@@ -1,0 +1,51 @@
+DIM IN
+DERIV DEG
+DAMP
+DUMP ALL
+PART
+DUMP IOM
+ $FLTCON WT=2.0, LOOP=2.0,
+         NMACH=1.0, MACH(1)=0.03635,
+         NALT=1.0, ALT(1)=0.0,
+         NALPHA=20.0,
+         ALSCHD(1)= -16.0, -8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 8.0, 9.0,
+             10.0, 12.0, 14.0, 16.0, 18.0, 19.0, 20.0, 21.0, 22.0, 24.0,
+         STMACH=0.6, TSMACH=1.4, TR=1.0$
+ $OPTINS ROUGFC=0.25E-3$
+ $SYNTHS XCG=12.0, ZCG=2.1,
+         XW=10.0,  ZW=2.3,  ALIW=3.6753,
+         XH=31.0,  ZH=0.7,   ALIH=0.0,
+         XV=28.5,  ZV=0.4,
+         SCALE=1.0, VERTUP=.TRUE.$
+ $BODY   NX=12.0,
+ X(1) =0.0, 0.5,  2.0,  5.0,   6.0,   8.0,  12.0,  18.0, 19.0, 20.0, 32.0, 33.0,
+ R(1) =0.0, 0.44, 1.25, 1.63,  1.44,  1.63, 1.38,  1.13, 1.0,  1.0,  0.5,  0.0,
+ ZU(1)=0.0, 1.5,  2.25, 3.25,  3.25,  3.25, 3.75,  4.63, 0.7,  0.6,  0.5,  0.0,
+ ZL(1)=0.0, 0.0,  -0.5, -1.23, -1.23, -1.8, -1.25, -1.0, -0.7, -0.6, -0.5, 0.0,
+ ITYPE=1.0, METHOD=1.0$
+ $WGPLNF CHRDR=9.4,   CHRDTP=3.01,
+         SSPN=25.85,  SSPNE=23.46,
+         SAVSI=1.3,
+         CHSTAT=0.25, TWISTA=-3.0,
+         DHDADI=3.6,
+         TYPE=1.0$
+NACA W 5 65415
+NACA H 4 0009
+ $HTPLNF CHRDTP=1.5, SSPNOP=3.0, SSPNE=8.75, SSPN=8.75,
+ CHRDBP=3.75, CHRDR=4.0, SAVSI=0.0, SAVSO=49.4, TWISTA=0.0,
+ CHSTAT=0.0, TYPE=2.0$
+ $VTPLNF CHRDTP=1.0, SSPNOP=0.88, SSPNE=5.88, SSPN=5.88,
+ CHRDBP=2.13, CHRDR=4.63, SAVSI=29.6, SAVSO=54.1,
+ CHSTAT=0.0, TYPE=1.0$
+ $SYMFLP FTYPE=1.0,
+         NDELTA=9.0, DELTA(1)=-20.0,-15.0,-10.0,-5.0,0.0,5.0,10.0,13.0,16.0,
+         PHETE=0.0522, PHETEP=0.0523,
+         CHRDFI=1.1875,  CHRDFO=1.0625,
+         SPANFI=0.0,   SPANFO=6.375,
+         CB=1.125,      TC=0.34375,       NTYPE=1.0$
+NACA V 4 0009
+ $PROPWR AIETLP=-5.19, NENGSP=1.0, THSTCP=0.0,
+ PHALOC=19.0, PHVLOC=4.0, PRPRAD=2.69,
+ BWAPR3=0.5, BWAPR6=0.38, BWAPR9=0.25, BAPR75=26.7,
+ NOPBPE=1.0, YP=0.0, CROT=.FALSE.$
+CASEID TOTAL: Citation II Model 550 Aircraft
