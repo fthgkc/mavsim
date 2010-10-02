@@ -16,6 +16,8 @@ target_link_libraries(oooarkScicos oooarkCommunication oooarkVisualization)
 set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERISON}
 	SOVERSION ${oooark_SOVERSION})
 
+install(TARGETS oooarkScicos DESTINATION lib)
+
 install(FILES
 	definitions.hpp
 	utilities.hpp

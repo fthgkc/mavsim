@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.6)
 
 project (oooark)
 
-#enable_language(C CXX Fortran)
+enable_language(C CXX Fortran)
 
 # The version number.
 set(oooark_VERSION_MAJOR 0)
@@ -23,13 +23,22 @@ set (CPACK_PACKAGE_VERSION_PATCH "${oooark_VERSION_PATCH}")
 include (CPack)
 
 # lib defs
+include(LibFindMacros)
 set(Boost_ADDITIONAL_VERSIONS "1.40.0")
 set(SCICOSLAB_INCLUDE_DIR "/usr/lib/scicoslab-gtk-4.4b7/routines")
 set(JSBSIM_INCLUDE_DIR "/usr/include/JSBSim")
+set(OSGGTK_INCLUDE_DIR "/usr/include/osgGtkmm-0.1")
+
+# gtkmm
+find_package(GTK)
+libfind_pkg_check_modules(GTKMM gtkmm-2.4)
 
 # find libraries
 find_package(Boost REQUIRED COMPONENTS thread-mt system-mt)
-find_package(OSG)
+
+# install data files
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION "share/oooark/"
+	PATTERN "*.git*" EXCLUDE)
 
 # subdirectories
 add_subdirectory(src)

@@ -5,9 +5,11 @@ add_library(oooarkVisualization SHARED
 	cmake_install.cmake
 	osgUtils.cpp
 	)
-target_link_libraries(oooarkVisualization ${OSG_LIBRARY})
+target_link_libraries(oooarkVisualization osg osgViewer ${Boost_LIBRARIES} )
 set_target_properties(oooarkVisualization PROPERTIES VERSION ${oooark_VERISON}
 	SOVERSION ${oooark_SOVERSION})
+
+install(TARGETS oooarkVisualization DESTINATION lib)
 
 install(FILES
 	Viewer.hpp

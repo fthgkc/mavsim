@@ -14,3 +14,4 @@ CPack*
 *.tar
 *.dll*
 *.so*
+*.nfs*

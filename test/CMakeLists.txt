@@ -1,1 +1,11 @@
-add_subdirectory(fortranC)
+include_directories("${PROJECT_INCLUDE_DIR}/src" ${OSGGTK_INCLUDE_DIR} ${GTKMM_INCLUDES})
+link_directories(${PROJECT_BINARY_DIR})
+
+add_library(fortranC SHARED hello.f90 world.cpp)
+target_link_libraries(fortranC gfortran)
+
+add_executable(fortranC_test fortranC.cpp)
+target_link_libraries(fortranC_test fortranC)
+
+add_executable(gcs_test gcs.cpp)
+target_link_libraries(gcs_test oooarkCommunication osggtk ${GTKMM_LIBRARIES}) 
