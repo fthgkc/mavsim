@@ -1,4 +1,5 @@
-include_directories("${PROJECT_INCLUDE_DIR}/src" ${OSGGTK_INCLUDE_DIR} ${GTKMM_INCLUDES})
+include_directories( "${PROJECT_INCLUDE_DIR}/src" ${OSGGTK_INCLUDE_DIRS}
+	${GTKMM_INCLUDE_DIRS} )
 link_directories(${PROJECT_BINARY_DIR})
 
 add_library(fortranC SHARED hello.f90 world.cpp)

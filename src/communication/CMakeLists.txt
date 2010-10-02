@@ -1,6 +1,7 @@
-include_directories(${JSBSIM_INCLUDE_DIR})
+include_directories(${JSBSIM_INCLUDE_DIRS} /usr/include/apmhsl)
 
 add_library(oooarkCommunication SHARED
+	ApmProtocol.cpp
 	AsyncSerial.cpp
 	FlightGearComm.cpp
 	JSBSimComm.cpp
@@ -13,6 +14,7 @@ set_target_properties(oooarkCommunication PROPERTIES VERSION ${oooark_VERISON}
 install(TARGETS oooarkCommunication DESTINATION lib)
 
 install(FILES
+	ApmProtocol.hpp
 	AsyncSerial.hpp
 	FlightGearComm.hpp
 	JSBSimComm.hpp

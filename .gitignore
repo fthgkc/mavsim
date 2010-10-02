@@ -15,3 +15,5 @@ CPack*
 *.dll*
 *.so*
 *.nfs*
+*_test
+*_app

@@ -1,4 +1,4 @@
-include_directories(${JSBSIM_INCLUDE_DIR} ${OSG_INCLUDE_DIR})
+include_directories(${JSBSIM_INCLUDE_DIRS} ${OSG_INCLUDE_DIRS})
 
 add_library(oooarkVisualization SHARED
 	Viewer.cpp

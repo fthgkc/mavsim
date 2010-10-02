@@ -1,5 +1,5 @@
-include_directories( "${PROJECT_SOURCE_DIR}/src" ${SCICOSLAB_INCLUDE_DIR}
-	${JSBSIM_INCLUDE_DIR} ${OSG_INCLUDE_DIR} )
+include_directories( "${PROJECT_SOURCE_DIR}/src" ${SCICOSLAB_INCLUDE_DIRS}
+	${JSBSIM_INCLUDE_DIRS} ${OSG_INCLUDE_DIRS} )
 link_directories( ${OSG_LIBRARY_DIRS} ) 
 
 add_library(oooarkScicos SHARED

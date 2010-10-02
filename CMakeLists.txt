@@ -25,13 +25,14 @@ include (CPack)
 # lib defs
 include(LibFindMacros)
 set(Boost_ADDITIONAL_VERSIONS "1.40.0")
-set(SCICOSLAB_INCLUDE_DIR "/usr/lib/scicoslab-gtk-4.4b7/routines")
-set(JSBSIM_INCLUDE_DIR "/usr/include/JSBSim")
-set(OSGGTK_INCLUDE_DIR "/usr/include/osgGtkmm-0.1")
+set(SCICOSLAB_INCLUDE_DIRS "/usr/lib/scicoslab-gtk-4.4b7/routines")
+set(JSBSIM_INCLUDE_DIRS "/usr/include/JSBSim")
 
 # gtkmm
 find_package(GTK)
-libfind_pkg_check_modules(GTKMM gtkmm-2.4)
+libfind_pkg_check_modules(GTKMM gtkmm-2.4 gdkmm-2.4)
+libfind_pkg_check_modules(OSGGTK osgGtkmm-1.0)
+
 
 # find libraries
 find_package(Boost REQUIRED COMPONENTS thread-mt system-mt)
