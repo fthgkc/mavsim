@@ -1,9 +1,10 @@
 include_directories(${JSBSIM_INCLUDE_DIRS} ${OSG_INCLUDE_DIRS})
 
 add_library(oooarkVisualization SHARED
-	Viewer.cpp
-	cmake_install.cmake
+	Ellipsoid.cpp
 	osgUtils.cpp
+	PointCloud.cpp
+	Viewer.cpp
 	)
 target_link_libraries(oooarkVisualization osg osgViewer ${Boost_LIBRARIES} )
 set_target_properties(oooarkVisualization PROPERTIES VERSION ${oooark_VERISON}
@@ -12,7 +13,9 @@ set_target_properties(oooarkVisualization PROPERTIES VERSION ${oooark_VERISON}
 install(TARGETS oooarkVisualization DESTINATION lib)
 
 install(FILES
-	Viewer.hpp
+	Ellipsoid.hpp
 	osgUtils.hpp
+	PointCloud.hpp
+	Viewer.hpp
 	DESTINATION include/oooark/visualization
 	)

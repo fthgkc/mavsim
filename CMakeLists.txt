@@ -27,6 +27,9 @@ include(LibFindMacros)
 set(Boost_ADDITIONAL_VERSIONS "1.40.0")
 set(SCICOSLAB_INCLUDE_DIRS "/usr/lib/scicoslab-gtk-4.4b7/routines")
 set(JSBSIM_INCLUDE_DIRS "/usr/include/JSBSim")
+set(OSGEARTH_LIBRARIES osgEarth osgEarthUtil osgEarthFeatures)
+set(APMHSL_LIBRARIES "apmhsl")
+set(APMHSL_INCLUDE_DIRS "/usr/include/apmhsl")
 
 # gtkmm
 find_package(GTK)

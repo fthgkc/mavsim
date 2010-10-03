@@ -25,14 +25,12 @@
 // as well as the handling the file load button
 #include <osgDB/ReadFile>
 
-#include <osgGA/FlightManipulator>
-#include <osgGA/TrackballManipulator>
 #include <osgEarthUtil/ObjectPlacer>
 #include <osg/PositionAttitudeTransform>
 #include <osg/MatrixTransform>
 #include <osgEarthUtil/EarthManipulator>
-#include <osg/ShapeDrawable>
 #include <osgGA/NodeTrackerManipulator>
+#include <osg/ShapeDrawable>
 
 // And we'll need this for the Gtkmm OSG viewer
 #include <osgGtkmm/ViewerGtkmm.h>
@@ -41,8 +39,8 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/bind.hpp>
 #include <string>
-//#include "oooark/utilities/constants.hpp"
 #include "communication/ApmProtocol.hpp" 
+#include "visualization/PointCloud.hpp"
 #include <sys/time.h>
 namespace oooark
 {
@@ -57,52 +55,67 @@ bool fileExists(const char * filename)
     return false;
 }     
 
-union int16_uint8
-{
-	int16_t asInt16;
-	uint8_t asUint8[2];
-};
+//union int16_uint8
+//{
+	//int16_t asInt16;
+	//uint8_t asUint8[2];
+//};
 
-union int32_uint8
-{
-	int32_t asInt32;
-	uint8_t asUint8[4];
-};
+//union int32_uint8
+//{
+	//int32_t asInt32;
+	//uint8_t asUint8[4];
+//};
 
-class MapVehicle
+class MapVehicle : public osg::Group
 {
+private:
+	timeval currentTime, lastTime;
+	double diff, updateFreq;
+	oooark::PointCloud* traceCloud;
+    osgEarthUtil::ObjectPlacer* placer;
+    osg::Node * model;
+    ApmProtocol comm;
+    osg::PositionAttitudeTransform * paTransform;
+    osg::MatrixTransform *matrixTransform, *traceMatrixTransform;
+    osg::Matrixd matrix, traceMatrix;
+    osg::Cylinder * cylinder;
+    boost::thread * thread;
+    osg::Vec3d vXYZ;
+    Gtk::Label * geoLabel;
+    double lat, lon, alt, roll, pitch, yaw, groundSpeed, groundCourse, timeOfWeek;
+    std::vector<int32_t> latVec, lonVec, altVec;
+
 public:
-    bool followMe, trace;
+    bool trace;
 
-    MapVehicle(osgViewer::ViewerGtkmm * viewer, osgEarthUtil::EarthManipulator * earthManipulator, std::string modelFile, std::string device,\
-            const long int baud, osg::Vec3Array * vXYZ, osg::Vec4Array * vColors, osg::DrawArrays * vDrawLines, osg::Group * vGroup, Gtk::Label * geoLabel) :	\
-            followMe(false), trace(false), viewer(viewer), earthManipulator(earthManipulator), placer(viewer->getSceneData()->asGroup()), \
-            model(osgDB::readNodeFile(modelFile)), comm(device, baud), pat(new osg::PositionAttitudeTransform), \
-            marker_pat(new osg::PositionAttitudeTransform), mt(new osg::MatrixTransform), marker_mt(new osg::MatrixTransform), \
-            matrix(), marker_matrix(), line(new osg::Geode), \
-            thread(), vXYZ(vXYZ), vColors(vColors), vDrawLines(vDrawLines), vGroup(vGroup), geoLabel(geoLabel), \
-            lat(40.430896), lon(-86.914602), alt(100), roll(0), pitch(0), yaw(0)
+    MapVehicle(osgEarthUtil::ObjectPlacer* placer, std::string modelFile, std::string device,\
+            const long int baud, Gtk::Label * geoLabel) : Group(),	\
+            trace(false), placer(placer), model(osgDB::readNodeFile(modelFile)), comm(device, baud),  \
+			paTransform(new osg::PositionAttitudeTransform), \
+            matrixTransform(new osg::MatrixTransform), traceMatrixTransform(new osg::MatrixTransform), \
+            matrix(), traceCloud(new oooark::PointCloud(2)), \
+            thread(), lat(40.430896), lon(-86.914602), alt(100), roll(0), pitch(0), yaw(0)
     {
 		gettimeofday(&currentTime, NULL);
 		gettimeofday(&lastTime, NULL);
 
-        mt->addChild(pat);
-        pat->setScale(osg::Vec3d(1,1,1));
-        pat->addChild(model);
-        viewer->getSceneData()->asGroup()->addChild(mt);
+        matrixTransform->addChild(paTransform);
+        paTransform->setScale(osg::Vec3d(1,1,1));
+        paTransform->addChild(model);
+        this->addChild(matrixTransform);
+		this->addChild(traceCloud);
 
+		//Marker cylinder from plane to ground
         osg::Geode * marker = new osg::Geode;
         cylinder = new osg::Cylinder(osg::Vec3(0, 0, 0), 0.3, 100);
         osg::ShapeDrawable *drawableCylinder = new osg::ShapeDrawable;
-        drawableCylinder->setUseDisplayList(false);
         drawableCylinder = new osg::ShapeDrawable(cylinder);
+        drawableCylinder->setUseDisplayList(false);
         drawableCylinder->setColor(osg::Vec4d(1.0,0,0,1.0));
-
         marker->addDrawable(drawableCylinder);
-        marker_pat->addChild(marker);
-        marker_mt->addChild(marker_pat);
-        viewer->getSceneData()->asGroup()->addChild(marker_mt);
 
+		updateFreq=12;
         thread = new boost::thread( boost::bind( &MapVehicle::update, this ) );
 
     }
@@ -112,6 +125,11 @@ public:
         if (thread) thread->join();
         delete thread;
     }
+
+	void clearTrace()
+	{
+		traceCloud->clear();
+	}
 
     void addWp(double lat, double lon, double alt)
     {
@@ -128,122 +146,98 @@ public:
     }
     void sendWpList()
     {
-		std::vector<char> message;
-        int16_uint8 messageType;
-        int32_uint8 lat, lon, alt;
-        message.push_back(messageType.asUint8[0]);
-        message.push_back(messageType.asUint8[1]);
-        for (int i = 0; i<latVec.size(); i++)
-        {
-            lat.asInt32 = latVec.at(i);
-            lon.asInt32 = lonVec.at(i);
-            alt.asInt32 = altVec.at(i);
-            for (int j = 0; j<4; j++) message.push_back(lat.asUint8[j]);
-            for (int j = 0; j<4; j++) message.push_back(lon.asUint8[j]);
-            for (int j = 0; j<4; j++) message.push_back(alt.asUint8[j]);
-        }
+		//std::vector<char> message;
+        //int16_uint8 messageType;
+        //int32_uint8 lat, lon, alt;
+        //message.push_back(messageType.asUint8[0]);
+        //message.push_back(messageType.asUint8[1]);
+        //for (int i = 0; i<latVec.size(); i++)
+        //{
+            //lat.asInt32 = latVec.at(i);
+            //lon.asInt32 = lonVec.at(i);
+            //alt.asInt32 = altVec.at(i);
+            //for (int j = 0; j<4; j++) message.push_back(lat.asUint8[j]);
+            //for (int j = 0; j<4; j++) message.push_back(lon.asUint8[j]);
+            //for (int j = 0; j<4; j++) message.push_back(alt.asUint8[j]);
+        //}
 
-        //comm.send(message);
+        ////comm.send(message);
 
-        for (int i = 0; i < latVec.size(); i++)
-        {
-            std::cout << "lat: " << latVec.at(i) << "  lon: " << lonVec.at(i) << "  alt: " << altVec.at(i) << std::endl;
-        }
+        //for (int i = 0; i < latVec.size(); i++)
+        //{
+            //std::cout << "lat: " << latVec.at(i) << "  lon: " << lonVec.at(i) << "  alt: " << altVec.at(i) << std::endl;
+        //}
     }
+	void printNavData()
+	{
+		std::cout << "lat: " << lat;
+		std::cout << "  lon: " << lon;
+		std::cout << "  alt: " << alt << std::endl;
+		std::cout << "roll: " << roll*180.0/M_PI;
+		std::cout << "  pitch: " << pitch*180.0/M_PI;
+		std::cout << "  yaw: " << yaw*180.0/M_PI << std::endl;
+		std::cout << std::endl;
+	}
 
     void update()
     {
         while (1)
         {
 			gettimeofday(&currentTime, NULL);
-			diff = (currentTime.tv_sec-lastTime.tv_sec) + (currentTime.tv_usec-lastTime.tv_usec)/((float)1000000);
-			if(comm.newNavData)
+			diff = (currentTime.tv_sec-lastTime.tv_sec) + (currentTime.tv_usec-lastTime.tv_usec)/1e6;
+			if(diff>(1.0/updateFreq))
 			{
-				lastTime = currentTime;
-				comm.read();
+				comm.update();
+				if(comm.newNavData)
+				{
+					lastTime = currentTime;
 
-                double c1, c2, c3, s1, s2, s3;
-                lat = comm.lat;
-				lon = comm.lon;
-				alt = comm.altMsl;
-				roll = comm.roll;
-				pitch = comm.pitch;
-				yaw = comm.yaw;
-                osg::Vec3d * xyz = new osg::Vec3d;
-                earthManipulator->getSRS()->getEllipsoid()->convertLatLongHeightToXYZ( lat, lon, alt+1000, xyz->x(), xyz->y(), xyz->z());
-				std::cout << "lat: " << lat;
-				std::cout << "  lon: " << lon;
-				std::cout << "  alt: " << alt << std::endl;
-				std::cout << "roll: " << roll*180.0/M_PI;
-				std::cout << "  pitch: " << pitch*180.0/M_PI;
-				std::cout << "  yaw: " << yaw*180.0/M_PI << std::endl;
-				std::cout << std::endl;
-				//std::cout.clear();
+					comm.getNavData(roll, pitch, yaw,lat, lon, alt, groundSpeed, groundCourse, timeOfWeek);
+					printNavData();
 
-                // correct for coordinate frame of cessna model
-                yaw = -yaw;
-                double tmp = pitch;
-                pitch = roll;
-                roll = tmp;
-                c1 = cos(roll/2.);
-                c2 = cos(pitch/2.);
-                c3 = cos(yaw/2.);
-                s1 = sin(roll/2);
-                s2 = sin(pitch/2.);
-                s3 = sin(yaw/2.);
+					// correct for coordinate frame of cessna model and put into
+					// a quaternion
+					yaw = -yaw;
+					double tmp = pitch;
+					pitch = roll;
+					roll = tmp;
+					double c1, c2, c3, s1, s2, s3;
+					c1 = cos(roll/2.);
+					c2 = cos(pitch/2.);
+					c3 = cos(yaw/2.);
+					s1 = sin(roll/2);
+					s2 = sin(pitch/2.);
+					s3 = sin(yaw/2.);
+					//set vehicle attitude
+					osg::Quat quat(s1*c2*c3-c1*s2*s3, c1*s2*c3+s1*c2*s3, c1*c2*s3+s1*s2*c3, c1*c2*c3+s1*s2*s3 );
+					paTransform->setAttitude(quat);
+					
+					//set vehicle position on map
+					bool status = placer->createPlacerMatrix(lat, lon, alt, matrix);
+					if (status) matrixTransform->setMatrix(matrix);
+					else {std::cout<<"Placer Matrix Error"<<std::endl; continue;}
 
-                osg::Quat quat(s1*c2*c3-c1*s2*s3, c1*s2*c3+s1*c2*s3, c1*c2*s3+s1*s2*c3, c1*c2*c3+s1*s2*s3 );
-                placer.createPlacerMatrix(lat, lon, alt, matrix);
-                placer.createPlacerMatrix(lat, lon, 0, marker_matrix);
+					//set cylinder that runs from plane to the ground
+					cylinder->setHeight(alt);
+					cylinder->setCenter(osg::Vec3(0,0,alt/2));
 
+					//Set Info Label
+					//char stringBuffer [100];
+					//sprintf (stringBuffer, "Lat:  %10.8Lf\n Lon: %10.8Lf\n Alt:  %10.8Lf", lat, lon, alt);
+					//geoLabel->set_label(stringBuffer);
 
-
-                //Set Info Label
-                //char stringBuffer [100];
-                //sprintf (stringBuffer, "Lat:  %10.8Lf\n Lon: %10.8Lf\n Alt:  %10.8Lf", lat, lon, alt);
-                //geoLabel->set_label(stringBuffer);
-
-                //Add wpLines
-                if (trace)
-                {
-
-                    //vXYZ->push_back(xyz);
-                    //vColors->push_back(osg::Vec4(0,0,1,1));
-                    //vDrawLines->setCount(vXYZ->size());
-                    //std::cout<<vXYZ->size()<<std::endl;
-                    //vXYZ->dirty();
-
-                    //Add vehicle trace
-                    osg::ref_ptr<osg::Geode> vGeode = new osg::Geode;
-                    osg::ref_ptr<osg::MatrixTransform> trace_mt = new osg::MatrixTransform;
-                    osg::Matrixd trace_matrix = marker_matrix;
-                    osg::ShapeDrawable * drawableSphere = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0,0,0), 1));
-                    drawableSphere->setColor(osg::Vec4d(0,1,0,1.0));
-                    vGeode->addDrawable(drawableSphere);
-                    trace_mt->setMatrix(trace_matrix);
-                    trace_mt->addChild(vGeode);
-                    vGroup->addChild(trace_mt);
-                }
-
-
-                viewer->stop();
-                cylinder->setHeight(alt);
-                cylinder->setCenter(osg::Vec3(0,0,alt/2));
-                pat->setAttitude(quat);
-                mt->setMatrix(matrix);
-                marker_mt->setMatrix(marker_matrix);
-                viewer->run();
-
-                if (followMe)
-                {
-                    osgEarthUtil::Viewpoint viewpoint;
-                    viewpoint = earthManipulator->getViewpoint();
-                    viewpoint.setFocalPoint(getFocalPoint());
-                    if (viewpoint.getRange()>500) viewpoint.setRange(500);
-                    earthManipulator->setViewpoint(viewpoint);
-                }
-
-				comm.newNavData=false;
+					if (trace)
+					{
+						//place marker at altitude
+						traceCloud->addPoint(matrixTransform->getMatrix().getTrans());
+						
+						//place marker on the ground
+						bool status = placer->createPlacerMatrix(lat, lon, 0, traceMatrix);
+						if (status) traceMatrixTransform->setMatrix(traceMatrix);
+						else {std::cout<<"Placer Matrix Error"<<std::endl; continue;}
+						traceCloud->addPoint(traceMatrixTransform->getMatrix().getTrans(), red);
+					}
+				}
 			}
         }
     }
@@ -253,7 +247,7 @@ public:
     }
     osg::Matrixd getMatrix()
     {
-        return mt->getInverseMatrix();
+        return matrixTransform->getInverseMatrix();
     }
     osg::Vec3d getGeo()
     {
@@ -264,28 +258,7 @@ public:
         return osg::Vec3d(lon, lat, alt);
     }
 
-private:
-	timeval currentTime, lastTime;
-	double diff;
-    osgViewer::ViewerGtkmm * viewer;
-    osgEarthUtil::EarthManipulator * earthManipulator;
-    osgEarthUtil::ObjectPlacer placer;
-    osg::Node * model;
-    ApmProtocol comm;
-    osg::PositionAttitudeTransform * pat, * marker_pat;
-    osg::ref_ptr<osg::MatrixTransform> mt, marker_mt;
-    osg::Matrixd matrix, marker_matrix;
-    osg::Cylinder * cylinder;
-    osg::ref_ptr<osg::Geode> line;
-    boost::thread * thread;
-    osg::Vec3Array * vXYZ;
-    osg::Vec4Array * vColors;
-    osg::DrawArrays * vDrawLines;
-    osg::Group * vGroup;
-    osg::Vec3dArray * vGeo;
-    Gtk::Label * geoLabel;
-    double lat, lon, alt, vN, vE, vD, roll, pitch, yaw, xTrack, xTrackVel, headingError, headingErrorRate;
-    std::vector<int32_t> latVec, lonVec, altVec;
+
 };
 
 } // oooark namespace
@@ -323,12 +296,13 @@ osg::DrawArrays * wpDrawLines;
 
 //Vehicle Track Lines
 osg::Vec3dArray * vGeo;
-osg::Vec3Array * vXYZ;
+osg::Vec3d * vXYZ, eye, center, up;
 osg::Vec4Array * vColors;
 osg::Geode * vLines;
 osg::Group * vGroup;
 osg::Geometry * vLineGeometry;
 osg::DrawArrays * vDrawLines;
+osg::Matrixd matrix;
 
 
 Gtk::ToggleButton * start_stop_button;
@@ -336,13 +310,16 @@ Gtk::Label * geo_label;
 
 bool modelLoaded = false;
 osgEarthUtil::EarthManipulator * earthManipulator = new osgEarthUtil::EarthManipulator;
+osgGA::NodeTrackerManipulator * nodeTrackManipulator = new osgGA::NodeTrackerManipulator;
+
+osgEarthUtil::ObjectPlacer* objectPlacer;
 
 int main( int argc, char** argv )
 {
 
 
     // We'll set a basic size of 800x600, but the user can resize larger if desired (but not smaller)
-    int width=400, height=300;
+    int width=800, height=600;
 
     // This is some gtkmm housekeeping... we need the main loop and we also need to initialize the OpenGL system
     Gtk::Main gtkmm_main( argc, argv );
@@ -354,7 +331,9 @@ int main( int argc, char** argv )
     // argument as the scene
     viewer = new osgViewer::ViewerGtkmm();
     viewer->setCameraManipulator(earthManipulator);
-    viewer->set_fps(30);
+    viewer->set_fps(13);
+	nodeTrackManipulator->setRotationMode(osgGA::NodeTrackerManipulator::ELEVATION_AZIM);
+	nodeTrackManipulator->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER);
 
     // Now we'll setup the viewer in a gtkmm window using the setup_viewer_in_gtkmm_window()
     // convenience method
@@ -435,19 +414,19 @@ int main( int argc, char** argv )
     wpLineGeometry->setUseDisplayList(false);
 
     //Setup vehicle track lines
-    vGeo = new osg::Vec3dArray;
-    vXYZ = new osg::Vec3Array;
-    vColors = new osg::Vec4Array;
-    vLines = new osg::Geode;
-    vGroup = new osg::Group;
-    vLineGeometry = new osg::Geometry;
-    vDrawLines = new osg::DrawArrays(osg::PrimitiveSet::LINE_STRIP, 0, 0);
-    vLines->addDrawable(vLineGeometry);
-    vLineGeometry->setVertexArray(vXYZ);
-    vLineGeometry->setColorArray(vColors);
-    vLineGeometry->addPrimitiveSet(vDrawLines);
-    vLineGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
-    vLineGeometry->setUseDisplayList(false);
+    //vGeo = new osg::Vec3dArray;
+    //vXYZ = new osg::Vec3Array;
+    //vColors = new osg::Vec4Array;
+    //vLines = new osg::Geode;
+    //vGroup = new osg::Group;
+    //vLineGeometry = new osg::Geometry;
+    //vDrawLines = new osg::DrawArrays(osg::PrimitiveSet::LINE_STRIP, 0, 0);
+    //vLines->addDrawable(vLineGeometry);
+    //vLineGeometry->setVertexArray(vXYZ);
+    //vLineGeometry->setColorArray(vColors);
+    //vLineGeometry->addPrimitiveSet(vDrawLines);
+    //vLineGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+    //vLineGeometry->setUseDisplayList(false);
 
     // This is boilerplate for all gtkmm apps... start the gtkmm main loop
     Gtk::Main::run(window);
@@ -522,6 +501,7 @@ void on_open_file_clicked()
 		if ( model.valid() )
 		{
 			viewer->setSceneData(model.get());
+			objectPlacer = new osgEarthUtil::ObjectPlacer(model.get());
 			modelLoaded =true;
 			viewer->run();
 		}
@@ -539,8 +519,6 @@ void on_open_file_clicked()
 
     viewer->getSceneData()->asGroup()->addChild(wpLines);
     viewer->getSceneData()->asGroup()->addChild(wpGroup);
-    viewer->getSceneData()->asGroup()->addChild(vGroup);
-    viewer->getSceneData()->asGroup()->addChild(vLines);
 }
 
 void on_open_vehicle_clicked()
@@ -571,7 +549,8 @@ void on_open_vehicle_clicked()
 		if(fileExists(file.c_str())) fileGood = true;
 		if(fileGood && portGood)
 		{
-        	vehicle = new MapVehicle(viewer, earthManipulator, file, port, baud, vXYZ, vColors, vDrawLines, vGroup, geo_label);
+        	vehicle = new MapVehicle(objectPlacer, file, port, baud, geo_label);
+			viewer->getSceneData()->asGroup()->addChild(vehicle);
 		}
 		else
 		{
@@ -599,7 +578,7 @@ void on_addWp_clicked(GdkEventButton & event)
             double lat, lon, alt, wpDispAlt;
 
             earthManipulator->getSRS()->getEllipsoid()->convertXYZToLatLongHeight(xyz.x(), xyz.y(), xyz.z(), lat, lon, alt);
-            if (alt<0) alt = 0;
+            if (alt<0) alt = 0; //if intercept calculate from clicking screen is calculated below 0, reset to 0;
             wpDispAlt = alt + 10;
             earthManipulator->getSRS()->getEllipsoid()->convertLatLongHeightToXYZ( lat, lon, wpDispAlt, xyz.x(), xyz.y(), xyz.z());
 
@@ -626,7 +605,6 @@ void on_center_vehicle_clicked()
 {
     if (vehicle)
     {
-        vehicle->followMe = false;
         osgEarthUtil::Viewpoint viewpoint;
         viewpoint = earthManipulator->getViewpoint();
         viewpoint.setFocalPoint(vehicle->getFocalPoint());
@@ -637,12 +615,20 @@ void on_center_vehicle_clicked()
 
 void on_follow_vehicle_clicked()
 {
-    if (vehicle)	vehicle->followMe = true;
+    if (vehicle) 
+	{
+        //osgEarthUtil::Viewpoint viewpoint;
+        //viewpoint = earthManipulator->getViewpoint();
+        //viewpoint.setFocalPoint(vehicle->getFocalPoint());
+        //if ( viewpoint.getRange()>500) viewpoint.setRange(500);
+        //earthManipulator->setViewpoint(viewpoint, 3);
+		earthManipulator->setTetherNode(vehicle->getModel());
+	}
 }
 
 void on_stop_follow_vehicle_clicked()
 {
-    if (vehicle) vehicle->followMe = false;
+	earthManipulator->setTetherNode(NULL);
 }
 
 void on_start_trace_clicked()
@@ -661,11 +647,7 @@ void on_start_trace_clicked()
 
 void on_reset_trace_clicked()
 {
-    vXYZ->clear();
-    vGeo->clear();
-    vColors->clear();
-    vDrawLines->setCount(vXYZ->size());
-    while (vGroup->removeChild(vGroup->getChild(0)));
+	vehicle->clearTrace();
 }
 
 void on_reset_wp_clicked()

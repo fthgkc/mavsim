@@ -1,5 +1,5 @@
 include_directories( "${PROJECT_SOURCE_DIR}/src" ${OSGGTK_INCLUDE_DIRS}
-	${GTKMM_INCLUDE_DIRS} /usr/include/apmhsl)
+	${GTKMM_INCLUDE_DIRS} ${APMHSL_INCLUDE_DIRS})
 link_directories(${PROJECT_BINARY_DIR})
 
 add_library(fortranC SHARED hello.f90 world.cpp)
@@ -9,4 +9,6 @@ add_executable(fortranC_test fortranC.cpp)
 target_link_libraries(fortranC_test fortranC)
 
 add_executable(gcs_test gcs.cpp)
-target_link_libraries(gcs_test oooarkCommunication osggtk ${GTKMM_LIBRARIES}) 
+target_link_libraries(gcs_test oooarkCommunication oooarkVisualization
+	${GTKMM_LIBRARIES} ${OSGGTK_LIBRARIES} 
+	${APMHSL_LIBRARIES} ${OSGEARTH_LIBRARIES}) 
