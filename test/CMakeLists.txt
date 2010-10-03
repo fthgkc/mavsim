@@ -1,5 +1,5 @@
-include_directories( "${PROJECT_INCLUDE_DIR}/src" ${OSGGTK_INCLUDE_DIRS}
-	${GTKMM_INCLUDE_DIRS} )
+include_directories( "${PROJECT_SOURCE_DIR}/src" ${OSGGTK_INCLUDE_DIRS}
+	${GTKMM_INCLUDE_DIRS} /usr/include/apmhsl)
 link_directories(${PROJECT_BINARY_DIR})
 
 add_library(fortranC SHARED hello.f90 world.cpp)
