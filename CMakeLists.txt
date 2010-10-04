@@ -31,19 +31,20 @@ set(OSGEARTH_LIBRARIES osgEarth osgEarthUtil osgEarthFeatures)
 set(APMHSL_LIBRARIES "apmhsl")
 set(APMHSL_INCLUDE_DIRS "/usr/include/apmhsl")
 
-# gtkmm
+# find libraries
 find_package(GTK)
+libfind_pkg_check_modules(OSG openscenegraph)
 libfind_pkg_check_modules(GTKMM gtkmm-2.4 gdkmm-2.4)
 libfind_pkg_check_modules(OSGGTK osgGtkmm-1.0)
-
-
-# find libraries
 find_package(Boost REQUIRED COMPONENTS thread-mt system-mt)
+find_package(Qt4 REQUIRED)
+set(QT_USE_QTOPENGL TRUE)
+set(QT_USE_QTUITOOLS TRUE)
 
 # install data files
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION "share/oooark/"
 	PATTERN "*.git*" EXCLUDE)
 
 # subdirectories
-add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(src)

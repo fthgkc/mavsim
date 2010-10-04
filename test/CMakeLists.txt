@@ -12,3 +12,5 @@ add_executable(gcs_test gcs.cpp)
 target_link_libraries(gcs_test oooarkCommunication oooarkVisualization
 	${GTKMM_LIBRARIES} ${OSGGTK_LIBRARIES} 
 	${APMHSL_LIBRARIES} ${OSGEARTH_LIBRARIES}) 
+
+add_subdirectory(gui)
