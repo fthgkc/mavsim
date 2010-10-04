@@ -7,7 +7,7 @@ add_library(oooarkCommunication SHARED
 	JSBSimComm.cpp
 	flightGearUtils.cpp
 	)
-target_link_libraries(oooarkCommunication jsbsim sgio)
+target_link_libraries(oooarkCommunication jsbsim sgio apmhsl)
 set_target_properties(oooarkCommunication PROPERTIES VERSION ${oooark_VERISON}
 	SOVERSION ${oooark_SOVERSION})
 
