@@ -18,6 +18,7 @@
 
 #include "MainWindow.hpp"
 #include "QOSGAdapterWidget.hpp"
+#include <QFileDialog>
 
 namespace oooark
 {
@@ -36,20 +37,24 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionLoad_Model_activated()
 {
-	std::cout << "loading model" << std::endl;
-    osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile("../data/plane.osg");
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Open Vehicle Model File"),
+       ".", tr("3D Model Files (*.osg *.ac)"));
+
+    osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile(fileName.toStdString());
     if (!loadedModel)
     {
         std::cout << "model not loaded" << std::endl;
     }
 	map->setSceneData(loadedModel);
+
 }
 
 void MainWindow::on_actionLoad_Map_activated()
 {
-	std::cout << "loading map" << std::endl;
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Open OSGEarth Map File"),
+       ".", tr("OSGEarth Files (*.earth)"));
 
-    osg::ref_ptr<osg::Node> loadedMap = osgDB::readNodeFile("../data/yahoo_aerial.earth");
+    osg::ref_ptr<osg::Node> loadedMap = osgDB::readNodeFile(fileName.toStdString());
     if (!loadedMap)
     {
         std::cout << "map not loaded" << std::endl;
