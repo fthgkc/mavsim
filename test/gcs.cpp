@@ -29,7 +29,6 @@
 #include <osg/PositionAttitudeTransform>
 #include <osg/MatrixTransform>
 #include <osgEarthUtil/EarthManipulator>
-#include <osgGA/NodeTrackerManipulator>
 #include <osg/ShapeDrawable>
 
 // And we'll need this for the Gtkmm OSG viewer
@@ -239,11 +238,12 @@ public:
 					}
 				}
 			}
+			usleep((1.0/(updateFreq+1))*1e6);
         }
     }
-    osg::Node * getModel()
+    osg::Node * getMatrixTransformNode()
     {
-        return model;
+        return matrixTransform;
     }
     osg::Matrixd getMatrix()
     {
@@ -309,10 +309,9 @@ Gtk::ToggleButton * start_stop_button;
 Gtk::Label * geo_label;
 
 bool modelLoaded = false;
-osgEarthUtil::EarthManipulator * earthManipulator = new osgEarthUtil::EarthManipulator;
-osgGA::NodeTrackerManipulator * nodeTrackManipulator = new osgGA::NodeTrackerManipulator;
 
 osgEarthUtil::ObjectPlacer* objectPlacer;
+osgEarthUtil::EarthManipulator * earthManipulator = new osgEarthUtil::EarthManipulator;
 
 int main( int argc, char** argv )
 {
@@ -329,11 +328,12 @@ int main( int argc, char** argv )
     //
     // We'll also set desired frame rate of 30 fps and load the first command line
     // argument as the scene
+
+	earthManipulator->getSettings()->setMinMaxPitch(-90,-30);
+
     viewer = new osgViewer::ViewerGtkmm();
     viewer->setCameraManipulator(earthManipulator);
-    viewer->set_fps(13);
-	nodeTrackManipulator->setRotationMode(osgGA::NodeTrackerManipulator::ELEVATION_AZIM);
-	nodeTrackManipulator->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER);
+    viewer->set_fps(10);
 
     // Now we'll setup the viewer in a gtkmm window using the setup_viewer_in_gtkmm_window()
     // convenience method
@@ -585,7 +585,9 @@ void on_addWp_clicked(GdkEventButton & event)
             //Add wp marker
             osg::ref_ptr<osg::Geode> geode = new osg::Geode;
             osg::ShapeDrawable * drawableSphere = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(xyz.x(), xyz.y(), xyz.z()), 5));
+            osg::ShapeDrawable * drawableSphereOrigin = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0.0, 0.0, 0.0), 10000));
             geode->addDrawable(drawableSphere);
+            geode->addDrawable(drawableSphereOrigin);
             wpGroup->addChild(geode);
 
 
@@ -609,7 +611,7 @@ void on_center_vehicle_clicked()
         viewpoint = earthManipulator->getViewpoint();
         viewpoint.setFocalPoint(vehicle->getFocalPoint());
         if ( viewpoint.getRange()>500) viewpoint.setRange(500);
-        earthManipulator->setViewpoint(viewpoint, 3);
+        earthManipulator->setViewpoint(viewpoint, 0);
     }
 }
 
@@ -617,12 +619,13 @@ void on_follow_vehicle_clicked()
 {
     if (vehicle) 
 	{
-        //osgEarthUtil::Viewpoint viewpoint;
-        //viewpoint = earthManipulator->getViewpoint();
-        //viewpoint.setFocalPoint(vehicle->getFocalPoint());
-        //if ( viewpoint.getRange()>500) viewpoint.setRange(500);
-        //earthManipulator->setViewpoint(viewpoint, 3);
-		earthManipulator->setTetherNode(vehicle->getModel());
+		osgEarthUtil::Viewpoint viewpoint;
+		viewpoint = earthManipulator->getViewpoint();
+		viewpoint.setFocalPoint(vehicle->getFocalPoint());
+		if ( viewpoint.getRange()>500) viewpoint.setRange(500);
+			
+		earthManipulator->setTetherNode(vehicle->getMatrixTransformNode());
+		earthManipulator->setViewpoint(viewpoint, 0);
 	}
 }
 
