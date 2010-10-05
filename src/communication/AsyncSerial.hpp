@@ -5,8 +5,8 @@
  * Created on September 7, 2009, 10:46 AM
  */
 
-#ifndef _ASYNCSERIAL_HPP
-#define	_ASYNCSERIAL_HPP
+#ifndef oooark_AsyncSerial_HPP
+#define	oooark_AsyncSerial_HPP
 
 #include <vector>
 #include <boost/asio.hpp>

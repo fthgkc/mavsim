@@ -430,7 +430,7 @@ int main( int argc, char** argv )
 
     // This is boilerplate for all gtkmm apps... start the gtkmm main loop
     Gtk::Main::run(window);
-    // If we got here, gtkmm exited it's main loop, so we'll exit cleanly
+    // If we got here, gtkmm exited it's main loop, so we'll exit cleanlyif (viewer->getSceneData()) viewer->setSceneData(NULL);
     return 0;
 }
 
@@ -439,7 +439,7 @@ int main( int argc, char** argv )
 //
 // Even though it is only the button release that we're concerned with,
 // we still handle the button press event since anything that we don't
-// handle is passed along to OSG. We don't want button press events
+// handle is passed along to OSG. We don't want button press eventsif (viewer->getSceneData()) viewer->setSceneData(NULL);
 // to be passed into OSG when the user is holding down the shift
 // key or the control key, so we stop that by returning true
 // when either key is held down and the right mouse button is clicked.

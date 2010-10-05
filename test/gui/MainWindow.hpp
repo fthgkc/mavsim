@@ -20,9 +20,8 @@
 #define oooark_MainWindow_HPP
 
 #include "ui_MainWindow.h"
-//#include "MapVehicle.hpp"
+#include "MapVehicle.hpp"
 #include <osgEarthUtil/EarthManipulator>
-#include <osgGA/NodeTrackerManipulator>
 #include <osgEarthUtil/ObjectPlacer>
 
 namespace oooark

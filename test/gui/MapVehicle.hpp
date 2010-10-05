@@ -26,8 +26,8 @@
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/bind.hpp>
-#include <string>
-#include "communication/ApmProtocol.hpp" 
+//#include <string>
+//#include "communication/ApmProtocol.hpp" 
 #include "visualization/PointCloud.hpp"
 #include <sys/time.h>
 
@@ -42,7 +42,7 @@ private:
 	oooark::PointCloud* traceCloud;
     osgEarthUtil::ObjectPlacer* placer;
     osg::Node * model;
-	ApmProtocol comm;
+	//ApmProtocol comm;
     osg::PositionAttitudeTransform * paTransform;
     osg::MatrixTransform *matrixTransform, *traceMatrixTransform;
     osg::Matrixd matrix, traceMatrix;

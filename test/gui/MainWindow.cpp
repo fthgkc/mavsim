@@ -14,10 +14,8 @@
  */
 
 #include "MainWindow.hpp"
-#include "QOSGAdapterWidget.hpp"
 #include <QFileDialog>
-#include <osg/ShapeDrawable>
-#include <osgGA/TrackballManipulator>
+#include <osgEarthUtil/EarthManipulator>
 
 namespace oooark
 {
@@ -26,7 +24,7 @@ MainWindow::MainWindow() :
 	earthManipulator(new osgEarthUtil::EarthManipulator), objectPlacer()
 {
 	setupUi(this);
-	map->setCameraManipulator(new osgGA::TrackballManipulator);
+	map->setCameraManipulator(new osgEarthUtil::EarthManipulator);
 	map->setSceneData(new osg::Group);
 	map->show();
 }
@@ -112,7 +110,17 @@ void MainWindow::on_pushButton_mapFile_clicked()
     {
         std::cout << "map not loaded" << std::endl;
     }
-	map->getSceneData()->asGroup()->addChild(loadedMap);
+	if(loadedMap.valid())
+	{
+		if (map->getSceneData()) map->setSceneData(NULL);
+		map->setSceneData(loadedMap);
+		objectPlacer = new osgEarthUtil::ObjectPlacer(loadedMap);
+	}
+	else
+	{
+		std::cout<<"map not valid"<<std::endl;
+	}
+
 }
 
 void MainWindow::on_pushButton_telemetryPort_clicked()
@@ -151,34 +159,34 @@ void MainWindow::on_pushButton_loadFlightPlan_clicked()
 
 void MainWindow::on_addWaypoint_clicked()
 {
-  	osgUtil::LineSegmentIntersector::Intersections intersections;
-	float x = 0, y = 0, height = 0; // TODO: set to values from qt mouse event
-	if (map->computeIntersections(x, height - y , intersections))
-	{
-		//std::cout<<"contains intersections"<<std::endl;
-		osg::Vec3d xyz;
-		earthManipulator->screenToWorld(x, height - y, map->getCamera()->getView(), xyz);
-		osg::EllipsoidModel ellipsoid;
-		double lat, lon, alt, wpDispAlt;
+      //osgUtil::LineSegmentIntersector::Intersections intersections;
+	//float x = 0, y = 0, height = 0; // TODO: set to values from qt mouse event
+	//if (map->computeIntersections(x, height - y , intersections))
+	//{
+		////std::cout<<"contains intersections"<<std::endl;
+		//osg::Vec3d xyz;
+		//earthManipulator->screenToWorld(x, height - y, map->getCamera()->getView(), xyz);
+		//osg::EllipsoidModel ellipsoid;
+		//double lat, lon, alt, wpDispAlt;
 
-		earthManipulator->getSRS()->getEllipsoid()->convertXYZToLatLongHeight(xyz.x(), xyz.y(), xyz.z(), lat, lon, alt);
-		if (alt<0) alt = 0; //if intercept calculate from clicking screen is calculated below 0, reset to 0;
-		wpDispAlt = alt + 10;
-		earthManipulator->getSRS()->getEllipsoid()->convertLatLongHeightToXYZ( lat, lon, wpDispAlt, xyz.x(), xyz.y(), xyz.z());
+		//earthManipulator->getSRS()->getEllipsoid()->convertXYZToLatLongHeight(xyz.x(), xyz.y(), xyz.z(), lat, lon, alt);
+		//if (alt<0) alt = 0; //if intercept calculate from clicking screen is calculated below 0, reset to 0;
+		//wpDispAlt = alt + 10;
+		//earthManipulator->getSRS()->getEllipsoid()->convertLatLongHeightToXYZ( lat, lon, wpDispAlt, xyz.x(), xyz.y(), xyz.z());
 
-		//Add wp marker
-		osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-		osg::ShapeDrawable * drawableSphere = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(xyz.x(), xyz.y(), xyz.z()), 5));
-		geode->addDrawable(drawableSphere);
-		wpGroup->addChild(geode);
+		////Add wp marker
+		//osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+		//osg::ShapeDrawable * drawableSphere = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(xyz.x(), xyz.y(), xyz.z()), 5));
+		//geode->addDrawable(drawableSphere);
+		//wpGroup->addChild(geode);
 
-		//Add wpLines
-		wpXYZ->push_back(xyz);
-		//wpGeo->push_back(osg::Vec3d(lat, lon, alt));
-		wpColors->push_back(osg::Vec4(1,0,0,1));
-		wpDrawLines->setCount(wpXYZ->size());
-		//vehicle->addWp(lat, lon, alt);
-	}
+		////Add wpLines
+		//wpXYZ->push_back(xyz);
+		////wpGeo->push_back(osg::Vec3d(lat, lon, alt));
+		//wpColors->push_back(osg::Vec4(1,0,0,1));
+		//wpDrawLines->setCount(wpXYZ->size());
+		////vehicle->addWp(lat, lon, alt);
+	//}
 }
 
 

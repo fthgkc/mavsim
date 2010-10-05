@@ -16,8 +16,8 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PointCloud_H
-#define PointCloud_H
+#ifndef oooark_PointCloud_HPP
+#define oooark_PointCloud_HPP
 
 #include <iostream>
 #include <osg/PositionAttitudeTransform>

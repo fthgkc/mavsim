@@ -16,8 +16,8 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef Ellipsoid_H
-#define Ellipsoid_H
+#ifndef oooark_Ellipsoid_HPP
+#define oooark_Ellipsoid_HPP
 
 #include <iostream>
 #include <osg/Geode>

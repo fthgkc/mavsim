@@ -16,12 +16,11 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ApmProtocol_h
-#define ApmProtocol_h
+#ifndef oooark_ApmProtocol_HPP
+#define oooark_ApmProtocol_HPP
 
 #include <vector>
 #include <apmhsl/APM_BinComm/APM_BinComm.h>
-#include <apmhsl/WProgram.h>
 namespace oooark
 {
 

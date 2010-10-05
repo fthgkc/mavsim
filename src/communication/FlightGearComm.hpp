@@ -16,8 +16,8 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FlightGearComm_H
-#define FlightGearComm_H
+#ifndef oooark_FlightGearComm_HPP
+#define oooark_FlightGearComm_HPP
 
 
 #include <stdio.h>

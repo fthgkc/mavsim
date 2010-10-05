@@ -23,7 +23,7 @@ namespace oooark
 
 MapVehicle::MapVehicle(osgEarthUtil::ObjectPlacer* placer, std::string modelFile, std::string device,\
 		const long int baud, std::string * geoLabel) : Group(),	\
-		trace(false), placer(placer), model(osgDB::readNodeFile(modelFile)), comm(device, baud),  \
+		trace(false), placer(placer), model(osgDB::readNodeFile(modelFile)), /*comm(device, baud),*/  \
 		paTransform(new osg::PositionAttitudeTransform), \
 		matrixTransform(new osg::MatrixTransform), traceMatrixTransform(new osg::MatrixTransform), \
 		matrix(), traceCloud(new oooark::PointCloud(2)), \
@@ -119,12 +119,12 @@ void MapVehicle::update()
 		diff = (currentTime.tv_sec-lastTime.tv_sec) + (currentTime.tv_usec-lastTime.tv_usec)/1e6;
 		if(diff>(1.0/updateFreq))
 		{
-			comm.update();
-			if(comm.newNavData)
+			//comm.update();
+			//if(comm.newNavData)
 			{
 				lastTime = currentTime;
 
-				comm.getNavData(roll, pitch, yaw,lat, lon, alt, groundSpeed, groundCourse, timeOfWeek);
+				//comm.getNavData(roll, pitch, yaw,lat, lon, alt, groundSpeed, groundCourse, timeOfWeek);
 				printNavData();
 
 				// correct for coordinate frame of cessna model and put into

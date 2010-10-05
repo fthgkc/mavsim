@@ -16,8 +16,8 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JSBSimComm_H
-#define JSBSimComm_H
+#ifndef oooark_JSBSimComm_HPP
+#define oooark_JSBSimComm_HPP
 
 #include "JSBSim/FGFDMExec.h"
 #include "JSBSim/models/FGFCS.h"
