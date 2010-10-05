@@ -20,6 +20,7 @@ include_directories(.)
 set(gui_src
 	QOSGAdapterWidget.cpp
 	MainWindow.cpp
+	MapVehicle.cpp
 	main.cpp
 	${gui_moc}
 	${gui_ui}
@@ -28,4 +29,5 @@ set(gui_src
 
 add_definitions(-DUSE_QT4)
 add_executable(gui ${gui_src})
-target_link_libraries(gui ${OSG_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(gui ${OSG_LIBRARIES} ${QT_LIBRARIES} ${Boost_LIBRARIES}
+	${OOOARK_LIBRARIES} ${OSGEARTH_LIBRARIES})

@@ -20,6 +20,10 @@
 #define oooark_MainWindow_HPP
 
 #include "ui_MainWindow.h"
+//#include "MapVehicle.hpp"
+#include <osgEarthUtil/EarthManipulator>
+#include <osgGA/NodeTrackerManipulator>
+#include <osgEarthUtil/ObjectPlacer>
 
 namespace oooark
 {
@@ -31,8 +35,63 @@ public:
     MainWindow();
     virtual ~MainWindow();
 private slots:
-	void on_actionLoad_Model_activated();
-	void on_actionLoad_Map_activated();
+	// control
+	void on_pushButton_getGains_clicked();
+	void on_pushButton_sendGains_clicked();
+	void on_pushButton_returnHome_clicked();
+	void on_pushButton_loiter_clicked();
+	void on_pushButton_land_clicked();
+	void on_pushButton_killThrottle_clicked();
+
+	// configuration
+	void on_comboBox_units_activated();
+	void on_pushButton_gainsSendFile_clicked();
+	void on_pushButton_gainsRequestFile_clicked();
+	void on_pushButton_cameraDevice_clicked();
+	void on_pushButton_vehicleFile_clicked();
+	void on_pushButton_mapFile_clicked();
+	void on_pushButton_telemetryPort_clicked();
+
+	// terminal
+	void on_pushButton_sendCommand_clicked();
+
+	// guidance
+	void on_pushButton_getFlightPlan_clicked();
+	void on_pushButton_sendFlightPlan_clicked();
+	void on_pushButton_clearFlightPlan_clicked();
+	void on_pushButton_loadFlightPlan_clicked();
+
+	// map
+	void on_addWaypoint_clicked();
+	
+private:
+
+	// osg earth
+	osgEarthUtil::EarthManipulator * earthManipulator;
+	osgEarthUtil::ObjectPlacer * objectPlacer;
+
+	// waypoint lines
+	osg::Vec3dArray * wpGeo;
+	osg::Vec3Array * wpXYZ;
+	osg::Vec4Array * wpColors;
+	osg::Geode * wpLines;
+	osg::Group * wpGroup;
+	osg::Geometry * wpLineGeometry;
+	osg::DrawArrays * wpDrawLines;
+
+	// vehicle track lines
+	osg::Vec3dArray * vGeo;
+	osg::Vec3d * vXYZ, eye, center, up;
+	osg::Vec4Array * vColors;
+	osg::Geode * vLines;
+	osg::Group * vGroup;
+	osg::Geometry * vLineGeometry;
+	osg::DrawArrays * vDrawLines;
+	osg::Matrixd matrix;
+
+	// vehicle
+	//MapVehicle * vehicle;
+
 };
 
 } // oooark

@@ -30,6 +30,7 @@ set(JSBSIM_INCLUDE_DIRS "/usr/include/JSBSim")
 set(OSGEARTH_LIBRARIES osgEarth osgEarthUtil osgEarthFeatures)
 set(APMHSL_LIBRARIES "apmhsl")
 set(APMHSL_INCLUDE_DIRS "/usr/include/apmhsl")
+set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkScicos)
 
 # find libraries
 find_package(GTK)
