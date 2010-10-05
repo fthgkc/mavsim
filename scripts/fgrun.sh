@@ -7,6 +7,8 @@ then
 fi
 aircraft=$1
 fgfs \
+--fg-root=/hsl/homes/uvg/FlightGear \
+--fg-scenery=/hsl/homes/uvg/Scenery \
 --aircraft=$aircraft \
 --geometry=400x300 \
 --vc=30 \

@@ -90,6 +90,19 @@ void QOSGAdapterWidget::mouseMoveEvent( QMouseEvent* event )
     _gw->getEventQueue()->mouseMotion(event->x(), event->y());
 }
 
+void QOSGAdapterWidget::mouseDoubleClickEvent( QMouseEvent* event )
+{
+ 	int button = 0;
+    switch(event->button())
+    {
+        case(Qt::LeftButton): button = 1; break;
+        case(Qt::MidButton): button = 2; break;
+        case(Qt::RightButton): button = 3; break;
+        case(Qt::NoButton): button = 0; break;
+        default: button = 0; break;
+    }
+    _gw->getEventQueue()->mouseDoubleButtonPress(event->x(), event->y(), button);
+}
 
 int mainQOSGAdapterWidget(QApplication& a, osg::ArgumentParser& arguments)
 {
