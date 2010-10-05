@@ -17,3 +17,6 @@ CPack*
 *.nfs*
 *_test
 *_app
+*.swp
+ui_*
+moc_*

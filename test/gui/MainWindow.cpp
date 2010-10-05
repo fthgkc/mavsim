@@ -26,8 +26,8 @@ namespace oooark
 MainWindow::MainWindow()
 {
 	setupUi(this);
-	map = new ViewerQT;
 	map->setCameraManipulator(new osgGA::TrackballManipulator);
+	map->show();
 }
 
 MainWindow::~MainWindow()
@@ -46,7 +46,6 @@ void MainWindow::on_actionLoad_Model_activated()
         std::cout << "model not loaded" << std::endl;
     }
 	map->setSceneData(loadedModel);
-
 }
 
 void MainWindow::on_actionLoad_Map_activated()
