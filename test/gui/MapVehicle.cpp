@@ -23,15 +23,12 @@ namespace oooark
 
 MapVehicle::MapVehicle(osgEarthUtil::ObjectPlacer* placer, std::string modelFile, std::string device,\
 		const long int baud, std::string * geoLabel) : Group(),	\
-		trace(false), placer(placer), model(osgDB::readNodeFile(modelFile)), /*comm(device, baud),*/  \
+		trace(false), placer(placer), model(osgDB::readNodeFile(modelFile)),  \
 		paTransform(new osg::PositionAttitudeTransform), \
 		matrixTransform(new osg::MatrixTransform), traceMatrixTransform(new osg::MatrixTransform), \
 		matrix(), traceCloud(new oooark::PointCloud(2)), \
-		thread(), lat(40.430896), lon(-86.914602), alt(100), roll(0), pitch(0), yaw(0)
+		lat(40.430896), lon(-86.914602), alt(100), roll(0), pitch(0), yaw(0)
 {
-	gettimeofday(&currentTime, NULL);
-	gettimeofday(&lastTime, NULL);
-
 	matrixTransform->addChild(paTransform);
 	paTransform->setScale(osg::Vec3d(1,1,1));
 	paTransform->addChild(model);
@@ -47,15 +44,10 @@ MapVehicle::MapVehicle(osgEarthUtil::ObjectPlacer* placer, std::string modelFile
 	drawableCylinder->setColor(osg::Vec4d(1.0,0,0,1.0));
 	marker->addDrawable(drawableCylinder);
 
-	updateFreq=12;
-	thread = new boost::thread( boost::bind( &MapVehicle::update, this ) );
-
 }
 
 MapVehicle::~MapVehicle()
 {
-	if (thread) thread->join();
-	delete thread;
 }
 
 void MapVehicle::clearTrace()
@@ -113,69 +105,61 @@ void MapVehicle::printNavData()
 
 void MapVehicle::update()
 {
-	while (1)
+	//comm.getNavData(roll, pitch, yaw,lat, lon, alt, groundSpeed, groundCourse, timeOfWeek);
+	printNavData();
+
+	// correct for coordinate frame of cessna model and put into
+	// a quaternion
+	yaw = -yaw;
+	double tmp = pitch;
+	pitch = roll;
+	roll = tmp;
+	double c1, c2, c3, s1, s2, s3;
+	c1 = cos(roll/2.);
+	c2 = cos(pitch/2.);
+	c3 = cos(yaw/2.);
+	s1 = sin(roll/2);
+	s2 = sin(pitch/2.);
+	s3 = sin(yaw/2.);
+	//set vehicle attitude
+	osg::Quat quat(s1*c2*c3-c1*s2*s3, c1*s2*c3+s1*c2*s3, c1*c2*s3+s1*s2*c3, c1*c2*c3+s1*s2*s3 );
+	paTransform->setAttitude(quat);
+	
+	//set vehicle position on map
+	bool status = placer->createPlacerMatrix(lat, lon, alt, matrix);
+	if (status) 
 	{
-		gettimeofday(&currentTime, NULL);
-		diff = (currentTime.tv_sec-lastTime.tv_sec) + (currentTime.tv_usec-lastTime.tv_usec)/1e6;
-		if(diff>(1.0/updateFreq))
+		matrixTransform->setMatrix(matrix);
+		//set cylinder that runs from plane to the ground
+		cylinder->setHeight(alt);
+		cylinder->setCenter(osg::Vec3(0,0,alt/2));
+	}
+	else 
+	{
+		std::cout<<"Placer Matrix Error"<<std::endl;
+	}
+
+	if (trace)
+	{
+		//place marker at altitude
+		traceCloud->addPoint(matrixTransform->getMatrix().getTrans());
+		
+		//place marker on the ground
+		bool status = placer->createPlacerMatrix(lat, lon, 0, traceMatrix);
+		if (status) 
 		{
-			//comm.update();
-			//if(comm.newNavData)
-			{
-				lastTime = currentTime;
-
-				//comm.getNavData(roll, pitch, yaw,lat, lon, alt, groundSpeed, groundCourse, timeOfWeek);
-				printNavData();
-
-				// correct for coordinate frame of cessna model and put into
-				// a quaternion
-				yaw = -yaw;
-				double tmp = pitch;
-				pitch = roll;
-				roll = tmp;
-				double c1, c2, c3, s1, s2, s3;
-				c1 = cos(roll/2.);
-				c2 = cos(pitch/2.);
-				c3 = cos(yaw/2.);
-				s1 = sin(roll/2);
-				s2 = sin(pitch/2.);
-				s3 = sin(yaw/2.);
-				//set vehicle attitude
-				osg::Quat quat(s1*c2*c3-c1*s2*s3, c1*s2*c3+s1*c2*s3, c1*c2*s3+s1*s2*c3, c1*c2*c3+s1*s2*s3 );
-				paTransform->setAttitude(quat);
-				
-				//set vehicle position on map
-				bool status = placer->createPlacerMatrix(lat, lon, alt, matrix);
-				if (status) matrixTransform->setMatrix(matrix);
-				else {std::cout<<"Placer Matrix Error"<<std::endl; continue;}
-
-				//set cylinder that runs from plane to the ground
-				cylinder->setHeight(alt);
-				cylinder->setCenter(osg::Vec3(0,0,alt/2));
-
-				//Set Info Label
-				//char stringBuffer [100];
-				//sprintf (stringBuffer, "Lat:  %10.8Lf\n Lon: %10.8Lf\n Alt:  %10.8Lf", lat, lon, alt);
-				//geoLabel->set_label(stringBuffer);
-
-				if (trace)
-				{
-					//place marker at altitude
-					traceCloud->addPoint(matrixTransform->getMatrix().getTrans());
-					
-					//place marker on the ground
-					bool status = placer->createPlacerMatrix(lat, lon, 0, traceMatrix);
-					if (status) traceMatrixTransform->setMatrix(traceMatrix);
-					else {std::cout<<"Placer Matrix Error"<<std::endl; continue;}
-					traceCloud->addPoint(traceMatrixTransform->getMatrix().getTrans(), red);
-				}
-			}
+			traceMatrixTransform->setMatrix(traceMatrix);
+			traceCloud->addPoint(traceMatrixTransform->getMatrix().getTrans(), red);
+		}
+		else 
+		{
+			std::cout<<"Placer Matrix Error"<<std::endl;
 		}
 	}
 }
-osg::Node * MapVehicle::getModel()
+osg::Node * MapVehicle::getTetherNode()
 {
-	return model;
+	return matrixTransform;
 }
 osg::Matrixd MapVehicle::getMatrix()
 {

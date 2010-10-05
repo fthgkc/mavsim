@@ -26,7 +26,7 @@
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/bind.hpp>
-//#include <string>
+#include <string>
 //#include "communication/ApmProtocol.hpp" 
 #include "visualization/PointCloud.hpp"
 #include <sys/time.h>
@@ -37,17 +37,13 @@ namespace oooark
 class MapVehicle : public osg::Group
 {
 private:
-	timeval currentTime, lastTime;
-	double diff, updateFreq;
 	oooark::PointCloud* traceCloud;
     osgEarthUtil::ObjectPlacer* placer;
     osg::Node * model;
-	//ApmProtocol comm;
     osg::PositionAttitudeTransform * paTransform;
     osg::MatrixTransform *matrixTransform, *traceMatrixTransform;
     osg::Matrixd matrix, traceMatrix;
     osg::Cylinder * cylinder;
-    boost::thread * thread;
     osg::Vec3d vXYZ;
 	std::string geoLabel;
     double lat, lon, alt, roll, pitch, yaw, groundSpeed, groundCourse, timeOfWeek;
@@ -65,7 +61,7 @@ public:
     void sendWpList();
 	void printNavData();
     void update();
-    osg::Node * getModel();
+    osg::Node * getTetherNode();
     osg::Matrixd getMatrix();
     osg::Vec3d getGeo();
     osg::Vec3d getFocalPoint();

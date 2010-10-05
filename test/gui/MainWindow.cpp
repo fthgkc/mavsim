@@ -15,23 +15,29 @@
 
 #include "MainWindow.hpp"
 #include <QFileDialog>
-#include <osgEarthUtil/EarthManipulator>
 
 namespace oooark
 {
 
 MainWindow::MainWindow() : 
-	earthManipulator(new osgEarthUtil::EarthManipulator), objectPlacer()
+	earthManipulator(new osgEarthUtil::EarthManipulator), objectPlacer()//, comm(NULL), serial(NULL), stream(NULL)
 {
 	setupUi(this);
 	map->setCameraManipulator(new osgEarthUtil::EarthManipulator);
 	map->setSceneData(new osg::Group);
 	map->show();
+
 }
 
 MainWindow::~MainWindow()
 {
 	delete map;
+}
+
+//Communication
+void MainWindow::updateComm()
+{
+	comm->update();
 }
 
 // control
@@ -98,6 +104,19 @@ void MainWindow::on_pushButton_vehicleFile_clicked()
         std::cout << "model not loaded" << std::endl;
     }
 	map->getSceneData()->asGroup()->addChild(loadedModel);
+
+	//Setup Comm
+	if(serial) delete serial;
+	if(stream) delete stream;
+	if(comm) delete comm;
+	if(timer) delete timer;
+
+	serial = new BufferedAsyncSerial(device,baud);
+	stream = new Stream(serial);
+	comm = new BinComm(handlerTable, stream);
+	timer = new QTimer(this);
+	connect(timer, SIGNAL(timeout()), this, SLOT(updateComm()));
+	timer->start(99);
 }
 
 void MainWindow::on_pushButton_mapFile_clicked()

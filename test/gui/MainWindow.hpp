@@ -23,6 +23,7 @@
 #include "MapVehicle.hpp"
 #include <osgEarthUtil/EarthManipulator>
 #include <osgEarthUtil/ObjectPlacer>
+#include <apmhsl/APM_BinComm/APM_BinComm.h>
 
 namespace oooark
 {
@@ -34,6 +35,9 @@ public:
     MainWindow();
     virtual ~MainWindow();
 private slots:
+	//communication 
+	void updateComm();
+
 	// control
 	void on_pushButton_getGains_clicked();
 	void on_pushButton_sendGains_clicked();
@@ -62,8 +66,19 @@ private slots:
 
 	// map
 	void on_addWaypoint_clicked();
+
+	//serial port update
+	
 	
 private:
+	//communication
+	QTimer *timer;
+	BinComm *comm;
+	BufferedAsyncSerial *serial;
+	BinComm::MessageHandler handlerTable[10];
+	Stream *stream;
+	std::string device;
+	unsigned int baud;
 
 	// osg earth
 	osgEarthUtil::EarthManipulator * earthManipulator;
@@ -89,7 +104,7 @@ private:
 	osg::Matrixd matrix;
 
 	// vehicle
-	//MapVehicle * vehicle;
+	MapVehicle * vehicle;
 
 };
 

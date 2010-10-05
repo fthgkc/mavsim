@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <apmhsl/APM_BinComm/APM_BinComm.h>
+
 namespace oooark
 {
 

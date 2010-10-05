@@ -19,8 +19,6 @@
 #include <iostream>
 #include "ApmProtocol.hpp"
 
-
-
 namespace oooark
 {
 void h_attitude(void * arg, uint8_t messageId, uint8_t messageVersion, void * messageData);
@@ -51,7 +49,7 @@ ApmProtocol::ApmProtocol(const std::string & device, long int baud) :
 	// read new data
 	void ApmProtocol::update()
 	{
-		comm.update();
+		//comm.update();
 	}
 
 	void ApmProtocol::getNavData(double& rRoll, double& rPitch, double& rYaw, double& rLatitude, double& rLongitude, double& rAltMsl, double& rGroundSpeed, double&rGroundCourse, double& rTimeOfWeek)
@@ -84,7 +82,7 @@ ApmProtocol::ApmProtocol(const std::string & device, long int baud) :
 void h_attitude(void * arg, uint8_t messageId, uint8_t messageVersion, void * messageData)
 {
 	ApmProtocol* protocol = (ApmProtocol*)arg;
-	protocol->comm.unpack_msg_attitude(protocol->roll,protocol->pitch,protocol->yaw);
+	//protocol->comm.unpack_msg_attitude(protocol->roll,protocol->pitch,protocol->yaw);
 	protocol->newNavData=true; 
 
 	//std::cout << "roll, pitch, yaw:\t" << protocol->roll << "\t" << protocol->pitch << "\t" << protocol->yaw << std::endl;
@@ -93,7 +91,7 @@ void h_attitude(void * arg, uint8_t messageId, uint8_t messageVersion, void * me
 void h_location(void * arg, uint8_t messageId, uint8_t messageVersion, void * messageData)
 {
 	ApmProtocol* protocol = (ApmProtocol*)arg;
-	protocol->comm.unpack_msg_location(protocol->lat,protocol->lon,protocol->altMsl,protocol->groundSpeed,protocol->groundCourse,protocol->timeOfWeek);
+	//protocol->comm.unpack_msg_location(protocol->lat,protocol->lon,protocol->altMsl,protocol->groundSpeed,protocol->groundCourse,protocol->timeOfWeek);
 
 	protocol->newNavData=true; 
 
