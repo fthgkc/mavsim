@@ -22,6 +22,7 @@ include_directories(. ${OSG_INCLUDE_DIRS}
 
 set(gui_src
 	QOSGAdapterWidget.cpp
+	MapWidget.cpp
 	MainWindow.cpp
 	MapVehicle.cpp
 	main.cpp

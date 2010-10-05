@@ -90,7 +90,6 @@ void QOSGAdapterWidget::mouseMoveEvent( QMouseEvent* event )
     _gw->getEventQueue()->mouseMotion(event->x(), event->y());
 }
 
-
 int mainQOSGAdapterWidget(QApplication& a, osg::ArgumentParser& arguments)
 {
     // load the scene.
