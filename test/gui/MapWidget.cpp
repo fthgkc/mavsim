@@ -41,7 +41,6 @@ void MapWidget::mousePressEvent( QMouseEvent* event )
 			button = 1;
 			if (event->modifiers() == Qt::ShiftModifier)
 			{
-				std::cout << "shift" << std::endl;
 				showWaypointMenu();
 			}
 			break;
@@ -50,7 +49,6 @@ void MapWidget::mousePressEvent( QMouseEvent* event )
 			button = 3;
 			if (event->modifiers() == Qt::ShiftModifier)
 			{
-				std::cout << "shift" << std::endl;
 				showViewMenu();
 			}
 			break;
@@ -75,23 +73,62 @@ void MapWidget::mouseDoubleClickEvent( QMouseEvent* event )
     _gw->getEventQueue()->mouseDoubleButtonPress(event->x(), event->y(), button);
 }
 
+// view
+
 void MapWidget::showViewMenu()
 {
-    QMenu Menu;
-    Menu.addAction("Follow Vehicle");
-    Menu.addAction("Center on Vehicle");
-    Menu.addAction("Center on Ground Station");
-    Menu.addAction("Stop Following Vehicle");
-	Menu.exec(mouseClickPosition);
+    QMenu menu;
+    menu.addAction("Follow Vehicle",this,SLOT(followVehicle()));
+    menu.addAction("Center on Vehicle",this,SLOT(centerOnVehicle()));
+    menu.addAction("Center on Ground Station",this,SLOT(centerOnGroundStation()));
+    menu.addAction("Stop Following Vehicle",this,SLOT(stopFollowingVehicle()));
+	menu.exec(mouseClickPosition);
 }
+
+void MapWidget::followVehicle()
+{
+	std::cout << "follow vehicle" << std::endl;
+}
+
+void MapWidget::centerOnVehicle()
+{
+	std::cout << "center on vehicle" << std::endl;
+}
+
+void MapWidget::centerOnGroundStation()
+{
+	std::cout << "center on groundstation" << std::endl;
+}
+
+void MapWidget::stopFollowingVehicle()
+{
+	std::cout << "stop following vehicle" << std::endl;
+}
+
+// waypoints
 
 void MapWidget::showWaypointMenu()
 {
     QMenu menu;
-    menu.addAction("Add Waypoint");
-    menu.addAction("Delete Waypoint");
-    menu.addAction("Clear Waypoints");
+    menu.addAction("Add Waypoint",this,SLOT(addWaypoint()));
+    menu.addAction("Delete Waypoint",this,SLOT(deleteWaypoint()));
+    menu.addAction("Clear Waypoints",this,SLOT(clearWaypoints()));
 	menu.exec(mouseClickPosition);
+}
+
+void MapWidget::addWaypoint()
+{
+	std::cout << "add waypoint" << std::endl;
+}
+
+void MapWidget::deleteWaypoint()
+{
+	std::cout << "delete wayopint" << std::endl;
+}
+
+void MapWidget::clearWaypoints()
+{
+	std::cout << "clear waypoint" << std::endl;
 }
 
 } // oooark

@@ -2,6 +2,7 @@ include( ${QT_USE_FILE} )
 
 set(gui_moc_src
 	MainWindow.hpp
+	MapWidget.hpp
 	)
 
 set(gui_ui_src

@@ -22,7 +22,7 @@
 #include "ui_MainWindow.h"
 #include "MapVehicle.hpp"
 #include <osgEarthUtil/EarthManipulator>
-#include <osgEarthUtil/ObjectPlacer>
+
 #include <apmhsl/APM_BinComm/APM_BinComm.h>
 
 namespace oooark
@@ -65,13 +65,9 @@ private slots:
 	void on_pushButton_sendFlightPlan_clicked();
 	void on_pushButton_clearFlightPlan_clicked();
 	void on_pushButton_loadFlightPlan_clicked();
-
-	// map
-	void on_addWaypoint_clicked();
-
-	//serial port update
 	
 private:
+
 	//communication
 	QTimer *timer;
 	BufferedAsyncSerial *serial;
