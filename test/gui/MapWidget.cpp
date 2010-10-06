@@ -41,7 +41,6 @@ void MapWidget::mousePressEvent( QMouseEvent* event )
 			button = 1;
 			if (event->modifiers() == Qt::ShiftModifier)
 			{
-				std::cout << "shift" << std::endl;
 				showWaypointMenu();
 			}
 			break;
@@ -50,7 +49,6 @@ void MapWidget::mousePressEvent( QMouseEvent* event )
 			button = 3;
 			if (event->modifiers() == Qt::ShiftModifier)
 			{
-				std::cout << "shift" << std::endl;
 				showViewMenu();
 			}
 			break;
@@ -89,18 +87,22 @@ void MapWidget::showViewMenu()
 
 void MapWidget::followVehicle()
 {
+	std::cout << "follow vehicle" << std::endl;
 }
 
 void MapWidget::centerOnVehicle()
 {
+	std::cout << "center on vehicle" << std::endl;
 }
 
 void MapWidget::centerOnGroundStation()
 {
+	std::cout << "center on groundstation" << std::endl;
 }
 
 void MapWidget::stopFollowingVehicle()
 {
+	std::cout << "stop following vehicle" << std::endl;
 }
 
 // waypoints
@@ -116,14 +118,17 @@ void MapWidget::showWaypointMenu()
 
 void MapWidget::addWaypoint()
 {
+	std::cout << "add waypoint" << std::endl;
 }
 
 void MapWidget::deleteWaypoint()
 {
+	std::cout << "delete wayopint" << std::endl;
 }
 
 void MapWidget::clearWaypoints()
 {
+	std::cout << "clear waypoint" << std::endl;
 }
 
 } // oooark
