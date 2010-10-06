@@ -18,15 +18,31 @@
 
 namespace oooark
 {
+void h_attitude(void * arg, uint8_t messageId, uint8_t messageVersion, void * messageData);
+void h_location(void * arg, uint8_t messageId, uint8_t messageVersion, void * messageData);
 
 MainWindow::MainWindow() : 
-	earthManipulator(new osgEarthUtil::EarthManipulator), objectPlacer()//, comm(NULL), serial(NULL), stream(NULL)
+	earthManipulator(new osgEarthUtil::EarthManipulator), device("/dev/ttyUSB0"), baud(115200), comm(NULL), serial(NULL), stream(NULL), objectPlacer(NULL), timer(NULL)
 {
 	setupUi(this);
 	map->setCameraManipulator(new osgEarthUtil::EarthManipulator);
-	map->setSceneData(new osg::Group);
+	map->setSceneData(NULL);
 	map->show();
 
+	int i=0;
+
+	handlerTable[i].messageID = BinComm::msg_ATTITUDE;
+	handlerTable[i].handler = h_attitude;
+	handlerTable[i].arg = this;
+	i++;
+
+	handlerTable[i].messageID = BinComm::msg_LOCATION;
+	handlerTable[i].handler = h_location;
+	handlerTable[i].arg = this;
+	i++;
+
+	//// signals end of handle table
+	handlerTable[i].messageID = BinComm::msg_NULL;
 }
 
 MainWindow::~MainWindow()
@@ -38,6 +54,7 @@ MainWindow::~MainWindow()
 void MainWindow::updateComm()
 {
 	comm->update();
+	std::cout<<"Updating Comm"<<std::endl;
 }
 
 // control
@@ -95,28 +112,36 @@ void MainWindow::on_pushButton_cameraDevice_clicked()
 
 void MainWindow::on_pushButton_vehicleFile_clicked()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, tr("Open Vehicle Model File"),
-       ".", tr("3D Model Files (*.osg *.ac)"));
+	if(map->getSceneData())
+	{
+		QString fileName = QFileDialog::getOpenFileName(this, tr("Open Vehicle Model File"),
+		   ".", tr("3D Model Files (*.osg *.ac)"));
 
-    osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile(fileName.toStdString());
-    if (!loadedModel)
-    {
-        std::cout << "model not loaded" << std::endl;
-    }
-	map->getSceneData()->asGroup()->addChild(loadedModel);
+		osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile(fileName.toStdString());
+		if (!loadedModel)
+		{
+			std::cout << "model not loaded" << std::endl;
+		}
 
-	//Setup Comm
-	if(serial) delete serial;
-	if(stream) delete stream;
-	if(comm) delete comm;
-	if(timer) delete timer;
 
-	serial = new BufferedAsyncSerial(device,baud);
-	stream = new Stream(serial);
-	comm = new BinComm(handlerTable, stream);
-	timer = new QTimer(this);
-	connect(timer, SIGNAL(timeout()), this, SLOT(updateComm()));
-	timer->start(99);
+
+		osg::ref_ptr<MapVehicle> vehicleTemp = new MapVehicle(objectPlacer, loadedModel);
+		map->getSceneData()->asGroup()->addChild(vehicleTemp);
+		vehicles.push_back(vehicleTemp);
+		//Setup Comm
+		if(serial) delete serial;
+		if(stream) delete stream;
+		if(comm) delete comm;
+		if(timer) delete timer;
+
+		serial = new BufferedAsyncSerial(device,baud);
+		stream = new Stream(serial);
+		comm = new BinComm(handlerTable, stream);
+		timer = new QTimer(this);
+		connect(timer, SIGNAL(timeout()), this, SLOT(updateComm()));
+		timer->start(90);
+	}
+	else std::cout<<"Please load a map first"<<std::endl;
 }
 
 void MainWindow::on_pushButton_mapFile_clicked()
@@ -129,17 +154,19 @@ void MainWindow::on_pushButton_mapFile_clicked()
     {
         std::cout << "map not loaded" << std::endl;
     }
-	if(loadedMap.valid())
-	{
-		if (map->getSceneData()) map->setSceneData(NULL);
-		map->setSceneData(loadedMap);
-		objectPlacer = new osgEarthUtil::ObjectPlacer(loadedMap);
-	}
 	else
 	{
-		std::cout<<"map not valid"<<std::endl;
-	}
+		if (map->getSceneData())
+		{
+			map->setSceneData(NULL);
+			delete objectPlacer;
+		}
+		map->setSceneData(loadedMap);
+		objectPlacer = new osgEarthUtil::ObjectPlacer(loadedMap);
 
+
+	std::cout<<"Maploaded done"<<std::endl;
+	}
 }
 
 void MainWindow::on_pushButton_telemetryPort_clicked()
@@ -208,6 +235,45 @@ void MainWindow::on_addWaypoint_clicked()
 	//}
 }
 
+void h_attitude(void * arg, uint8_t messageId, uint8_t messageVersion, void * messageData)
+{
+	int16_t rollI, pitchI;
+   	uint16_t yawI;
+	MainWindow* mainWindow = (MainWindow*)arg;
+	MapVehicle* mapVehicle = mainWindow->vehicles[0];
+	mainWindow->comm->unpack_msg_attitude(rollI,pitchI,yawI);
+	mapVehicle->roll = rollI/1e2;
+	mapVehicle->pitch = pitchI/1e2;
+	mapVehicle->yaw = yawI/1e2;
+	
+	mapVehicle->update();
+	
+	std::cout << "roll, pitch, yaw:\t" << mapVehicle->roll << "\t" << mapVehicle->pitch << "\t" << mapVehicle->yaw << std::endl;
+}
+
+void h_location(void * arg, uint8_t messageId, uint8_t messageVersion, void * messageData)
+{
+	int32_t latI, lonI;
+	int16_t altMslI;
+   	uint16_t groundSpeedI, groundCourseI;
+   	uint32_t timeOfWeekI;
+	MainWindow* mainWindow = (MainWindow*)arg;
+	MapVehicle* mapVehicle = mainWindow->vehicles[0];
+	mainWindow->comm->unpack_msg_location(latI, lonI, altMslI, groundSpeedI, groundCourseI, timeOfWeekI);
+	mapVehicle->lat = latI/1e7;
+	mapVehicle->lon =lonI/1e7;
+	mapVehicle->altMsl = altMslI/1e1;
+	mapVehicle->groundSpeed = groundSpeedI/1e2;
+	mapVehicle->groundCourse = groundCourseI/1e2;
+	mapVehicle->timeOfWeek = timeOfWeekI/1e3;
+	
+	mapVehicle->update();
+
+	std::cout << "lat, lon, altMsl:\t" << mapVehicle->lat << "\t" 
+		<< mapVehicle->lon << "\t" << mapVehicle->altMsl <<"\t"
+		<< "ground speed, ground course, time of week:\t" << mapVehicle->groundSpeed << "\t" 
+		<< mapVehicle->groundCourse << "\t" << mapVehicle->timeOfWeek << std::endl;
+}
 
 } // oooark
 

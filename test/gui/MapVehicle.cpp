@@ -21,13 +21,12 @@
 namespace oooark
 {
 
-MapVehicle::MapVehicle(osgEarthUtil::ObjectPlacer* placer, std::string modelFile, std::string device,\
-		const long int baud, std::string * geoLabel) : Group(),	\
-		trace(false), placer(placer), model(osgDB::readNodeFile(modelFile)),  \
+MapVehicle::MapVehicle(osgEarthUtil::ObjectPlacer* placer, osg::Node * loadedModel) : Group(),	\
+		trace(false), placer(placer), model(loadedModel),  \
 		paTransform(new osg::PositionAttitudeTransform), \
 		matrixTransform(new osg::MatrixTransform), traceMatrixTransform(new osg::MatrixTransform), \
 		matrix(), traceCloud(new oooark::PointCloud(2)), \
-		lat(40.430896), lon(-86.914602), alt(100), roll(0), pitch(0), yaw(0)
+		lat(40.430896), lon(-86.914602), altMsl(100), roll(0), pitch(0), yaw(0)
 {
 	matrixTransform->addChild(paTransform);
 	paTransform->setScale(osg::Vec3d(1,1,1));
@@ -96,7 +95,7 @@ void MapVehicle::printNavData()
 {
 	std::cout << "lat: " << lat;
 	std::cout << "  lon: " << lon;
-	std::cout << "  alt: " << alt << std::endl;
+	std::cout << "  alt: " << altMsl << std::endl;
 	std::cout << "roll: " << roll*180.0/M_PI;
 	std::cout << "  pitch: " << pitch*180.0/M_PI;
 	std::cout << "  yaw: " << yaw*180.0/M_PI << std::endl;
@@ -105,7 +104,6 @@ void MapVehicle::printNavData()
 
 void MapVehicle::update()
 {
-	//comm.getNavData(roll, pitch, yaw,lat, lon, alt, groundSpeed, groundCourse, timeOfWeek);
 	printNavData();
 
 	// correct for coordinate frame of cessna model and put into
@@ -126,13 +124,13 @@ void MapVehicle::update()
 	paTransform->setAttitude(quat);
 	
 	//set vehicle position on map
-	bool status = placer->createPlacerMatrix(lat, lon, alt, matrix);
+	bool status = placer->createPlacerMatrix(lat, lon, altMsl, matrix);
 	if (status) 
 	{
 		matrixTransform->setMatrix(matrix);
 		//set cylinder that runs from plane to the ground
-		cylinder->setHeight(alt);
-		cylinder->setCenter(osg::Vec3(0,0,alt/2));
+		cylinder->setHeight(altMsl);
+		cylinder->setCenter(osg::Vec3(0,0,altMsl/2));
 	}
 	else 
 	{
@@ -167,11 +165,11 @@ osg::Matrixd MapVehicle::getMatrix()
 }
 osg::Vec3d MapVehicle::getGeo()
 {
-	return osg::Vec3d(lat, lon, alt);
+	return osg::Vec3d(lat, lon, altMsl);
 }
 osg::Vec3d MapVehicle::getFocalPoint()
 {
-	return osg::Vec3d(lon, lat, alt);
+	return osg::Vec3d(lon, lat, altMsl);
 }
 
 

@@ -34,6 +34,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 public:
     MainWindow();
     virtual ~MainWindow();
+	std::vector<MapVehicle*> vehicles;
+	BinComm *comm;
 private slots:
 	//communication 
 	void updateComm();
@@ -69,11 +71,9 @@ private slots:
 
 	//serial port update
 	
-	
 private:
 	//communication
 	QTimer *timer;
-	BinComm *comm;
 	BufferedAsyncSerial *serial;
 	BinComm::MessageHandler handlerTable[10];
 	Stream *stream;
@@ -102,10 +102,6 @@ private:
 	osg::Geometry * vLineGeometry;
 	osg::DrawArrays * vDrawLines;
 	osg::Matrixd matrix;
-
-	// vehicle
-	MapVehicle * vehicle;
-
 };
 
 } // oooark

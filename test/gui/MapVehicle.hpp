@@ -46,14 +46,10 @@ private:
     osg::Cylinder * cylinder;
     osg::Vec3d vXYZ;
 	std::string geoLabel;
-    double lat, lon, alt, roll, pitch, yaw, groundSpeed, groundCourse, timeOfWeek;
-    std::vector<int32_t> latVec, lonVec, altVec;
 
 public:
     bool trace;
-
-    MapVehicle(osgEarthUtil::ObjectPlacer* placer, std::string modelFile, std::string device,\
-            const long int baud, std::string * geoLabel);
+    MapVehicle(osgEarthUtil::ObjectPlacer* placer, osg::Node* loadedModel);
     virtual ~MapVehicle();
 	void clearTrace();
     void addWp(double lat, double lon, double alt);
@@ -65,6 +61,9 @@ public:
     osg::Matrixd getMatrix();
     osg::Vec3d getGeo();
     osg::Vec3d getFocalPoint();
+    double lat, lon, altMsl, roll, pitch, yaw, groundSpeed, groundCourse, timeOfWeek;
+    std::vector<int32_t> latVec, lonVec, altVec;
+
 };
 
 } // oooark namespace
