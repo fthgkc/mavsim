@@ -96,9 +96,9 @@ void MapVehicle::printNavData()
 	std::cout << "lat: " << lat;
 	std::cout << "  lon: " << lon;
 	std::cout << "  alt: " << altMsl << std::endl;
-	std::cout << "roll: " << roll*180.0/M_PI;
-	std::cout << "  pitch: " << pitch*180.0/M_PI;
-	std::cout << "  yaw: " << yaw*180.0/M_PI << std::endl;
+	std::cout << "roll: " << roll;
+	std::cout << "  pitch: " << pitch;
+	std::cout << "  yaw: " << yaw << std::endl;
 	std::cout << std::endl;
 }
 

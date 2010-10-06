@@ -213,8 +213,6 @@ void h_attitude(void * arg, uint8_t messageId, uint8_t messageVersion, void * me
 	mapVehicle->yaw = yawI/1e2;
 	
 	mapVehicle->update();
-	
-	std::cout << "roll, pitch, yaw:\t" << mapVehicle->roll << "\t" << mapVehicle->pitch << "\t" << mapVehicle->yaw << std::endl;
 }
 
 void h_location(void * arg, uint8_t messageId, uint8_t messageVersion, void * messageData)
@@ -234,11 +232,6 @@ void h_location(void * arg, uint8_t messageId, uint8_t messageVersion, void * me
 	mapVehicle->timeOfWeek = timeOfWeekI/1e3;
 	
 	mapVehicle->update();
-
-	std::cout << "lat, lon, altMsl:\t" << mapVehicle->lat << "\t" 
-		<< mapVehicle->lon << "\t" << mapVehicle->altMsl <<"\t"
-		<< "ground speed, ground course, time of week:\t" << mapVehicle->groundSpeed << "\t" 
-		<< mapVehicle->groundCourse << "\t" << mapVehicle->timeOfWeek << std::endl;
 }
 
 } // oooark
