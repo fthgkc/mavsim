@@ -63,14 +63,9 @@ private slots:
 	void on_pushButton_sendFlightPlan_clicked();
 	void on_pushButton_clearFlightPlan_clicked();
 	void on_pushButton_loadFlightPlan_clicked();
-
-	// map
-	void on_addWaypoint_clicked();
-
-	//serial port update
-	
 	
 private:
+
 	//communication
 	QTimer *timer;
 	BinComm *comm;

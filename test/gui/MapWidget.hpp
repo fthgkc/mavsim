@@ -20,6 +20,7 @@
 #define oooark_MapWidget_HPP
 
 #include "QOSGAdapterWidget.hpp"
+#include "MapVehicle.hpp"
 
 namespace oooark
 {
@@ -32,6 +33,7 @@ public:
 	MapWidget(QWidget * parent = 0, const char * name = 0,
 		const QGLWidget * shareWidget = 0, WindowFlags f = 0);
     virtual ~MapWidget();
+	inline void setCurrentVehicle(MapVehicle * mapVehicle) { currentVehicle = mapVehicle; }
 
 protected:
 
@@ -39,8 +41,9 @@ protected:
 	virtual void mousePressEvent( QMouseEvent* event);
 	virtual void mouseDoubleClickEvent( QMouseEvent* event);
 	QPoint mouseClickPosition;
-
-private slots:
+	MapVehicle * currentVehicle;
+	
+protected slots:
 
 	// view
 	void showViewMenu();
