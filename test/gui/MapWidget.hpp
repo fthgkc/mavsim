@@ -26,6 +26,8 @@ namespace oooark
 
 class MapWidget : public ViewerQT
 {
+Q_OBJECT
+
 public:
 	MapWidget(QWidget * parent = 0, const char * name = 0,
 		const QGLWidget * shareWidget = 0, WindowFlags f = 0);
@@ -38,7 +40,7 @@ protected:
 	virtual void mouseDoubleClickEvent( QMouseEvent* event);
 	QPoint mouseClickPosition;
 
-private:
+private slots:
 
 	// view
 	void showViewMenu();
@@ -52,6 +54,7 @@ private:
 	void addWaypoint();
 	void deleteWaypoint();
 	void clearWaypoints();
+
 };
 
 } // oooark

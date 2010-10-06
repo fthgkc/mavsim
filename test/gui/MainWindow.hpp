@@ -22,7 +22,7 @@
 #include "ui_MainWindow.h"
 #include "MapVehicle.hpp"
 #include <osgEarthUtil/EarthManipulator>
-#include <osgEarthUtil/ObjectPlacer>
+
 #include <apmhsl/APM_BinComm/APM_BinComm.h>
 
 namespace oooark

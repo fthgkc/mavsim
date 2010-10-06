@@ -75,23 +75,55 @@ void MapWidget::mouseDoubleClickEvent( QMouseEvent* event )
     _gw->getEventQueue()->mouseDoubleButtonPress(event->x(), event->y(), button);
 }
 
+// view
+
 void MapWidget::showViewMenu()
 {
-    QMenu Menu;
-    Menu.addAction("Follow Vehicle");
-    Menu.addAction("Center on Vehicle");
-    Menu.addAction("Center on Ground Station");
-    Menu.addAction("Stop Following Vehicle");
-	Menu.exec(mouseClickPosition);
+    QMenu menu;
+    menu.addAction("Follow Vehicle",this,SLOT(followVehicle()));
+    menu.addAction("Center on Vehicle",this,SLOT(centerOnVehicle()));
+    menu.addAction("Center on Ground Station",this,SLOT(centerOnGroundStation()));
+    menu.addAction("Stop Following Vehicle",this,SLOT(stopFollowingVehicle()));
+	menu.exec(mouseClickPosition);
 }
+
+void MapWidget::followVehicle()
+{
+}
+
+void MapWidget::centerOnVehicle()
+{
+}
+
+void MapWidget::centerOnGroundStation()
+{
+}
+
+void MapWidget::stopFollowingVehicle()
+{
+}
+
+// waypoints
 
 void MapWidget::showWaypointMenu()
 {
     QMenu menu;
-    menu.addAction("Add Waypoint");
-    menu.addAction("Delete Waypoint");
-    menu.addAction("Clear Waypoints");
+    menu.addAction("Add Waypoint",this,SLOT(addWaypoint()));
+    menu.addAction("Delete Waypoint",this,SLOT(deleteWaypoint()));
+    menu.addAction("Clear Waypoints",this,SLOT(clearWaypoints()));
 	menu.exec(mouseClickPosition);
+}
+
+void MapWidget::addWaypoint()
+{
+}
+
+void MapWidget::deleteWaypoint()
+{
+}
+
+void MapWidget::clearWaypoints()
+{
 }
 
 } // oooark
