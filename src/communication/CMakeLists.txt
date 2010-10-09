@@ -1,4 +1,4 @@
-include_directories(${JSBSIM_INCLUDE_DIRS} /usr/include/apmhsl)
+include_directories(${JSBSIM_INCLUDE_DIRS} ${APMHSL_INCLUDE_DIRS})
 
 add_library(oooarkCommunication SHARED
 	ApmProtocol.cpp
