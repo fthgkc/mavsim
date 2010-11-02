@@ -1,5 +1,7 @@
 include_directories( "${PROJECT_SOURCE_DIR}/src" ${SCICOSLAB_INCLUDE_DIRS}
-	${JSBSIM_INCLUDE_DIRS} /usr/local/include/JSBSim ${OSG_INCLUDE_DIRS} )
+	${JSBSIM_INCLUDE_DIRS} /usr/local/include/JSBSim ${OSG_INCLUDE_DIRS}
+	${APM_INCLUDE_DIRS})
+
 link_directories( /usr/local/lib ${OSG_LIBRARY_DIRS} ) 
 
 add_library(oooarkScicos SHARED
@@ -12,7 +14,8 @@ add_library(oooarkScicos SHARED
 	utilities.cpp
 	)
 target_link_libraries(oooarkScicos oooarkCommunication oooarkVisualization
-	${JSBSIM_LIBRARIES})
+	${APM_LIBRARIES} ${JSBSIM_LIBRARIES})
+
 set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERISON}
 	SOVERSION ${oooark_SOVERSION})
 
