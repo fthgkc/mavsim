@@ -87,6 +87,8 @@ class ViewerQT : public osgViewer::Viewer, public QOSGAdapterWidget
 {
 public:
 
+	boost::mutex mutex;
+
     ViewerQT(QWidget * parent = 0, const char * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0):
             QOSGAdapterWidget( parent, name, shareWidget, f )
     {
@@ -102,20 +104,21 @@ public:
 
     virtual void paintGL()
     {
-		_mutex.lock();
+		mutex.lock();
         frame();
-		_mutex.unlock();
+		mutex.unlock();
     }
 
 protected:
 
-	boost::mutex _mutex;
     QTimer _timer;
 };
 
 class CompositeViewerQT : public osgViewer::CompositeViewer, public QOSGAdapterWidget
 {
 public:
+
+	boost::mutex mutex;
 
     CompositeViewerQT(QWidget * parent = 0, const char * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0):
             QOSGAdapterWidget( parent, name, shareWidget, f )
@@ -128,14 +131,13 @@ public:
 
     virtual void paintGL()
     {
-		_mutex.lock();
+		mutex.lock();
         frame();
-		_mutex.unlock();
+		mutex.unlock();
     }
 
 protected:
 
-	boost::mutex _mutex;
     QTimer _timer;
 };
 

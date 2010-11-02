@@ -41,16 +41,22 @@ libfind_pkg_check_modules(JSBSIM jsbsim>=1.0.rc3-advtrim)
 libfind_pkg_check_modules(APM ardupilotmegacomm>=0.0.2)
 libfind_pkg_check_modules(OSG openscenegraph>=2.8)
 
-# install data files
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION "share/oooark/"
-	PATTERN "*.git*" EXCLUDE)
+# data directory
+if(NOT DEFINED DATADIR)
+	set(DATADIR ${PROJECT_SOURCE_DIR}/data)
+endif(NOT DEFINED DATADIR)
+add_definitions(-DDATADIR="${DATADIR}")
 
-# subdirectories
-add_subdirectory(test)
-add_subdirectory(src)
+# install data files
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION "share/oooark/" 
+	PATTERN "*.git*" EXCLUDE)
 
 # pkgconfig
 install(FILES
 	oooark.pc
 	DESTINATION lib/pkgconfig
 	)
+
+# subdirectories
+add_subdirectory(test)
+add_subdirectory(src)

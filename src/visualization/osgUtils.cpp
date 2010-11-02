@@ -397,7 +397,7 @@ Jet::Jet() :
         model(), myLeftAileron(), myRightAileron(),
         myLeftElevator(), myRightElevator(), myRudder()
 {
-    model = osgDB::readNodeFile(std::string(getenv("OOOARK"))+"/data/Jet/jet.ac");
+    model = osgDB::readNodeFile(std::string(DATADIR)+"/models/jet.ac");
     myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-1.375,-3.330,0.485),model));
     myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-1.375,3.330,0.485),model));
     myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-7.431,-1.934,-0.417),model));
