@@ -32,6 +32,11 @@ namespace oooark
 namespace visualization
 {
 
+static const osg::Vec4d white(1,1,1,1), red(1,0,0,1), green(0,1,0,1), blue(0,0,1,1), pink(1,0,1,1);
+
+std::vector<osg::Node*> findNamedNodes(const std::string& searchName, 
+									  osg::Node* currNode);
+
 class NodeFinder : public osg::NodeVisitor
 {
 public:

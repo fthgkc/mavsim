@@ -16,7 +16,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH})
 # installer
 include (InstallRequiredSystemLibraries)
 set (CPACK_PACKAGE_CONTACT "James Goppert james.goppert@gmail.com")
-set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License.txt")
+set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 set (CPACK_PACKAGE_VERSION_MAJOR "${oooark_VERSION_MAJOR}")
 set (CPACK_PACKAGE_VERSION_MINOR "${oooark_VERSION_MINOR}")
 set (CPACK_PACKAGE_VERSION_PATCH "${oooark_VERSION_PATCH}")
@@ -48,3 +48,9 @@ install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION "share/oooark/"
 # subdirectories
 add_subdirectory(test)
 add_subdirectory(src)
+
+# pkgconfig
+install(FILES
+	oooark.pc
+	DESTINATION lib/pkgconfig
+	)
