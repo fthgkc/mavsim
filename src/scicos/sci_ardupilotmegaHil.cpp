@@ -73,17 +73,18 @@ extern "C"
         }
         else if (flag==scicos::computeOutput)
         {
-			hil->toApm.msg.roll = x[0];
-			hil->toApm.msg.pitch = x[1];
-			hil->toApm.msg.heading = x[2];
-			hil->toApm.msg.airspeed = x[3];
+			hil->toApm.msg.airspeed = x[0];
+			hil->toApm.msg.pitch = x[2];
+			hil->toApm.msg.roll = x[6];
+			hil->toApm.msg.heading = x[9];
 			hil->send();
 
 			hil->receive();
-			u[0] = hil->fromApm.msg.rollServo;
-            u[1] = hil->fromApm.msg.pitchServo;
-            u[2] = hil->fromApm.msg.throttleServo;
-            u[3] = hil->fromApm.msg.rudderServo;
+			//hil->print();
+            u[0] = hil->fromApm.msg.throttleServo/3600.0;
+			u[1] = hil->fromApm.msg.rollServo/3600.0;
+            u[2] = hil->fromApm.msg.pitchServo/3600.0;
+            u[3] = hil->fromApm.msg.rudderServo/3600.0;
         }
         else
         {
