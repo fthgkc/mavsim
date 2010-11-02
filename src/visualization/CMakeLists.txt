@@ -1,4 +1,5 @@
 include(${QT_USE_FILE})
+
 include_directories(${QT_INCLUDE_DIRS} ${OSG_INCLUDE_DIRS})
 
 add_definitions(-DUSE_QT4)
@@ -8,7 +9,8 @@ add_library(oooarkVisualization SHARED
 	Viewer.cpp
 	QOSGAdapterWidget.cpp
 	)
-target_link_libraries(oooarkVisualization ${OSG_LIBRARIES} ${Boost_LIBRARIES} )
+target_link_libraries(oooarkVisualization ${OSG_LIBRARIES} ${Boost_LIBRARIES}
+	${QT_LIBRARIES})
 set_target_properties(oooarkVisualization PROPERTIES VERSION ${oooark_VERISON}
 	SOVERSION ${oooark_SOVERSION})
 
