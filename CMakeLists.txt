@@ -22,25 +22,24 @@ set (CPACK_PACKAGE_VERSION_MINOR "${oooark_VERSION_MINOR}")
 set (CPACK_PACKAGE_VERSION_PATCH "${oooark_VERSION_PATCH}")
 include (CPack)
 
-# lib defs
-include(LibFindMacros)
-set(Boost_ADDITIONAL_VERSIONS "1.40.0")
+# manual lib definitions
 set(SCICOSLAB_INCLUDE_DIRS "/usr/lib/scicoslab-gtk-4.4b7/routines")
-set(JSBSIM_INCLUDE_DIRS "/usr/include/JSBSim")
 set(OSGEARTH_LIBRARIES osgEarth osgEarthUtil osgEarthFeatures)
-set(APMHSL_LIBRARIES "apmhsl")
-set(APMHSL_INCLUDE_DIRS "/usr/local/include/apmhsl")
+set(SIMGEAR_LIBRARIES sgio)
 set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkScicos)
 
-# find libraries
-find_package(GTK)
-libfind_pkg_check_modules(OSG openscenegraph)
-libfind_pkg_check_modules(GTKMM gtkmm-2.4 gdkmm-2.4)
-libfind_pkg_check_modules(OSGGTK osgGtkmm-1.0)
+# find libraries with cmake module
+set(Boost_ADDITIONAL_VERSIONS "1.40.0")
 find_package(Boost REQUIRED COMPONENTS thread-mt system-mt)
 find_package(Qt4 REQUIRED)
 set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTUITOOLS TRUE)
+
+# find libraries with pkg-config
+include(LibFindMacros)
+libfind_pkg_check_modules(JSBSIM jsbsim>=1.0.rc3-advtrim)
+libfind_pkg_check_modules(APM ardupilotmegacomm>=0.0.2)
+libfind_pkg_check_modules(OSG openscenegraph>=2.8)
 
 # install data files
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION "share/oooark/"

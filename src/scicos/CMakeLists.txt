@@ -1,18 +1,18 @@
 include_directories( "${PROJECT_SOURCE_DIR}/src" ${SCICOSLAB_INCLUDE_DIRS}
-	${JSBSIM_INCLUDE_DIRS} ${OSG_INCLUDE_DIRS} )
-link_directories( ${OSG_LIBRARY_DIRS} ) 
+	${JSBSIM_INCLUDE_DIRS} /usr/local/include/JSBSim ${OSG_INCLUDE_DIRS} )
+link_directories( /usr/local/lib ${OSG_LIBRARY_DIRS} ) 
 
 add_library(oooarkScicos SHARED
 	sci_ardupilotmegaHil.cpp
 	sci_flightGearComm.cpp
 	sci_invPend.cpp
 	sci_jet.cpp
-	sci_jsbSimComm.cpp
 	sci_jsbsimComm.cpp
 	sci_jsbsimTrim.cpp
 	utilities.cpp
 	)
-target_link_libraries(oooarkScicos oooarkCommunication oooarkVisualization)
+target_link_libraries(oooarkScicos oooarkCommunication oooarkVisualization
+	${JSBSIM_LIBRARIES})
 set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERISON}
 	SOVERSION ${oooark_SOVERSION})
 
