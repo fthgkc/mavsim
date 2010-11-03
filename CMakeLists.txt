@@ -25,7 +25,7 @@ include (CPack)
 # manual lib definitions
 set(SCICOSLAB_INCLUDE_DIRS "/usr/lib/scicoslab-gtk-4.4b7/routines")
 set(OSGEARTH_LIBRARIES osgEarth osgEarthUtil osgEarthFeatures)
-set(SIMGEAR_LIBRARIES sgio)
+#set(SIMGEAR_LIBRARIES sgio)
 set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkScicos)
 
 # find libraries with cmake module
