@@ -1,4 +1,5 @@
 include(${QT_USE_FILE})
+link_directories(${OSG_LIBRARIES_DIRS} ${QT_LIBRARIES_DIRS})
 
 include_directories(${QT_INCLUDE_DIRS} ${OSG_INCLUDE_DIRS})
 
