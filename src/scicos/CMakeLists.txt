@@ -6,7 +6,7 @@ link_directories( /usr/local/lib ${OSG_LIBRARY_DIRS} )
 
 add_library(oooarkScicos SHARED
 	sci_ardupilotmegaHil.cpp
-	sci_flightGearComm.cpp
+	#sci_flightGearComm.cpp
 	sci_invPend.cpp
 	sci_jet.cpp
 	sci_jsbsimComm.cpp
