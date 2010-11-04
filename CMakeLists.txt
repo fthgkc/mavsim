@@ -72,7 +72,8 @@ endif(NOT DEFINED DATADIR)
 add_definitions(-DDATADIR="${DATADIR}")
 
 # the install_name directory component to be used when installing
-SET(CMAKE_INSTALL_NAME_DIR ${LIB_DIR})
+set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+message(STATUS "install_name ${CMAKE_INSTALL_NAME_DIR}")
 
 # install data files
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION "share/oooark/" 
