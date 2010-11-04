@@ -2,7 +2,13 @@ cmake_minimum_required (VERSION 2.6)
 
 project (oooark)
 
-enable_language(C CXX Fortran)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+      FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
+enable_language(C CXX)
 
 # The version number.
 set(oooark_VERSION_MAJOR 0)
@@ -22,8 +28,32 @@ set (CPACK_PACKAGE_VERSION_MINOR "${oooark_VERSION_MINOR}")
 set (CPACK_PACKAGE_VERSION_PATCH "${oooark_VERSION_PATCH}")
 include (CPack)
 
+# find scicos on Mac OS X
+if (APPLE)
+       execute_process(COMMAND mdfind "kMDItemKind == Application && kMDItemDisplayName == ScicosLabGtk"
+		   			   COMMAND head -1
+                       RESULT_VARIABLE RESULT
+                       OUTPUT_VARIABLE SCICOS_APP_BUNDLE
+                       ERROR_VARIABLE ERROR_MESSAGE
+                       OUTPUT_STRIP_TRAILING_WHITESPACE)
+       if (RESULT) 
+               MESSAGE(FATAL_ERROR "Could not locate ScicosLabGtk.app - ${ERROR_MESSAGE}")
+       endif (RESULT)
+       execute_process(COMMAND find ${SCICOS_APP_BUNDLE} -name routines
+		   			   COMMAND head -1
+                       RESULT_VARIABLE RESULT
+                       OUTPUT_VARIABLE SCICOSLAB_INCLUDE_DIRS
+                       ERROR_VARIABLE ERROR_MESSAGE
+                       OUTPUT_STRIP_TRAILING_WHITESPACE)
+       if (RESULT) 
+               MESSAGE(FATAL_ERROR "Could not locate scicos_block4.h in ScicosLabGtk.app - ${ERROR_MESSAGE}")
+       endif (RESULT)  
+       MESSAGE(STATUS "Found ScicosLab headers in ${SCICOSLAB_INCLUDE_DIRS}")
+else (APPLE)
+       set(SCICOSLAB_INCLUDE_DIRS "/usr/lib/scicoslab-gtk-4.4b7/routines")
+endif (APPLE)
+
 # manual lib definitions
-set(SCICOSLAB_INCLUDE_DIRS "/usr/lib/scicoslab-gtk-4.4b7/routines")
 set(OSGEARTH_LIBRARIES osgEarth osgEarthUtil osgEarthFeatures)
 #set(SIMGEAR_LIBRARIES sgio)
 set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkScicos)
@@ -48,7 +78,8 @@ endif(NOT DEFINED DATADIR)
 add_definitions(-DDATADIR="${DATADIR}")
 
 # the install_name directory component to be used when installing
-SET(CMAKE_INSTALL_NAME_DIR ${LIB_DIR})
+set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+message(STATUS "install_name ${CMAKE_INSTALL_NAME_DIR}")
 
 # install data files
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION "share/oooark/" 
@@ -61,5 +92,4 @@ install(FILES
 	)
 
 # subdirectories
-add_subdirectory(test)
 add_subdirectory(src)
