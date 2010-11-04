@@ -35,6 +35,9 @@ extern "C"
                         int* IWORk,int* LIWORK,int* INFO);
 
 }
+
+namespace oooark
+{
 //TODO fix these two functions
 //vector<double> latLon2Quat(double lat, double lon)
 //{
@@ -635,4 +638,5 @@ matrix<double> prod3(const matrix<double> &a, const matrix<double> &b, const mat
 	//}
 	//printMat(permutation,"Permutation",0);
 
+} //namespace oooark
 // vim:ts=4:sw=4

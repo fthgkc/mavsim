@@ -2,11 +2,12 @@
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
-#include "utilities.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-using namespace boost::numeric::ublas;
+#include "math/utilities.hpp"
 
+using namespace boost::numeric::ublas;
+using namespace oooark;
 int main (int argc, char const* argv[])
 {
 	double jFreq = 500;
