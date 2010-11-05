@@ -12,7 +12,7 @@ enable_language(C CXX)
 
 # The version number.
 set(oooark_VERSION_MAJOR 0)
-set(oooark_VERSION_MINOR 0)
+set(oooark_VERSION_MINOR 1)
 set(oooark_VERSION_PATCH 0)
 set(oooark_SOVERSION 0)
 
@@ -68,7 +68,7 @@ set(QT_USE_QTUITOOLS TRUE)
 # find libraries with pkg-config
 include(LibFindMacros)
 libfind_pkg_check_modules(JSBSIM jsbsim>=1.0.rc3-advtrim)
-libfind_pkg_check_modules(APM ardupilotmegacomm>=0.0.2)
+libfind_pkg_check_modules(APM ardupilotmegacomm>=0.1.0)
 libfind_pkg_check_modules(OSG openscenegraph>=2.8)
 
 # data directory
