@@ -55,8 +55,13 @@ endif (APPLE)
 
 # manual lib definitions
 set(OSGEARTH_LIBRARIES osgEarth osgEarthUtil osgEarthFeatures)
+set(LAPACK_LIBRARIES lapack)
 #set(SIMGEAR_LIBRARIES sgio)
-set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkScicos)
+if(APPLE)
+	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkScicos)
+else(APPLE)
+	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkScicos oooarkMath)
+endif(APPLE)
 
 # find libraries with cmake module
 set(Boost_ADDITIONAL_VERSIONS "1.40.0")
@@ -93,3 +98,6 @@ install(FILES
 
 # subdirectories
 add_subdirectory(src)
+if(NOT APPLE)
+	add_subdirectory(test)
+endif(NOT APPLE)
