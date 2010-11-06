@@ -108,6 +108,7 @@ T abs(T x)
 }
 
 // matrix math
+matrix<double> cross(const vector<double> &vec);
 matrix<double> ones(int m, int n);
 matrix<double> skew(const vector<double> &v);
 matrix<double> inv(const matrix<double>& input);

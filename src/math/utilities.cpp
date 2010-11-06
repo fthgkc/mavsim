@@ -38,6 +38,14 @@ extern "C"
 
 namespace oooark
 {
+matrix<double> cross(const vector<double> &vec)
+{
+	matrix<double> cross(3,3);
+	cross(0,0) = 0 			,cross(0,1) = -vec(2) 	, cross(0,2) = vec(1);
+	cross(1,0) = vec(2) 	,cross(1,1) = 0 	 	, cross(1,2) = -vec(0);
+	cross(2,0) = -vec(1) 	,cross(2,1) = vec(0) 	, cross(2,2) = 0;
+	return cross;
+}
 //TODO fix these two functions
 //vector<double> latLon2Quat(double lat, double lon)
 //{

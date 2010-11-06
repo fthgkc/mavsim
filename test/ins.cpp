@@ -13,10 +13,11 @@ int main (int argc, char const* argv[])
 	double jFreq = 500;
 	double kFreq = 100;
 	double lFreq = 10;
+	double gFreq = 1;
 	int integrateIndex=0;
 
-	double dt_j, dt_k, dt_l;
-	dt_j = dt_k = dt_l = 0;
+	double dt_j, dt_k, dt_l, dt_g;
+	dt_j = dt_k = dt_l = dt_g = 0;
 	double kQuat = 1;
 	double sigmaNorm, zetaNorm;
 	double as, ac, bs, bc;
@@ -25,7 +26,7 @@ int main (int argc, char const* argv[])
 	vector<double> wb = zero_vector<double>(3);
 	//wb(0) = 1*M_PI/180;
 	vector<double> fb = zero_vector<double>(3);
-	fb(0) = 1000;
+	//fb(0) = 1000;
 	fb(1) =1000;
 	//fb(1) = 1;
 	//fb(2) = 1;
@@ -53,9 +54,9 @@ int main (int argc, char const* argv[])
 	
 	q(0)=1;
 	matrix<double> Sigma = zero_matrix<double>(4,4);
-	boost::posix_time::ptime time, time_j, time_k, time_l, time_0;
-	time = time_j = time_k = time_l= time_0 = boost::posix_time::microsec_clock::universal_time();
-	boost::posix_time::time_duration diff_j, diff_k, diff_l, diff_0;
+	boost::posix_time::ptime time, time_j, time_k, time_l, time_g, time_0;
+	time = time_j = time_k = time_l= time_g = time_0 = boost::posix_time::microsec_clock::universal_time();
+	boost::posix_time::time_duration diff_j, diff_k, diff_l, diff_g, diff_0;
 	double elapsed=0;
 	matrix<double> I3 = identity_matrix<double>(3);
 	vector<double> w_ie = zero_vector<double>(3);
@@ -65,10 +66,15 @@ int main (int argc, char const* argv[])
 	double h;
 	vector<double> latLon(2);
 
-	latLon(0) = 40*M_PI/180.0;
+	latLon(0) = 89.99*M_PI/180.0;
 	latLon(1) = -86*M_PI/180.0;
 	h = 200.0;
 
+	vector<double> eulerLatLon(3);
+	eulerLatLon(0) = -latLon(0);
+	eulerLatLon(1) = 0;
+	eulerLatLon(2) = -latLon(1);
+	std::cout<<"Euler: "<<quat2Euler(euler2Quat(eulerLatLon))*180/M_PI<<std::endl;
 	while(1)
 	{
 		//calculate elapsed time for each cycle
@@ -153,10 +159,10 @@ int main (int argc, char const* argv[])
 			elapsed = diff_0.total_microseconds()/1e6;
 			//std::cout<<"Elapsed: "<<elapsed<<std::endl;	
 			////coriolis correction
-
-			//w_ie(0) = omega*cos(lat);
-			//w_ie(2) = -omega*sin(lat);
-			//vn =  prod((I3 - 2*cross(w_ie) - cross(w_en))*dt_l,vn);
+			w_ie(0) = omega*cos(latLon(0));
+			w_ie(1) = 0;
+			w_ie(2) = -omega*sin(latLon(0));
+			//vn =  prod((I3 - 2*cross(w_ie)*dt_l - cross(w_en))*dt_l,vn);
 			
 			//rotating navigation frame correction
 			zetaNorm = norm_2(zeta);
@@ -185,6 +191,13 @@ int main (int argc, char const* argv[])
 			
 			//reset integration term
 			zeta = zero_vector<double>(3);
+		}
+
+		diff_g = time-time_g;
+		dt_g = diff_g.total_microseconds()/1e6;
+		if(dt_g>=gFreq)
+		{
+
 		}
 	}
 
