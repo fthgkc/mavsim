@@ -3,6 +3,6 @@ exec_prefix=${prefix}
 
 Name: oooark
 Description: The oooark library
-Version: 0.0.0
+Version: 0.1.0
 Cflags: -I${prefix}/include/oooark
 Libs: -L${exec_prefix}/lib -loooarkCommunication -loooarkVisualization
