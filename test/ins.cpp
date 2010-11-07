@@ -12,7 +12,7 @@ int main (int argc, char const* argv[])
 {
 	double jFreq = 500;
 	double kFreq = 100;
-	double lFreq = 10;
+	double lFreq = 100;
 	double gFreq = 1;
 	int integrateIndex=0;
 
@@ -26,8 +26,8 @@ int main (int argc, char const* argv[])
 	vector<double> wb = zero_vector<double>(3);
 	//wb(0) = 1*M_PI/180;
 	vector<double> fb = zero_vector<double>(3);
-	//fb(0) = 1000;
-	fb(1) =1000;
+	fb(0) = 1000;
+	fb(1) = 1000;
 	//fb(1) = 1;
 	//fb(2) = 1;
 	//fb(2)=-9.81;
@@ -52,8 +52,7 @@ int main (int argc, char const* argv[])
 	vector<double> xnk = zero_vector<double>(3);
 	vector<double> xnkMinus = zero_vector<double>(3);
 	
-	q(0)=1;
-	matrix<double> Sigma = zero_matrix<double>(4,4);
+
 	boost::posix_time::ptime time, time_j, time_k, time_l, time_g, time_0;
 	time = time_j = time_k = time_l= time_g = time_0 = boost::posix_time::microsec_clock::universal_time();
 	boost::posix_time::time_duration diff_j, diff_k, diff_l, diff_g, diff_0;
@@ -62,19 +61,26 @@ int main (int argc, char const* argv[])
 	vector<double> w_ie = zero_vector<double>(3);
 	vector<double> w_en = zero_vector<double>(3);
 	double R0 = 6.3781e6; //earth radius in meters
-	double omega = 7.27e-5; //earth rotation rate in radians
+	double omega = 7.292115e-5; //earth rotation rate in radians
 	double h;
+	
+	vector<double> eulerAtt(3);
+	eulerAtt(0) = 0;
+	eulerAtt(1) = 0;
+	eulerAtt(2) = M_PI;
+	q= euler2Quat(eulerAtt);
 	vector<double> latLon(2);
 
-	latLon(0) = 89.99*M_PI/180.0;
-	latLon(1) = -86*M_PI/180.0;
+	vector<double> qLatLon(4);
+
+	latLon(0) = 0*M_PI/180.0;
+	latLon(1) = -0*M_PI/180.0;
 	h = 200.0;
 
-	vector<double> eulerLatLon(3);
-	eulerLatLon(0) = -latLon(0);
-	eulerLatLon(1) = 0;
-	eulerLatLon(2) = -latLon(1);
-	std::cout<<"Euler: "<<quat2Euler(euler2Quat(eulerLatLon))*180/M_PI<<std::endl;
+	qLatLon = latLon2Quat(latLon);
+
+	std::cout<<"Quat: "<<qLatLon<<std::endl;
+	std::cout<<"Euler: "<<quat2Euler(qLatLon)*180/M_PI<<std::endl;
 	while(1)
 	{
 		//calculate elapsed time for each cycle
@@ -154,16 +160,19 @@ int main (int argc, char const* argv[])
 		if(dt_l>=1.0/lFreq)
 		{
 			fb(0)=0;
+			fb(1)=0;
 			time_l=time;
 			diff_0 = time - time_0;
 			elapsed = diff_0.total_microseconds()/1e6;
-			//std::cout<<"Elapsed: "<<elapsed<<std::endl;	
-			////coriolis correction
+			std::cout<<"Elapsed: "<<elapsed<<std::endl;	
+			
+			//coriolis correction
 			w_ie(0) = omega*cos(latLon(0));
 			w_ie(1) = 0;
 			w_ie(2) = -omega*sin(latLon(0));
-			//vn =  prod((I3 - 2*cross(w_ie)*dt_l - cross(w_en))*dt_l,vn);
 			
+			vn =  prod((I3 - 2.0*cross(w_ie)*dt_l - cross(zeta)),vn);
+		
 			//rotating navigation frame correction
 			zetaNorm = norm_2(zeta);
 			bc=cos(zetaNorm/2.0);
@@ -174,19 +183,22 @@ int main (int argc, char const* argv[])
 			p(2)=bs*zeta(1);
 			p(3)=bs*zeta(2);
 			q = quatProd(quatConj(p),q);
-			vn = quatRotate(quatConj(p),vn);
+			qLatLon = quatProd(p,qLatLon);
 			
 			std::cout<<"P Euler: "<<quat2Euler(p)<<std::endl;
 			std::cout<<"P Quat: "<<p<<std::endl;
+			std::cout<<"QLATLON: "<<quat2Euler(qLatLon)*180/M_PI<<std::endl;
+			std::cout<<"QLATLON: "<<quat2LatLon(qLatLon)*180/M_PI<<std::endl;
+			std::cout<<"LAT LON H: "<<latLon*180/M_PI<<" "<<h<<std::endl;
 			
 			std::cout<<"Pos: "<<xn<<std::endl;
 			std::cout<<"Vel: "<<vn<<std::endl;
-			std::cout<<"Att: "<<quat2Euler(q)<<std::endl;
-			std::cout<<"LAT LON H: "<<latLon*180/M_PI<<" "<<h<<std::endl;
+			std::cout<<"Att: "<<quat2Euler(q)*180/M_PI<<std::endl;
 			std::cout<<std::endl;
 			
 			//quaternion normilatization
 			q+=q*kQuat*(1-(q(0)*q(0) + q(1)*q(1) + q(2)*q(2) + q(3)*q(3)));
+			qLatLon+=qLatLon*kQuat*(1-(qLatLon(0)*qLatLon(0) + qLatLon(1)*qLatLon(1) + qLatLon(2)*qLatLon(2) + qLatLon(3)*qLatLon(3)));
 			//std::cout<<"l-cycle Hz: "<<1.0/dt_l<<std::endl;
 			
 			//reset integration term

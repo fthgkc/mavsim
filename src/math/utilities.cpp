@@ -46,65 +46,32 @@ matrix<double> cross(const vector<double> &vec)
 	cross(2,0) = -vec(1) 	,cross(2,1) = vec(0) 	, cross(2,2) = 0;
 	return cross;
 }
-//TODO fix these two functions
-//vector<double> latLon2Quat(double lat, double lon)
-//{
-	//vector<double> euler(3);
-	//euler(0) = lon;
-	//euler(1) = -lat;
-	//euler(2) = 0;
-	//return euler2Quat(euler);
+vector<double> latLon2Quat(const vector<double> &latLon)
+{
+		vector<double> quat(4);
+		double clat = cos(-latLon(0)/2.0);
+		double clon = cos(latLon(1)/2.0);
+		double slat = sin(-latLon(0)/2.0);
+		double slon = sin(latLon(1)/2.0);
 		
-	////double clat = cos(lat/2.0);
-        ////double clon = cos(lon/2.0);
-        ////double slat = sin(lat/2.0);
-        ////double slon = sin(lon/2.0);
-        
-        ////// The order in which the lat/lon angles are applied is critical. This can be thought of as multiplying two
-        ////// quaternions together, one for each lat/lon angle. Like matrices, quaternions affect vectors in reverse
-        ////// order. For example, suppose we construct a quaternion
-        //////     Q = QLat * QLon
-        ////// then transform some vector V by Q. This can be thought of as first transforming V by QLat, then QLon. This
-        ////// means that the order of quaternion multiplication is the reverse of the order in which the lat/lon angles
-        ////// are applied.
-        //////
-        ////// The ordering below refers to order in which angles are applied.
-        //////
-        ////// QLat = (0,    slat, 0, clat)
-        ////// QLon = (slon, 0,    0, clon)
-        //////
-        ////// 1. LatLon Ordering
-        ////// (QLon * QLat)
-        ////// qw = clat * clon;
-        ////// qx = clat * slon;
-        ////// qy = slat * clon;
-        ////// qz = slat * slon;
-        //////
-        ////// 2. LonLat Ordering
-        ////// (QLat * QLon)
-        ////// qw = clat * clon;
-        ////// qx = clat * slon;
-        ////// qy = slat * clon;
-        ////// qz = - slat * slon;
-        //////
+		quat(0) =  clat * clon;
+		quat(1) =  clat * slon;
+		quat(2) =  slat * clon;
+		quat(3) =  -slat * slon;
 
-        ////quat(0) =  clat * clon;
-        ////quat(1) =  clat * slon;
-        ////quat(2) =  slat * clon;
-        ////quat(3) =  slat * slon;
+		return quat;
+}
 
-        ////return quat;
-//}
+vector<double> quat2LatLon(const vector<double> &quat)
+{
+		vector<double> latLon(2);
+		vector<double> euler(3);
+		euler = quat2Euler(quat);
+		latLon(0) = -euler(1);
+		latLon(1) = euler(0);
 
-//matrix<double> cross(const vector<double> &w)
-//{
-	//matrix<double> cross = zero_matrix<double>(3,3);
-	
-	//cross(0,1)=-w(2), cross(0,2)=w(1);
-	//cross(1,0)=w(2), cross(1,2)=-w(0);
-	//cross(2,0)=-w(1), cross(2,1)=w(0);
-	//return cross;
-//}
+		return latLon;
+}
 
 
 bool fileExists(const char * filename)
@@ -554,9 +521,9 @@ vector<double> quat2Euler(const vector<double> &q)
     }
     else
     {
-        roll = atan2(2 * (q(0) * q(1) + q(2) * q(3)), sq0 - sq1 - sq2 + sq3);
-        pitch = asin(-2 * (q(1) * q(3) - q(0) * q(2)));
-        yaw = atan2(2 * (q(1) * q(2) + q(0) * q(3)), sq0 + sq1 - sq2 - sq3);
+        roll = 	atan2(2 * (q(0) * q(1) + q(2) * q(3)), sq0 - sq1 - sq2 + sq3);
+        pitch = asin( 2 * (q(0) * q(2) - q(1) * q(3)));
+        yaw = 	atan2(2 * (q(1) * q(2) + q(0) * q(3)), sq0 + sq1 - sq2 - sq3);
     }
     eul(0) = roll;
     eul(1) = pitch;
@@ -567,11 +534,11 @@ vector<double> quat2Euler(const vector<double> &q)
 vector<double> euler2Quat(const vector<double> &euler)
 {
     vector<double> quat(4);
-    double phi = euler(0), th = euler(1), gam = euler(2);
-    quat(0) = cos(phi/2)*cos(th/2)*cos(gam/2)+sin(phi/2)*sin(th/2)*sin(gam/2);
-    quat(1) = sin(phi/2)*cos(th/2)*cos(gam/2)-cos(phi/2)*sin(th/2)*sin(gam/2);
-    quat(2) = cos(phi/2)*sin(th/2)*cos(gam/2)+sin(phi/2)*cos(th/2)*sin(gam/2);
-    quat(3) = cos(phi/2)*cos(th/2)*sin(gam/2)+sin(phi/2)*sin(th/2)*cos(gam/2);
+    double phi = euler(0), th = euler(1), psi = euler(2);
+    quat(0) = cos(phi/2)*cos(th/2)*cos(psi/2)+sin(phi/2)*sin(th/2)*sin(psi/2);
+    quat(1) = sin(phi/2)*cos(th/2)*cos(psi/2)-cos(phi/2)*sin(th/2)*sin(psi/2);
+    quat(2) = cos(phi/2)*sin(th/2)*cos(psi/2)+sin(phi/2)*cos(th/2)*sin(psi/2);
+    quat(3) = cos(phi/2)*cos(th/2)*sin(psi/2)-sin(phi/2)*sin(th/2)*cos(psi/2);
     return norm(quat);
 }
 
