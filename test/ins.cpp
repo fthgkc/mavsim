@@ -21,8 +21,9 @@ int main (int argc, char const* argv[])
 	double kQuat = 1;
 	double sigmaNorm, zetaNorm;
 	double as, ac, bs, bc;
+	double g0 = 9.81;
 	vector<double> g = zero_vector<double>(3);
-	//g(2) = 9.81;
+	//g(2) = g0;
 	vector<double> wb = zero_vector<double>(3);
 	//wb(0) = 1*M_PI/180;
 	vector<double> fb = zero_vector<double>(3);
@@ -51,7 +52,16 @@ int main (int argc, char const* argv[])
 	vector<double> xn = zero_vector<double>(3);
 	vector<double> xnk = zero_vector<double>(3);
 	vector<double> xnkMinus = zero_vector<double>(3);
-	
+
+	//filter variables
+	matrix<double> H = zero_matrix<double>(6,10);
+	matrix<double> F = zero_matrix<double>(10,10);
+	matrix<double> Frr(3,3), Frv(3,3), Fvr(3,3), Fvv(3,3), Fqr(4,3), Fqv(4,4), fnX(3,4), w_inX(4,4);
+	Frr = Frv = Fvr = Fvv = zero_matrix<double>(3,3);
+	Fqr = zero_matrix<double>(4,3);
+       	Fqv = zero_matrix<double>(4,3);
+        fnX = zero_matrix<double>(3,4);
+        w_inX = zero_matrix<double>(4,4);
 
 	boost::posix_time::ptime time, time_j, time_k, time_l, time_g, time_0;
 	time = time_j = time_k = time_l= time_g = time_0 = boost::posix_time::microsec_clock::universal_time();
@@ -61,7 +71,7 @@ int main (int argc, char const* argv[])
 	vector<double> w_ie = zero_vector<double>(3);
 	vector<double> w_en = zero_vector<double>(3);
 	double R0 = 6.3781e6; //earth radius in meters
-	double omega = 7.292115e-5; //earth rotation rate in radians
+	double w = 7.292115e-5; //earth rotation rate in radians
 	double h;
 	
 	vector<double> eulerAtt(3);
@@ -128,7 +138,7 @@ int main (int argc, char const* argv[])
 			
 			vnkMinus = vnk;
 			vnk = vn;
-			vn += un + g*dt_k;
+			vn += un + g*(R0/(R0+h))*(R0/(R0+h))*dt_k;
 
 			if (integrateIndex == 2)
 			{
@@ -167,9 +177,9 @@ int main (int argc, char const* argv[])
 			std::cout<<"Elapsed: "<<elapsed<<std::endl;	
 			
 			//coriolis correction
-			w_ie(0) = omega*cos(latLon(0));
+			w_ie(0) = w*cos(latLon(0));
 			w_ie(1) = 0;
-			w_ie(2) = -omega*sin(latLon(0));
+			w_ie(2) = w*sin(latLon(0));
 			
 			vn =  prod((I3 - 2.0*cross(w_ie)*dt_l - cross(zeta)),vn);
 		
@@ -209,6 +219,44 @@ int main (int argc, char const* argv[])
 		dt_g = diff_g.total_microseconds()/1e6;
 		if(dt_g>=gFreq)
 		{
+			double cosLat = cos(latLon(0));
+			double tanLat = tan(latLon(0));
+			double sinLat = sin(latLon(0));
+			double R = R0+h;
+			double vN = v(0);
+			double vE = v(1);
+			double vD = v(2);
+
+			Frr(0,0)=0 	,Frr(0,1)=0 	, Frr(0,2)=vN/(R*R);
+			Frr(1,0)=-vE*sinLat/(R*cosLat*cosLat) 	, Frr(1,1)=0 	, Frr(1,2)= -vE/(R*R*cosLat*cosLat);
+			Frr(2,0)=0 	,Frr(2,1)=0 	, Frr(2,2)=0 	;
+
+			Frv(0,0)=1.0/R	, Frv(0,1)=0 	, Frv(0,2)= 0	;
+			Frv(1,0)=0 	, Frv(1,1)= 1.0/(R*cosLat)	, Frv(1,2)=0 	;
+			Frv(2,0)= 0	, Frv(2,1)= 0	, Frv(2,2)= -1 	;
+			
+			Fvr(0,0)= -2*w*vE*cosLat-vE*vE/(R*cosLat*cosLat)	, Fvr(0,1)=0 	, Fvr(0,2)= -vN*vD/(R*R) + vE*vE*tanLat/(R*R);
+			Fvr(1,0)= 2*w*(sinLat*vD-vN*cosLat) + vE*vN/(R*cosLat*cosLat)	, Fvr(1,1)=0 	, Fvr(1,2)= vD*vE/(R*R) + vE*vN*tanLat/(R*R)	;
+			Fvr(2,0)= 2*w*vE*sinLat	, Fvr(2,1)=0 	, Fvr(2,2)= vE*vE/(R*R) + vN*vN/(R*R) - 2*g0*((R0*R0/(R*R))/(R))	;
+
+			Fvv(0,0)=vD/R 	, Fvv(0,1)=-2*w*sinLat-2*vE*tanLat/R 	, Fvv(0,2)=vN/R	;
+			Fvv(1,0)= -2*w*sinLat-vE*tanLat/R , Fvv(1,1)= -vD-vN*tanLat/R	, Fvv(1,2)= -2*w*cosLat-vE/R	;
+			Fvv(2,0)= -2*vN/R	, Fvv(2,1)= -2*w*cosLat-2*vE/R	, Fvv(2,2)= 0	;
+
+			//TODO Program Fq matrices and fnX, w_inX
+			//Fqr
+			//Fqv
+			//fnX
+			//w_inX
+
+
+			subrange(F, 0,3,  0,3) = Frr, subrange(F, 0,3,  3,6) = Frv;
+			subrange(F, 3,6,  0,3) = Fvr, subrange(F, 3,6,  3,6) = Fvv, subrange(F, 3,6,  6,10) = fnX;
+			subrange(F, 6,10, 0,3) = Fqr, subrange(F, 6,10, 3,6) = Fqv, subrange(F, 6,10, 6,10) = w_inX;
+
+			H(0,0) = R;
+			H(1,1) = R*cosLat;
+			H(2,2) = H(3,3) = H(4,4) = H(5,5) = 1.0;
 
 		}
 	}
