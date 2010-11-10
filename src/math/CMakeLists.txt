@@ -2,6 +2,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 add_library(oooarkMath SHARED
 	utilities.cpp
+	GpsIns.cpp
 	)
 target_link_libraries(oooarkMath ${Boost_LIBRARIES} ${LAPACK_LIBRARIES})
 set_target_properties(oooarkMath PROPERTIES VERSION ${oooark_VERISON}
@@ -11,5 +12,6 @@ install(TARGETS oooarkMath DESTINATION lib)
 
 install(FILES
 	utilities.hpp
+	GpsIns.hpp
 	DESTINATION include/oooark/math
 	)

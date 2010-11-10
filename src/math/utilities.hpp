@@ -124,6 +124,7 @@ double min(const vector<double> &v);
 //Quaternion and Vector Operations
 vector<double> quat2LatLon(const vector<double> &quat);
 vector<double> latLon2Quat(const vector<double> &latLon);
+vector<double> latLon2Quat(const double &lat, const double &lon);
 double dotProd(const vector<double> &v1, const vector<double> &v2);
 vector<double> quatProd(const vector<double> &q1, const vector<double> &q2);
 vector<double> quatRotate(const vector<double> &q, const vector<double> &vec);

@@ -62,6 +62,22 @@ vector<double> latLon2Quat(const vector<double> &latLon)
 		return quat;
 }
 
+vector<double> latLon2Quat(const double &lat, const double &lon)
+{
+		vector<double> quat(4);
+		double clat = cos(-lat/2.0);
+		double clon = cos(lon/2.0);
+		double slat = sin(-lat/2.0);
+		double slon = sin(lon/2.0);
+		
+		quat(0) =  clat * clon;
+		quat(1) =  clat * slon;
+		quat(2) =  slat * clon;
+		quat(3) =  -slat * slon;
+
+		return quat;
+}
+
 vector<double> quat2LatLon(const vector<double> &quat)
 {
 		vector<double> latLon(2);
