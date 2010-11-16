@@ -119,7 +119,7 @@ public:
     /**
      * Read buffer maximum size
      */
-    static const int readBufferSize=512;
+    static const int readBufferSize=2048;
 private:
 
     /**
@@ -259,6 +259,11 @@ public:
                         boost::asio::serial_port_base::stop_bits opt_stop=
                             boost::asio::serial_port_base::stop_bits(
                                 boost::asio::serial_port_base::stop_bits::one));
+
+	/**
+	 * return num of serial available
+	 */
+    int available();
 
     /**
      * Read some data asynchronously. Returns immediately.

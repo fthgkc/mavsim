@@ -56,6 +56,7 @@ namespace oooark
 		xn = zero_vector<double>(3);
 		xnk = zero_vector<double>(3);
 		xnkMinus = zero_vector<double>(3);
+		w_en = w_ie = zero_vector<double>(3);
 
 		eulerAtt(0) = roll;
 		eulerAtt(1) = pitch;
@@ -113,8 +114,10 @@ namespace oooark
 		I3 = identity_matrix<double>(3);
 	}
 
-	void GpsIns::updateFast(const ublas::vector<double>& fb, const ublas::vector<double> &wb)
+	void GpsIns::updateFast(const ublas::vector<double> &fb, const ublas::vector<double> &wbIn)
 	{
+		bounded_vector<double,3> wb;
+		wb = wbIn + quatRotate(q,w_ie);
 		//calculate elapsed time for each cycle
 		time = boost::posix_time::microsec_clock::universal_time();
 		
@@ -234,17 +237,18 @@ namespace oooark
 			//std::cout<<"Q LAT LON H: "<<quat2LatLon(qLatLon)<<std::endl;
 			//std::cout<<"LAT LON H: "<<latLonH*180/M_PI<<" "<<h<<std::endl;
 			
-			std::cout<<"Pos: "<<xn<<std::endl;
-			std::cout<<"Vel: "<<vn<<std::endl;
-			std::cout<<"Att: "<<quat2Euler(q)*180/M_PI<<std::endl;
-			//std::cout<<std::endl;
-			
 			//quaternion normilatization
 			q+=q*kQuat*(1-(q(0)*q(0) + q(1)*q(1) + q(2)*q(2) + q(3)*q(3)));
 			qLatLon+=qLatLon*kQuat*(1-(qLatLon(0)*qLatLon(0) + qLatLon(1)*qLatLon(1) + qLatLon(2)*qLatLon(2) + qLatLon(3)*qLatLon(3)));
 			subrange(latLonH, 0,2) = quat2LatLon(qLatLon);
 			//std::cout<<"l-cycle Hz: "<<1.0/dt_l<<std::endl;
 			
+			//std::cout<<"Pos: "<<xn<<std::endl;
+			std::cout<<"LAT LON H: "<<latLonH(0)*180/M_PI<<" "<<latLonH(1)*180/M_PI<<" "<<latLonH(2)<<std::endl;
+			std::cout<<"Vel: "<<vn<<std::endl;
+			std::cout<<"Att: "<<quat2Euler(q)*180/M_PI<<std::endl;
+			std::cout<<std::endl;
+
 			//reset integration term
 			zeta = zero_vector<double>(3);
 		}
@@ -276,12 +280,20 @@ namespace oooark
 			Frv(2,0)= 0	, Frv(2,1)= 0	, Frv(2,2)= -1 	;
 			
 			Fvr(0,0)= -2*w*vE*cosLat-vE*vE/(R*cosLat*cosLat)	, Fvr(0,1)=0 	, Fvr(0,2)= -vN*vD/(R*R) + vE*vE*tanLat/(R*R);
-			Fvr(1,0)= 2*w*(sinLat*vD-vN*cosLat) - vE*vN/(R*cosLat*cosLat)	, Fvr(1,1)=0 	, Fvr(1,2)= vD*vE/(R*R) + vE*vN*tanLat/(R*R)	;
+			Fvr(1,0)= -2*w*(sinLat*vD-vN*cosLat) - vE*vN/(R*cosLat*cosLat)	, Fvr(1,1)=0 	, Fvr(1,2)= -(vD*vE/(R*R) + vE*vN*tanLat/(R*R))	;
 			Fvr(2,0)= 2*w*vE*sinLat	, Fvr(2,1)=0 	, Fvr(2,2)= vE*vE/(R*R) + vN*vN/(R*R) - 2*g0*((R0*R0/(R*R))/(R))	;
 
 			Fvv(0,0)=vD/R 	, Fvv(0,1)=-2*w*sinLat-2*vE*tanLat/R 	, Fvv(0,2)=vN/R	;
-			Fvv(1,0)= -2*w*sinLat-vE*tanLat/R , Fvv(1,1)= -vD/R-vN*tanLat/R	, Fvv(1,2)= -2*w*cosLat-vE/R	;
+			Fvv(1,0)= -(-2*w*sinLat-vE*tanLat/R) , Fvv(1,1)= -(-vD/R-vN*tanLat/R)	, Fvv(1,2)= -(-2*w*cosLat-vE/R)	;
 			Fvv(2,0)= -2*vN/R	, Fvv(2,1)= -2*w*cosLat-2*vE/R	, Fvv(2,2)= 0	;
+			//my derivation			
+			//Fvr(0,0)= -2*w*vE*cosLat-vE*vE/(R*cosLat*cosLat)	, Fvr(0,1)=0 	, Fvr(0,2)= -vN*vD/(R*R) + vE*vE*tanLat/(R*R);
+			//Fvr(1,0)= 2*w*(sinLat*vD-vN*cosLat) - vE*vN/(R*cosLat*cosLat)	, Fvr(1,1)=0 	, Fvr(1,2)= vD*vE/(R*R) + vE*vN*tanLat/(R*R)	;
+			//Fvr(2,0)= 2*w*vE*sinLat	, Fvr(2,1)=0 	, Fvr(2,2)= vE*vE/(R*R) + vN*vN/(R*R) - 2*g0*((R0*R0/(R*R))/(R))	;
+
+			//Fvv(0,0)=vD/R 	, Fvv(0,1)=-2*w*sinLat-2*vE*tanLat/R 	, Fvv(0,2)=vN/R	;
+			//Fvv(1,0)= -2*w*sinLat-vE*tanLat/R , Fvv(1,1)= -vD/R-vN*tanLat/R	, Fvv(1,2)= -2*w*cosLat-vE/R	;
+			//Fvv(2,0)= -2*vN/R	, Fvv(2,1)= -2*w*cosLat-2*vE/R	, Fvv(2,2)= 0	;
 
 			Fqr(0,0)=-w*sinLat	, Fqr(0,1)=0 	, Fqr(0,2)= -vE/(R*R)	;
 			Fqr(1,0)=0 	, Fqr(1,1)= 1.0/(R*cosLat)	, Fqr(1,2)= vN/(R*R) 	;
@@ -342,10 +354,10 @@ namespace oooark
 
 			qCorrection = euler2Quat(subrange(xErr, 6,9));
 
-			q = quatProd(quatConj(qCorrection), q);
+			q = quatProd(qCorrection, q);
 		
 			Un = Sigma = Zeta = zero_vector<double>(3);
-			std::cout<<"Pos Update: "<<xn<<std::endl;
+			std::cout<<"Lat Lon H Update: "<<latLonH(0)*180/M_PI<<" "<<latLonH(1)*180/M_PI<<" "<<latLonH(2)<<std::endl;
 			std::cout<<"Vel Update: "<<vn<<std::endl;
 			std::cout<<"Att Update: "<<quat2Euler(q)*180/M_PI<<std::endl;
 		}

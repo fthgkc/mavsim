@@ -14,7 +14,8 @@ set_target_properties(oooarkCommunication PROPERTIES VERSION ${oooark_VERISON}
 install(TARGETS oooarkCommunication DESTINATION lib)
 
 install(FILES
-	AsyncSerial.hpp
+	AsyncSerial.hpp 
+	asio_mavlink_bridge_header.h
 	#FlightGearComm.hpp
 	#flightGearUtils.hpp
 	#net_ctrls.hxx

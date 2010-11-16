@@ -30,7 +30,7 @@ class GpsIns
 {
 public:
 	GpsIns(double lat=0, double lon=0, double height=0, double roll=0, double pitch=0, double yaw=0, bool useGravity = true);
-	void updateFast(const ublas::vector<double>& fb, const ublas::vector<double> &wb);
+	void updateFast(const ublas::vector<double> &fb, const ublas::vector<double> &wb);
 	void updateMed();
 	void updateSlow();
 	void updateGps(ublas::vector<double> z);

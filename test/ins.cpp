@@ -5,6 +5,8 @@ int main (int argc, char const* argv[])
 	boost::numeric::ublas::bounded_vector<double,3> fb;
 	boost::numeric::ublas::bounded_vector<double,3> wb;
 	fb = wb = boost::numeric::ublas::zero_vector<double>(3);
+	//fb(0) = 1;
+	//wb(0) = .001;
 
 	double lat = 45*M_PI/180.0;
 	double lon = -86*M_PI/180.0;
@@ -16,12 +18,12 @@ int main (int argc, char const* argv[])
 	oooark::GpsIns gpsIns(lat,lon,height,roll,pitch,yaw,useGravity);
 	oooark::GpsIns gpsInsError(lat,lon,height,roll,pitch,yaw,useGravity);
 
-	double fbNoiseFreq = 100;
-	double fbNoiseMag = .001*9.81;
+	double fbNoiseFreq = 1330;
+	double fbNoiseMag = .01*9.81;
 	double fbNoise;
 
-	double wbNoiseFreq = 100;
-	double wbNoiseMag = 1*M_PI/180;
+	double wbNoiseFreq = 1300;
+	double wbNoiseMag = 2*M_PI/180;
 	double wbNoise;
 	boost::numeric::ublas::bounded_vector<double,3> ones3;
 	for(int i=0;i<ones3.size();i++) ones3(i) = 1.0;
@@ -51,7 +53,7 @@ int main (int argc, char const* argv[])
 		z(5) = gpsInsError.vn(2) - gpsIns.vn(2);
 
 		gpsInsError.updateGps(z);
-
+		//std::cout<<std::endl;
 		usleep(1.0/1000.0*1e6);
 	}
 		return 0;
