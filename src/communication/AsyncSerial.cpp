@@ -611,6 +611,12 @@ BufferedAsyncSerial::BufferedAsyncSerial(): AsyncSerial()
 
 }
 
+int BufferedAsyncSerial::available()
+{
+	lock_guard<mutex> l(readQueueMutex);
+	return readQueue.size(); 
+}
+
 BufferedAsyncSerial::BufferedAsyncSerial(const std::string& devname,
         unsigned int baud_rate,
         asio::serial_port_base::parity opt_parity,
