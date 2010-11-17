@@ -57,7 +57,7 @@ void trimFunction ()
     std::string aircraftPath="easystar";
     std::string enginePath="easystar";
     std::string systemsPath="easystar";
-	std::string root=std::string(getenv("OOOARK"))+"/data";
+    std::string root=std::string(getenv("OOOARK"))+"/data";
     double rtol = std::numeric_limits<float>::epsilon();
     double abstol = std::numeric_limits<double>::epsilon();
     double speed = 2.0;
@@ -83,7 +83,7 @@ void trimFunction ()
         prompt("\tengine path\t\t",enginePath);
         prompt("\tsystems path\t\t",systemsPath);
         fdm.LoadModel(root+"/"+aircraftPath,root+"/"+enginePath,
-				root+"/"+systemsPath,aircraft,false);
+                      root+"/"+systemsPath,aircraft,false);
         std::string aircraftName = fdm.GetAircraft()->GetAircraftName();
         if (aircraftName == "")
         {
@@ -245,32 +245,32 @@ void trimFunction ()
     std::cout << ss << std::endl;
 
     ss.linearize(x0,u0,y0,A,B,C,D);
-	int width=10;
-	std::cout.precision(3);
-	std::cout
-		<< std::fixed
-		<< std::right
-		<< "\nA=\n" << std::setw(width) << A
-		<< "\nB=\n" << std::setw(width) << B
-		<< "\nC=\n" << std::setw(width) << C
-		<< "\nD=\n" << std::setw(width) << D
-		<< std::endl;
+    int width=10;
+    std::cout.precision(3);
+    std::cout
+            << std::fixed
+            << std::right
+            << "\nA=\n" << std::setw(width) << A
+            << "\nB=\n" << std::setw(width) << B
+            << "\nC=\n" << std::setw(width) << C
+            << "\nD=\n" << std::setw(width) << D
+            << std::endl;
 
-	//write scicoslab file
-	std::ofstream scicos(std::string(aircraft+"_lin.sce").c_str());
-	scicos.precision(10);
-	width=20;
-	scicos
-	<< std::scientific
-	<< "x0=..\n" << std::setw(width) << x0 << ";\n"
-	<< "u0=..\n" << std::setw(width) << u0 << ";\n"
-	<< "sys = syslin('c',..\n"
-	<< std::setw(width) << A << ",..\n"
-	<< std::setw(width) << B << ",..\n"
-	<< std::setw(width) << C << ",..\n"
-	<< std::setw(width) << D << ");\n"
-	<< "tfm = ss2tf(sys);\n"
-	<< std::endl;
+    //write scicoslab file
+    std::ofstream scicos(std::string(aircraft+"_lin.sce").c_str());
+    scicos.precision(10);
+    width=20;
+    scicos
+            << std::scientific
+            << "x0=..\n" << std::setw(width) << x0 << ";\n"
+            << "u0=..\n" << std::setw(width) << u0 << ";\n"
+            << "sys = syslin('c',..\n"
+            << std::setw(width) << A << ",..\n"
+            << std::setw(width) << B << ",..\n"
+            << std::setw(width) << C << ",..\n"
+            << std::setw(width) << D << ");\n"
+            << "tfm = ss2tf(sys);\n"
+            << std::endl;
 }
 
 extern "C"

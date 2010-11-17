@@ -70,7 +70,7 @@ extern "C"
             fgComm->setCtrlsTransBuf().aileron = u[0];
             fgComm->setCtrlsTransBuf().elevator = u[1];
             fgComm->setCtrlsTransBuf().rudder = -u[2];
-            for (int i=0;i<4;i++) fgComm->setCtrlsTransBuf().throttle[i] = u[3];
+            for (int i=0; i<4; i++) fgComm->setCtrlsTransBuf().throttle[i] = u[3];
 
             // send data to flightGear
             fgComm->send();

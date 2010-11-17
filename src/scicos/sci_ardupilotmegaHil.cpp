@@ -31,14 +31,14 @@ extern "C"
 
     void sci_ardupilotmegaHil(scicos_block *block, scicos::enumScicosFlags flag)
     {
-		using namespace ardupilotmegacomm;
+        using namespace ardupilotmegacomm;
 
         // data
         double * x=GetRealInPortPtrs(block,1);
         double * u=GetRealOutPortPtrs(block,1);
         int * ipar=block->ipar;
-		static char * device;
-		static int baudRate;
+        static char * device;
+        static int baudRate;
         static char ** stringArray;
         static int * intArray;
 
@@ -50,12 +50,12 @@ extern "C"
         if (flag==scicos::initialize || flag==scicos::reinitialize)
         {
             if (!hil)
-			{
-				getIpars(1,1,ipar,&stringArray,&intArray); 
-				device = stringArray[0];
-				baudRate = intArray[0];	
-				hil = new ArdupilotmegaHil(device,baudRate);
-			}
+            {
+                getIpars(1,1,ipar,&stringArray,&intArray);
+                device = stringArray[0];
+                baudRate = intArray[0];
+                hil = new ArdupilotmegaHil(device,baudRate);
+            }
         }
         else if (flag==scicos::terminate)
         {
@@ -73,16 +73,16 @@ extern "C"
         }
         else if (flag==scicos::computeOutput)
         {
-			hil->toApm.msg.airspeed = x[0];
-			hil->toApm.msg.pitch = x[2];
-			hil->toApm.msg.roll = x[6];
-			hil->toApm.msg.heading = x[9];
-			hil->send();
+            hil->toApm.msg.airspeed = x[0];
+            hil->toApm.msg.pitch = x[2];
+            hil->toApm.msg.roll = x[6];
+            hil->toApm.msg.heading = x[9];
+            hil->send();
 
-			hil->receive();
-			//hil->print();
+            hil->receive();
+            //hil->print();
             u[0] = hil->fromApm.msg.throttleServo/3600.0;
-			u[1] = hil->fromApm.msg.rollServo/3600.0;
+            u[1] = hil->fromApm.msg.rollServo/3600.0;
             u[2] = hil->fromApm.msg.pitchServo/3600.0;
             u[3] = hil->fromApm.msg.rudderServo/3600.0;
         }

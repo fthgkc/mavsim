@@ -3,8 +3,11 @@ mode(-1);
 oooark_sci_gateway_path=get_absolute_file_path('loader.sce');
 link(oooark_sci_gateway_path+'../src/scicos/liboooarkScicos.so',..
 	['sci_jet',..
-	'sci_jsbsimTrim','sci_jsbsimComm',..
-	'sci_ardupilotmegaHil'],'c');
+	'sci_jsbsimTrim',..
+    'sci_jsbsimComm',..
+	'sci_ardupilotmegaHil',..
+	'sci_mavlinkHil'],..
+    'c');
 
 CurrentDirectory = pwd();
 mainpathL = get_absolute_file_path("loader.sce");

@@ -56,7 +56,7 @@ void getIpars(int nStrings, int nInts, int * ipar, char *** stringArray, int ** 
             if (iString >= nStrings) break; // finished
         }
     }
-    for (int i=0;i<nInts;i++)
+    for (int i=0; i<nInts; i++)
     {
         (*intArray)[i] = ipar[iInt];
         iInt = iInt + 1;

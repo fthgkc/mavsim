@@ -2,7 +2,7 @@
 #ifndef APM_MAVLINK_BRIDGE_HEADER_H
 #define APM_MAVLINK_BRIDGE_HEADER_H
  
-#include "mavlink/include/mavlink_types.h"
+#include "mavlink_types.h"
 #include "AsyncSerial.hpp"
 
 
@@ -39,5 +39,4 @@ static inline uint16_t comm_get_available(mavlink_channel_t chan)
     }
     return bytes;
 }
- 
 #endif /* APM_MAVLINK_BRIDGE_HEADER_H */
