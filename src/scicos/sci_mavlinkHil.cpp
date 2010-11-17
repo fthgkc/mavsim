@@ -42,7 +42,7 @@ extern "C"
         static int * intArray;
 
         static uint16_t packet_drops = 0;
-        static mavlink_rc_channels_t rc_channels;
+        static mavlink_rc_channels_scaled_t rc_channels;
 
         //handle flags
         if (flag==scicos::initialize || flag==scicos::reinitialize)
@@ -95,9 +95,9 @@ extern "C"
                     std::cout << "initialized mavlink port" << std::endl;
                     switch(msg.msgid)
                     {
-                    case MAVLINK_MSG_ID_RC_CHANNELS:
+                    case MAVLINK_MSG_ID_RC_CHANNELS_SCALED:
                     {
-                        mavlink_msg_rc_channels_decode(&msg,&rc_channels);
+                        mavlink_msg_rc_channels_scaled_decode(&msg,&rc_channels);
                         std::cout << "received rc packet" << std::endl;
                         break;
                     }
@@ -110,14 +110,14 @@ extern "C"
 
             // output
             std::cout << "computing output" << std::endl;
-            u[0] = rc_channels.chan1_255;
-            u[1] = rc_channels.chan2_255;
-            u[2] = rc_channels.chan3_255;
-            u[3] = rc_channels.chan4_255;
-            u[4] = rc_channels.chan5_255;
-            u[5] = rc_channels.chan6_255;
-            u[6] = rc_channels.chan7_255;
-            u[7] = rc_channels.chan8_255;
+            u[0] = rc_channels.chan1_scaled;
+            u[1] = rc_channels.chan2_scaled;
+            u[2] = rc_channels.chan3_scaled;
+            u[3] = rc_channels.chan4_scaled;
+            u[4] = rc_channels.chan5_scaled;
+            u[5] = rc_channels.chan6_scaled;
+            u[6] = rc_channels.chan7_scaled;
+            u[7] = rc_channels.chan8_scaled;
         }
         else
         {

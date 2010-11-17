@@ -2,5 +2,5 @@
 	path = data/easystar
 	url = git://oooark.git.sf.net/gitroot/oooark/easystar
 [submodule "src/communication/mavlink"]
-	path = src/communication/mavlink
+	path = thirdParty/mavlink
 	url = git://github.com/pixhawk/mavlink.git

@@ -59,9 +59,9 @@ set(OSGEARTH_LIBRARIES osgEarth osgEarthUtil osgEarthFeatures)
 set(LAPACK_LIBRARIES lapack)
 #set(SIMGEAR_LIBRARIES sgio)
 if(APPLE)
-	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkScicos)
+	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization)
 else(APPLE)
-	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkScicos oooarkMath)
+	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkMath)
 endif(APPLE)
 
 # find libraries with cmake module
