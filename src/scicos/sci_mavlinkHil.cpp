@@ -52,7 +52,6 @@ extern "C"
                 getIpars(1,1,ipar,&stringArray,&intArray);
                 device = stringArray[0];
                 baudRate = intArray[0];
-                std::cout << "creating mavlink port" << std::endl;
                 try
                 {
                     mavlink_comm_0_port = new BufferedAsyncSerial(device,baudRate);
@@ -65,10 +64,8 @@ extern "C"
         }
         else if (flag==scicos::terminate)
         {
-            std::cout << "terminating" << std::endl;
             if (mavlink_comm_0_port)
             {
-                std::cout << "deleting mavlink port" << std::endl;
                 delete mavlink_comm_0_port;
                 mavlink_comm_0_port = NULL;
             }
@@ -87,37 +84,31 @@ extern "C"
             while(comm_get_available(MAVLINK_COMM_0))
             {
                 uint8_t c = comm_receive_ch(MAVLINK_COMM_0);
-                std::cout << "available: " << comm_get_available(MAVLINK_COMM_0) << std::endl;
 
                 // try to get new message
                 if(mavlink_parse_char(MAVLINK_COMM_0,c,&msg,&status))
                 {
-                    std::cout << "initialized mavlink port" << std::endl;
                     switch(msg.msgid)
                     {
-                    case MAVLINK_MSG_ID_RC_CHANNELS_SCALED:
-                    {
-                        mavlink_msg_rc_channels_scaled_decode(&msg,&rc_channels);
-                        std::cout << "received rc packet" << std::endl;
-                        break;
-                    }
+                        case MAVLINK_MSG_ID_RC_CHANNELS_SCALED:
+                        {
+                            mavlink_msg_rc_channels_scaled_decode(&msg,&rc_channels);
+                            u[0] = rc_channels.chan1_scaled/10000.0f;
+                            u[1] = rc_channels.chan2_scaled/10000.0f;
+                            u[2] = rc_channels.chan3_scaled/10000.0f;
+                            u[3] = rc_channels.chan4_scaled/10000.0f;
+                            u[4] = rc_channels.chan5_scaled/10000.0f;
+                            u[5] = rc_channels.chan6_scaled/10000.0f;
+                            u[6] = rc_channels.chan7_scaled/10000.0f;
+                            u[7] = rc_channels.chan8_scaled/10000.0f;
+                            break;
+                        }
                     }
                 }
 
                 // update packet drop counter
                 packet_drops += status.packet_rx_drop_count;
             }
-
-            // output
-            std::cout << "computing output" << std::endl;
-            u[0] = rc_channels.chan1_scaled;
-            u[1] = rc_channels.chan2_scaled;
-            u[2] = rc_channels.chan3_scaled;
-            u[3] = rc_channels.chan4_scaled;
-            u[4] = rc_channels.chan5_scaled;
-            u[5] = rc_channels.chan6_scaled;
-            u[6] = rc_channels.chan7_scaled;
-            u[7] = rc_channels.chan8_scaled;
         }
         else
         {
