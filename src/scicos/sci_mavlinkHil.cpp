@@ -32,14 +32,15 @@ extern "C"
     void sci_mavlinkHil(scicos_block *block, scicos::enumScicosFlags flag)
     {
         // data
-        double * x=GetRealInPortPtrs(block,1);
-        double * u=GetRealOutPortPtrs(block,1);
+        double * u=GetRealInPortPtrs(block,1);
+        double * y=GetRealOutPortPtrs(block,1);
         int * ipar=block->ipar;
 
         static char * device;
         static int baudRate;
         static char ** stringArray;
         static int * intArray;
+        static int count = 0;
 
         static uint16_t packet_drops = 0;
         static mavlink_rc_channels_scaled_t rc_channels;
@@ -78,6 +79,33 @@ extern "C"
         }
         else if (flag==scicos::computeOutput)
         {
+            // channel
+            mavlink_channel_t chan = MAVLINK_COMM_0;
+
+
+             // send messages
+            
+            if (count++ > 50)
+            {
+                float lat = 40;
+                float lon = -86;
+                float alt = 1; 
+                float speed = 1;
+                float hdg = 1;
+                int timeStamp = 0;
+                float ax = 1, ay = 1, az = 1;
+                float xmag =1, ymag = 2, zmag = 3;
+                float p = 0, q =0, r =0;
+                float rawPress = 1;
+                float airspeed = 1;
+                mavlink_msg_gps_raw_send(chan,timeStamp,1,lat,lon,alt,2,10,speed,hdg);
+                mavlink_msg_raw_imu_send(chan,timeStamp,ax*1000,ay*1000,az*1000,p,q,r,
+                        xmag,ymag,zmag);
+                mavlink_msg_raw_pressure_send(chan,timeStamp,airspeed,rawPress,0);
+                count = 0;
+            }
+
+            // receive messages
             mavlink_message_t msg;
             mavlink_status_t status;
 
@@ -93,14 +121,14 @@ extern "C"
                         case MAVLINK_MSG_ID_RC_CHANNELS_SCALED:
                         {
                             mavlink_msg_rc_channels_scaled_decode(&msg,&rc_channels);
-                            u[0] = rc_channels.chan1_scaled/10000.0f;
-                            u[1] = rc_channels.chan2_scaled/10000.0f;
-                            u[2] = rc_channels.chan3_scaled/10000.0f;
-                            u[3] = rc_channels.chan4_scaled/10000.0f;
-                            u[4] = rc_channels.chan5_scaled/10000.0f;
-                            u[5] = rc_channels.chan6_scaled/10000.0f;
-                            u[6] = rc_channels.chan7_scaled/10000.0f;
-                            u[7] = rc_channels.chan8_scaled/10000.0f;
+                            y[0] = rc_channels.chan1_scaled/10000.0f;
+                            y[1] = rc_channels.chan2_scaled/10000.0f;
+                            y[2] = rc_channels.chan3_scaled/10000.0f;
+                            y[3] = rc_channels.chan4_scaled/10000.0f;
+                            y[4] = rc_channels.chan5_scaled/10000.0f;
+                            y[5] = rc_channels.chan6_scaled/10000.0f;
+                            y[6] = rc_channels.chan7_scaled/10000.0f;
+                            y[7] = rc_channels.chan8_scaled/10000.0f;
                             break;
                         }
                     }
