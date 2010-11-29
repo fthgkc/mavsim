@@ -36,51 +36,51 @@ namespace oooark
 namespace visualization
 {
 
-std::vector<osg::Node*> findNamedNodes(const std::string& searchName, 
-									  osg::Node* currNode)
+std::vector<osg::Node*> findNamedNodes(const std::string& searchName,
+                                       osg::Node* currNode)
 {
-   osg::Group* currGroup;
-   std::vector<osg::Node*> foundNodes;
-   osg::Node *foundNode;
+    osg::Group* currGroup;
+    std::vector<osg::Node*> foundNodes;
+    osg::Node *foundNode;
 
-   // check to see if we have a valid (non-NULL) node.
-   // if we do have a null node, return NULL.
-   if ( !currNode)
-   {
-	  return foundNodes;
-   }
+    // check to see if we have a valid (non-NULL) node.
+    // if we do have a null node, return NULL.
+    if ( !currNode)
+    {
+        return foundNodes;
+    }
 
-   // We have a valid node, check to see if this is the node we 
-   // are looking for. If so, return the current node.
-   if (currNode->getName() == searchName)
-   {
-	   foundNodes.push_back(currNode);
-   }
+    // We have a valid node, check to see if this is the node we
+    // are looking for. If so, return the current node.
+    if (currNode->getName() == searchName)
+    {
+        foundNodes.push_back(currNode);
+    }
 
-   // We have a valid node, but not the one we are looking for.
-   // Check to see if it has children (non-leaf node). If the node
-   // has children, check each of the child nodes by recursive call.
-   // If one of the recursive calls returns a non-null value we have
-   // found the correct node, so return this node.
-   // If we check all of the children and have not found the node,
-   // return NULL
-   currGroup = currNode->asGroup(); // returns NULL if not a group.
-   if ( currGroup ) 
-   {
-	  for (unsigned int i = 0 ; i < currGroup->getNumChildren(); i ++)
-	  { 
-		  std::vector<osg::Node*> subNodes = findNamedNodes(searchName, currGroup->getChild(i));
-		 if (subNodes.size())
-			 for(int j=0;j<subNodes.size();j++) foundNodes.push_back(subNodes[j]); // found a match!
-	  }
-   }
-   return foundNodes;
+    // We have a valid node, but not the one we are looking for.
+    // Check to see if it has children (non-leaf node). If the node
+    // has children, check each of the child nodes by recursive call.
+    // If one of the recursive calls returns a non-null value we have
+    // found the correct node, so return this node.
+    // If we check all of the children and have not found the node,
+    // return NULL
+    currGroup = currNode->asGroup(); // returns NULL if not a group.
+    if ( currGroup )
+    {
+        for (unsigned int i = 0 ; i < currGroup->getNumChildren(); i ++)
+        {
+            std::vector<osg::Node*> subNodes = findNamedNodes(searchName, currGroup->getChild(i));
+            if (subNodes.size())
+                for(int j=0; j<subNodes.size(); j++) foundNodes.push_back(subNodes[j]); // found a match!
+        }
+    }
+    return foundNodes;
 }
 
 
 NodeFinder::NodeFinder(const std::string & name) :
-        osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN),
-        myName(name), myNode(NULL)
+    osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN),
+    myName(name), myNode(NULL)
 {
 }
 
@@ -172,8 +172,8 @@ Actuator::Actuator(
     const std::string & name,
     const osg::Vec3 & center,
     osg::Node * root) :
-        myPat(new osg::PositionAttitudeTransform),
-        myCenter(center)
+    myPat(new osg::PositionAttitudeTransform),
+    myCenter(center)
 {
     attachNode(name,myPat,root);
     myPat->setPosition(center);
@@ -194,7 +194,7 @@ Vector3::Vector3(const osg::Vec3 & start,
                  const osg::Vec3 & end,
                  const std::string & name,
                  const osg::Vec4 & color) :
-        myPat(new osg::PositionAttitudeTransform)
+    myPat(new osg::PositionAttitudeTransform)
 {
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(new osg::ShapeDrawable(
@@ -226,14 +226,14 @@ void Vector3::set(const osg::Vec3 & start,
 }
 
 Ellipsoid::Ellipsoid(osg::Vec3d radii, osg::Vec3d center, osg::Vec4 color, int vBands, int hBands) :
-        myRadii(radii),
-        myCenter(center),
-        myVBands(vBands),
-        myHBands(hBands),
-        myGeom(new osg::Geometry),
-        myVertices(new osg::Vec3Array),
-        myNormals(new osg::Vec3Array),
-        myPrimitive(new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLE_STRIP,0))
+    myRadii(radii),
+    myCenter(center),
+    myVBands(vBands),
+    myHBands(hBands),
+    myGeom(new osg::Geometry),
+    myVertices(new osg::Vec3Array),
+    myNormals(new osg::Vec3Array),
+    myPrimitive(new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLE_STRIP,0))
 {
     osg::Geode * geode = new osg::Geode;
     osg::Vec4Array * colors = new osg::Vec4Array;
@@ -338,10 +338,10 @@ void Ellipsoid::draw()
 }
 
 PointCloud::PointCloud(int pointSize) :
-        myPoints(new osg::Vec3Array),
-        myColors(new osg::Vec4Array),
-        myGeom(new osg::Geometry),
-        myDrawArrays(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, myPoints->size()))
+    myPoints(new osg::Vec3Array),
+    myColors(new osg::Vec4Array),
+    myGeom(new osg::Geometry),
+    myDrawArrays(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, myPoints->size()))
 {
     osg::Geode * geode = new osg::Geode;
     addChild(geode);
@@ -394,8 +394,8 @@ osg::StateSet* PointCloud::makeStateSet(float size)
 }
 
 Jet::Jet() :
-        model(), myLeftAileron(), myRightAileron(),
-        myLeftElevator(), myRightElevator(), myRudder()
+    model(), myLeftAileron(), myRightAileron(),
+    myLeftElevator(), myRightElevator(), myRudder()
 {
     model = osgDB::readNodeFile(std::string(DATADIR)+"/models/jet.ac");
     myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-1.375,-3.330,0.485),model));

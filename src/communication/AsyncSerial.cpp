@@ -42,7 +42,7 @@ class AsyncSerialImpl: private boost::noncopyable
 {
 public:
     AsyncSerialImpl(): io(), port(io), backgroundThread(), open(false),
-            error(false) {}
+        error(false) {}
 
     boost::asio::io_service io; ///< Io service object
     boost::asio::serial_port port; ///< Serial port object
@@ -72,7 +72,7 @@ AsyncSerial::AsyncSerial(const std::string& devname, unsigned int baud_rate,
                          asio::serial_port_base::character_size opt_csize,
                          asio::serial_port_base::flow_control opt_flow,
                          asio::serial_port_base::stop_bits opt_stop)
-        : pimpl(new AsyncSerialImpl)
+    : pimpl(new AsyncSerialImpl)
 {
     open(devname,baud_rate,opt_parity,opt_csize,opt_flow,opt_stop);
 }
@@ -317,7 +317,7 @@ AsyncSerial::AsyncSerial(const std::string& devname, unsigned int baud_rate,
                          asio::serial_port_base::character_size opt_csize,
                          asio::serial_port_base::flow_control opt_flow,
                          asio::serial_port_base::stop_bits opt_stop)
-        : pimpl(new AsyncSerialImpl)
+    : pimpl(new AsyncSerialImpl)
 {
     open(devname,baud_rate,opt_parity,opt_csize,opt_flow,opt_stop);
 }
@@ -581,7 +581,7 @@ CallbackAsyncSerial::CallbackAsyncSerial(const std::string& devname,
         asio::serial_port_base::character_size opt_csize,
         asio::serial_port_base::flow_control opt_flow,
         asio::serial_port_base::stop_bits opt_stop)
-        :AsyncSerial(devname,baud_rate,opt_parity,opt_csize,opt_flow,opt_stop)
+    :AsyncSerial(devname,baud_rate,opt_parity,opt_csize,opt_flow,opt_stop)
 {
 
 }
@@ -613,8 +613,8 @@ BufferedAsyncSerial::BufferedAsyncSerial(): AsyncSerial()
 
 int BufferedAsyncSerial::available()
 {
-	lock_guard<mutex> l(readQueueMutex);
-	return readQueue.size(); 
+    lock_guard<mutex> l(readQueueMutex);
+    return readQueue.size();
 }
 
 BufferedAsyncSerial::BufferedAsyncSerial(const std::string& devname,
@@ -623,7 +623,7 @@ BufferedAsyncSerial::BufferedAsyncSerial(const std::string& devname,
         asio::serial_port_base::character_size opt_csize,
         asio::serial_port_base::flow_control opt_flow,
         asio::serial_port_base::stop_bits opt_stop)
-        :AsyncSerial(devname,baud_rate,opt_parity,opt_csize,opt_flow,opt_stop)
+    :AsyncSerial(devname,baud_rate,opt_parity,opt_csize,opt_flow,opt_stop)
 {
     setReadCallback(bind(&BufferedAsyncSerial::readCallback, this, _1, _2));
 }
@@ -682,7 +682,7 @@ std::vector<char>::iterator BufferedAsyncSerial::findStringInVector(
         vector<char>::iterator result=find(it,v.end(),s[0]);
         if (result==v.end()) return v.end();//If not found return
 
-        for (size_t i=0;i<s.size();i++)
+        for (size_t i=0; i<s.size(); i++)
         {
             vector<char>::iterator temp=result+i;
             if (temp==v.end()) return v.end();

@@ -27,7 +27,7 @@ namespace visualization
 {
 
 Viewer::Viewer(int fps) :
-        myThread(), myMutex(), myFps(fps)
+    myThread(), myMutex(), myFps(fps)
 {
     using namespace osgViewer;
     setThreadSafeReferenceCounting(true);

@@ -20,9 +20,9 @@
 
 QOSGAdapterWidget::QOSGAdapterWidget( QWidget * parent, const char * name, const QGLWidget * shareWidget, WindowFlags f):
 #if USE_QT4
-        QGLWidget(parent, shareWidget, f)
+    QGLWidget(parent, shareWidget, f)
 #else
-        QGLWidget(parent, name, shareWidget, f)
+    QGLWidget(parent, name, shareWidget, f)
 #endif
 {
     _gw = new osgViewer::GraphicsWindowEmbedded(0,0,width(),height());

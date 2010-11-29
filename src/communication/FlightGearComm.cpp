@@ -20,12 +20,12 @@
 
 FlightGearComm::FlightGearComm(const std::string host, const std::string fdmRecvPort,
                                const std::string ctrlsRecvPort, const std::string ctrlsTransPort) :
-        myFdmRecvSock(new SGSocketUDP(host,fdmRecvPort)),
-        myCtrlsRecvSock(new SGSocketUDP(host,ctrlsRecvPort)),
-        myCtrlsTransSock(new SGSocketUDP(host,ctrlsTransPort)),
-        myFdmRecvBuf(),
-        myCtrlsRecvBuf(),
-        myCtrlsTransBuf()
+    myFdmRecvSock(new SGSocketUDP(host,fdmRecvPort)),
+    myCtrlsRecvSock(new SGSocketUDP(host,ctrlsRecvPort)),
+    myCtrlsTransSock(new SGSocketUDP(host,ctrlsTransPort)),
+    myFdmRecvBuf(),
+    myCtrlsRecvBuf(),
+    myCtrlsTransBuf()
 {
     myFdmRecvSock->open(SG_IO_IN);
     myCtrlsRecvSock->open(SG_IO_IN);

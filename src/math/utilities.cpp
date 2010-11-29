@@ -40,53 +40,53 @@ namespace oooark
 {
 matrix<double> cross(const vector<double> &vec)
 {
-	matrix<double> cross(3,3);
-	cross(0,0) = 0 			,cross(0,1) = -vec(2) 	, cross(0,2) = vec(1);
-	cross(1,0) = vec(2) 	,cross(1,1) = 0 	 	, cross(1,2) = -vec(0);
-	cross(2,0) = -vec(1) 	,cross(2,1) = vec(0) 	, cross(2,2) = 0;
-	return cross;
+    matrix<double> cross(3,3);
+    cross(0,0) = 0 			,cross(0,1) = -vec(2) 	, cross(0,2) = vec(1);
+    cross(1,0) = vec(2) 	,cross(1,1) = 0 	 	, cross(1,2) = -vec(0);
+    cross(2,0) = -vec(1) 	,cross(2,1) = vec(0) 	, cross(2,2) = 0;
+    return cross;
 }
 vector<double> latLon2Quat(const vector<double> &latLon)
 {
-		vector<double> quat(4);
-		double clat = cos(-latLon(0)/2.0);
-		double clon = cos(latLon(1)/2.0);
-		double slat = sin(-latLon(0)/2.0);
-		double slon = sin(latLon(1)/2.0);
-		
-		quat(0) =  clat * clon;
-		quat(1) =  clat * slon;
-		quat(2) =  slat * clon;
-		quat(3) =  -slat * slon;
+    vector<double> quat(4);
+    double clat = cos(-latLon(0)/2.0);
+    double clon = cos(latLon(1)/2.0);
+    double slat = sin(-latLon(0)/2.0);
+    double slon = sin(latLon(1)/2.0);
 
-		return quat;
+    quat(0) =  clat * clon;
+    quat(1) =  clat * slon;
+    quat(2) =  slat * clon;
+    quat(3) =  -slat * slon;
+
+    return quat;
 }
 
 vector<double> latLon2Quat(const double &lat, const double &lon)
 {
-		vector<double> quat(4);
-		double clat = cos(-lat/2.0);
-		double clon = cos(lon/2.0);
-		double slat = sin(-lat/2.0);
-		double slon = sin(lon/2.0);
-		
-		quat(0) =  clat * clon;
-		quat(1) =  clat * slon;
-		quat(2) =  slat * clon;
-		quat(3) =  -slat * slon;
+    vector<double> quat(4);
+    double clat = cos(-lat/2.0);
+    double clon = cos(lon/2.0);
+    double slat = sin(-lat/2.0);
+    double slon = sin(lon/2.0);
 
-		return quat;
+    quat(0) =  clat * clon;
+    quat(1) =  clat * slon;
+    quat(2) =  slat * clon;
+    quat(3) =  -slat * slon;
+
+    return quat;
 }
 
 vector<double> quat2LatLon(const vector<double> &quat)
 {
-		vector<double> latLon(2);
-		vector<double> euler(3);
-		euler = quat2Euler(quat);
-		latLon(0) = -euler(1);
-		latLon(1) = euler(0);
+    vector<double> latLon(2);
+    vector<double> euler(3);
+    euler = quat2Euler(quat);
+    latLon(0) = -euler(1);
+    latLon(1) = euler(0);
 
-		return latLon;
+    return latLon;
 }
 
 
@@ -128,71 +128,71 @@ void lowPass(const double &freq, const vector<double> &freqCut,
 
 double signum(double in)
 {
-	if (in>=0.0) return 1.0;
-	else return -1.0;
+    if (in>=0.0) return 1.0;
+    else return -1.0;
 }
 
 vector<double> ones(int n)
 {
-	vector<double> ones(n);
-	for(int i=0;i<n;i++) ones(i) = 1;
-	return ones;
+    vector<double> ones(n);
+    for(int i=0; i<n; i++) ones(i) = 1;
+    return ones;
 }
 
 matrix<double> ones(int m, int n)
 {
     matrix<double> A(m,n);
-    for (int i=0;i<m;i++)
-        for (int j=0;j<n;j++)
+    for (int i=0; i<m; i++)
+        for (int j=0; j<n; j++)
             A(i,j) = 1;
     return A;
 }
 
 vector<double> dcm2Quat(const matrix<double> &dcm)
 {
-	vector<double> quat(4);
-	quat(0) = sqrt((1+dcm(0,0)+dcm(1,1)+dcm(2,2))/4.0);
-	quat(1) = sqrt((1+dcm(0,0)-dcm(1,1)-dcm(2,2))/4.0);
-	quat(2) = sqrt((1-dcm(0,0)+dcm(1,1)-dcm(2,2))/4.0);
-	quat(3) = sqrt((1-dcm(0,0)-dcm(1,1)+dcm(2,2))/4.0);
-	double maxVal = max(quat);
-	if(quat(0)==maxVal)
-	{
-		quat(1) = signum(dcm(1,2)-dcm(2,1))*quat(1);
-		quat(2) = signum(dcm(2,0)-dcm(0,2))*quat(2);
-		quat(3) = signum(dcm(0,1)-dcm(1,0))*quat(3);
-	}
-	else if(quat(1)==maxVal)
-	{
-		quat(0) = signum(dcm(1,2)-dcm(2,1))*quat(0);
-		quat(2) = signum(dcm(0,1)+dcm(1,0))*quat(2);
-		quat(3) = signum(dcm(0,2)+dcm(2,0))*quat(3);
-	}
-	else if(quat(2)==maxVal)
-	{
-		quat(0) = signum(dcm(2,0)-dcm(0,2))*quat(0);
-		quat(1) = signum(dcm(0,1)+dcm(1,0))*quat(1);
-		quat(3) = signum(dcm(1,2)+dcm(2,1))*quat(3);
-	}
-	else if(quat(3)==maxVal)
-	{
-		quat(0) = signum(dcm(0,1)-dcm(1,0))*quat(0);
-		quat(1) = signum(dcm(0,2)+dcm(2,0))*quat(1);
-		quat(2) = signum(dcm(1,2)+dcm(2,1))*quat(2);
-	}
-return quat;
+    vector<double> quat(4);
+    quat(0) = sqrt((1+dcm(0,0)+dcm(1,1)+dcm(2,2))/4.0);
+    quat(1) = sqrt((1+dcm(0,0)-dcm(1,1)-dcm(2,2))/4.0);
+    quat(2) = sqrt((1-dcm(0,0)+dcm(1,1)-dcm(2,2))/4.0);
+    quat(3) = sqrt((1-dcm(0,0)-dcm(1,1)+dcm(2,2))/4.0);
+    double maxVal = max(quat);
+    if(quat(0)==maxVal)
+    {
+        quat(1) = signum(dcm(1,2)-dcm(2,1))*quat(1);
+        quat(2) = signum(dcm(2,0)-dcm(0,2))*quat(2);
+        quat(3) = signum(dcm(0,1)-dcm(1,0))*quat(3);
+    }
+    else if(quat(1)==maxVal)
+    {
+        quat(0) = signum(dcm(1,2)-dcm(2,1))*quat(0);
+        quat(2) = signum(dcm(0,1)+dcm(1,0))*quat(2);
+        quat(3) = signum(dcm(0,2)+dcm(2,0))*quat(3);
+    }
+    else if(quat(2)==maxVal)
+    {
+        quat(0) = signum(dcm(2,0)-dcm(0,2))*quat(0);
+        quat(1) = signum(dcm(0,1)+dcm(1,0))*quat(1);
+        quat(3) = signum(dcm(1,2)+dcm(2,1))*quat(3);
+    }
+    else if(quat(3)==maxVal)
+    {
+        quat(0) = signum(dcm(0,1)-dcm(1,0))*quat(0);
+        quat(1) = signum(dcm(0,2)+dcm(2,0))*quat(1);
+        quat(2) = signum(dcm(1,2)+dcm(2,1))*quat(2);
+    }
+    return quat;
 }
 
 matrix<double> quat2Dcm(const vector<double> &quat)
 {
-	matrix<double>DCM(3,3);
-	double qr, qi, qj, qk, qr2, qi2, qj2, qk2;
-	qr=quat(0), qi=quat(1), qj=quat(2), qk=quat(3);
-	qr2 = qr*qr, qi2=qi*qi, qj2=qj*qj, qk2=qk*qk;	
-	DCM(0,0) = qr2+qi2-qj2-qk2, 	DCM(0,1) = 2*(qi*qj-qr*qk), 	DCM(0,2) = 2*(qi*qk+qr*qj);
-	DCM(1,0) = 2*(qr*qk+qi*qj), 	DCM(1,1) = qr2-qi2+qj2-qk2, 	DCM(1,2) = 2*(qj*qk-qr*qi);
-	DCM(2,0) = 2*(qi*qk-qr*qj), 	DCM(2,1) = 2*(qr*qi+qj*qk), 	DCM(2,2) = qr2-qi2-qj2+qk2;
-	return DCM;
+    matrix<double>DCM(3,3);
+    double qr, qi, qj, qk, qr2, qi2, qj2, qk2;
+    qr=quat(0), qi=quat(1), qj=quat(2), qk=quat(3);
+    qr2 = qr*qr, qi2=qi*qi, qj2=qj*qj, qk2=qk*qk;
+    DCM(0,0) = qr2+qi2-qj2-qk2, 	DCM(0,1) = 2*(qi*qj-qr*qk), 	DCM(0,2) = 2*(qi*qk+qr*qj);
+    DCM(1,0) = 2*(qr*qk+qi*qj), 	DCM(1,1) = qr2-qi2+qj2-qk2, 	DCM(1,2) = 2*(qj*qk-qr*qi);
+    DCM(2,0) = 2*(qi*qk-qr*qj), 	DCM(2,1) = 2*(qr*qi+qj*qk), 	DCM(2,2) = qr2-qi2-qj2+qk2;
+    return DCM;
 }
 
 
@@ -214,7 +214,7 @@ matrix<double> skew(const vector<double> &v)
 double max(const vector<double> &v)
 {
     double max = v(0);
-    for (int i=1;i<v.size();i++)
+    for (int i=1; i<v.size(); i++)
     {
         if (v(i) > max) max = v(i);
     }
@@ -224,7 +224,7 @@ double max(const vector<double> &v)
 double min(const vector<double> &v)
 {
     double min = v(0);
-    for (int i=1;i<v.size();i++)
+    for (int i=1; i<v.size(); i++)
     {
         if (v(i) < min) min = v(i);
     }
@@ -275,7 +275,7 @@ matrix<double> pinv(const matrix<double>& A)
     //std::cout << "tol: " << tol << std::endl;
 
     SigI = zero_matrix<double>(n,m);
-    for (int i=0;i<minDim;i++)
+    for (int i=0; i<minDim; i++)
     {
         if (Sig(i) > tol)
         {
@@ -322,7 +322,7 @@ matrix<double> dare(const matrix<double> &A, const matrix<double> &B, const matr
     Z11=inv(A);                       //inv(A)
     temp1=inv(R);                     //inv(R)
     Z21=prod(Q,Z11);                  //Q*inv(A)
-	temp2=prod3(B,temp1,trans(B));     //B*inv(R)*B'
+    temp2=prod3(B,temp1,trans(B));     //B*inv(R)*B'
     Z12=prod(Z11,temp2);
     Z22=trans(A)+prod(Z21,temp2);
 
@@ -349,7 +349,7 @@ matrix<double> dare(const matrix<double> &A, const matrix<double> &B, const matr
 
     int c1=0;
 
-    for (int i=0;i<n_Z;i++)
+    for (int i=0; i<n_Z; i++)
     {
         if ((eig(i).real()*eig(i).real()+eig(i).imag()*eig(i).imag())>1) //outside the unite cycle
         {
@@ -498,7 +498,7 @@ vector<double> crossProd(const vector<
 
 double dotProd(const vector<double> &v1, const vector<double> &v2)
 {
-	return inner_prod(v1,v2);
+    return inner_prod(v1,v2);
 }
 vector<double> quatConj(const vector<double> &q)
 {
@@ -587,15 +587,15 @@ vector<double> norm(const vector<double> &vec)
  */
 matrix<double> matSqrt(const matrix<double>& A)
 {
-	matrix<double,column_major> a(A);
-	int n = A.size1();	
-	vector<double> w(n);
-	matrix<double> W(n,n);
-	lapack::syev('V','U',a,w,lapack::minimal_workspace());
-	for (int i=0;i<n;i++) W(i,i)=sqrt(w(i));
-	matrix<double> tmp = prod(a,W);
-	matrix<double> result = prod(tmp,trans(a));
-	return result;
+    matrix<double,column_major> a(A);
+    int n = A.size1();
+    vector<double> w(n);
+    matrix<double> W(n,n);
+    lapack::syev('V','U',a,w,lapack::minimal_workspace());
+    for (int i=0; i<n; i++) W(i,i)=sqrt(w(i));
+    matrix<double> tmp = prod(a,W);
+    matrix<double> result = prod(tmp,trans(a));
+    return result;
 }
 
 
@@ -604,30 +604,30 @@ matrix<double> matSqrt(const matrix<double>& A)
  */
 matrix<double> vectorToMatrix(const vector<double> &v)
 {
-  	using namespace boost::numeric::ublas;
-	int n = v.size();
-	matrix<double> m(n,1);
-  	for (int i=0;i<n;i++) m(i,0) = v(i);
-	return m;
+    using namespace boost::numeric::ublas;
+    int n = v.size();
+    matrix<double> m(n,1);
+    for (int i=0; i<n; i++) m(i,0) = v(i);
+    return m;
 }
 
 matrix<double> prod3(const matrix<double> &a, const matrix<double> &b, const matrix<double> &c)
 {
-  	using namespace boost::numeric::ublas;
-	return prod(matrix<double>(prod(a,b)),c);	
+    using namespace boost::numeric::ublas;
+    return prod(matrix<double>(prod(a,b)),c);
 }
 
 //Used for re-arranging according to a permutation matrix
-	//matrix<double> permutation = identity_matrix<double>(vSize+lSize*trackingMin, vSize+lSize*trackingMin);
-	//for(int i=0;i<trackingMin-1;i++)
-	//{
-		//for(int j=0;j<3;j++)
-		//{
-			//std::cout<<"i: "<<permutation.size1()-(i+1)*lSize-3+j<<"   j: "<< permutation.size1()-(i+1)*lSize+3*i+j<<std::endl;
-			//swapRows(permutation, permutation.size1()-(i+1)*lSize-3+j, permutation.size1()-(i+1)*lSize+3*i+j);
-		//}
-	//}
-	//printMat(permutation,"Permutation",0);
+//matrix<double> permutation = identity_matrix<double>(vSize+lSize*trackingMin, vSize+lSize*trackingMin);
+//for(int i=0;i<trackingMin-1;i++)
+//{
+//for(int j=0;j<3;j++)
+//{
+//std::cout<<"i: "<<permutation.size1()-(i+1)*lSize-3+j<<"   j: "<< permutation.size1()-(i+1)*lSize+3*i+j<<std::endl;
+//swapRows(permutation, permutation.size1()-(i+1)*lSize-3+j, permutation.size1()-(i+1)*lSize+3*i+j);
+//}
+//}
+//printMat(permutation,"Permutation",0);
 
 } //namespace oooark
 // vim:ts=4:sw=4
