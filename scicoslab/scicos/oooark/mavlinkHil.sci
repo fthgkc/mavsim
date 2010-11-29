@@ -38,7 +38,7 @@ select job
 				getvalue('Set mavlink HIL Parameters',labels,..
 				list('str',-1,'vec',1),exprs);
 			if ~ok then break,end
-			[model,graphics,ok]=check_io(model,graphics,[13],[8],[1],[])
+			[model,graphics,ok]=check_io(model,graphics,[14],[8],[1],[])
 			if ok then
 				model.ipar=[..
 					length(evstr(device)),ascii(evstr(device)),0,..
@@ -53,15 +53,15 @@ select job
 		// set model properties
 		model=scicos_model()
 		model.sim=list('sci_mavlinkHil',4)
-		model.in=[13]
+		model.in=[14]
 		model.out=[8]
 		model.evtin=[1]
 		model.blocktype='c'
-		model.dep_ut=[%f %t]
+		model.dep_ut=[%t %f]
 
 		// jsbsim parameters
 		device="""/dev/ttyUSB0""";
-		baudRate=38400;
+		baudRate=115200;
 		model.ipar=[..
 					length(evstr(device)),ascii(evstr(device)),0,..
 					baudRate];

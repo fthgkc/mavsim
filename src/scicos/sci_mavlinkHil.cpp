@@ -29,6 +29,8 @@ extern "C"
 #include <math.h>
 #include "definitions.hpp"
 
+    static const double rad2deg = 180.0/3.14159;
+
     void sci_mavlinkHil(scicos_block *block, scicos::enumScicosFlags flag)
     {
         // data
@@ -73,7 +75,7 @@ extern "C"
         }
         else if (flag==scicos::updateState)
         {
-        }
+ 		}
         else if (flag==scicos::computeDeriv)
         {
         }
@@ -82,30 +84,68 @@ extern "C"
             // channel
             mavlink_channel_t chan = MAVLINK_COMM_0;
 
+            // accelerometer in milli g's
+            int16_t ax = u[0]*1000/9.81;
+            int16_t ay = u[1]*1000/9.81;
+            int16_t az = u[2]*1000/9.81;
 
-             // send messages
-            
-            if (count++ > 50)
+            // gyros
+            int16_t gx = u[3]*1000;
+            int16_t gy = u[4]*1000;
+            int16_t gz = u[5]*1000;
+
+            // magnetometer
+            int16_t mx = u[6]*1000;
+            int16_t my = u[7]*1000;
+            int16_t mz = u[8]*1000;
+
+			static int imuRate = 50;
+			static int gpsRate = 1;
+
+			//std::cout << "a:\t" << ax << "\t" << ay << "\t" << az << std::endl;
+			//std::cout << "g:\t" << gx << "\t" << gy << "\t" << gz << std::endl;
+			//std::cout << "m:\t" << mx << "\t" << my << "\t" << mz << std::endl;
+
+			double scicosTime = get_scicos_time();
+			static double imuTimeStamp = scicosTime;
+			static double gpsTimeStamp = scicosTime;
+			uint64_t timeStamp = scicosTime*1e6;
+
+			std::cout << "dt imu: " << scicosTime - imuTimeStamp << std::endl;
+			std::cout << "imu period: " << 1.0/imuRate << std::endl;
+			std::cout << "dt gps: " << scicosTime - gpsTimeStamp << std::endl;
+			std::cout << "gps period: " << 1.0/imuRate << std::endl;
+
+			// send imu message
+			if (scicosTime - imuTimeStamp > 1.0/imuRate)
+			{
+                mavlink_msg_raw_imu_send(chan,timeStamp,ax,ay,az,gx,gy,gz,mx,my,mz);
+				imuTimeStamp = scicosTime;
+			}
+			else if (scicosTime  - imuTimeStamp < 0)
+				imuTimeStamp = scicosTime;
+
+			// send gps mesage
+            if (scicosTime - gpsTimeStamp > 1.0/gpsRate)
             {
-                float lat = 40;
-                float lon = -86;
-                float alt = 1; 
-                float speed = 1;
-                float hdg = 1;
-                int timeStamp = 0;
-                float ax = 1, ay = 1, az = 1;
-                float xmag =1, ymag = 2, zmag = 3;
-                float p = 0, q =0, r =0;
-                float rawPress = 1;
-                float airspeed = 1;
-                mavlink_msg_gps_raw_send(chan,timeStamp,1,lat,lon,alt,2,10,speed,hdg);
-                mavlink_msg_raw_imu_send(chan,timeStamp,ax*1000,ay*1000,az*1000,p,q,r,
-                        xmag,ymag,zmag);
-                mavlink_msg_raw_pressure_send(chan,timeStamp,airspeed,rawPress,0);
-                count = 0;
-            }
+                // gps
+                double cog = u[9];
+                double sog = u[10];
+                double lat = u[11]*rad2deg;
+                double lon = u[12]*rad2deg;
+                double alt = u[13];
 
-            // receive messages
+                //double rawPress = 1;
+                //double airspeed = 1;
+
+                mavlink_msg_gps_raw_send(chan,timeStamp,1,lat,lon,alt,2,10,sog,cog);
+                //mavlink_msg_raw_pressure_send(chan,timeStamp,airspeed,rawPress,0);
+				gpsTimeStamp = scicosTime;
+            }
+			else if (scicosTime  - gpsTimeStamp < 0)
+				gpsTimeStamp = scicosTime;
+
+			// receive messages
             mavlink_message_t msg;
             mavlink_status_t status;
 
@@ -137,11 +177,8 @@ extern "C"
                 // update packet drop counter
                 packet_drops += status.packet_rx_drop_count;
             }
-        }
-        else
-        {
-        }
-    }
+    	}
+	}
 
 } // extern c
 
