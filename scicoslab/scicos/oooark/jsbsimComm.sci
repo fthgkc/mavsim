@@ -1,6 +1,36 @@
 function [x,y,typ]=jsbsimComm(job,arg1,arg2)
 //
 // jsbsimComm.sci
+//
+// USAGE:
+//
+// output 1: (state x) 
+//  [1]  Vt
+//  [2]  Alpha
+//  [3]  Theta
+//  [4]  Q
+//  [5]  Alt
+//  [6]  Beta
+//  [7]  Phi
+//  [8]  P
+//  [9]  R
+//  [10] Psi
+//  [11] Longitude
+//  [12] Latitude,
+//  [13] Rpm(if prop)
+//  [14] PropPitch (if prop)
+//
+// output 2: (output y) 
+//  (currently y=x, state feedback, see above)
+//
+// input: (input u)
+//  [1] Throttle
+//  [2] Aileron
+//  [3] Elevator
+//  [4] Rudder
+//
+// AUTHOR:
+//
 // Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>
 //
 // jsbsimComm.sci is free software: you can redistribute it and/or modify it

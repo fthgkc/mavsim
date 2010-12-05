@@ -33,6 +33,7 @@
 #include "JSBSim/input_output/FGPropertyManager.h"
 #include "JSBSim/input_output/flightGearIO.h"
 #include "utilities.hpp"
+#include <stdexcept>
 
 namespace JSBSim
 {
@@ -48,16 +49,21 @@ public:
     {
         std::cout << "initializing JSBSim" << std::endl;
         fdm.SetDebugLevel(debugLevel);
-        fdm.LoadModel(
+		
+        if (!fdm.LoadModel(
             std::string(root)+std::string(aircraftPath),
             std::string(root)+std::string(enginePath),
             std::string(root)+std::string(systemsPath),
-            std::string(modelName),false);
+            std::string(modelName),false))
+		{
+			throw std::runtime_error("unable to load model: " + std::string(root)+std::string(aircraftPath));
+		}
 
         if (enableFlightGearComm)
         {
             std::cout << "initializing FlightGear communication" << std::endl;
             socket = new FGfdmSocket(flightGearHost,flightGearPort,FGfdmSocket::ptUDP);
+			if (!socket) throw std::runtime_error("unable to open FlightGear socket");
         }
 
         // defaults
@@ -176,9 +182,15 @@ extern "C"
                 debugLevel = intArray[0];
                 enableFlightGearComm = intArray[1];
                 flightGearPort = intArray[2];
-                comm = new JSBSim::JSBSimComm(root,aircraftPath,enginePath,systemsPath,modelName,x,u,debugLevel,
-                                              enableFlightGearComm,flightGearHost,flightGearPort);
-                sci_jsbsimComm(block,scicos::updateState);
+				try
+				{
+                	comm = new JSBSim::JSBSimComm(root,aircraftPath,enginePath,systemsPath,modelName,x,u,debugLevel,
+                    	enableFlightGearComm,flightGearHost,flightGearPort);
+				}
+				catch (const std::runtime_error & e)
+				{
+					Coserror((char *)e.what());
+				}
             }
         }
         else if (flag==scicos::terminate)

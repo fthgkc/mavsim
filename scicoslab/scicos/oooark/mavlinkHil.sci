@@ -1,6 +1,33 @@
 function [x,y,typ]=mavlinkHil(job,arg1,arg2)
 //
 // mavlinkHil.sci
+//
+// USAGE:
+//
+// input: 
+//   accel
+//     [1] aX
+//     [2] aY
+//     [3] aZ
+//   gyro
+//     [4] gX
+//     [5] gY
+//     [6] gZ
+//   mag
+//     [7] mX
+//     [8] mY
+//     [9] mZ
+//   gps
+//     [10] cog (course over ground)
+//     [11] sog (speed over ground)
+//     [12] lat
+//     [13] lon
+//     [14] alt
+//
+// output: scaled servos (ch1-ch8)
+//
+// AUTHOR:
+//
 // Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>
 //
 // mavlinkHil.sci is free software: you can redistribute it and/or modify it
