@@ -14,6 +14,14 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * x: Vt, Alpha, Theta, Q, Alt, Beta, Phi, P, R, Psi, Longitude, Latitude,
+ * 		Rpm(if prop), PropPitch (if prop)
+ *
+ * u: Throttle, Aileron, Elevator, Rudder
+ * 
+ * y: x
+ *
  */
 
 #include "FGFDMExec.h"
