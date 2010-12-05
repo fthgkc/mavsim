@@ -14,6 +14,11 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * u: (accel) aX, aY, aZ, (gyro) gX, gY, gZ, (gps) cog, sog, lat, lon, alt
+ * 
+ * y: (scaled servos) ch1-ch8
+ *
  */
 
 #include "utilities.hpp"
