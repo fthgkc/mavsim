@@ -21,7 +21,17 @@ function [x,y,typ]=jsbsimComm(job,arg1,arg2)
 //  [14] PropPitch (if prop)
 //
 // output 2: (output y) 
-//  (currently y=x, state feedback, see above)
+// 	[1]  Latitude
+//  [2]  Longitude 
+//  [3]  Altitude
+//  [4]  Theta
+//  [5]  VGround
+//  [6]  AccelX
+//  [7]  AccelY
+//  [8]  AccelZ
+//  [9]  P
+//  [10] Q
+//  [11] R
 //
 // input: (input u)
 //  [1] Throttle

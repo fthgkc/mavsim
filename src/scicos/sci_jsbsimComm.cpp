@@ -105,7 +105,17 @@ public:
         ss.u.add(new FGStateSpace::DrCmd);
 
         // state feedback
-        ss.y = ss.x;
+        ss.y.add(new FGStateSpace::Latitude);
+		ss.y.add(new FGStateSpace::Longitude);
+		ss.y.add(new FGStateSpace::Alt);
+		ss.y.add(new FGStateSpace::Theta);
+		ss.y.add(new FGStateSpace::VGround);
+		ss.y.add(new FGStateSpace::AccelX);
+		ss.y.add(new FGStateSpace::AccelY);
+		ss.y.add(new FGStateSpace::AccelZ);
+		ss.y.add(new FGStateSpace::P);
+		ss.y.add(new FGStateSpace::Q);
+		ss.y.add(new FGStateSpace::R);
 
         // turn on propulsion
         fdm.GetPropulsion()->InitRunning(-1);

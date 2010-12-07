@@ -112,10 +112,10 @@ extern "C"
             static double gpsTimeStamp = scicosTime;
             uint64_t timeStamp = scicosTime*1e6;
 
-            std::cout << "dt imu: " << scicosTime - imuTimeStamp << std::endl;
-            std::cout << "imu period: " << 1.0/imuRate << std::endl;
-            std::cout << "dt gps: " << scicosTime - gpsTimeStamp << std::endl;
-            std::cout << "gps period: " << 1.0/imuRate << std::endl;
+            //std::cout << "dt imu: " << scicosTime - imuTimeStamp << std::endl;
+            //std::cout << "imu period: " << 1.0/imuRate << std::endl;
+            //std::cout << "dt gps: " << scicosTime - gpsTimeStamp << std::endl;
+            //std::cout << "gps period: " << 1.0/imuRate << std::endl;
 
             // send imu message
             if (scicosTime - imuTimeStamp > 1.0/imuRate)
@@ -160,6 +160,19 @@ extern "C"
                     switch(msg.msgid)
                     {
                     case MAVLINK_MSG_ID_RC_CHANNELS_SCALED:
+                    {
+                        mavlink_msg_rc_channels_scaled_decode(&msg,&rc_channels);
+                        y[0] = rc_channels.chan1_scaled/10000.0f;
+                        y[1] = rc_channels.chan2_scaled/10000.0f;
+                        y[2] = rc_channels.chan3_scaled/10000.0f;
+                        y[3] = rc_channels.chan4_scaled/10000.0f;
+                        y[4] = rc_channels.chan5_scaled/10000.0f;
+                        y[5] = rc_channels.chan6_scaled/10000.0f;
+                        y[6] = rc_channels.chan7_scaled/10000.0f;
+                        y[7] = rc_channels.chan8_scaled/10000.0f;
+                        break;
+                    }
+					 case MAVLINK_MSG_ID_RC_CHANNELS_SCALED:
                     {
                         mavlink_msg_rc_channels_scaled_decode(&msg,&rc_channels);
                         y[0] = rc_channels.chan1_scaled/10000.0f;
