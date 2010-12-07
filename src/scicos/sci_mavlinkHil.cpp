@@ -46,7 +46,6 @@ extern "C"
         static int count = 0;
 
         static uint16_t packet_drops = 0;
-        static mavlink_rc_channels_scaled_t rc_channels;
 
         //handle flags
         if (flag==scicos::initialize || flag==scicos::reinitialize)
@@ -161,6 +160,7 @@ extern "C"
                     {
                     case MAVLINK_MSG_ID_RC_CHANNELS_SCALED:
                     {
+        				mavlink_rc_channels_scaled_t rc_channels;
                         mavlink_msg_rc_channels_scaled_decode(&msg,&rc_channels);
                         y[0] = rc_channels.chan1_scaled/10000.0f;
                         y[1] = rc_channels.chan2_scaled/10000.0f;
@@ -172,19 +172,29 @@ extern "C"
                         y[7] = rc_channels.chan8_scaled/10000.0f;
                         break;
                     }
-					 case MAVLINK_MSG_ID_RC_CHANNELS_SCALED:
-                    {
-                        mavlink_msg_rc_channels_scaled_decode(&msg,&rc_channels);
-                        y[0] = rc_channels.chan1_scaled/10000.0f;
-                        y[1] = rc_channels.chan2_scaled/10000.0f;
-                        y[2] = rc_channels.chan3_scaled/10000.0f;
-                        y[3] = rc_channels.chan4_scaled/10000.0f;
-                        y[4] = rc_channels.chan5_scaled/10000.0f;
-                        y[5] = rc_channels.chan6_scaled/10000.0f;
-                        y[6] = rc_channels.chan7_scaled/10000.0f;
-                        y[7] = rc_channels.chan8_scaled/10000.0f;
+					case MAVLINK_MSG_ID_GLOBAL_POSITION:
+					{
+						mavlink_global_position_t global_position;
+						mavlink_msg_global_position_decode(&msg,&global_position);
+                        y[8] = global_position.lat;
+                        y[9] = global_position.lon;
+                        y[10] = global_position.alt;
+                        y[11] = global_position.vx;
+                        y[12] = global_position.vy;
+                        y[13] = global_position.vz;
                         break;
                     }
+					case MAVLINK_MSG_ID_ATTITUDE:
+					{
+						mavlink_attitude_t attitude;
+						mavlink_msg_attitude_decode(&msg,&attitude);
+                        y[14] = attitude.roll;
+                        y[15] = attitude.pitch;
+                        y[16] = attitude.yaw;
+                        y[17] = attitude.rollspeed;
+                        y[18] = attitude.pitchspeed;
+                        y[19] = attitude.yawspeed;
+                        break;
                     }
                 }
 
@@ -192,7 +202,8 @@ extern "C"
                 packet_drops += status.packet_rx_drop_count;
             }
         }
-    }
+   	 }
+  }
 
 } // extern c
 

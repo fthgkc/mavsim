@@ -24,7 +24,20 @@ function [x,y,typ]=mavlinkHil(job,arg1,arg2)
 //     [13] lon
 //     [14] alt
 //
-// output: scaled servos (ch1-ch8)
+// output: 
+// 	   normalized servos [1]-[8]
+// 	   [9 ] lat
+// 	   [10] lon
+//     [11] alt
+//     [12] vN
+//     [13] vE
+//     [14] vD
+//     [15] roll
+//     [16] pitch
+//     [17] yaw
+//     [18] roll speed
+//     [19] pitch speed
+//     [20] yaw speed
 //
 // AUTHOR:
 //
@@ -65,7 +78,7 @@ select job
 				getvalue('Set mavlink HIL Parameters',labels,..
 				list('str',-1,'vec',1),exprs);
 			if ~ok then break,end
-			[model,graphics,ok]=check_io(model,graphics,[14],[8],[1],[])
+			[model,graphics,ok]=check_io(model,graphics,[14],[20],[1],[])
 			if ok then
 				model.ipar=[..
 					length(evstr(device)),ascii(evstr(device)),0,..
@@ -81,7 +94,7 @@ select job
 		model=scicos_model()
 		model.sim=list('sci_mavlinkHil',4)
 		model.in=[14]
-		model.out=[8]
+		model.out=[20]
 		model.evtin=[1]
 		model.blocktype='c'
 		model.dep_ut=[%t %f]
