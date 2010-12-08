@@ -29,11 +29,19 @@ namespace ublas = boost::numeric::ublas;
 class GpsIns
 {
 public:
-	GpsIns(double lat=0, double lon=0, double height=0, double roll=0, double pitch=0, double yaw=0, bool useGravity = true);
+	GpsIns(double lat, double lon, double height, //
+			double roll, double pitch, double yaw,  //
+			double Vn, double Ve, double Vd, //
+			double sigmaPos, double sigmaAlt, double sigmaVel, //
+			double sigmaAccelG, double sigmaGyro, bool useGravity=true);
+
+void updateAll(double fbx, double fby, double fbz, double wbx, double wby, double wbz, double lat, double lon, double alt, double Vn, double Ve, double Vd);
+	void updateAll(const ublas::vector<double> &fb, const ublas::vector<double> &wb);
 	void updateFast(const ublas::vector<double> &fb, const ublas::vector<double> &wb);
 	void updateMed();
 	void updateSlow();
-	void updateGps(ublas::vector<double> z);
+	void updateGps(const ublas::vector<double> &z);
+	void getState(double *output);
 	
 	double jFreq;
 	double kFreq;
@@ -41,14 +49,14 @@ public:
 	double gFreq;
 	int integrateIndex;
 
-	double R0; //earth radius in meters
-	double w; //earth rotation rate in radians
+	static const double R0 = 6.3781e6; //earth radius in meters
+	static const double w= 7.292115e-5; //earth rotation rate in radians
 
 	double dt_j, dt_k, dt_l, dt_g;
 	double kQuat;
 	double sigmaNorm, zetaNorm;
 	double as, ac, bs, bc;
-	double g0;
+	static const double g0=9.81;
 	ublas::bounded_vector<double,3>g;
 	
 	ublas::bounded_vector<double,3>v;

@@ -22,20 +22,28 @@
 
 namespace oooark
 {
-GpsIns::GpsIns(double lat, double lon, double height, double roll, double pitch, double yaw, bool useGravity)
+GpsIns::GpsIns(double lat, double lon, double height, //
+	   	double roll, double pitch, double yaw, //
+		double Vn, double Ve, double Vd, //
+		double sigmaPos, double sigmaAlt, double sigmaVel, //
+		double sigmaAccelG, double sigmaGyro, bool useGravity): //
+		sigmaDegLat(sigmaPos/111131.745*M_PI/180.0), sigmaH(sigmaAlt), sigmaV(sigmaVel), sigmaAccel(sigmaAccelG*g0), sigmaGyro(sigmaGyro)
 {
+    //sigmaDegLat = sigmaPos/111131.745*M_PI/180.0; //10 meters expressed as radians of latitude uncertainty
+    //sigmaAccel = .01*g0; //1 milli g accell uncertainty
+    //sigmaGyro = 2*M_PI/180; //1 deg/sec rate uncertainty
+    //sigmaH = 10; //meters
+    //sigmaV = 0.2; //meters/sec
+    sigmaDeg = .001*M_PI/180; //1 deg attitude uncertainty
+
     jFreq = 500;
     kFreq = 100;
     lFreq = 10;
     gFreq = 1;
     integrateIndex=0;
 
-    R0 = 6.3781e6; //earth radius in meters
-    w = 7.292115e-5; //earth rotation rate in radians
-
     dt_j = dt_k = dt_l = dt_g = 0;
     kQuat = 1;
-    g0 = 9.81;
     g = zero_vector<double>(3);
     if(useGravity) g(2) = g0;
 
@@ -46,7 +54,9 @@ GpsIns::GpsIns(double lat, double lon, double height, double roll, double pitch,
     zeta = zero_vector<double>(3);
 
     q = zero_vector<double>(4);
-    vn = zero_vector<double>(3);
+    vn(0) = Vn;
+	vn(1) = Ve;
+	vn(2) = Vd;
     vnk = zero_vector<double>(3);
     vnkMinus = zero_vector<double>(3);
     r = zero_vector<double>(4);
@@ -72,7 +82,7 @@ GpsIns::GpsIns(double lat, double lon, double height, double roll, double pitch,
     //GPS-INS filter variables
     Sigma = zero_vector<double>(3); //incremental sum of body rotation
     Un = zero_vector<double>(3); //incremental sum of change in velocity
-    Zeta = zero_vector<double>(3); //incremental sume of navigation frame rotation
+    Zeta = zero_vector<double>(3); //incremental sum of navigation frame rotation
 
     H = zero_matrix<double>(6,9);
     Fc = zero_matrix<double>(9,9);
@@ -84,12 +94,7 @@ GpsIns::GpsIns(double lat, double lon, double height, double roll, double pitch,
     w_inX = zero_matrix<double>(3,3);
 
     //Noise Matrices
-    sigmaDegLat = 10.0/111131.745*M_PI/180.0; //10 meters expressed as radians of latitude uncertainty
-    sigmaAccel = .01*g0; //1 milli g accell uncertainty
-    sigmaGyro = 2*M_PI/180; //1 deg/sec rate uncertainty
-    sigmaH = 10; //meters
-    sigmaV = 0.2; //meters/sec
-    sigmaDeg = 1*M_PI/180; //1 deg attitude uncertainty
+
     G = zero_matrix<double>(9,6);
     Q = zero_matrix<double>(6,6);
     Qk = zero_matrix<double>(9,9);
@@ -114,10 +119,30 @@ GpsIns::GpsIns(double lat, double lon, double height, double roll, double pitch,
     I3 = identity_matrix<double>(3);
 }
 
+void GpsIns::updateAll(double fbx, double fby, double fbz, double wbx, double wby, double wbz, double lat, double lon, double alt, double Vn, double Ve, double Vd)
+{
+	vector<double> fb(3), wb(3), z(6);
+	fb(0) = fbx;
+	fb(1) = fby;
+	fb(2) = fbz;
+	wb(0) = wbx;
+	wb(1) = wby;
+	wb(2) = wbz;
+	z(0) = lat;
+	z(1) = lon;
+	z(2) = alt;
+	z(3) = Vn;
+	z(4) = Ve;
+	z(5) = Vd;
+
+	updateFast(fb,wb);
+	updateMed();
+	updateSlow();
+	updateGps(z);
+}
+
 void GpsIns::updateFast(const ublas::vector<double> &fb, const ublas::vector<double> &wbIn)
 {
-    bounded_vector<double,3> wb;
-    wb = wbIn + quatRotate(q,w_ie);
     //calculate elapsed time for each cycle
     time = boost::posix_time::microsec_clock::universal_time();
 
@@ -127,6 +152,10 @@ void GpsIns::updateFast(const ublas::vector<double> &fb, const ublas::vector<dou
     if (dt_j >= 1.0/jFreq)
     {
         time_j=time;
+		
+		bounded_vector<double,3> wb;
+		wb = wbIn ;//+ quatRotate(q,w_ie);
+
         alfa += wb*dt_j;
         deltaAlfa+=crossProd(alfa,wb)*dt_j;
 
@@ -244,17 +273,17 @@ void GpsIns::updateSlow()
         //std::cout<<"l-cycle Hz: "<<1.0/dt_l<<std::endl;
 
         //std::cout<<"Pos: "<<xn<<std::endl;
-        std::cout<<"LAT LON H: "<<latLonH(0)*180/M_PI<<" "<<latLonH(1)*180/M_PI<<" "<<latLonH(2)<<std::endl;
-        std::cout<<"Vel: "<<vn<<std::endl;
-        std::cout<<"Att: "<<quat2Euler(q)*180/M_PI<<std::endl;
-        std::cout<<std::endl;
+        //std::cout<<"LAT LON H: "<<latLonH(0)*180/M_PI<<" "<<latLonH(1)*180/M_PI<<" "<<latLonH(2)<<std::endl;
+        //std::cout<<"Vel: "<<vn<<std::endl;
+        //std::cout<<"Att: "<<quat2Euler(q)*180/M_PI<<std::endl;
+        //std::cout<<std::endl;
 
         //reset integration term
         zeta = zero_vector<double>(3);
     }
 }
 
-void GpsIns::updateGps(vector<double> z)
+void GpsIns::updateGps(const vector<double> &z)
 {
     time = boost::posix_time::microsec_clock::universal_time();
     diff_g = time-time_g;
@@ -266,9 +295,9 @@ void GpsIns::updateGps(vector<double> z)
         double tanLat = tan(latLonH(0));
         double sinLat = sin(latLonH(0));
         double R = R0+latLonH(2);
-        double vN = v(0);
-        double vE = v(1);
-        double vD = v(2);
+        double vN = vn(0);
+        double vE = vn(1);
+        double vD = vn(2);
 
         //Fill out Fc and Fd
         Frr(0,0)=0 	,Frr(0,1)=0 	, Frr(0,2)=-vN/(R*R);
@@ -343,7 +372,7 @@ void GpsIns::updateGps(vector<double> z)
         xErr = prod(kalman,z);
         P =prod(identity_matrix<double>(9)-prod(kalman,H) , P);
 
-        std::cout<<"xErr: "<<xErr<<std::endl;
+        //std::cout<<"xErr: "<<xErr<<std::endl;
         qLatLonCorrection = latLon2Quat(xErr(0), xErr(1));
         qLatLon = quatProd(quatConj(qLatLonCorrection),qLatLon);
         subrange(latLonH, 0,2) = quat2LatLon(qLatLon);
@@ -357,10 +386,24 @@ void GpsIns::updateGps(vector<double> z)
         q = quatProd(qCorrection, q);
 
         Un = Sigma = Zeta = zero_vector<double>(3);
-        std::cout<<"Lat Lon H Update: "<<latLonH(0)*180/M_PI<<" "<<latLonH(1)*180/M_PI<<" "<<latLonH(2)<<std::endl;
-        std::cout<<"Vel Update: "<<vn<<std::endl;
-        std::cout<<"Att Update: "<<quat2Euler(q)*180/M_PI<<std::endl;
+		std::cout<<"Lat Lon H GpsUpdate: "<<latLonH(0)*180/M_PI<<" "<<latLonH(1)*180/M_PI<<" "<<latLonH(2)<<std::endl;
+		std::cout<<"Vel GpsUpdate: "<<vn<<std::endl;
+		std::cout<<"Att GpsUpdate: "<<quat2Euler(q)*180/M_PI<<std::endl;
     }
+}
+
+void GpsIns::getState(double *output)
+{
+	vector<double> eulerTemp = quat2Euler(q)*180/M_PI;
+	output[0]=latLonH(0)*180/M_PI;
+	output[1]=latLonH(1)*180/M_PI;
+	output[2]=latLonH(2);
+	output[3]=eulerTemp(0);
+	output[4]=eulerTemp(1);
+	output[5]=eulerTemp(2);
+	output[6]=vn(0);
+	output[7]=vn(1);
+	output[8]=vn(2);
 }
 } // oooark
 

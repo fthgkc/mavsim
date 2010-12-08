@@ -14,9 +14,15 @@ int main (int argc, char const* argv[])
     double roll = 0*M_PI/180.0;
     double pitch = 0*M_PI/180.0;
     double yaw = 0*M_PI/180.0;
+    double sigmaPos = 10;
+    double sigmaAlt = 5;
+    double sigmaVel = 1;
+    double sigmaAccelG = .001;
+    double sigmaGyro = .001;
     bool useGravity = false;
-    oooark::GpsIns gpsIns(lat,lon,height,roll,pitch,yaw,useGravity);
-    oooark::GpsIns gpsInsError(lat,lon,height,roll,pitch,yaw,useGravity);
+
+    oooark::GpsIns gpsIns(lat,lon,height,roll,pitch,yaw,0,0,0,sigmaPos,sigmaAlt,sigmaVel,sigmaAccelG,sigmaGyro,useGravity);
+    oooark::GpsIns gpsInsError(lat,lon,height,roll,pitch,yaw,0,0,0,sigmaPos,sigmaAlt,sigmaVel,sigmaAccelG,sigmaGyro,useGravity);
 
     double fbNoiseFreq = 1330;
     double fbNoiseMag = .01*9.81;
