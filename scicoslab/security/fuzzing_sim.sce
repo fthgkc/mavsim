@@ -1,4 +1,5 @@
-clear clc
+clc
+numRuns = 10;
 load SCI/macros/scicos/lib
 exec (loadpallibs,-1)
 cd /hsl/homes/awkim/Projects/oooark/scicoslab/security
@@ -13,36 +14,54 @@ phi_t = x0(7);
 
 ///delay factor
 n_val = 5;   //number of testing values
-values1 = linspace(0,.5,n_val);  //varible values for sensitiviy study    
-values2 = linspace(0,.5,n_val);
-values3 = linspace(0,.5,n_val);
+values1 = linspace(0,.2,n_val);  //varible values for sensitiviy study    
+values2 = linspace(0,.2,n_val);
+values3 = linspace(0,.2,n_val);
 
 tf = 30;          //final integtration time for simulation
 t_sample = .1;   //sampling time
 
-load("BacksidePIDAutopilot_gainSched2.cos")
+load("BacksidePIDAutopilot_fuzzing2.cos")
 
 scs_m.props.tf=tf;
 
 for i = 1:n_val
   for j = 1:n_val
     for k = 1:n_val
-      exec easystar-datcom_lin.sce;
-      
-      sig_throt = values1(i);
-      sig_elev = values2(j);
-      sig_rudd = values3(k);
-      Info = scicos_simulate(scs_m);
-      if i == 1
-        savematfile('Data\fuzz\time','del_alt_ft.time');
+      altTemp=0;
+      vTemp=0;
+      phiTemp = 0;
+      rTemp = 0;
+      psiTemp = 0;
+      for m = 1:numRuns
+        exec easystar-datcom_lin.sce;
+        
+        sig_throt = values1(i);
+        sig_elev = values2(j);
+        sig_rudd = values3(k);
+        Info = scicos_simulate(scs_m);
+        if i == 1
+          savematfile('Data\fuzz\time','del_alt_ft.time');
+        end
+        altTemp = altTemp+del_alt_ft.values.^2;
+        vTemp = vTemp+del_v_m_s.values.^2;
+        phiTemp = phiTemp+del_phi_deg.values.^2;
+        rTemp = rTemp +del_r_rads_s.values.^2;
+        psiTemp = psiTemp +del_psi_deg.values.^2;
+        clear del_alt_ft del_v_m_s del_phi_deg del_r_rads_s del_psi_deg
       end
       
-      savematfile('Data\fuzz\del_alt_ft_'+string(i)+'_'+string(j)+'_'+string(k),'del_alt_ft.values');
-      savematfile('Data\fuzz\del_v_m_s_'+string(i)+'_'+string(j)+'_'+string(k),'del_v_m_s.values');  
-      savematfile('Data\fuzz\del_phi_deg_'+string(i)+'_'+string(j)+'_'+string(k),'del_phi_deg.values');
-      savematfile('Data\fuzz\del_r_rads_s_'+string(i)+'_'+string(j)+'_'+string(k),'del_r_rads_s.values');
-      savematfile('Data\fuzz\del_psi_deg_'+string(i)+'_'+string(j)+'_'+string(k),'del_psi_deg.values');
-      clear del_alt_ft del_v_m_s del_phi_deg del_r_rads_s del_psi_deg
+      altTemp = altTemp/numRuns;
+      vTemp = vTemp/numRuns;
+      phiTemp = phiTemp/numRuns;
+      rTemp = rTemp/numRuns;
+      psiTemp = psiTemp/numRuns;
+      savematfile('Data\fuzz\del_alt_ft_'+string(i)+'_'+string(j)+'_'+string(k),'altTemp');
+      savematfile('Data\fuzz\del_v_m_s_'+string(i)+'_'+string(j)+'_'+string(k),'vTemp');  
+      savematfile('Data\fuzz\del_phi_deg_'+string(i)+'_'+string(j)+'_'+string(k),'phiTemp');
+      savematfile('Data\fuzz\del_r_rads_s_'+string(i)+'_'+string(j)+'_'+string(k),'rTemp');
+      savematfile('Data\fuzz\del_psi_deg_'+string(i)+'_'+string(j)+'_'+string(k),'psiTemp');
+      
     end
   end
 end

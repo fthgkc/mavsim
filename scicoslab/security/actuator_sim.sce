@@ -15,14 +15,16 @@ exec easystar-datcom_lin.sce;
 ///delay factor
 n_val = 4;   //number of testing values
 
-values1 = [0,-1,-.3,.3,1];
-values2 = [0,-1,-.3,.3,1];
-values3 = [0,-1,-.3,.3,1];
+values1 = linspace(-.5,.5,n_val);
+values2 = linspace(-.5,.5,n_val);
+values3 = linspace(-.5,.5,n_val);
+values1 = [0, values1];
+values2 = [0, values2];
+values3 = [0, values3];
 
 tf = 30;          //final integtration time for simulation
 %scicos_context.t_sample = .1;   //sampling time
 
-load("BacksidePIDAutopilot_actuator4.cos")
 
 scs_m.props.tf=tf;
 
@@ -34,7 +36,9 @@ for i = 1:n_val+1
       %scicos_context.act_throttle = values1(i);
       %scicos_context.act_elevator = values2(j);
       %scicos_context.act_rudder = values3(k);
-      Info = scicos_simulate(scs_m);
+      load("BacksidePIDAutopilot_actuator3.cos")
+
+      Info = scicos_simulate(scs_m,list(),%scicos_context);
       if i == 1
         savematfile('Data\actuator\time','del_alt_ft.time');
       end

@@ -1,4 +1,4 @@
-clear clc
+clc
 load SCI/macros/scicos/lib
 exec (loadpallibs,-1)
 cd /hsl/homes/awkim/Projects/oooark/scicoslab/security
