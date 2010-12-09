@@ -1,4 +1,3 @@
-clear 
 clc
 load SCI/macros/scicos/lib
 exec (loadpallibs,-1)
@@ -7,10 +6,11 @@ cd /hsl/homes/awkim/Projects/oooark/scicoslab/security
 exec easystar-datcom_lin.sce;
 
 //trim values
-h_t=x0(5);
-v_t=x0(1);
-psi_t=180;
-phi_t=x0(7);
+
+%scicos_context.h_c=x0(5);
+%scicos_context.v_c=x0(1);
+%scicos_context.psi_c=180;
+%scicos_context.phi_c=x0(7);
 
 ///delay factor
 n_val = 4;   //number of testing values
@@ -20,9 +20,9 @@ values2 = [0,-1,-.3,.3,1];
 values3 = [0,-1,-.3,.3,1];
 
 tf = 30;          //final integtration time for simulation
-t_sample = .1;   //sampling time
+%scicos_context.t_sample = .1;   //sampling time
 
-load("BacksidePIDAutopilot_actuator2.cos")
+load("BacksidePIDAutopilot_actuator4.cos")
 
 scs_m.props.tf=tf;
 
@@ -31,9 +31,9 @@ for i = 1:n_val+1
   for j = 1:n_val+1
     for k = 1:n_val+1
 
-      act_throt = values1(i);
-      act_elev = values2(j);
-      act_rudd = values3(k);
+      %scicos_context.act_throttle = values1(i);
+      %scicos_context.act_elevator = values2(j);
+      %scicos_context.act_rudder = values3(k);
       Info = scicos_simulate(scs_m);
       if i == 1
         savematfile('Data\actuator\time','del_alt_ft.time');
@@ -54,5 +54,4 @@ savematfile('Data\actuator\values1','values1');
 savematfile('Data\actuator\values2','values2');
 savematfile('Data\actuator\values3','values3');
   
-
   
