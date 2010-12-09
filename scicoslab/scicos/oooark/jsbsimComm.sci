@@ -24,14 +24,18 @@ function [x,y,typ]=jsbsimComm(job,arg1,arg2)
 // 	[1]  Latitude
 //  [2]  Longitude 
 //  [3]  Altitude
-//  [4]  Theta
+//  [4]  COG (course over ground)
 //  [5]  VGround
 //  [6]  AccelX
 //  [7]  AccelY
 //  [8]  AccelZ
-//  [9]  P
-//  [10] Q
-//  [11] R
+//  [9]  Pi (inertial)
+//  [10] Qi (inertial)
+//  [11] Ri (inertial)
+//  [12] Vn
+//  [13] Ve 
+//  [14] Vd 
+
 //
 // input: (input u)
 //  [1] Throttle
@@ -91,7 +95,7 @@ select job
 					'vec',1,'str',-1,'vec',1),exprs);
 			if ~ok then break,end
 			n=size(x0,1)
-			model.out=[n;n];
+			model.out=[n;14];
 			[model,graphics,ok]=check_io(model,graphics,[4],[n;n],[],[])
 			if ok then
 				model.state=[x0];
@@ -114,13 +118,13 @@ select job
 		model=scicos_model()
 		model.sim=list('sci_jsbsimComm',4)
 		model.in=4
-		model.out=[13;13]
+		model.out=[14;14]
 		model.blocktype='c'
 		model.dep_ut=[%f %t]
 
 		// jsbsim parameters
-		Root="getenv(""OOOARK"")+""/data/EasyStar""";
-		ModelName="""EasyStar-datcom""";
+		Root="getenv(""OOOARK"")+""/data/easystar""";
+		ModelName="""easystar-datcom""";
 		AircraftPath="""""";
 		EnginePath="""""";
 		SystemsPath="""""";
@@ -138,7 +142,7 @@ select job
 					DebugLevel,EnableFlightGearComm,FlightGearPort];
 		
 		// intial state
-		x0=[]
+		x0="place x0 here";
 
 		// save state
 		model.state=x0;
