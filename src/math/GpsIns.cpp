@@ -386,17 +386,17 @@ void GpsIns::updateGps(const vector<double> &z)
         q = quatProd(qCorrection, q);
 
         Un = Sigma = Zeta = zero_vector<double>(3);
-		std::cout<<"Lat Lon H GpsUpdate: "<<latLonH(0)*180/M_PI<<" "<<latLonH(1)*180/M_PI<<" "<<latLonH(2)<<std::endl;
-		std::cout<<"Vel GpsUpdate: "<<vn<<std::endl;
-		std::cout<<"Att GpsUpdate: "<<quat2Euler(q)*180/M_PI<<std::endl;
+		//std::cout<<"Lat Lon H GpsUpdate: "<<latLonH(0)*180/M_PI<<" "<<latLonH(1)*180/M_PI<<" "<<latLonH(2)<<std::endl;
+		//std::cout<<"Vel GpsUpdate: "<<vn<<std::endl;
+		//std::cout<<"Att GpsUpdate: "<<quat2Euler(q)*180/M_PI<<std::endl;
     }
 }
 
 void GpsIns::getState(double *output)
 {
 	vector<double> eulerTemp = quat2Euler(q)*180/M_PI;
-	output[0]=latLonH(0)*180/M_PI;
-	output[1]=latLonH(1)*180/M_PI;
+	output[0]=latLonH(0);
+	output[1]=latLonH(1);
 	output[2]=latLonH(2);
 	output[3]=eulerTemp(0);
 	output[4]=eulerTemp(1);
