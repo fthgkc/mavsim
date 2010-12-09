@@ -75,7 +75,7 @@ select job
 				list('vec',1,'vec',1,'vec',1,'vec',1,'vec',1),exprs);
 			if ~ok then break,end
 			model.out=[9];
-			[model,graphics,ok]=check_io(model,graphics,[4],model.out,[],[])
+			[model,graphics,ok]=check_io(model,graphics,model.in,model.out,[],[])
 			if ok then
 				model.state=[x0];
 				model.rpar=[];

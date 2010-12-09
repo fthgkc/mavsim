@@ -35,7 +35,6 @@ function [x,y,typ]=jsbsimComm(job,arg1,arg2)
 //  [12] Vn
 //  [13] Ve 
 //  [14] Vd 
-
 //
 // input: (input u)
 //  [1] Throttle
