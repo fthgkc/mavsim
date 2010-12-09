@@ -96,7 +96,7 @@ select job
 			if ~ok then break,end
 			n=size(x0,1)
 			model.out=[n;14];
-			[model,graphics,ok]=check_io(model,graphics,[4],[n;n],[],[])
+			[model,graphics,ok]=check_io(model,graphics,[4],model.out,[],[])
 			if ok then
 				model.state=[x0];
 				model.ipar=[..

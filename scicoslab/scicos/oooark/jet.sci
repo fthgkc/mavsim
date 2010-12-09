@@ -1,6 +1,19 @@
 function [x,y,typ]=jet(job,arg1,arg2)
 //
 // jet.sci
+//
+// USAGE:
+//
+// input 1:
+//  [1]  roll
+//  [2]  pitch
+//  [3]  yaw
+//  [4]  aileron
+//  [5]  elevator
+//  [6]  rudder
+//  [7]  throttle
+//
+//
 // Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>
 //
 // jet.sci is free software: you can redistribute it and/or modify it
