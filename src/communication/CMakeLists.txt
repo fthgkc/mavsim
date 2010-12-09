@@ -15,7 +15,7 @@ install(TARGETS oooarkCommunication DESTINATION lib)
 
 install(FILES
 	AsyncSerial.hpp 
-	asio_mavlink_bridge_header.h
+	asio_mavlink_bridge.h
 	#FlightGearComm.hpp
 	#flightGearUtils.hpp
 	#net_ctrls.hxx

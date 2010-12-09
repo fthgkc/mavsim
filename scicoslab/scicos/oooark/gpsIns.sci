@@ -16,16 +16,16 @@ function [x,y,typ]=gpsIns(job,arg1,arg2)
 //  [9]  Vd
 //
 // input 1: (input u1)
-//  [1] fb
-//  [2] wb
+//  [1] fbi (inertial)
+//  [2] wbi (inertial)
 //
 // input 2: (input u2)
 //  [1]  Lat
 //  [2]  Lon
 //  [3]  Alt
-//  [4]  roll
-//  [5]  pitch
-//  [6]  yaw
+//  [4]  Phi
+//  [5]  Theta
+//  [6]  Psi
 //  [7]  Vn
 //  [8]  Ve
 //  [9]  Vd
