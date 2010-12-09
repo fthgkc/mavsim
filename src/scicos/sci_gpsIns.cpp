@@ -62,9 +62,8 @@ extern "C"
 
         // data
         double *u1=(double*)GetInPortPtrs(block,1);
-		double *u2=(double*)GetInPortPtrs(block,2)
+		double *u2=(double*)GetInPortPtrs(block,2);
         double *xOut=(double*)GetOutPortPtrs(block,1);
-        double *y=(double*)GetOutPortPtrs(block,2);
         double *x=(double*)GetState(block);
         double *xd=(double*)GetDerState(block);
         double * rpar=block->rpar;
@@ -80,28 +79,28 @@ extern "C"
         {
             if (!gpsIns)
             {
-				lat = u2[0];
-				lon = u2[1];
-				height = u2[2];
-				roll = u2[3];
-				pitch = u2[4];
-				yaw = u2[5];
-				Vn = u2[6];
-				Ve = u2[7];
-				Vd = u2[8];
-				sigmaPos = rPar[0];
-				sigmaAlt = rPar[1];
-				sigmaVel = rPar[2];
-				sigmaAccelG = rPar[3];
-				sigmaGyro = rPar[4];
+				lat = &u2[0];
+				lon = &u2[1];
+				height = &u2[2];
+				roll = &u2[3];
+				pitch = &u2[4];
+				yaw = &u2[5];
+				Vn = &u2[6];
+				Ve = &u2[7];
+				Vd = &u2[8];
+				sigmaPos = &rpar[0];
+				sigmaAlt = &rpar[1];
+				sigmaVel = &rpar[2];
+				sigmaAccelG = &rpar[3];
+				sigmaGyro = &rpar[4];
 				useGravity = false;
 				
-				fbx = u1[0];
-				fby = u1[1];
-				fbz = u1[2];
-				wbx = u1[3];
-				wby = u1[4];
-				wbz = u1[5];
+				fbx = &u1[0];
+				fby = &u1[1];
+				fbz = &u1[2];
+				wbx = &u1[3];
+				wby = &u1[4];
+				wbz = &u1[5];
 
 				try
 				{
@@ -123,14 +122,14 @@ extern "C"
         }
         else if (flag==scicos::updateState)
         {
-			gpsIns->updateAll(*fbx, *fby, *fbz, *wbx, *wby, *wbz, *lat, *lon, *alt, *Vn, *Ve, *Vd)
+			if(gpsIns) gpsIns->updateAll(*fbx, *fby, *fbz, *wbx, *wby, *wbz, *lat, *lon, *height, *Vn, *Ve, *Vd);
         }
         //else if (flag==scicos::computeDeriv)
         //{
         //}
         else if (flag==scicos::computeOutput)
         {
-			gpsIns->getState(xOut);
+			if(gpsIns) gpsIns->getState(xOut);
         }
         else
         {

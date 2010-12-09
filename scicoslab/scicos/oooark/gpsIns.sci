@@ -5,30 +5,30 @@ function [x,y,typ]=gpsIns(job,arg1,arg2)
 // USAGE:
 //
 // output 1: (state x) 
-//  [1]  Lat
-//  [2]  Lon
-//  [3]  Alt
-//  [4]  roll
-//  [5]  pitch
-//  [6]  yaw
-//  [7]  Vn
-//  [8]  Ve
-//  [9]  Vd
+//  [1]  Lat 	(rad)
+//  [2]  Lon 	(rad)
+//  [3]  Alt 	(m)
+//  [4]  roll 	(rad)
+//  [5]  pitch 	(rad)
+//  [6]  yaw 	(rad)
+//  [7]  Vn 	(m/s)
+//  [8]  Ve 	(m/s)
+//  [9]  Vd 	(m/s)
 //
 // input 1: (input u1)
-//  [1] fbi (inertial)
-//  [2] wbi (inertial)
+//  [1] fbi (m/s^2) (inertial)
+//  [2] wbi (m/s^2) (inertial)
 //
 // input 2: (input u2)
-//  [1]  Lat
-//  [2]  Lon
-//  [3]  Alt
-//  [4]  Phi
-//  [5]  Theta
-//  [6]  Psi
-//  [7]  Vn
-//  [8]  Ve
-//  [9]  Vd
+//  [1]  Lat 	(rad)
+//  [2]  Lon 	(rad)
+//  [3]  Alt 	(m)
+//  [4]  Phi 	(rad)
+//  [5]  Theta 	(rad)
+//  [6]  Psi 	(rad)
+//  [7]  Vn 	(m/s)
+//  [8]  Ve 	(m/s)
+//  [9]  Vd 	(m/s)
 //
 // AUTHOR:
 //
@@ -75,7 +75,7 @@ select job
 				list('vec',1,'vec',1,'vec',1,'vec',1,'vec',1),exprs);
 			if ~ok then break,end
 			model.out=[9];
-			[model,graphics,ok]=check_io(model,graphics,[4],model.out,[],[])
+			[model,graphics,ok]=check_io(model,graphics,model.in,model.out,[],[])
 			if ok then
 				model.state=[x0];
 				model.rpar=[];

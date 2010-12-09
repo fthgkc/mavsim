@@ -11,10 +11,11 @@ add_library(oooarkScicos SHARED
     sci_invPend.cpp
     sci_jet.cpp
     sci_jsbsimComm.cpp
+    sci_gpsIns.cpp
     sci_jsbsimTrim.cpp
     utilities.cpp
     )
-target_link_libraries(oooarkScicos oooarkCommunication oooarkVisualization
+target_link_libraries(oooarkScicos oooarkCommunication oooarkVisualization oooarkMath
     ${APM_LIBRARIES} ${JSBSIM_LIBRARIES})
 
 set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERISON}
