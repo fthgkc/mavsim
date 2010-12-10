@@ -7,7 +7,8 @@ link(oooark_sci_gateway_path+'../src/scicos/liboooarkScicos.so',..
 'sci_jsbsimComm',..
 'sci_gpsIns',..
 'sci_ardupilotmegaHil',..
-'sci_mavlinkHil'],..
+'sci_mavlinkHilSensor',..
+'sci_mavlinkHilState'],..
 'c');
 
 CurrentDirectory = pwd();

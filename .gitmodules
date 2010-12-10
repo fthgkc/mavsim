@@ -3,4 +3,4 @@
 	url = git://oooark.git.sf.net/gitroot/oooark/easystar
 [submodule "src/communication/mavlink"]
 	path = thirdParty/mavlink
-	url = git://github.com/pixhawk/mavlink.git
+	url = git://github.com/pixhawk/mavlink.git -b dev

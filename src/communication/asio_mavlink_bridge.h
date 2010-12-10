@@ -1,16 +1,14 @@
 /* MAVLink adapter header */
-#ifndef APM_MAVLINK_BRIDGE_HEADER_H
-#define APM_MAVLINK_BRIDGE_HEADER_H
+#ifndef APM_MAVLINK_BRIDGE__H
+#define APM_MAVLINK_BRIDGE__H
 
 #include "mavlink_types.h"
 #include "AsyncSerial.hpp"
 
+extern BufferedAsyncSerial * mavlink_comm_0_port;
+extern mavlink_system_t mavlink_system; 
 
 #define MAVLINK_USE_CONVENIENCE_FUNCTIONS
-
-mavlink_system_t mavlink_system = {13,1,0,0};
-
-BufferedAsyncSerial * mavlink_comm_0_port = NULL;
 
 static inline void comm_send_ch(mavlink_channel_t chan, uint8_t ch)
 {
@@ -45,4 +43,4 @@ static inline uint16_t comm_get_available(mavlink_channel_t chan)
     }
     return bytes;
 }
-#endif /* APM_MAVLINK_BRIDGE_HEADER_H */
+#endif /* APM_MAVLINK_BRIDGE__H */

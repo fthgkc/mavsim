@@ -1,43 +1,29 @@
-function [x,y,typ]=mavlinkHil(job,arg1,arg2)
+function [x,y,typ]=mavlinkHilState(job,arg1,arg2)
 //
-// mavlinkHil.sci
+// mavlinkHilState.sci
 //
 // USAGE:
 //
 // input: 
-//   accel
-//     [1] aX
-//     [2] aY
-//     [3] aZ
-//   gyro
-//     [4] gX
-//     [5] gY
-//     [6] gZ
-//   mag
-//     [7] mX
-//     [8] mY
-//     [9] mZ
-//   gps
-//     [10] cog (course over ground)
-//     [11] sog (speed over ground)
-//     [12] lat
-//     [13] lon
-//     [14] alt
+//   airspeed (meters/second)
+//     [1] Vt (true airspeed)
+//   attitude (rad)
+//     [2] roll
+//     [3] pitch
+//     [4] yaw
+//   attitude rates (body frame, rad/second)
+//     [5] rollRate
+//     [6] pitchRate
+//     [7] yawRate 
+//   position
+//     [8] cog (course over ground)
+//     [9] sog (speed over ground)
+//    [10] lat (rad)
+//    [11] lon (rad)
+//    [12] alt (meters)
 //
 // output: 
 // 	   normalized servos [1]-[8]
-// 	   [9 ] lat
-// 	   [10] lon
-//     [11] alt
-//     [12] vN
-//     [13] vE
-//     [14] vD
-//     [15] roll
-//     [16] pitch
-//     [17] yaw
-//     [18] roll speed
-//     [19] pitch speed
-//     [20] yaw speed
 //
 // AUTHOR:
 //
@@ -92,7 +78,7 @@ select job
 	case 'define' then
 		// set model properties
 		model=scicos_model()
-		model.sim=list('sci_mavlinkHil',4)
+		model.sim=list('sci_mavlinkHilState',4)
 		model.in=[14]
 		model.out=[20]
 		model.evtin=[1]
@@ -110,7 +96,7 @@ select job
 		exprs=[strcat(device),strcat(sci2exp(baudRate))];
 
 		// setup icon
-	  	gr_i=['xstringb(orig(1),orig(2),''mavlink HIL'',sz(1),sz(2),''fill'');']
+	  	gr_i=['xstringb(orig(1),orig(2),''mavlink HIL State'',sz(1),sz(2),''fill'');']
 	  	x=standard_define([5 2],model,exprs,gr_i)
 	end
 endfunction
