@@ -10,6 +10,7 @@ add_library(oooarkScicos SHARED
 	sci_mavlinkHilState.cpp
     sci_invPend.cpp
     sci_jet.cpp
+	sci_plane.cpp
     sci_jsbsimComm.cpp
     sci_gpsIns.cpp
     sci_jsbsimTrim.cpp

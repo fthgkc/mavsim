@@ -147,7 +147,7 @@ public:
     Jet();
     void setEuler(double roll, double pitch, double yaw);
     void setPositionScalars(double x, double y, double z);
-    void setU(double aileron, double elevator, double rudder, double throttle);
+    void setU(double throttle, double aileron, double elevator, double rudder);
 private:
     osg::ref_ptr<osg::Node> model;
     boost::scoped_ptr<Actuator> myLeftAileron;
@@ -155,7 +155,28 @@ private:
     boost::scoped_ptr<Actuator> myLeftElevator;
     boost::scoped_ptr<Actuator> myRightElevator;
     boost::scoped_ptr<Actuator> myRudder;
+    boost::scoped_ptr<Actuator> myThrustPlume;
 };
+
+class Plane : public osg::PositionAttitudeTransform
+{
+public:
+    Plane();
+    void setEuler(double roll, double pitch, double yaw);
+    void setPositionScalars(double x, double y, double z);
+    void setU(double throttle, double aileron, double elevator, double rudder);
+private:
+	double propAngle;
+    osg::ref_ptr<osg::Node> model;
+    boost::scoped_ptr<Actuator> myLeftAileron;
+    boost::scoped_ptr<Actuator> myRightAileron;
+    boost::scoped_ptr<Actuator> myLeftElevator;
+    boost::scoped_ptr<Actuator> myRightElevator;
+    boost::scoped_ptr<Actuator> myRudder;
+    boost::scoped_ptr<Actuator> myPropeller;
+};
+
+
 
 } // visualization
 

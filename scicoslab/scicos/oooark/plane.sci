@@ -1,6 +1,6 @@
-function [x,y,typ]=jet(job,arg1,arg2)
+function [x,y,typ]=plane(job,arg1,arg2)
 //
-// jet.sci
+// plane.sci
 //
 // USAGE:
 //
@@ -16,12 +16,12 @@ function [x,y,typ]=jet(job,arg1,arg2)
 //
 // Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>
 //
-// jet.sci is free software: you can redistribute it and/or modify it
+// plane.sci is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// jet.sci is distributed in the hope that it will be useful, but
+// plane.sci is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
@@ -44,15 +44,15 @@ select job
 	 	x=arg1;
 	case 'define' then
 	  	model=scicos_model()
-	  	model.sim=list('sci_jet',4)
+	  	model.sim=list('sci_plane',4)
 		model.in=7
 		model.evtin=1
 		  //model.out=1
 	  	model.blocktype='c'
 	  	model.dep_ut=[%t %f]
-	  	exprs='sci_jet'
+	  	exprs='sci_plane'
 	  	gr_i=['xstringb(orig(1),orig(2),..
-			[''Jet''],sz(1),sz(2),''fill'');']
+			[''plane''],sz(1),sz(2),''fill'');']
 	  	x=standard_define([5 2],model,exprs,gr_i)
 	end
 endfunction

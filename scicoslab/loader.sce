@@ -3,6 +3,7 @@ mode(-1);
 oooark_sci_gateway_path=get_absolute_file_path('loader.sce');
 link(oooark_sci_gateway_path+'../src/scicos/liboooarkScicos.so',..
 	['sci_jet',..
+'sci_plane',..
 'sci_jsbsimTrim',..
 'sci_jsbsimComm',..
 'sci_gpsIns',..

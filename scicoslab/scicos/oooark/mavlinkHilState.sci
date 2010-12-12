@@ -29,12 +29,12 @@ function [x,y,typ]=mavlinkHilState(job,arg1,arg2)
 //
 // Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>
 //
-// mavlinkHil.sci is free software: you can redistribute it and/or modify it
+// This file is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// mavlinkHil.sci is distributed in the hope that it will be useful, but
+// This file is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
@@ -64,7 +64,7 @@ select job
 				getvalue('Set mavlink HIL Parameters',labels,..
 				list('str',-1,'vec',1),exprs);
 			if ~ok then break,end
-			[model,graphics,ok]=check_io(model,graphics,[14],[20],[1],[])
+			[model,graphics,ok]=check_io(model,graphics,[12],[20],[1],[])
 			if ok then
 				model.ipar=[..
 					length(evstr(device)),ascii(evstr(device)),0,..
@@ -79,7 +79,7 @@ select job
 		// set model properties
 		model=scicos_model()
 		model.sim=list('sci_mavlinkHilState',4)
-		model.in=[14]
+		model.in=[12]
 		model.out=[20]
 		model.evtin=[1]
 		model.blocktype='c'
