@@ -129,11 +129,9 @@ Label::Label(
     float minScale,
     float maxScale)
 {
-    std::string timesFont("/usr/share/fonts/truetype/ttf-liberation/LiberationSans-Regular.ttf");
     osgText::Text* text = new osgText::Text;
     text->setCharacterSize(characterSize);
     text->setText(message);
-    text->setFont(timesFont);
     text->setAlignment(osgText::Text::CENTER_CENTER);
 
     osg::Geode* geode = new osg::Geode;
@@ -148,7 +146,7 @@ Label::Label(
     at->setMinimumScale(minScale);
     at->setMaximumScale(maxScale);
     at->setPosition(position);
-    addChild(at);
+    //addChild(at);
 }
 
 Frame::Frame(

@@ -1,8 +1,6 @@
 include_directories( "${PROJECT_SOURCE_DIR}/src")
 link_directories(${PROJECT_BINARY_DIR})
+link_libraries(${Boost_LIBRARIES} ${OOOARK_LIBRARIES})
 
-set(oooark_src
-	ins.cpp
-	)
-add_executable(ins ${oooark_src})
-target_link_libraries(ins ${Boost_LIBRARIES} ${OOOARK_LIBRARIES})
+add_executable(ins ins.cpp)
+add_executable(visualization visualization.cpp)
