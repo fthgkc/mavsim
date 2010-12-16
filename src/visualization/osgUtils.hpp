@@ -192,6 +192,23 @@ private:
     boost::scoped_ptr<Actuator> myWheelRB;
 };
 
+class Quad : public osg::PositionAttitudeTransform
+{
+public:
+    Quad();
+    void setEuler(double roll, double pitch, double yaw);
+    void setPositionScalars(double x, double y, double z);
+    void setU(double throttleF, double throttleB, double throttleL, double throttleR);
+private:
+	double myPropAngleF, myPropAngleB, myPropAngleL, myPropAngleR;
+    osg::ref_ptr<osg::Node> model;
+    boost::scoped_ptr<Actuator> myPropF;
+    boost::scoped_ptr<Actuator> myPropB;
+	boost::scoped_ptr<Actuator> myPropL;
+    boost::scoped_ptr<Actuator> myPropR;
+};
+
+
 
 
 } // visualization

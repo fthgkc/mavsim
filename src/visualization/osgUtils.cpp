@@ -527,6 +527,46 @@ void Car::setU(double throttle, double steering, double velocity)
 	myWheelRB->setAttitude(osg::Quat(myTireAngleRB-=0.5*throttle,osg::Vec3(0,1,0)));
 }
 
+Quad::Quad() :
+    model(), myPropF(), myPropB(),myPropL(), myPropR(),
+	myPropAngleF(), myPropAngleB(), myPropAngleL(), myPropAngleR()
+{
+	std::string modelFile( std::string(DATADIR) + "/models/arducopter.ac");
+	std::cout << "model file: " << modelFile << std::endl;
+    model = osgDB::readNodeFile(modelFile);
+	if (!model)
+	{
+		throw(std::runtime_error("can't find model: " + modelFile));
+		return;
+	}
+    myPropF.reset(new Actuator("propellerF",osg::Vec3(6.2,0,1),model));
+    myPropB.reset(new Actuator("propellerB",osg::Vec3(-6.2,0,1),model));
+    myPropL.reset(new Actuator("propellerL",osg::Vec3(0,-6.2,1),model));
+    myPropR.reset(new Actuator("propellerR",osg::Vec3(0,6.2,1),model));
+    addChild(model);
+}
+
+void Quad::setEuler(double roll, double pitch, double yaw)
+{
+    setAttitude(osg::Quat(
+                    roll,osg::Vec3(1,0,0),
+                    pitch,osg::Vec3(0,1,0),
+                    yaw,osg::Vec3(0,0,1)));
+}
+
+void Quad::setPositionScalars(double x, double y, double z)
+{
+    setPosition(osg::Vec3(x,y,z));
+}
+
+void Quad::setU(double throttleF, double throttleB, double throttleL, double throttleR)
+{
+	myPropF->setAttitude(osg::Quat(myPropAngleF-=0.5*throttleF,osg::Vec3(0,0,1)));
+	myPropB->setAttitude(osg::Quat(myPropAngleB-=0.5*throttleB,osg::Vec3(0,0,1)));
+	myPropL->setAttitude(osg::Quat(myPropAngleL-=0.5*throttleL,osg::Vec3(0,0,1)));
+	myPropR->setAttitude(osg::Quat(myPropAngleR-=0.5*throttleR,osg::Vec3(0,0,1)));
+}
+
 
 
 } // visualization

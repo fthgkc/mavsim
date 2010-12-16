@@ -12,6 +12,7 @@ add_library(oooarkScicos SHARED
     sci_jet.cpp
 	sci_plane.cpp
 	sci_car.cpp
+	sci_quad.cpp
     sci_jsbsimComm.cpp
     sci_gpsIns.cpp
     sci_jsbsimTrim.cpp
