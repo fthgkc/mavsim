@@ -29,6 +29,7 @@
 #include <osg/PointSprite>
 #include <osg/Point>
 #include <osgDB/ReadFile>
+#include <stdexcept>
 
 namespace oooark
 {
@@ -395,7 +396,13 @@ Jet::Jet() :
     model(), myLeftAileron(), myRightAileron(),
     myLeftElevator(), myRightElevator(), myRudder()
 {
-    model = osgDB::readNodeFile(std::string(DATADIR)+"/models/jet.ac");
+ 	std::string modelFile(std::string(DATADIR)+"/models/jet.ac");
+    model = osgDB::readNodeFile(modelFile);
+	if (!model)
+	{
+		throw(std::runtime_error("can't find model: " + modelFile));
+		return;
+	}
     myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-1.375,-3.330,0.485),model));
     myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-1.375,3.330,0.485),model));
     myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-7.431,-1.934,-0.417),model));
@@ -432,13 +439,20 @@ Plane::Plane() :
     model(), myLeftAileron(), myRightAileron(),
     myLeftElevator(), myRightElevator(), myRudder(), propAngle()
 {
+ 	std::string modelFile(std::string(DATADIR)+"/models/plane.ac");
+    model = osgDB::readNodeFile(modelFile);
+	if (!model)
+	{
+		throw(std::runtime_error("can't find model: " + modelFile));
+		return;
+	}
     model = osgDB::readNodeFile(std::string(DATADIR)+"/models/plane.ac");
-    myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-1.375,-3.330,0.485),model));
-    myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-1.375,3.330,0.485),model));
-    myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-7.431,-1.934,-0.417),model));
-    myRightElevator.reset(new Actuator("rightElevator",osg::Vec3(-7.431,1.934,-0.417),model));
-    myRudder.reset(new Actuator("rudder",osg::Vec3(-8.279,0,-2.458),model));
-    myPropeller.reset(new Actuator("propeller",osg::Vec3(0,0,0),model));
+    myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-0.142,-7.852,1.249),model));
+    myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-0.142,7.852,1.249),model));
+    myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-12.895,-1.820,0.021),model));
+    myRightElevator.reset(new Actuator("rightElevator",osg::Vec3(-12.895,1.820,0.021),model));
+    myRudder.reset(new Actuator("rudder",osg::Vec3(-12.598,0.003,.522),model));
+    myPropeller.reset(new Actuator("propeller",osg::Vec3(8.657,0,0.788),model));
     addChild(model);
 }
 
@@ -462,9 +476,58 @@ void Plane::setU(double throttle, double aileron, double elevator, double rudder
 	myLeftElevator->setAttitude(osg::Quat(elevator,osg::Vec3(0,1,0)));
 	myRightElevator->setAttitude(osg::Quat(elevator,osg::Vec3(0,1,0)));
 	myRudder->setAttitude(osg::Quat(rudder,osg::Vec3(0,0,1)));
-	propAngle += 10*throttle;
-	myPropeller->setAttitude(osg::Quat(propAngle,osg::Vec3(1,0,0)));
+	myPropeller->setAttitude(osg::Quat(propAngle+=5*throttle,osg::Vec3(1,0,0)));
 }
+
+Car::Car() :
+    model(), myWheelLF(), myWheelLB(),
+    myWheelRF(), myWheelRB(),
+	myTireAngleLF(), myTireAngleLB(),
+	myTireAngleRF(), myTireAngleRB()
+{
+	std::string modelFile( std::string(DATADIR) + "/models/rcTruck.ac");
+	std::cout << "model file: " << modelFile << std::endl;
+    model = osgDB::readNodeFile(modelFile);
+	if (!model)
+	{
+		throw(std::runtime_error("can't find model: " + modelFile));
+		return;
+	}
+    myWheelLF.reset(new Actuator("wheelLF",osg::Vec3(3.5,-3,1),model));
+    myWheelLB.reset(new Actuator("wheelLB",osg::Vec3(-3.5,-3,1),model));
+    myWheelRF.reset(new Actuator("wheelRF",osg::Vec3(3.5,3,1),model));
+    myWheelRB.reset(new Actuator("wheelRB",osg::Vec3(-3.5,3,1),model));
+    addChild(model);
+}
+
+void Car::setEuler(double roll, double pitch, double yaw)
+{
+    setAttitude(osg::Quat(
+                    roll,osg::Vec3(1,0,0),
+                    pitch,osg::Vec3(0,1,0),
+                    yaw,osg::Vec3(0,0,1)));
+}
+
+void Car::setPositionScalars(double x, double y, double z)
+{
+    setPosition(osg::Vec3(x,y,z));
+}
+
+void Car::setU(double throttle, double steering, double velocity)
+{
+	myWheelLF->setAttitude(osg::Quat(
+					myTireAngleLF-=0.5*throttle,osg::Vec3(0,1,0),
+                    0,osg::Vec3(1,0,0),
+                    steering,osg::Vec3(0,0,1)));
+	myWheelLB->setAttitude(osg::Quat(myTireAngleLB-=0.5*throttle,osg::Vec3(0,1,0)));
+	myWheelRF->setAttitude(osg::Quat(
+					myTireAngleRF-=0.5*throttle,osg::Vec3(0,1,0),
+                    0,osg::Vec3(1,0,0),
+                    steering,osg::Vec3(0,0,1)));
+	myWheelRB->setAttitude(osg::Quat(myTireAngleRB-=0.5*throttle,osg::Vec3(0,1,0)));
+}
+
+
 
 } // visualization
 

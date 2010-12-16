@@ -37,7 +37,7 @@ Viewer::Viewer(int fps) :
 
 Viewer::~Viewer()
 {
-    myThread->join();
+    if (myThread) myThread->join();
 }
 
 int Viewer::run()

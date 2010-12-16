@@ -1,13 +1,13 @@
 /*
- * sci_jet.cpp
+ * sci_car.cpp
  * Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>
  *
- * sci_jet.cpp is free software: you can redistribute it and/or modify it
+ * sci_car.cpp is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * sci_jet.cpp is distributed in the hope that it will be useful, but
+ * sci_car.cpp is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
@@ -23,22 +23,23 @@
 
 using namespace oooark::visualization;
 
-class VisJet : public Viewer
+class VisCar : public Viewer
 {
 public:
 
-    Jet * jet;
-    VisJet() : jet(new Jet)
+    Car * car;
+    VisCar() : car()
     {
+		car = new Car; // throws
         osg::Group * root = new Frame(15,"N","E","D");
-        root->addChild(jet);
+        if (car) root->addChild(car);
         getCameraManipulator()->setHomePosition(osg::Vec3(-30,30,-30),
                                                 osg::Vec3(0,0,0),osg::Vec3(0,0,-1));
-        setSceneData(root);
+        if (root) setSceneData(root);
         setUpViewInWindow(0,0,800,600);
         run();
     }
-    ~VisJet()
+    ~VisCar()
     {
         setDone(true);
     }
@@ -51,10 +52,10 @@ extern "C"
 #include <scicos/scicos_block4.h>
 #include <math.h>
 
-    void sci_jet(scicos_block *block, scicos::enumScicosFlags flag)
+    void sci_car(scicos_block *block, scicos::enumScicosFlags flag)
     {
         // definitions
-        static VisJet * vis=NULL;
+        static VisCar * vis=NULL;
         double *u=(double*)GetInPortPtrs(block,1);
 
         // handle flags
@@ -72,22 +73,24 @@ extern "C"
         }
         else if (flag==scicos::computeOutput)
         {
-			if (!vis)
+            if (!vis)
 			{
 				try
 				{
-					vis = new VisJet;
+					vis = new VisCar;
 				}
 				catch (const std::runtime_error & e)
 				{
 					Coserror((char *)e.what());
 				}
 			}
-
-            vis->lock();
-            vis->jet->setEuler(u[0],u[1],u[2]);
-            vis->jet->setU(u[3],u[4],u[5],u[6]);
-            vis->unlock();
+			else
+			{
+				vis->lock();
+				vis->car->setEuler(u[0],u[1],u[2]);
+				vis->car->setU(u[3],u[4],u[5]);
+				vis->unlock();
+			}
         }
         else
         {

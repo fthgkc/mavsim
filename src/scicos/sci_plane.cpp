@@ -7,7 +7,7 @@
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * sci_flightVis.cpp is distributed in the hope that it will be useful, but
+ * sci_plane.cpp is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
@@ -23,12 +23,12 @@
 
 using namespace oooark::visualization;
 
-class FlightVisPlane : public Viewer
+class VisPlane : public Viewer
 {
 public:
 
     Plane * plane;
-    FlightVisPlane() : plane(new Plane)
+    VisPlane() : plane(new Plane)
     {
         osg::Group * root = new Frame(15,"N","E","D");
         root->addChild(plane);
@@ -38,7 +38,7 @@ public:
         setUpViewInWindow(0,0,800,600);
         run();
     }
-    ~FlightVisPlane()
+    ~VisPlane()
     {
         setDone(true);
     }
@@ -54,7 +54,7 @@ extern "C"
     void sci_plane(scicos_block *block, scicos::enumScicosFlags flag)
     {
         // definitions
-        static FlightVisPlane * vis=NULL;
+        static VisPlane * vis=NULL;
         double *u=(double*)GetInPortPtrs(block,1);
 
         // handle flags
@@ -72,7 +72,18 @@ extern "C"
         }
         else if (flag==scicos::computeOutput)
         {
-            if (!vis) vis = new FlightVisPlane;
+			if (!vis)
+			{
+				try
+				{
+					vis = new VisPlane;
+				}
+				catch (const std::runtime_error & e)
+				{
+					Coserror((char *)e.what());
+				}
+			}
+
             vis->lock();
             vis->plane->setEuler(u[0],u[1],u[2]);
             vis->plane->setU(u[3],u[4],u[5],u[6]);

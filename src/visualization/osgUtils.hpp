@@ -176,6 +176,22 @@ private:
     boost::scoped_ptr<Actuator> myPropeller;
 };
 
+class Car : public osg::PositionAttitudeTransform
+{
+public:
+    Car();
+    void setEuler(double roll, double pitch, double yaw);
+    void setPositionScalars(double x, double y, double z);
+    void setU(double throttle, double steering, double velocity);
+private:
+	double myTireAngleLF, myTireAngleLB, myTireAngleRF, myTireAngleRB;
+    osg::ref_ptr<osg::Node> model;
+    boost::scoped_ptr<Actuator> myWheelLF;
+    boost::scoped_ptr<Actuator> myWheelLB;
+	boost::scoped_ptr<Actuator> myWheelRF;
+    boost::scoped_ptr<Actuator> myWheelRB;
+};
+
 
 
 } // visualization
