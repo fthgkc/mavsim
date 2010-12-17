@@ -27,7 +27,7 @@
 #include "communication/asio_mavlink_bridge.h"
 #include "common/mavlink.h"
 
-static BufferedAsyncSerial * mavlink_comm_0_port = NULL;
+BufferedAsyncSerial * mavlink_comm_0_port = NULL;
 
 extern "C"
 {

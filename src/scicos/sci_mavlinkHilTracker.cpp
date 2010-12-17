@@ -27,7 +27,7 @@
 #include "communication/asio_mavlink_bridge.h"
 #include "common/mavlink.h"
 	
-static BufferedAsyncSerial * mavlink_comm_0_port = NULL;
+BufferedAsyncSerial * mavlink_comm_2_port = NULL;
 
 extern "C"
 {
@@ -56,14 +56,14 @@ extern "C"
         //handle flags
         if (flag==scicos::initialize || flag==scicos::reinitialize)
         {
-            if (mavlink_comm_0_port == NULL)
+            if (mavlink_comm_2_port == NULL)
             {
                 getIpars(1,1,ipar,&stringArray,&intArray);
                 device = stringArray[0];
                 baudRate = intArray[0];
                 try
                 {
-                    mavlink_comm_0_port = new BufferedAsyncSerial(device,baudRate);
+                    mavlink_comm_2_port = new BufferedAsyncSerial(device,baudRate);
                 }
                 catch(const boost::system::system_error & e)
                 {
@@ -73,10 +73,10 @@ extern "C"
         }
         else if (flag==scicos::terminate)
         {
-            if (mavlink_comm_0_port)
+            if (mavlink_comm_2_port)
             {
-                delete mavlink_comm_0_port;
-                mavlink_comm_0_port = NULL;
+                delete mavlink_comm_2_port;
+                mavlink_comm_2_port = NULL;
             }
         }
         else if (flag==scicos::updateState)
@@ -88,7 +88,7 @@ extern "C"
         else if (flag==scicos::computeOutput)
         {
             // channel
-            mavlink_channel_t chan = MAVLINK_COMM_0;
+            mavlink_channel_t chan = MAVLINK_COMM_2;
 
 			// loop rates
 			// TODO: clean this up to use scicos events w/ timers
@@ -120,12 +120,12 @@ extern "C"
             mavlink_message_t msg;
             mavlink_status_t status;
 
-            while(comm_get_available(MAVLINK_COMM_0))
+            while(comm_get_available(MAVLINK_COMM_2))
             {
-                uint8_t c = comm_receive_ch(MAVLINK_COMM_0);
+                uint8_t c = comm_receive_ch(MAVLINK_COMM_2);
 
                 // try to get new message
-                if(mavlink_parse_char(MAVLINK_COMM_0,c,&msg,&status))
+                if(mavlink_parse_char(MAVLINK_COMM_2,c,&msg,&status))
                 {
                     switch(msg.msgid)
                     {
