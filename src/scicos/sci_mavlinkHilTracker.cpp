@@ -112,6 +112,7 @@ extern "C"
                 double vD = u[5];
 
                 mavlink_msg_global_position_send(chan,positionTimeStamp,lat,lon,alt,vN,vE,vD);
+				std::cout << "sending global position" << std::endl;
             }
             else if (scicosTime  - positionTimeStamp < 0)
                 positionTimeStamp = scicosTime;
@@ -122,6 +123,7 @@ extern "C"
 
             while(comm_get_available(MAVLINK_COMM_2))
             {
+				std::cout << "serial available" << std::endl;
                 uint8_t c = comm_receive_ch(MAVLINK_COMM_2);
 
                 // try to get new message
