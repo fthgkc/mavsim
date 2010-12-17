@@ -57,18 +57,7 @@ scs_m.objs(1)=scicos_block(..
                        mlist(["Block","graphics","model","gui","doc"],..
                        mlist(..
                        ["graphics","orig","sz","flip","theta","exprs","pin","pout","pein","peout","gr_i",..
-                       "id","in_implicit","out_implicit"],[0,0],[100,40],%t,0,"sci_quad",0,[],0,[],..
-                       list("xstringb(orig(1),orig(2),			[''quad''],sz(1),sz(2),''fill'');",8),"","E",..
-                       []),..
-                       mlist(..
-                       ["model","sim","in","in2","intyp","out","out2","outtyp","evtin","evtout","state",..
-                       "dstate","odstate","rpar","ipar","opar","blocktype","firing","dep_ut","label",..
-                       "nzcross","nmode","equations"],list("sci_quad",4),7,[],1,[],[],1,1,[],[],[],..
-                       list(),[],[],list(),"c",[],[%t,%f],"",0,0,list()),"quad",list()),..
-                       mlist(["Block","graphics","model","gui","doc"],..
-                       mlist(..
-                       ["graphics","orig","sz","flip","theta","exprs","pin","pout","pein","peout","gr_i",..
-                       "id","in_implicit","out_implicit"],[130,0],[100,40],%t,0,"sci_car",0,[],0,[],..
+                       "id","in_implicit","out_implicit"],[0,0],[100,40],%t,0,"sci_car",0,[],0,[],..
                        list("xstringb(orig(1),orig(2),			[''car''],sz(1),sz(2),''fill'');",8),"","E",[]),..
                        mlist(..
                        ["model","sim","in","in2","intyp","out","out2","outtyp","evtin","evtout","state",..
@@ -78,7 +67,29 @@ scs_m.objs(1)=scicos_block(..
                        mlist(["Block","graphics","model","gui","doc"],..
                        mlist(..
                        ["graphics","orig","sz","flip","theta","exprs","pin","pout","pein","peout","gr_i",..
-                       "id","in_implicit","out_implicit"],[260,0],[100,40],%t,0,"sci_plane",0,[],0,[],..
+                       "id","in_implicit","out_implicit"],[130,0],[100,40],%t,0,"sci_FlightGearComm",0,..
+                       0,0,[],..
+                       list("xstringb(orig(1),orig(2),			[''FlightGearComm''],sz(1),sz(2),''fill'');",8),..
+                       "","E","E"),..
+                       mlist(..
+                       ["model","sim","in","in2","intyp","out","out2","outtyp","evtin","evtout","state",..
+                       "dstate","odstate","rpar","ipar","opar","blocktype","firing","dep_ut","label",..
+                       "nzcross","nmode","equations"],list("sci_flightGearComm",4),4,[],1,11,[],1,1,[],..
+                       [],[],list(),[],[],list(),"c",[],[%t,%f],"",0,0,list()),"flightGearComm",list()),..
+                       mlist(["Block","graphics","model","gui","doc"],..
+                       mlist(..
+                       ["graphics","orig","sz","flip","theta","exprs","pin","pout","pein","peout","gr_i",..
+                       "id","in_implicit","out_implicit"],[260,0],[100,40],%t,0,"sci_jet",0,[],0,[],..
+                       list("xstringb(orig(1),orig(2),			[''Jet''],sz(1),sz(2),''fill'');",8),"","E",[]),..
+                       mlist(..
+                       ["model","sim","in","in2","intyp","out","out2","outtyp","evtin","evtout","state",..
+                       "dstate","odstate","rpar","ipar","opar","blocktype","firing","dep_ut","label",..
+                       "nzcross","nmode","equations"],list("sci_jet",4),7,[],1,[],[],1,1,[],[],[],..
+                       list(),[],[],list(),"c",[],[%t,%f],"",0,0,list()),"jet",list()),..
+                       mlist(["Block","graphics","model","gui","doc"],..
+                       mlist(..
+                       ["graphics","orig","sz","flip","theta","exprs","pin","pout","pein","peout","gr_i",..
+                       "id","in_implicit","out_implicit"],[390,0],[100,40],%t,0,"sci_plane",0,[],0,[],..
                        list("xstringb(orig(1),orig(2),			[''plane''],sz(1),sz(2),''fill'');",8),"","E",..
                        []),..
                        mlist(..
@@ -89,26 +100,14 @@ scs_m.objs(1)=scicos_block(..
                        mlist(["Block","graphics","model","gui","doc"],..
                        mlist(..
                        ["graphics","orig","sz","flip","theta","exprs","pin","pout","pein","peout","gr_i",..
-                       "id","in_implicit","out_implicit"],[390,0],[100,40],%t,0,"sci_jet",0,[],0,[],..
-                       list("xstringb(orig(1),orig(2),			[''Jet''],sz(1),sz(2),''fill'');",8),"","E",[]),..
+                       "id","in_implicit","out_implicit"],[0,70],[100,40],%t,0,"sci_quad",0,[],0,[],..
+                       list("xstringb(orig(1),orig(2),			[''quad''],sz(1),sz(2),''fill'');",8),"","E",..
+                       []),..
                        mlist(..
                        ["model","sim","in","in2","intyp","out","out2","outtyp","evtin","evtout","state",..
                        "dstate","odstate","rpar","ipar","opar","blocktype","firing","dep_ut","label",..
-                       "nzcross","nmode","equations"],list("sci_jet",4),7,[],1,[],[],1,1,[],[],[],..
-                       list(),[],[],list(),"c",[],[%t,%f],"",0,0,list()),"jet",list()),..
-                       mlist(["Block","graphics","model","gui","doc"],..
-                       mlist(..
-                       ["graphics","orig","sz","flip","theta","exprs","pin","pout","pein","peout","gr_i",..
-                       "id","in_implicit","out_implicit"],[0,70],[100,40],%t,0,"sci_FlightGearComm",0,0,..
-                       0,[],..
-                       list("xstringb(orig(1),orig(2),			[''FlightGearComm''],sz(1),sz(2),''fill'');",8),..
-                       "","E","E"),..
-                       mlist(..
-                       ["model","sim","in","in2","intyp","out","out2","outtyp","evtin","evtout","state",..
-                       "dstate","odstate","rpar","ipar","opar","blocktype","firing","dep_ut","label",..
-                       "nzcross","nmode","equations"],list("sci_flightGearComm",4),4,[],1,11,[],1,1,[],..
-                       [],[],list(),[],[],list(),"c",[],[%t,%f],"",0,0,list()),"flightGearComm",list())),..
-                       "",list(),..
+                       "nzcross","nmode","equations"],list("sci_quad",4),7,[],1,[],[],1,1,[],[],[],..
+                       list(),[],[],list(),"c",[],[%t,%f],"",0,0,list()),"quad",list())),"",list(),..
                        mlist(..
                        ["codegeneration","silent","cblock","rdnom","rpat","libs","opt","enable_debug",..
                        "scopes","remove","replace"],0,0,[],[],[],1,0,[],[],[])),..

@@ -57,7 +57,21 @@ scs_m.objs(1)=scicos_block(..
                        mlist(["Block","graphics","model","gui","doc"],..
                        mlist(..
                        ["graphics","orig","sz","flip","theta","exprs","pin","pout","pein","peout","gr_i",..
-                       "id","in_implicit","out_implicit"],[0,0],[100,40],%t,0,..
+                       "id","in_implicit","out_implicit"],[0,0],[100,40],%t,0,"sci_invPend",[0;0;0],..
+                       [0;0],[],[],..
+                       list(..
+                       "xstringb(orig(1),orig(2),			[''Inverted Pendulum''],sz(1),sz(2),''fill'');",8),..
+                       "",["E";"E";"E"],["E";"E"]),..
+                       mlist(..
+                       ["model","sim","in","in2","intyp","out","out2","outtyp","evtin","evtout","state",..
+                       "dstate","odstate","rpar","ipar","opar","blocktype","firing","dep_ut","label",..
+                       "nzcross","nmode","equations"],list("sci_invPend",4),[1;1;1],[],1,[1;1],[],1,[],..
+                       [],[],[],list(),["M";"m";"l";"ph"],[],list(),"c",[],[%t,%f],"",0,0,list()),..
+                       "invPend",list()),..
+                       mlist(["Block","graphics","model","gui","doc"],..
+                       mlist(..
+                       ["graphics","orig","sz","flip","theta","exprs","pin","pout","pein","peout","gr_i",..
+                       "id","in_implicit","out_implicit"],[130,0],[100,40],%t,0,..
                        ["getenv(""OOOARK"")+""/data/easystar""","""""","""""","""""",..
                        """easystar-datcom""","""place x0 here""","0","0","""localhost""","5500"],0,..
                        [0;0],[],[],..
@@ -68,25 +82,11 @@ scs_m.objs(1)=scicos_block(..
                        "dstate","odstate","rpar","ipar","opar","blocktype","firing","dep_ut","label",..
                        "nzcross","nmode","equations"],list("sci_jsbsimComm",4),4,[],1,[14;14],[],1,[],..
                        [],"place x0 here",[],list(),[],..
-                       [49,47,104,115,108,47,104,111,109,101,115,47,106,103,111,112,112,101,114,116,47,..
-                       80,114,111,106,101,99,116,115,47,111,111,111,97,114,107,47,100,97,116,97,47,..
-                       101,97,115,121,115,116,97,114,0,0,0,0,0,0,0,15,101,97,115,121,115,116,97,114,..
-                       45,100,97,116,99,111,109,0,9,108,111,99,97,108,104,111,115,116,0,0,0,5500],..
-                       list(),"c",[],[%f,%t],"",0,0,list()),"jsbsimComm",list()),..
-                       mlist(["Block","graphics","model","gui","doc"],..
-                       mlist(..
-                       ["graphics","orig","sz","flip","theta","exprs","pin","pout","pein","peout","gr_i",..
-                       "id","in_implicit","out_implicit"],[130,0],[100,40],%t,0,"sci_invPend",[0;0;0],..
-                       [0;0],[],[],..
-                       list(..
-                       "xstringb(orig(1),orig(2),			[''Inverted Pendulum''],sz(1),sz(2),''fill'');",8),..
-                       "",["E";"E";"E"],["E";"E"]),..
-                       mlist(..
-                       ["model","sim","in","in2","intyp","out","out2","outtyp","evtin","evtout","state",..
-                       "dstate","odstate","rpar","ipar","opar","blocktype","firing","dep_ut","label",..
-                       "nzcross","nmode","equations"],list("sci_invPend",4),[1;1;1],[],1,[1;1],[],1,[],..
-                       [],[],[],list(),["M";"m";"l";"ph"],[],list(),"c",[],[%t,%f],"",0,0,list()),..
-                       "invPend",list())),"",list(),..
+                       [46,47,104,115,108,47,104,111,109,101,115,47,114,107,114,111,98,47,80,114,111,..
+                       106,101,99,116,115,47,111,111,111,97,114,107,47,100,97,116,97,47,101,97,115,..
+                       121,115,116,97,114,0,0,0,0,0,0,0,15,101,97,115,121,115,116,97,114,45,100,97,..
+                       116,99,111,109,0,9,108,111,99,97,108,104,111,115,116,0,0,0,5500],list(),"c",[],..
+                       [%f,%t],"",0,0,list()),"jsbsimComm",list())),"",list(),..
                        mlist(..
                        ["codegeneration","silent","cblock","rdnom","rpat","libs","opt","enable_debug",..
                        "scopes","remove","replace"],0,0,[],[],[],1,0,[],[],[])),..

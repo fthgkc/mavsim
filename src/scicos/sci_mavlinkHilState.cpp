@@ -174,7 +174,7 @@ extern "C"
                     {
                     case MAVLINK_MSG_ID_RC_CHANNELS_SCALED:
                     {
-						std::cout << "receiving messages" << std::endl;
+						//std::cout << "receiving messages" << std::endl;
         				mavlink_rc_channels_scaled_t rc_channels;
                         mavlink_msg_rc_channels_scaled_decode(&msg,&rc_channels);
                         y[0] = rc_channels.chan1_scaled/10000.0f;
