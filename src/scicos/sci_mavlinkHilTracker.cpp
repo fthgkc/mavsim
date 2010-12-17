@@ -1,13 +1,13 @@
 /*
- * sci_mavlinkHilSensor.cpp
+ * sci_mavlinkHilTracker.cpp
  * Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>
  *
- * sci_mavlinkHilSensor.cpp is free software: you can redistribute it and/or modify it
+ * sci_mavlinkHilTracker.cpp is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * sci_mavlinkHilSensor.cpp is distributed in the hope that it will be useful, but
+ * sci_mavlinkHilTracker.cpp is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
@@ -18,8 +18,11 @@
  */
 
 #include "utilities.hpp"
+#include "communication/AsyncSerial.hpp"
 #include <iostream>
 #include <stdexcept>
+
+// mavlink system definition and headers
 #include "mavlink_types.h"
 #include "communication/asio_mavlink_bridge.h"
 #include "common/mavlink.h"
@@ -32,9 +35,9 @@ extern "C"
 
     static const double rad2deg = 180.0/3.14159;
 
-    void sci_mavlinkHilSensor(scicos_block *block, scicos::enumScicosFlags flag)
+    void sci_mavlinkHilTracker(scicos_block *block, scicos::enumScicosFlags flag)
     {
-		static BufferedAsyncSerial * mavlink_comm_0_port;
+		static BufferedAsyncSerial * mavlink_comm_0_port = NULL;
 
         // data
         double * u=GetRealInPortPtrs(block,1);
@@ -87,67 +90,30 @@ extern "C"
             mavlink_channel_t chan = MAVLINK_COMM_0;
 
 			// loop rates
-			// TODO: cleanup to use scicos timers
-            static int imuRate = 50;
-            static int gpsRate = 1;
+			// TODO: clean this up to use scicos events w/ timers
+            static int positionRate = 10;
 
-            //std::cout << "a:\t" << ax << "\t" << ay << "\t" << az << std::endl;
-            //std::cout << "g:\t" << gx << "\t" << gy << "\t" << gz << std::endl;
-            //std::cout << "m:\t" << mx << "\t" << my << "\t" << mz << std::endl;
-
+			// initial times
             double scicosTime = get_scicos_time();
-            static double imuTimeStamp = scicosTime;
-            static double gpsTimeStamp = scicosTime;
-            uint64_t timeStamp = scicosTime*1e6;
-
-            //std::cout << "dt imu: " << scicosTime - imuTimeStamp << std::endl;
-            //std::cout << "imu period: " << 1.0/imuRate << std::endl;
-            //std::cout << "dt gps: " << scicosTime - gpsTimeStamp << std::endl;
-            //std::cout << "gps period: " << 1.0/imuRate << std::endl;
-
-            // send imu message
-            if (scicosTime - imuTimeStamp > 1.0/imuRate)
+            static double positionTimeStamp = scicosTime;
+ 		    
+			// send global position
+            if (scicosTime - positionTimeStamp > 1.0/positionRate)
             {
-				// accelerometer in milli g's
-				int16_t ax = u[0]*1000/9.81;
-				int16_t ay = u[1]*1000/9.81;
-				int16_t az = u[2]*1000/9.81;
+                positionTimeStamp = scicosTime;
 
-				// gyros
-				int16_t gx = u[3]*1000;
-				int16_t gy = u[4]*1000;
-				int16_t gz = u[5]*1000;
-
-				// magnetometer
-				int16_t mx = u[6]*1000;
-				int16_t my = u[7]*1000;
-				int16_t mz = u[8]*1000;
-
-                mavlink_msg_raw_imu_send(chan,timeStamp,ax,ay,az,gx,gy,gz,mx,my,mz);
-                imuTimeStamp = scicosTime;
-            }
-            else if (scicosTime  - imuTimeStamp < 0)
-                imuTimeStamp = scicosTime;
-
-            // send gps mesage
-            if (scicosTime - gpsTimeStamp > 1.0/gpsRate)
-            {
                 // gps
-                double cog = u[9];
-                double sog = u[10];
-                double lat = u[11]*rad2deg;
-                double lon = u[12]*rad2deg;
-                double alt = u[13];
+                double lat = u[0]*rad2deg;
+                double lon = u[1]*rad2deg;
+                double alt = u[2];
+                double vN = u[3];
+                double vE = u[4];
+                double vD = u[5];
 
-                //double rawPress = 1;
-                //double airspeed = 1;
-
-                mavlink_msg_gps_raw_send(chan,timeStamp,1,lat,lon,alt,2,10,sog,cog);
-                //mavlink_msg_raw_pressure_send(chan,timeStamp,airspeed,rawPress,0);
-                gpsTimeStamp = scicosTime;
+                mavlink_msg_global_position_send(chan,positionTimeStamp,lat,lon,alt,vN,vE,vD);
             }
-            else if (scicosTime  - gpsTimeStamp < 0)
-                gpsTimeStamp = scicosTime;
+            else if (scicosTime  - positionTimeStamp < 0)
+                positionTimeStamp = scicosTime;
 
             // receive messages
             mavlink_message_t msg;
@@ -164,6 +130,7 @@ extern "C"
                     {
                     case MAVLINK_MSG_ID_RC_CHANNELS_SCALED:
                     {
+						std::cout << "receiving messages" << std::endl;
         				mavlink_rc_channels_scaled_t rc_channels;
                         mavlink_msg_rc_channels_scaled_decode(&msg,&rc_channels);
                         y[0] = rc_channels.chan1_scaled/10000.0f;
@@ -174,30 +141,6 @@ extern "C"
                         y[5] = rc_channels.chan6_scaled/10000.0f;
                         y[6] = rc_channels.chan7_scaled/10000.0f;
                         y[7] = rc_channels.chan8_scaled/10000.0f;
-                        break;
-                    }
-					case MAVLINK_MSG_ID_GLOBAL_POSITION:
-					{
-						mavlink_global_position_t global_position;
-						mavlink_msg_global_position_decode(&msg,&global_position);
-                        y[8] = global_position.lat;
-                        y[9] = global_position.lon;
-                        y[10] = global_position.alt;
-                        y[11] = global_position.vx;
-                        y[12] = global_position.vy;
-                        y[13] = global_position.vz;
-                        break;
-                    }
-					case MAVLINK_MSG_ID_ATTITUDE:
-					{
-						mavlink_attitude_t attitude;
-						mavlink_msg_attitude_decode(&msg,&attitude);
-                        y[14] = attitude.roll;
-                        y[15] = attitude.pitch;
-                        y[16] = attitude.yaw;
-                        y[17] = attitude.rollspeed;
-                        y[18] = attitude.pitchspeed;
-                        y[19] = attitude.yawspeed;
                         break;
                     }
                 }

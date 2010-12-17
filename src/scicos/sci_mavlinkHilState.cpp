@@ -27,8 +27,6 @@
 #include "communication/asio_mavlink_bridge.h"
 #include "common/mavlink.h"
 
-BufferedAsyncSerial * mavlink_comm_0_port = NULL;
-
 extern "C"
 {
 #include <scicos/scicos_block4.h>
@@ -39,6 +37,8 @@ extern "C"
 
     void sci_mavlinkHilState(scicos_block *block, scicos::enumScicosFlags flag)
     {
+		static BufferedAsyncSerial * mavlink_comm_0_port = NULL;
+
         // data
         double * u=GetRealInPortPtrs(block,1);
         double * y=GetRealOutPortPtrs(block,1);

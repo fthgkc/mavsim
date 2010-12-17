@@ -8,6 +8,7 @@ add_library(oooarkScicos SHARED
     sci_ardupilotmegaHil.cpp
 	sci_mavlinkHilSensor.cpp
 	sci_mavlinkHilState.cpp
+	sci_mavlinkHilTracker.cpp
     sci_invPend.cpp
     sci_jet.cpp
 	sci_plane.cpp
