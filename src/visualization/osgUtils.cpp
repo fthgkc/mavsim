@@ -130,6 +130,7 @@ Label::Label(
     float minScale,
     float maxScale)
 {
+	/*
     osgText::Text* text = new osgText::Text;
     text->setCharacterSize(characterSize);
     text->setText(message);
@@ -147,7 +148,8 @@ Label::Label(
     at->setMinimumScale(minScale);
     at->setMaximumScale(maxScale);
     at->setPosition(position);
-    //addChild(at);
+    addChild(at);
+	*/
 }
 
 Frame::Frame(
