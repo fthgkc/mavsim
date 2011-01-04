@@ -71,7 +71,6 @@ set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libjsbsim.a")
 
 # manual lib definitions
 set(LAPACK_LIBRARIES lapack)
-set(SIMGEAR_LIBRARIES sgio)
 if(APPLE)
 	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization)
 else(APPLE)
