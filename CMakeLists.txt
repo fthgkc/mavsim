@@ -80,9 +80,6 @@ endif(APPLE)
 # find libraries with cmake module
 set(Boost_ADDITIONAL_VERSIONS "1.40.0")
 find_package(Boost REQUIRED COMPONENTS thread-mt system-mt)
-find_package(Qt4 REQUIRED)
-set(QT_USE_QTOPENGL TRUE)
-set(QT_USE_QTUITOOLS TRUE)
 
 # find libraries with pkg-config
 include(LibFindMacros)
