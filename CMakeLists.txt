@@ -108,10 +108,10 @@ add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/git.stamp
 	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsim.stamp
-	COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure
+	COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/autogen.sh
 	COMMAND make
 	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsim.stamp
-	WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/thirdParty/jsbsim)
+	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim)
 
 add_custom_target(config ALL
 	DEPENDS 
