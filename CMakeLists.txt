@@ -2,6 +2,15 @@ cmake_minimum_required (VERSION 2.6)
 
 project (oooark)
 
+if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+	message(FATAL_ERROR "In-source builds are not allowed. For example run:
+	rm -rf CMakeCache.txt
+	mkdir build
+	cd build
+	cmake
+	make")
+endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
@@ -58,9 +67,11 @@ endif (APPLE)
 # libraries built from source
 set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
 set(JSBSIM_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/src")
+set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libjsbsim.a")
 
 # manual lib definitions
 set(LAPACK_LIBRARIES lapack)
+set(SIMGEAR_LIBRARIES sgio)
 if(APPLE)
 	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization)
 else(APPLE)
@@ -101,20 +112,32 @@ install(FILES
 	)
 
 # custom commands
+add_custom_command(OUTPUT  ${PROJECT_BINARY_DIR}/dir.stamp
+	COMMAND mkdir ARGS -p jsbsim
+	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/dir.stamp
+	WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
+
 add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/git.stamp
 	COMMAND git ARGS submodule init
 	COMMAND git ARGS submodule update
 	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp
 	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
+add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
+	COMMAND ./autogen.sh --no-configure
+	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
+	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim)
+
 add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsim.stamp
-	COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/autogen.sh
+	COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
 	COMMAND make
 	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsim.stamp
-	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim)
+	DEPENDS ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
+	WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/jsbsim)
 
 add_custom_target(config ALL
 	DEPENDS 
+	${PROJECT_BINARY_DIR}/dir.stamp 
 	${PROJECT_BINARY_DIR}/git.stamp 
 	${PROJECT_BINARY_DIR}/jsbsim.stamp)
 

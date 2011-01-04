@@ -26,12 +26,12 @@
 
 #include "FGFDMExec.h"
 #include "models/FGFCS.h"
-#include "JSBSim/math/FGStateSpace.h"
+#include "math/FGStateSpace.h"
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include "JSBSim/input_output/FGPropertyManager.h"
-#include "JSBSim/input_output/flightGearIO.h"
+#include "input_output/FGPropertyManager.h"
+#include "input_output/flightGearIO.h"
 #include "utilities.hpp"
 #include <stdexcept>
 

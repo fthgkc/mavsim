@@ -1,7 +1,7 @@
 mode(-1);
 
 oooark_sci_gateway_path=get_absolute_file_path('loader.sce');
-link(oooark_sci_gateway_path+'../src/scicos/liboooarkScicos.so',..
+link(oooark_sci_gateway_path+'../build/src/scicos/liboooarkScicos.so',..
 	['sci_jet',..
 'sci_car',..
 'sci_quad',..
@@ -9,7 +9,6 @@ link(oooark_sci_gateway_path+'../src/scicos/liboooarkScicos.so',..
 'sci_jsbsimTrim',..
 'sci_jsbsimComm',..
 'sci_gpsIns',..
-'sci_ardupilotmegaHil',..
 'sci_mavlinkHilSensor',..
 'sci_mavlinkHilState',..
 'sci_mavlinkHilTracker'],..
