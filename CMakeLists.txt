@@ -50,14 +50,17 @@ if (APPLE)
        endif (RESULT)  
        MESSAGE(STATUS "Found ScicosLab headers in ${SCICOSLAB_INCLUDE_DIRS}")
 else (APPLE)
+
+# find scicos on linux
        set(SCICOSLAB_INCLUDE_DIRS "/usr/lib/scicoslab-gtk-4.4b7/routines")
 endif (APPLE)
 
-# manual lib definitions
+# libraries built from source
 set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
-set(OSGEARTH_LIBRARIES osgEarth osgEarthUtil osgEarthFeatures)
+set(JSBSIM_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/src")
+
+# manual lib definitions
 set(LAPACK_LIBRARIES lapack)
-#set(SIMGEAR_LIBRARIES sgio)
 if(APPLE)
 	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization)
 else(APPLE)
@@ -73,8 +76,6 @@ set(QT_USE_QTUITOOLS TRUE)
 
 # find libraries with pkg-config
 include(LibFindMacros)
-libfind_pkg_check_modules(JSBSIM jsbsim>=1.0.rc3-advtrim)
-libfind_pkg_check_modules(APM ardupilotmegacomm>=0.1.0)
 libfind_pkg_check_modules(OSG openscenegraph>=2.8)
 
 # data directory
@@ -90,12 +91,32 @@ message(STATUS "install_name ${CMAKE_INSTALL_NAME_DIR}")
 # install data files
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION "share/oooark/" 
 	PATTERN "*.git*" EXCLUDE)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/scicoslab" DESTINATION "share/oooark/" 
+	PATTERN "*.git*" EXCLUDE)
 
 # pkgconfig
 install(FILES
 	oooark.pc
 	DESTINATION lib/pkgconfig
 	)
+
+# custom commands
+add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/git.stamp
+	COMMAND git ARGS submodule init
+	COMMAND git ARGS submodule update
+	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp
+	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsim.stamp
+	COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure
+	COMMAND make
+	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsim.stamp
+	WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/thirdParty/jsbsim)
+
+add_custom_target(config ALL
+	DEPENDS 
+	${PROJECT_BINARY_DIR}/git.stamp 
+	${PROJECT_BINARY_DIR}/jsbsim.stamp)
 
 # subdirectories
 add_subdirectory(src)

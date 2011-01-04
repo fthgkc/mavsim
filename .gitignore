@@ -6,6 +6,8 @@ tags
 Makefile
 _CPack_Packages
 CPack*
+build
+*.stamp
 *.cosf
 *.exe
 *.deb

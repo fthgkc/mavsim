@@ -4,3 +4,6 @@
 [submodule "thirdParty/mavlink"]
 	path = thirdParty/mavlink
 	url = https://github.com/pixhawk/mavlink.git
+[submodule "thirdParty/jsbsim"]
+	path = thirdParty/jsbsim
+	url = git://oooark.git.sourceforge.net/gitroot/oooark/jsbsim
