@@ -7,3 +7,9 @@
 [submodule "thirdParty/jsbsim"]
 	path = thirdParty/jsbsim
 	url = git://oooark.git.sourceforge.net/gitroot/oooark/jsbsim
+[submodule "boost-numeric-bindings"]
+	path = boost-numeric-bindings
+	url = http://git.tiker.net/trees/boost-numeric-bindings.git
+[submodule "thirdParty/boost-numeric-bindings"]
+	path = thirdParty/boost-numeric-bindings
+	url = http://git.tiker.net/trees/boost-numeric-bindings.git
