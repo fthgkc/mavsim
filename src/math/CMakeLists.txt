@@ -1,4 +1,4 @@
-include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${BOOST_NUMERIC_BINDINGS_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 add_library(oooarkMath SHARED
 	utilities.cpp

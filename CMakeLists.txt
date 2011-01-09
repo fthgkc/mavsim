@@ -4,10 +4,10 @@ project (oooark)
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	message(FATAL_ERROR "In-source builds are not allowed. For example run:
-	rm -rf CMakeCache.txt
+	rm CMakeCache.txt
 	mkdir build
 	cd build
-	cmake
+	cmake ..
 	make")
 endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
@@ -66,6 +66,7 @@ endif (APPLE)
 
 # libraries built from source
 set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
+set(BOOST_NUMERIC_BINDINGS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/boost-numeric-bindings")
 set(JSBSIM_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/src")
 set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libjsbsim.a")
 
