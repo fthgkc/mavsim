@@ -1,7 +1,13 @@
 add_subdirectory(communication)
-add_subdirectory(visualization)
-add_subdirectory(scicos)
-if(NOT APPLE)
-	add_subdirectory(math)
-endif(NOT APPLE)
 
+if (OPENSCENEGRAPH_FOUND) 
+	add_subdirectory(visualization)
+endif(OPENSCENEGRAPH_FOUND)
+
+if (LAPACK_FOUND)
+	add_subdirectory(math)
+endif(LAPACK_FOUND)
+
+if (SCICOSLAB_FOUND)
+	add_subdirectory(scicos)
+endif(SCICOSLAB_FOUND)

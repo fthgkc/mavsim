@@ -17,7 +17,7 @@ if(NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
-enable_language(C CXX)
+enable_language(C CXX Fortran)
 
 # The version number.
 set(oooark_VERSION_MAJOR 0)
@@ -37,54 +37,17 @@ set (CPACK_PACKAGE_VERSION_MINOR "${oooark_VERSION_MINOR}")
 set (CPACK_PACKAGE_VERSION_PATCH "${oooark_VERSION_PATCH}")
 include (CPack)
 
-# find scicos on Mac OS X
-if (APPLE)
-       execute_process(COMMAND mdfind "kMDItemKind == Application && kMDItemDisplayName == ScicosLabGtk"
-		   			   COMMAND head -1
-                       RESULT_VARIABLE RESULT
-                       OUTPUT_VARIABLE SCICOS_APP_BUNDLE
-                       ERROR_VARIABLE ERROR_MESSAGE
-                       OUTPUT_STRIP_TRAILING_WHITESPACE)
-       if (RESULT) 
-               MESSAGE(FATAL_ERROR "Could not locate ScicosLabGtk.app - ${ERROR_MESSAGE}")
-       endif (RESULT)
-       execute_process(COMMAND find ${SCICOS_APP_BUNDLE} -name routines
-		   			   COMMAND head -1
-                       RESULT_VARIABLE RESULT
-                       OUTPUT_VARIABLE SCICOSLAB_INCLUDE_DIRS
-                       ERROR_VARIABLE ERROR_MESSAGE
-                       OUTPUT_STRIP_TRAILING_WHITESPACE)
-       if (RESULT) 
-               MESSAGE(FATAL_ERROR "Could not locate scicos_block4.h in ScicosLabGtk.app - ${ERROR_MESSAGE}")
-       endif (RESULT)  
-       MESSAGE(STATUS "Found ScicosLab headers in ${SCICOSLAB_INCLUDE_DIRS}")
-else (APPLE)
-
-# find scicos on linux
-       set(SCICOSLAB_INCLUDE_DIRS "/usr/lib/scicoslab-gtk-4.4b7/routines")
-endif (APPLE)
+# find libraries with cmake modules
+find_package(SCICOSLAB)
+find_package(Boost 1.40.0 REQUIRED COMPONENTS thread-mt system-mt)
+find_package(OpenSceneGraph 2.8.3 COMPONENTS osgDB osgUtil osgViewer)
+find_package(LAPACK)
 
 # libraries built from source
 set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
 set(BOOST_NUMERIC_BINDINGS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/boost-numeric-bindings")
 set(JSBSIM_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/src")
 set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libjsbsim.a")
-
-# manual lib definitions
-set(LAPACK_LIBRARIES lapack)
-if(APPLE)
-	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization)
-else(APPLE)
-	set(OOOARK_LIBRARIES oooarkCommunication oooarkVisualization oooarkMath)
-endif(APPLE)
-
-# find libraries with cmake module
-set(Boost_ADDITIONAL_VERSIONS "1.40.0")
-find_package(Boost REQUIRED COMPONENTS thread-mt system-mt)
-
-# find libraries with pkg-config
-include(LibFindMacros)
-libfind_pkg_check_modules(OSG openscenegraph>=2.8)
 
 # data directory
 if(NOT DEFINED DATADIR)
@@ -108,7 +71,7 @@ install(FILES
 	DESTINATION lib/pkgconfig
 	)
 
-# custom commands
+# custom commands for submodules
 add_custom_command(OUTPUT  ${PROJECT_BINARY_DIR}/dir.stamp
 	COMMAND mkdir ARGS -p jsbsim
 	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/dir.stamp
@@ -138,8 +101,34 @@ add_custom_target(config ALL
 	${PROJECT_BINARY_DIR}/git.stamp 
 	${PROJECT_BINARY_DIR}/jsbsim.stamp)
 
+# internal library list definition
+message(STATUS "==================================")
+message(STATUS "OOOARK LIBRARY BUILD SUMMARY")
+set(OOOARK_LIBRARIES oooarkCommunication)
+message(STATUS "\tCommunication\tYES")
+
+if (SCICOSLAB_FOUND)
+	list(APPEND OOOARK_LIBRARIES oooarkScicos)
+	message(STATUS "\tScicos\t\tYES")
+else()
+	message(STATUS "\tScicos\t\tNO")
+endif (SCICOSLAB_FOUND)
+
+if (OPENSCENEGRAPH_FOUND)
+	list(APPEND OOOARK_LIBRARIES oooarkVisualization)
+	message(STATUS "\tVisualization\tYES")
+else()
+	message(STATUS "\tVisualization\tNO")
+endif (OPENSCENEGRAPH_FOUND)
+
+if (LAPACK_FOUND)
+	list(APPEND OOOARK_LIBRARIES oooarkMath)
+	message(STATUS "\tMath\t\tYES")
+else()
+	message(STATUS "\tMath\t\tNO")
+endif (LAPACK_FOUND)
+message(STATUS "==================================")
+
 # subdirectories
 add_subdirectory(src)
-if(NOT APPLE)
-	add_subdirectory(test)
-endif(NOT APPLE)
+add_subdirectory(test)
