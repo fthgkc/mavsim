@@ -30,6 +30,7 @@
 #include <osg/Point>
 #include <osgDB/ReadFile>
 #include <stdexcept>
+#include "config.h"
 
 namespace oooark
 {
@@ -398,7 +399,7 @@ Jet::Jet() :
     model(), myLeftAileron(), myRightAileron(),
     myLeftElevator(), myRightElevator(), myRudder()
 {
- 	std::string modelFile(std::string(DATADIR)+"/models/jet.ac");
+ 	std::string modelFile(std::string(datadir)+"/models/jet.ac");
     model = osgDB::readNodeFile(modelFile);
 	if (!model)
 	{
@@ -441,14 +442,14 @@ Plane::Plane() :
     model(), myLeftAileron(), myRightAileron(),
     myLeftElevator(), myRightElevator(), myRudder(), propAngle()
 {
- 	std::string modelFile(std::string(DATADIR)+"/models/plane.ac");
+ 	std::string modelFile(std::string(datadir)+"/models/plane.ac");
     model = osgDB::readNodeFile(modelFile);
 	if (!model)
 	{
 		throw(std::runtime_error("can't find model: " + modelFile));
 		return;
 	}
-    model = osgDB::readNodeFile(std::string(DATADIR)+"/models/plane.ac");
+    model = osgDB::readNodeFile(std::string(datadir)+"/models/plane.ac");
     myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-0.142,-7.852,1.249),model));
     myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-0.142,7.852,1.249),model));
     myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-12.895,-1.820,0.021),model));
@@ -487,7 +488,7 @@ Car::Car() :
 	myTireAngleLF(), myTireAngleLB(),
 	myTireAngleRF(), myTireAngleRB()
 {
-	std::string modelFile( std::string(DATADIR) + "/models/rcTruck.ac");
+	std::string modelFile( std::string(datadir) + "/models/rcTruck.ac");
 	std::cout << "model file: " << modelFile << std::endl;
     model = osgDB::readNodeFile(modelFile);
 	if (!model)
@@ -533,7 +534,7 @@ Quad::Quad() :
     model(), myPropF(), myPropB(),myPropL(), myPropR(),
 	myPropAngleF(), myPropAngleB(), myPropAngleL(), myPropAngleR()
 {
-	std::string modelFile( std::string(DATADIR) + "/models/arducopter.ac");
+	std::string modelFile( std::string(datadir) + "/models/arducopter.ac");
 	std::cout << "model file: " << modelFile << std::endl;
     model = osgDB::readNodeFile(modelFile);
 	if (!model)

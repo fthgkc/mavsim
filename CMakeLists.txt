@@ -57,7 +57,6 @@ set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libjsbsim.a")
 if(NOT DEFINED DATADIR)
 	set(DATADIR ${PROJECT_SOURCE_DIR}/data)
 endif(NOT DEFINED DATADIR)
-add_definitions(-DDATADIR="${DATADIR}")
 
 # the install_name directory component to be used when installing
 set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
