@@ -21,7 +21,7 @@
 
 #include <QWidget>
 #include "ui_MainWindow.h"
-#include "oooark/visualization/osgUtils.hpp"
+#include "visualization/osgUtils.hpp"
 #include "JSBSim/math/FGNelderMead.h"
 #include <iomanip>
 #include <boost/thread.hpp>

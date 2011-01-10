@@ -43,9 +43,3 @@ find_path(SCICOSLAB_INCLUDE_DIR
 # NOTE: Singular variables for this library, plural for libraries this this lib depends on.
 set(SCICOSLAB_PROCESS_INCLUDES SCICOSLAB_INCLUDE_DIR)
 libfind_process(SCICOSLAB)
-
-if (SCICOSLAB_FOUND)
-	message(STATUS "Found ScicosLab headers in ${SCICOSLAB_GUESS_INCLUDE_DIRS}")
-else()
-	message(STATUS "Scicoslab headers not found.")
-endif()

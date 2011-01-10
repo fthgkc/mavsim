@@ -1,8 +1,5 @@
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-configure_file(config.h.in config.h)
-install(FILES config.h DESTINATION include/oooark)
-
 add_subdirectory(communication)
 
 if (OPENSCENEGRAPH_FOUND) 

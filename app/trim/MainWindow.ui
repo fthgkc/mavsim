@@ -874,7 +874,7 @@
   <customwidget>
    <class>ViewerQT</class>
    <extends>QWidget</extends>
-   <header>oooark/visualization/QOSGAdapterWidget.hpp</header>
+   <header>visualization/QOSGAdapterWidget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

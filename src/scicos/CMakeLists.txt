@@ -13,6 +13,12 @@ set(oooarkScicosSources
     sci_jsbsimComm.cpp
 	)
 
+if (SIMGEAR_FOUND)
+	list(APPEND oooarkScicosSources
+		sci_flightGearComm.cpp
+	)
+endif (SIMGEAR_FOUND)
+
 if (LAPACK_FOUND)
 	list(APPEND oooarkScicosSources
     	sci_gpsIns.cpp

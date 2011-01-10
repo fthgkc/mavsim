@@ -41,11 +41,28 @@ include (CPack)
 find_package(Qt4)
 set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTUITOOLS TRUE)
+if (QT4_FOUND)
+	message(STATUS "Found QT4")
+endif(QT4_FOUND)
 
-find_package(SCICOSLAB)
 find_package(Boost 1.40.0 REQUIRED COMPONENTS thread-mt system-mt)
+if (Boost_FOUND)
+	message(STATUS "Found BOOST")
+endif(Boost_FOUND)
+
 find_package(OpenSceneGraph 2.8.3 COMPONENTS osgDB osgUtil osgViewer)
+if (OPENSCENEGRAPH_FOUND)
+	message(STATUS "Found OPENSCENEGRAPH")
+endif(OPENSCENEGRAPH_FOUND)
+
 find_package(LAPACK)
+if (LAPACK_FOUND)
+	message(STATUS "Found LAPACK")
+endif(LAPACK_FOUND)
+
+# find libraries with custom cmake modules
+find_package(SIMGEAR)
+find_package(SCICOSLAB)
 
 # libraries built from source
 set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
@@ -109,6 +126,7 @@ message(STATUS "==================================")
 message(STATUS "\tLIBRARY\t\tBUILDING")
 message(STATUS "==================================")
 set(OOOARK_LIBRARIES oooarkCommunication)
+message(STATUS "\tCommunication\tYES")
 
 if (SCICOSLAB_FOUND)
 	message(STATUS "\tScicos\t\tYES")
@@ -130,6 +148,9 @@ else()
 	message(STATUS "\tMath\t\tNO")
 endif (LAPACK_FOUND)
 message(STATUS "==================================")
+
+# project wide flags
+include_directories( ${PROJECT_SOURCE_DIR}/src )
 
 # subdirectories
 add_subdirectory(src)

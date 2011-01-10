@@ -10,8 +10,8 @@ set(oooarkVisualizationSource
 	)
 
 set(oooarkVisualizationHeaders
-	osgUtils.cpp
-	Viewer.cpp
+	osgUtils.hpp
+	Viewer.hpp
 	)
 
 if(QT_FOUND)
