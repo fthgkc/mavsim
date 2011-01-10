@@ -38,6 +38,10 @@ set (CPACK_PACKAGE_VERSION_PATCH "${oooark_VERSION_PATCH}")
 include (CPack)
 
 # find libraries with cmake modules
+find_package(Qt4)
+set(QT_USE_QTOPENGL TRUE)
+set(QT_USE_QTUITOOLS TRUE)
+
 find_package(SCICOSLAB)
 find_package(Boost 1.40.0 REQUIRED COMPONENTS thread-mt system-mt)
 find_package(OpenSceneGraph 2.8.3 COMPONENTS osgDB osgUtil osgViewer)
@@ -101,14 +105,13 @@ add_custom_target(config ALL
 	${PROJECT_BINARY_DIR}/git.stamp 
 	${PROJECT_BINARY_DIR}/jsbsim.stamp)
 
-# internal library list definition
+# internal library list definition / dep summary
 message(STATUS "==================================")
-message(STATUS "OOOARK LIBRARY BUILD SUMMARY")
+message(STATUS "\tLIBRARY\t\tBUILDING")
+message(STATUS "==================================")
 set(OOOARK_LIBRARIES oooarkCommunication)
-message(STATUS "\tCommunication\tYES")
 
 if (SCICOSLAB_FOUND)
-	list(APPEND OOOARK_LIBRARIES oooarkScicos)
 	message(STATUS "\tScicos\t\tYES")
 else()
 	message(STATUS "\tScicos\t\tNO")
@@ -132,3 +135,4 @@ message(STATUS "==================================")
 # subdirectories
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(app)
