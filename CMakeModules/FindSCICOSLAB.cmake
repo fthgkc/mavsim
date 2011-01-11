@@ -27,7 +27,10 @@ if (APPLE)
                MESSAGE(FATAL_ERROR "Could not locate scicos_block4.h in ScicosLabGtk.app - ${ERROR_MESSAGE}")
        endif (RESULT)  
 elseif(UNIX)
-	set(SCICOSLAB_GUESS_INCLUDE_DIRS "/usr/lib/scicoslab-gtk-4.4b7/routines")
+	set(SCICOSLAB_GUESS_INCLUDE_DIRS
+		/usr/lib/scicoslab-gtk-4.4b7/routines
+		/usr/lib/scicoslab-gtk-4.4/routines
+		)
 elseif(WIN32)
 	message(FATAL_ERROR "scicoslab cmake find module doesn't work for windows")
 endif()
