@@ -2,6 +2,9 @@ cmake_minimum_required (VERSION 2.6)
 
 project (oooark)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
+include(${CMAKE_MODULE_PATH}/language_support_v2.cmake) 
+
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	message(FATAL_ERROR "In-source builds are not allowed. For example run:
 	rm CMakeCache.txt
@@ -11,13 +14,20 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	make")
 endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
-enable_language(C CXX Fortran)
+enable_language(C)
+enable_language(CXX)
+
+workaround_9220(Fortran Fortran_langurage_works)
+if (Fortran_langurage_works)
+	enable_language(Fortran OPTIONAL)
+endif(Fortran_langurage_works)
 
 # The version number.
 set(oooark_VERSION_MAJOR 0)
@@ -51,7 +61,11 @@ set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTUITOOLS TRUE)
 find_package(Boost 1.40.0 REQUIRED COMPONENTS thread-mt system-mt)
 find_package(OpenSceneGraph 2.8.3 COMPONENTS osgDB osgUtil osgViewer)
-find_package(LAPACK)
+
+#if (CMAKE_Fortran_COMPILER_WORKS)
+	#find_package(LAPACK)
+#endif()
+
 find_package(SIMGEAR)
 find_package(SCICOSLAB)
 find_package(MAVLINK)
@@ -162,6 +176,14 @@ if (LAPACK_FOUND)
 else()
 	message(STATUS "\tMath\t\t\tNO")
 endif (LAPACK_FOUND)
+if (CMAKE_Fortran_COMPILER_WORKS)
+	message(STATUS "\t\tFortran\t\tYES")
+else()
+	message(STATUS "\t\tFortran\t\tNO")
+	set(CMAKE_Fortran_COMPILER none)
+endif (CMAKE_Fortran_COMPILER_WORKS)
+
+
 
 message(STATUS "=======================================")
 
