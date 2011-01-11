@@ -2,9 +2,19 @@ cmake_minimum_required (VERSION 2.6)
 
 project (oooark)
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
-include(${CMAKE_MODULE_PATH}/language_support_v2.cmake) 
+# marcos
+macro(find_or_build_from_source PACKAGE)
+	if (NOT ${PACKAGE}_BUILD_FROM_SOURCE)
+		find_package(${PACKAGE})
+	endif()
 
+	if (NOT ${PACKAGE}_FOUND)
+		set(${PACKAGE}_BUILD_FROM_SOURCE TRUE)
+		message(STATUS "could not find package ${PACKAGE}, building from source")
+	endif()
+endmacro(find_or_build_from_source)
+
+# check for out of source build
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	message(FATAL_ERROR "In-source builds are not allowed. For example run:
 	rm CMakeCache.txt
@@ -14,29 +24,34 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	make")
 endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
-
+# set build type
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
-enable_language(C)
-enable_language(CXX)
-
-workaround_9220(Fortran Fortran_langurage_works)
-if (Fortran_langurage_works)
-	enable_language(Fortran OPTIONAL)
-endif(Fortran_langurage_works)
-
-# The version number.
+# settings
 set(oooark_VERSION_MAJOR 0)
 set(oooark_VERSION_MINOR 1)
 set(oooark_VERSION_PATCH 0)
 set(oooark_SOVERSION 0)
+set(MAVLINK_BUILD_FROM_SOURCE FALSE)
+set(JSBSIM_BUILD_FROM_SOURCE FALSE)
+set(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE FALSE)
 
+# built variables
 set(oooark_VERISON ${oooark_VERSION_MAJOR}.${oooark_VERSION_MINOR}.${oooark_VERSION_PATCH})
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH})
+
+# enable languages
+include(${CMAKE_MODULE_PATH}/language_support_v2.cmake) 
+enable_language(C)
+enable_language(CXX)
+workaround_9220(Fortran Fortran_langurage_works)
+if (Fortran_langurage_works)
+	enable_language(Fortran OPTIONAL)
+endif(Fortran_langurage_works)
 
 # initialize lists
 set(configDepends  
@@ -61,39 +76,36 @@ set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTUITOOLS TRUE)
 find_package(Boost 1.40.0 REQUIRED COMPONENTS thread-mt system-mt)
 find_package(OpenSceneGraph 2.8.3 COMPONENTS osgDB osgUtil osgViewer)
-
-#if (CMAKE_Fortran_COMPILER_WORKS)
-	#find_package(LAPACK)
-#endif()
-
+find_package(LAPACK)
 find_package(SIMGEAR)
 find_package(SCICOSLAB)
-find_package(MAVLINK)
 find_package(JSBSIM)
-find_package(BOOSTNUMERICBINDINGS)
+find_or_build_from_source(BOOSTNUMERICBINDINGS)
+find_or_build_from_source(JSBSIM)
+find_or_build_from_source(MAVLINK)
 
 # build libraries from source if not found on system
-if (NOT MAVLINK_FOUND)
+if (MAVLINK_BUILD_FROM_SOURCE)
 	set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
 	set(MAVLINK_FOUND TRUE)
-endif(NOT MAVLINK_FOUND)
+endif()
 
-if (NOT BOOSTNUMERICBINDINGS_FOUND)
+if (BOOSTNUMERICBINDINGS_BUILD_FROM_SOURCE)
 	set(BOOSTNUMERICBINDINGS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/boost-numeric-bindings")
 	set(BOOSTNUMERICBINDINGS_FOUND TRUE)
-endif(NOT BOOSTNUMERICBINDINGS_FOUND)
+endif()
 
-if (NOT JSBSIM_FOUND)
+if (JSBSIM_BUILD_FROM_SOURCE)
 	set(JSBSIM_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/src")
 	set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libjsbsim.a")
 	list(APPEND configDepends ${PROJECT_BINARY_DIR}/jsbsim.stamp)
 	set(JSBSIM_FOUND TRUE)
-endif(NOT JSBSIM_FOUND)
+endif()
 
 # data directory
 if(NOT DEFINED DATADIR)
 	set(DATADIR ${PROJECT_SOURCE_DIR}/data)
-endif(NOT DEFINED DATADIR)
+endif()
 
 # the install_name directory component to be used when installing
 set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
