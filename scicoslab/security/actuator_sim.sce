@@ -36,7 +36,7 @@ for i = 1:n_val+1
       %scicos_context.act_throttle = values1(i);
       %scicos_context.act_elevator = values2(j);
       %scicos_context.act_rudder = values3(k);
-      load("BacksidePIDAutopilot_actuator3.cos")
+      load("BacksidePIDAutopilot_actuator4.cos")
 
       Info = scicos_simulate(scs_m,list(),%scicos_context);
       if i == 1
@@ -48,7 +48,8 @@ for i = 1:n_val+1
       savematfile('Data\actuator\del_phi_deg_'+string(i)+'_'+string(j)+'_'+string(k),'del_phi_deg.values');
       savematfile('Data\actuator\del_r_rads_s_'+string(i)+'_'+string(j)+'_'+string(k),'del_r_rads_s.values');
       savematfile('Data\actuator\del_psi_deg_'+string(i)+'_'+string(j)+'_'+string(k),'del_psi_deg.values');
-      clear del_alt_ft del_v_m_s del_phi_deg del_r_rads_s del_psi_deg
+      savematfile('Data\gain\del_theta_deg_'+string(i)+'_'+string(j)+'_'+string(k),'del_theta_deg.values');
+      clear del_alt_ft del_v_m_s del_phi_deg del_r_rads_s del_psi_deg del_theta_deg
       mtlb_close all
     end
   end

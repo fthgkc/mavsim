@@ -33,6 +33,7 @@ for i = 1:n_val
       phiTemp = 0;
       rTemp = 0;
       psiTemp = 0;
+      thetaTemp = 0;
       for m = 1:numRuns
         exec easystar-datcom_lin.sce;
         
@@ -48,7 +49,8 @@ for i = 1:n_val
         phiTemp = phiTemp+del_phi_deg.values.^2;
         rTemp = rTemp +del_r_rads_s.values.^2;
         psiTemp = psiTemp +del_psi_deg.values.^2;
-        clear del_alt_ft del_v_m_s del_phi_deg del_r_rads_s del_psi_deg
+        thetaTemp = thetaTemp + del_theta_deg.values.^2;
+        clear del_alt_ft del_v_m_s del_phi_deg del_r_rads_s del_psi_deg del_theta_deg
       end
       
       altTemp = altTemp/numRuns;
@@ -56,11 +58,13 @@ for i = 1:n_val
       phiTemp = phiTemp/numRuns;
       rTemp = rTemp/numRuns;
       psiTemp = psiTemp/numRuns;
+      thetaTemp = thetaTemp/numRuns;
       savematfile('Data\fuzz\del_alt_ft_'+string(i)+'_'+string(j)+'_'+string(k),'altTemp');
       savematfile('Data\fuzz\del_v_m_s_'+string(i)+'_'+string(j)+'_'+string(k),'vTemp');  
       savematfile('Data\fuzz\del_phi_deg_'+string(i)+'_'+string(j)+'_'+string(k),'phiTemp');
       savematfile('Data\fuzz\del_r_rads_s_'+string(i)+'_'+string(j)+'_'+string(k),'rTemp');
       savematfile('Data\fuzz\del_psi_deg_'+string(i)+'_'+string(j)+'_'+string(k),'psiTemp');
+      savematfile('Data\fuzz\del_theta_deg_'+string(i)+'_'+string(j)+'_'+string(k),'thetaTemp');
       
     end
   end
