@@ -45,7 +45,8 @@ for i = 1:n_val
       savematfile('Data\digital\del_phi_deg_'+string(i)+'_'+string(j)+'_'+string(k),'del_phi_deg.values');
       savematfile('Data\digital\del_r_rads_s_'+string(i)+'_'+string(j)+'_'+string(k),'del_r_rads_s.values');
       savematfile('Data\digital\del_psi_deg_'+string(i)+'_'+string(j)+'_'+string(k),'del_psi_deg.values');
-      clear del_alt_ft del_v_m_s del_phi_deg del_r_rads_s del_psi_deg
+      savematfile('Data\gain\del_theta_deg_'+string(i)+'_'+string(j)+'_'+string(k),'del_theta_deg.values');
+      clear del_alt_ft del_v_m_s del_phi_deg del_r_rads_s del_psi_deg del_theta_deg
       mtlb_close all
     end
   end
