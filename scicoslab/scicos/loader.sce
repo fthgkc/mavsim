@@ -11,3 +11,7 @@ add_palette('oooark Hardware in the Loop',pwd()+'/oooarkHil/oooarkHil.cosf');
 genlib('lib_oooarkDynamics',pwd()+'/oooarkDynamics');
 create_palette('oooarkDynamics');
 add_palette('oooark Dynamics',pwd()+'/oooarkDynamics/oooarkDynamics.cosf');
+
+genlib('lib_oooarkNav',pwd()+'/oooarkNav');
+create_palette('oooarkNav');
+add_palette('oooark Navigation',pwd()+'/oooarkNav/oooarkNav.cosf');

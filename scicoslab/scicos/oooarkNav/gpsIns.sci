@@ -16,8 +16,12 @@ function [x,y,typ]=gpsIns(job,arg1,arg2)
 //  [9]  Vd 	(m/s)
 //
 // input 1: (input u1)
-//  [1] fbi (m/s^2) (inertial)
-//  [2] wbi (m/s^2) (inertial)
+//  [1] fbx (m/s^2) (inertial)
+//  [2] fby (m/s^2) (inertial)
+//  [3] fbz (m/s^2) (inertial)
+//  [4] wbx (m/s^2) (inertial)
+//  [5] wby (m/s^2) (inertial)
+//  [6] wbz (m/s^2) (inertial)
 //
 // input 2: (input u2)
 //  [1]  Lat 	(rad)
@@ -75,9 +79,8 @@ select job
 				list('vec',1,'vec',1,'vec',1,'vec',1,'vec',1),exprs);
 			if ~ok then break,end
 			model.out=[9];
-			[model,graphics,ok]=check_io(model,graphics,model.in,model.out,[],[])
+			[model,graphics,ok]=check_io(model,graphics,model.in,model.out,model.evtin,[])
 			if ok then
-				model.state=[x0];
 				model.rpar=[];
 				graphics.exprs=exprs;
 				x.graphics=graphics;
@@ -89,10 +92,11 @@ select job
 		// set model properties
 		model=scicos_model()
 		model.sim=list('sci_gpsIns',4)
+		model.evtin=[1];
 		model.in=[6;9]
 		model.out=[9]
 		model.blocktype='c'
-		model.dep_ut=[%f %t]
+		model.dep_ut=[%t %f]
 
 		// gpsIns parameters
 		SigmaPos=10;
@@ -102,12 +106,6 @@ select job
 		SigmaGyro=.002;
 		model.rpar=[SigmaPos,SigmaAlt,SigmaVel,SigmaAccel,SigmaGyro];
 		
-		// intial state
-		x0=[]
-
-		// save state
-		model.state=x0;
-
 		// initialize strings for gui
 		exprs=[
 			strcat(sci2exp(SigmaPos)),..

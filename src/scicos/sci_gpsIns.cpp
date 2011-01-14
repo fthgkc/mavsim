@@ -40,35 +40,43 @@ extern "C"
 
     void sci_gpsIns(scicos_block *block, scicos::enumScicosFlags flag)
     {
-		oooark::GpsIns* gpsIns = NULL;
-        static double * doubleArray;
+		static oooark::GpsIns* gpsIns = NULL;
 
-		double *lat;
-		double *lon;
-		double *height;
-		double *roll;
-		double *pitch;
-		double *yaw;
-		double *sigmaPos;
-		double *sigmaAlt;
-		double *sigmaVel;
-		double *sigmaAccelG;
-		double *sigmaGyro;
-		bool useGravity;
+		// constants
+		bool useGravity = false;
 
-		double *fbx, *fby, *fbz;
-		double *wbx, *wby, *wbz;
-		double *Vn, *Ve, *Vd;
-
-        // data
-        double *u1=(double*)GetInPortPtrs(block,1);
-		double *u2=(double*)GetInPortPtrs(block,2);
-        double *xOut=(double*)GetOutPortPtrs(block,1);
-        double *x=(double*)GetState(block);
-        double *xd=(double*)GetDerState(block);
+	 	// data
+        double * u1=(double*)GetInPortPtrs(block,1);
+		double * u2=(double*)GetInPortPtrs(block,2);
+        double * xOut=(double*)GetOutPortPtrs(block,1);
         double * rpar=block->rpar;
 
-        // make sure you have initialized the block
+		// alias names
+		double * fbx = &u1[0];
+		double * fby = &u1[1];
+		double * fbz = &u1[2];
+		double * wbx = &u1[3];
+		double * wby = &u1[4];
+		double * wbz = &u1[5];
+
+		double * lat = &u2[0];
+		double * lon = &u2[1];
+		double * height = &u2[2];
+		double * roll = &u2[3];
+		double * pitch = &u2[4];
+		double * yaw = &u2[5];
+		double * Vn = &u2[6];
+		double * Ve = &u2[7];
+		double * Vd = &u2[8];
+
+		double * sigmaPos = &rpar[0];
+		double * sigmaAlt = &rpar[1];
+		double * sigmaVel = &rpar[2];
+		double * sigmaAccelG = &rpar[3];
+		double * sigmaGyro = &rpar[4];
+
+	
+		// make sure you have initialized the block
         if (!gpsIns && flag!=scicos::initialize)
         {
             sci_gpsIns(block,scicos::initialize);
@@ -77,31 +85,10 @@ extern "C"
         //handle flags
         if (flag==scicos::initialize || flag==scicos::reinitialize)
         {
+            std::cout << "initializing" << std::endl;
             if (!gpsIns)
             {
-				lat = &u2[0];
-				lon = &u2[1];
-				height = &u2[2];
-				roll = &u2[3];
-				pitch = &u2[4];
-				yaw = &u2[5];
-				Vn = &u2[6];
-				Ve = &u2[7];
-				Vd = &u2[8];
-				sigmaPos = &rpar[0];
-				sigmaAlt = &rpar[1];
-				sigmaVel = &rpar[2];
-				sigmaAccelG = &rpar[3];
-				sigmaGyro = &rpar[4];
-				useGravity = false;
-				
-				fbx = &u1[0];
-				fby = &u1[1];
-				fbz = &u1[2];
-				wbx = &u1[3];
-				wby = &u1[4];
-				wbz = &u1[5];
-
+			
 				try
 				{
                 	gpsIns = new oooark::GpsIns(*lat,*lon,*height,*roll,*pitch,*yaw,*Vn,*Ve,*Vd,*sigmaPos,*sigmaAlt,*sigmaVel,*sigmaAccelG,*sigmaGyro,useGravity);
@@ -114,6 +101,7 @@ extern "C"
         }
         else if (flag==scicos::terminate)
         {
+            std::cout << "terminating" << std::endl;
             if (gpsIns)
             {
                 delete gpsIns;
@@ -122,14 +110,17 @@ extern "C"
         }
         else if (flag==scicos::updateState)
         {
-			if(gpsIns) gpsIns->updateAll(*fbx, *fby, *fbz, *wbx, *wby, *wbz, *lat, *lon, *height, *Vn, *Ve, *Vd);
+            std::cout << "updating state" << std::endl;
+		
         }
-        //else if (flag==scicos::computeDeriv)
-        //{
-        //}
         else if (flag==scicos::computeOutput)
         {
-			if(gpsIns) gpsIns->getState(xOut);
+            std::cout << "computing Output" << std::endl;
+			if(gpsIns)
+			{
+				gpsIns->updateAll(*fbx, *fby, *fbz, *wbx, *wby, *wbz, *lat, *lon, *height, *Vn, *Ve, *Vd);
+				gpsIns->getState(xOut);
+			}
         }
         else
         {
