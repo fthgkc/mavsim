@@ -22,14 +22,7 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	cd build
 	cmake ..
 	make")
-endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-
-# set build type
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-      FORCE)
-endif(NOT CMAKE_BUILD_TYPE)
+endif()
 
 # settings
 set(oooark_VERSION_MAJOR 0)
@@ -39,10 +32,29 @@ set(oooark_SOVERSION 0)
 set(MAVLINK_BUILD_FROM_SOURCE FALSE)
 set(JSBSIM_BUILD_FROM_SOURCE FALSE)
 set(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE FALSE)
+set(STATIC_LINKING FALSE)
 
 # built variables
 set(oooark_VERISON ${oooark_VERSION_MAJOR}.${oooark_VERSION_MINOR}.${oooark_VERSION_PATCH})
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+
+# only find static libraries
+if(STATIC_LINKING)
+	if(WIN32)
+		set(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+	else(WIN32)
+		set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+	endif(WIN32)
+endif()
+
+# set build type
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+      FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
 
 # enable languages
 include(${CMAKE_MODULE_PATH}/language_support_v2.cmake) 
@@ -53,7 +65,7 @@ if (Fortran_langurage_works)
 	enable_language(Fortran OPTIONAL)
 endif(Fortran_langurage_works)
 
-# initialize lists
+# initialize variables
 set(configDepends  
 	${PROJECT_BINARY_DIR}/dir.stamp 
 	${PROJECT_BINARY_DIR}/git.stamp 
@@ -64,10 +76,23 @@ set(SCICOSLAB_BLOCKS jsbsimBlocks;mavlinkBlocks)
 # installer
 include (InstallRequiredSystemLibraries)
 set (CPACK_PACKAGE_CONTACT "James Goppert james.goppert@gmail.com")
+set (CPACK_INSTALL_PREFIX "/usr/local")
+set (CPACK_PACKAGE_DESCRITION_SUMMARY "
+    The Open Object Oriented Autonomous Robotics Kit
+
+    This library is useful for controller design for unmanned
+	vehicles. It has a trim gui based on qt that can be used
+    to craete a linaer model of JSBSim flight dynamic model.
+    This model can then be used in the Scicoslab toolbox
+    provided for controller design. A simple bicyle model
+    for ground vehicles is also implemented in one of the
+    demonstration blocks. Hardware in the loop simulation
+    is enabled via the MAVLINK protocol.	
+	")
 set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set (CPACK_PACKAGE_VERSION_MAJOR "${oooark_VERSION_MAJOR}")
-set (CPACK_PACKAGE_VERSION_MINOR "${oooark_VERSION_MINOR}")
-set (CPACK_PACKAGE_VERSION_PATCH "${oooark_VERSION_PATCH}")
+set (CPACK_PACKAGE_VERSION_MAJOR ${oooark_VERSION_MAJOR})
+set (CPACK_PACKAGE_VERSION_MINOR ${oooark_VERSION_MINOR})
+set (CPACK_PACKAGE_VERSION_PATCH ${oooark_VERSION_PATCH})
 include (CPack)
 
 # find libraries with cmake modules
@@ -75,7 +100,8 @@ find_package(Qt4)
 set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTUITOOLS TRUE)
 find_package(Boost 1.40.0 REQUIRED COMPONENTS thread-mt system-mt)
-find_package(OpenSceneGraph 2.0.0 COMPONENTS osgDB osgUtil osgViewer)
+find_package(OpenGL)
+find_package(OpenSceneGraph 2.0.0 COMPONENTS osgGA osgDB osgUtil osgViewer osgdb_ac)
 find_package(LAPACK)
 find_package(SIMGEAR)
 find_package(SCICOSLAB)
@@ -107,20 +133,20 @@ if(NOT DEFINED DATADIR)
 	set(DATADIR ${PROJECT_SOURCE_DIR}/data)
 endif()
 
-# the install_name directory component to be used when installing
-set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-message(STATUS "install_name ${CMAKE_INSTALL_NAME_DIR}")
-
 # install data files
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION "share/oooark/" 
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/data"
+	# XXX : CMAKE_INSTALL_PREFIX is required for cpack to work correctly
+	# this is a bug in cmake or cpack
+	DESTINATION ${CMAKE_INSTALL_PREFIX}/share/oooark
 	PATTERN "*.git*" EXCLUDE)
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/scicoslab" DESTINATION "share/oooark/" 
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/scicoslab"
+	DESTINATION ${CMAKE_INSTALL_PREFIX}/share/oooark
 	PATTERN "*.git*" EXCLUDE)
 
 # pkgconfig
 install(FILES
 	oooark.pc
-	DESTINATION lib/pkgconfig
+	DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig
 	)
 
 # custom commands for submodules
@@ -209,7 +235,6 @@ message(STATUS "=======================================")
 include_directories( ${PROJECT_SOURCE_DIR}/src )
 
 # subdirectories
-add_subdirectory(config)
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(app)

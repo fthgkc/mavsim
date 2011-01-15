@@ -33,3 +33,5 @@ add_executable(trim ${trim_src})
 target_link_libraries(trim ${OSG_LIBRARIES}
 	${QT_LIBRARIES} ${JSBSIM_LIBRARIES}
 	${OOOARK_LIBRARIES} ${Boost_LIBRARIES})
+
+install(TARGETS trim DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

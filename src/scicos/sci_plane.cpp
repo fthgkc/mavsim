@@ -84,10 +84,13 @@ extern "C"
 				}
 			}
 
-            vis->lock();
-            vis->plane->setEuler(u[0],u[1],u[2]);
-            vis->plane->setU(u[3],u[4],u[5],u[6]);
-            vis->unlock();
+			if (vis)
+			{
+				vis->lock();
+				vis->plane->setEuler(u[0],u[1],u[2]);
+				vis->plane->setU(u[3],u[4],u[5],u[6]);
+				vis->unlock();
+			}
         }
         else
         {

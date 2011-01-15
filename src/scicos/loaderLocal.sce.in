@@ -7,7 +7,7 @@ lapackBlocks=['sci_gpsIns']';
 mavlinkBlocks=['sci_mavlinkHilSensor','sci_mavlinkHilState','sci_mavlinkHilTracker']';
 
 oooark_sci_gateway_path=get_absolute_file_path('loader.sce');
-link('/hsl/homes/jgoppert/Projects/oooark/build/src/scicos/liboooarkScicos.so',[jsbsimBlocks;mavlinkBlocks;osgBlocks;lapackBlocks]','c');
+link('@SCICOSLAB_LOCATION@',[@SCICOSLAB_BLOCKS@]','c');
 
 CurrentDirectory = pwd();
 mainpathL = get_absolute_file_path("loader.sce");

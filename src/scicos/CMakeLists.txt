@@ -41,10 +41,16 @@ target_link_libraries(oooarkScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES})
 set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERISON}
     SOVERSION ${oooark_SOVERSION})
 
-install(TARGETS oooarkScicos DESTINATION lib)
+get_target_property(SCICOSLAB_LOCATION oooarkScicos LOCATION)
+configure_file(loaderLocal.sce.in ${CMAKE_SOURCE_DIR}/scicoslab/loader.sce)
+configure_file(loader.sce.in ${CMAKE_CURRENT_BINARY_DIR}/loader.sce)
+
+install(TARGETS oooarkScicos DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 install(FILES
     definitions.hpp
     utilities.hpp
-    DESTINATION include/oooark/scicos
+	DESTINATION ${CMAKE_INSTALL_PREFIX}/include/oooark/scicos
     )
+
+install(FILES  ${CMAKE_CURRENT_BINARY_DIR}/loader.sce DESTINATION ${CMAKE_INSTALL_PREFIX}/share/oooark/scicoslab)
