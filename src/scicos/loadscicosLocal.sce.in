@@ -1,6 +1,8 @@
 mode(-1);
 lines(0);
 
+oooarkDataPath='@DATADIR@'
+
 simgearBlocks=['sci_flightGearComm'];
 osgBlocks=['sci_jet','sci_car','sci_quad','sci_plane']';
 jsbsimBlocks=['sci_jsbsimTrim','sci_jsbsimComm']';

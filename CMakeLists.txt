@@ -14,6 +14,12 @@ macro(find_or_build_from_source PACKAGE)
 	endif()
 endmacro(find_or_build_from_source)
 
+macro(set_default VAR DEFAULT)
+	if (NOT DEFINED ${VAR})
+		set(${VAR} ${DEFAULT})
+	endif()
+endmacro(set_default)
+
 # check for out of source build
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	message(FATAL_ERROR "In-source builds are not allowed. For example run:
@@ -29,10 +35,12 @@ set(oooark_VERSION_MAJOR 0)
 set(oooark_VERSION_MINOR 1)
 set(oooark_VERSION_PATCH 0)
 set(oooark_SOVERSION 0)
-set(MAVLINK_BUILD_FROM_SOURCE FALSE)
-set(JSBSIM_BUILD_FROM_SOURCE FALSE)
-set(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE FALSE)
-set(STATIC_LINKING FALSE)
+
+set_default(MAVLINK_BUILD_FROM_SOURCE FALSE)
+set_default(JSBSIM_BUILD_FROM_SOURCE FALSE)
+set_default(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE FALSE)
+set_default(STATIC_LINKING FALSE)
+set_default(IN_SRC_BUILD FALSE)
 
 # built variables
 set(oooark_VERISON ${oooark_VERSION_MAJOR}.${oooark_VERSION_MINOR}.${oooark_VERSION_PATCH})
@@ -130,8 +138,16 @@ if (JSBSIM_BUILD_FROM_SOURCE)
 endif()
 
 # data directory
-if(NOT DEFINED DATADIR)
+if(IN_SRC_BUILD)
+	message(STATUS "configuring for in source build")
 	set(DATADIR ${PROJECT_SOURCE_DIR}/data)
+	set(LIBDIR ${CMAKE_SOURCE_DIR}/data)
+	set(BINDIR ${CMAKE_BINARY_DIR}/bin)
+else()
+	message(STATUS "configuring for install build")
+	set(DATADIR ${CMAKE_INSTALL_PREFIX}/share/oooark/data)
+	set(LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+	set(BINDIR ${CMAKE_INSTALL_PREFIX}/bin)
 endif()
 
 # install data files
@@ -141,7 +157,6 @@ install(DIRECTORY "${PROJECT_SOURCE_DIR}/data"
 	DESTINATION ${CMAKE_INSTALL_PREFIX}/share/oooark
 	PATTERN "*.git*" EXCLUDE)
 
-#install(CODE "EXECUTE_PROCESS(COMMAND scicoslab -nb -nwni -e \"cd('${PROJECT_SOURCE_DIR}/oooark-toolbox');exec('builder.sce');exec('loader.sce');exit\" )")
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/oooark-toolbox"
 	DESTINATION ${SCICOSLAB_CONTRIB_DIR}
 	PATTERN "*.git*" EXCLUDE)
