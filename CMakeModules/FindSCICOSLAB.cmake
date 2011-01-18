@@ -3,6 +3,7 @@
 #
 #  SCICOSLAB_FOUND - system has scicoslab 
 #  SCICOSLAB_INCLUDE_DIRS - the scicoslab include directories
+#  SCICOSLAB_CONTRIB_DIR - the scicoslab contrib directory
 
 include(LibFindMacros)
 
@@ -40,6 +41,14 @@ endif()
 find_path(SCICOSLAB_INCLUDE_DIR
   NAMES version.h
   PATHS ${SCICOSLAB_GUESS_INCLUDE_DIRS}
+)
+
+# Contrib dir
+find_path(SCICOSLAB_CONTRIB_DIR
+  NAMES loader.sce
+  PATHS
+  	/usr/lib/scicoslab-gtk-4.4b7
+	/usr/lib/scicoslab-gtk-4.4
 )
 
 # Set the include dir variables and the libraries and let libfind_process do the rest.

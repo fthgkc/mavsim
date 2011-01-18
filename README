@@ -1,1 +1,19 @@
+Copyright 2010 James Goppert
+Released under GPL v3 License
 
+Using Scicoslab Toolbox:
+
+	For running in source directory, launch scicoslab from the oooark directory:
+	1a. launch a terminal in oooark root directory where this README is located.
+
+	If oooark toolbox is installed in the 
+	system path (i.e. /usr/lib/scicos../contrib)
+	1b. launch scicoslab
+
+	Opening the toolbox
+	2. select menu toolboxes->oooark-toolbox
+	3. select menu Demos->"oooark block demos"
+
+Using Trim Application 
+
+	1. launch the application: ./build/bin/trim

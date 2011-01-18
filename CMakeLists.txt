@@ -139,8 +139,8 @@ install(DIRECTORY "${PROJECT_SOURCE_DIR}/data"
 	# this is a bug in cmake or cpack
 	DESTINATION ${CMAKE_INSTALL_PREFIX}/share/oooark
 	PATTERN "*.git*" EXCLUDE)
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/scicoslab"
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/share/oooark
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/oooark-toolbox"
+	DESTINATION ${SCICOSLAB_CONTRIB_DIR}
 	PATTERN "*.git*" EXCLUDE)
 
 # pkgconfig
