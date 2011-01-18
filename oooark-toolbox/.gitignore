@@ -6,4 +6,3 @@ Makelib
 *.la
 lib
 names
-src/loader.sce

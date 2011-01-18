@@ -140,6 +140,8 @@ install(DIRECTORY "${PROJECT_SOURCE_DIR}/data"
 	# this is a bug in cmake or cpack
 	DESTINATION ${CMAKE_INSTALL_PREFIX}/share/oooark
 	PATTERN "*.git*" EXCLUDE)
+
+#install(CODE "EXECUTE_PROCESS(COMMAND scicoslab -nb -nwni -e \"cd('${PROJECT_SOURCE_DIR}/oooark-toolbox');exec('builder.sce');exec('loader.sce');exit\" )")
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/oooark-toolbox"
 	DESTINATION ${SCICOSLAB_CONTRIB_DIR}
 	PATTERN "*.git*" EXCLUDE)
