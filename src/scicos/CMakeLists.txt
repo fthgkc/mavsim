@@ -42,8 +42,9 @@ set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERISON}
     SOVERSION ${oooark_SOVERSION})
 
 get_target_property(SCICOSLAB_LOCATION oooarkScicos LOCATION)
-configure_file(loaderLocal.sce.in ${CMAKE_SOURCE_DIR}/scicoslab/loader.sce)
-configure_file(loader.sce.in ${CMAKE_CURRENT_BINARY_DIR}/loader.sce)
+configure_file(loadscicosLocal.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/loadscicos.sce)
+configure_file(loadscicos.sce.in ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce)
+configure_file(VERSION.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/VERSION)
 
 install(TARGETS oooarkScicos DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
@@ -53,4 +54,4 @@ install(FILES
 	DESTINATION ${CMAKE_INSTALL_PREFIX}/include/oooark/scicos
     )
 
-install(FILES  ${CMAKE_CURRENT_BINARY_DIR}/loader.sce DESTINATION ${CMAKE_INSTALL_PREFIX}/share/oooark/scicoslab)
+install(FILES  ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce DESTINATION ${SCICOSLAB_CONTRIB_DIR})

@@ -47,8 +47,8 @@ find_path(SCICOSLAB_INCLUDE_DIR
 find_path(SCICOSLAB_CONTRIB_DIR
   NAMES loader.sce
   PATHS
-  	/usr/lib/scicoslab-gtk-4.4b7
-	/usr/lib/scicoslab-gtk-4.4
+  	/usr/lib/scicoslab-gtk-4.4b7/contrib
+	/usr/lib/scicoslab-gtk-4.4/contrib
 )
 
 # Set the include dir variables and the libraries and let libfind_process do the rest.

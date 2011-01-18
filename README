@@ -14,6 +14,35 @@ Using Scicoslab Toolbox:
 	2. select menu toolboxes->oooark-toolbox
 	3. select menu Demos->"oooark block demos"
 
-Using Trim Application 
+Using Trim Application: 
 
-	1. launch the application: ./build/bin/trim
+	If the oooark is installed.
+	1a. launch the application: ./build/bin/oooarkTrim
+
+	If you are building from source.
+	1b. launch the application: oooarkTrim
+
+Building from Source:
+
+	Notes:
+		
+		The code only works for debian sid/squeeze and ubuntu maverick currently due to an
+		issue with osgstateset with osg  version < 2.8.3
+
+	Get the dependencies:
+
+		For debian sid/squeeze and ubuntu maverick:
+		sudo apt-get install cmake libqt4-dev simgear-dev liblapack-dev libboost-all-dev libopenscenegraph-dev gfortran
+
+	Build the code:
+	
+		./autobuild.sh
+
+Packaging:
+
+	CPack may by used for packaging.
+	
+	For example:
+	cd build; cpack -g TGZ, will generate a tarball of the source.
+	cd build; cpack -g DEB, will generate a debian package.
+	cd build; cpack -g ZIP, will generate a zip of the source.

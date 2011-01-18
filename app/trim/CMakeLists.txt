@@ -29,9 +29,9 @@ set(trim_src
 	)
 
 add_definitions(-DUSE_QT4)
-add_executable(trim ${trim_src})
-target_link_libraries(trim ${OSG_LIBRARIES}
+add_executable(oooarkTrim ${trim_src})
+target_link_libraries(oooarkTrim ${OSG_LIBRARIES}
 	${QT_LIBRARIES} ${JSBSIM_LIBRARIES}
 	${OOOARK_LIBRARIES} ${Boost_LIBRARIES})
 
-install(TARGETS trim DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+install(TARGETS oooarkTrim DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
