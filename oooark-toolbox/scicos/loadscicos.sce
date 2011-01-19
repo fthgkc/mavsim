@@ -9,22 +9,22 @@ jsbsimBlocks=['sci_jsbsimTrim','sci_jsbsimComm']';
 lapackBlocks=['sci_gpsIns']';
 mavlinkBlocks=['sci_mavlinkHilSensor','sci_mavlinkHilState','sci_mavlinkHilTracker']';
 
-link('/usr/local/lib/liboooarkScicos.so',[jsbsimBlocks;mavlinkBlocks;simgearBlocks;osgBlocks;lapackBlocks]','c');
+link('/hsl/homes/jgoppert/Projects/oooark/build/src/scicos/liboooarkScicos.so',[jsbsimBlocks;mavlinkBlocks;simgearBlocks;osgBlocks;lapackBlocks]','c');
 
 genlib('lib_oooarkVis',pwd()+'/oooarkVis');
-//create_palette('oooarkVis');
+create_palette('oooarkVis');
 add_palette('oooark Visualization',pwd()+'/oooarkVis/oooarkVis.cosf');
 
 genlib('lib_oooarkHil',pwd()+'/oooarkHil');
-//create_palette('oooarkHil');
+create_palette('oooarkHil');
 add_palette('oooark Hardware in the Loop',pwd()+'/oooarkHil/oooarkHil.cosf');
 
 genlib('lib_oooarkDynamics',pwd()+'/oooarkDynamics');
-//create_palette('oooarkDynamics');
+create_palette('oooarkDynamics');
 add_palette('oooark Dynamics',pwd()+'/oooarkDynamics/oooarkDynamics.cosf');
 
 genlib('lib_oooarkNav',pwd()+'/oooarkNav');
-//create_palette('oooarkNav');
+create_palette('oooarkNav');
 add_palette('oooark Navigation',pwd()+'/oooarkNav/oooarkNav.cosf');
 
-clear simgearBlocks osgBlocks jsbsimBlocks lapackBlocks mavlinkBlocks
+clear simgearBlocks osgBlocks jsbsimBlocks lapackBlocks mavlinkBlocksode(-1)

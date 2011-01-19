@@ -32,13 +32,13 @@ endif()
 
 # settings
 set(oooark_VERSION_MAJOR 0)
-set(oooark_VERSION_MINOR 1)
+set(oooark_VERSION_MINOR 3)
 set(oooark_VERSION_PATCH 0)
 set(oooark_SOVERSION 0)
 
-set_default(MAVLINK_BUILD_FROM_SOURCE FALSE)
-set_default(JSBSIM_BUILD_FROM_SOURCE FALSE)
-set_default(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE FALSE)
+set_default(MAVLINK_BUILD_FROM_SOURCE TRUE)
+set_default(JSBSIM_BUILD_FROM_SOURCE TRUE)
+set_default(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE TRUE)
 set_default(STATIC_LINKING FALSE)
 set_default(IN_SRC_BUILD FALSE)
 
@@ -186,7 +186,7 @@ add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
 
 add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsim.stamp
 	COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
-	COMMAND make
+	COMMAND make -j8
 	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsim.stamp
 	DEPENDS ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
 	WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/jsbsim)

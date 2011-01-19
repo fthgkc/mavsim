@@ -47,13 +47,12 @@ add_custom_target(oooarkToolbox ALL
 
 get_target_property(SCICOSLAB_LOCATION oooarkScicos LOCATION)
 
-if (IN_SRC_BUILD)
-	configure_file(loadscicosLocal.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/scicos/loadscicos.sce)
-else()
-	configure_file(loadscicos.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/scicos/loadscicos.sce)
-endif()
+configure_file(loadscicosLocal.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/scicos/loadscicos.sce)
+configure_file(loadscicos.sce.in ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce)
 
 configure_file(VERSION.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/VERSION)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce DESTINATION ${SCICOSLAB_CONTRIB_DIR}/oooark-toolbox/scicos)
 
 install(TARGETS oooarkScicos DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
