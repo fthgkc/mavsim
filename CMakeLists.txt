@@ -32,7 +32,7 @@ endif()
 
 # settings
 set(oooark_VERSION_MAJOR 0)
-set(oooark_VERSION_MINOR 3)
+set(oooark_VERSION_MINOR 2)
 set(oooark_VERSION_PATCH 0)
 set(oooark_SOVERSION 0)
 
@@ -86,7 +86,7 @@ set(SCICOSLAB_BLOCKS jsbsimBlocks;mavlinkBlocks)
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${oooark_VERSION}")
 set(CPACK_GENERATOR "DEB")
-set(CPACK_SOURCE_GENERATOR "TGZ")
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
 set(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 set(CPACK_SET_DESTDIR TRUE)
 set(CPACK_PACKAGE_CONTACT "James Goppert james.goppert@gmail.com")
@@ -181,11 +181,15 @@ add_custom_command(OUTPUT  ${PROJECT_BINARY_DIR}/dir.stamp
 	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/dir.stamp
 	WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 
-add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/git.stamp
-	COMMAND git ARGS submodule init
-	COMMAND git ARGS submodule update
-	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp
-	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+if(IS_DIRECTORY .git)
+	add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/git.stamp
+		COMMAND git ARGS submodule init
+		COMMAND git ARGS submodule update
+		COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+else()
+	execute_process(COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp)
+endif()
 
 add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
 	COMMAND ./autogen.sh --no-configure
