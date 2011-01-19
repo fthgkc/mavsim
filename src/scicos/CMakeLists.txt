@@ -39,20 +39,26 @@ add_library(oooarkScicos SHARED ${oooarkScicosSources})
 
 target_link_libraries(oooarkScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES})
 
-set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERISON}
+set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERSION}
     SOVERSION ${oooark_SOVERSION})
 
+add_custom_target(oooarkToolbox ALL
+	DEPENDS oooarkScicos
+    COMMAND cd ${PROJECT_SOURCE_DIR}/oooark-toolbox && ./build.sh)
+
 get_target_property(SCICOSLAB_LOCATION oooarkScicos LOCATION)
+
 configure_file(loadscicosLocal.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/scicos/loadscicos.sce)
 configure_file(loadscicos.sce.in ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce)
+
 configure_file(VERSION.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/VERSION)
 
-install(TARGETS oooarkScicos DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce DESTINATION ${SCICOSLAB_CONTRIB_DIR}/oooark-toolbox/scicos)
+
+install(TARGETS oooarkScicos DESTINATION lib)
 
 install(FILES
     definitions.hpp
     utilities.hpp
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/include/oooark/scicos
+	DESTINATION include/oooark/scicos
     )
-
-install(FILES  ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce DESTINATION ${SCICOSLAB_CONTRIB_DIR}/oooark-toolbox/scicos)

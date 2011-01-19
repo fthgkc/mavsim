@@ -26,8 +26,8 @@ endif(SIMGEAR_FOUND)
 add_library(oooarkCommunication SHARED ${oooarkCommunicationSources})
 target_link_libraries(oooarkCommunication ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
 set_target_properties(oooarkCommunication PROPERTIES 
-	VERSION ${oooark_VERISON} 
+	VERSION ${oooark_VERSION} 
 	SOVERSION ${oooark_SOVERSION})
 
-install(TARGETS oooarkCommunication DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-install(FILES ${oooarkCommunicationHeaders} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/oooark/communication)
+install(TARGETS oooarkCommunication DESTINATION lib)
+install(FILES ${oooarkCommunicationHeaders} DESTINATION include/oooark/communication)

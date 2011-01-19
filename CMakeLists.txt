@@ -14,6 +14,12 @@ macro(find_or_build_from_source PACKAGE)
 	endif()
 endmacro(find_or_build_from_source)
 
+macro(set_default VAR DEFAULT)
+	if (NOT DEFINED ${VAR})
+		set(${VAR} ${DEFAULT})
+	endif()
+endmacro(set_default)
+
 # check for out of source build
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	message(FATAL_ERROR "In-source builds are not allowed. For example run:
@@ -26,16 +32,18 @@ endif()
 
 # settings
 set(oooark_VERSION_MAJOR 0)
-set(oooark_VERSION_MINOR 1)
+set(oooark_VERSION_MINOR 2)
 set(oooark_VERSION_PATCH 0)
 set(oooark_SOVERSION 0)
-set(MAVLINK_BUILD_FROM_SOURCE FALSE)
-set(JSBSIM_BUILD_FROM_SOURCE FALSE)
-set(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE FALSE)
-set(STATIC_LINKING FALSE)
+
+set_default(MAVLINK_BUILD_FROM_SOURCE TRUE)
+set_default(JSBSIM_BUILD_FROM_SOURCE TRUE)
+set_default(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE TRUE)
+set_default(STATIC_LINKING FALSE)
+set_default(IN_SRC_BUILD FALSE)
 
 # built variables
-set(oooark_VERISON ${oooark_VERSION_MAJOR}.${oooark_VERSION_MINOR}.${oooark_VERSION_PATCH})
+set(oooark_VERSION ${oooark_VERSION_MAJOR}.${oooark_VERSION_MINOR}.${oooark_VERSION_PATCH})
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
@@ -75,10 +83,14 @@ set(OOOARK_LIBRARIES oooarkCommunication)
 set(SCICOSLAB_BLOCKS jsbsimBlocks;mavlinkBlocks)
 
 # installer
-include (InstallRequiredSystemLibraries)
-set (CPACK_PACKAGE_CONTACT "James Goppert james.goppert@gmail.com")
-set (CPACK_INSTALL_PREFIX "/usr/local")
-set (CPACK_PACKAGE_DESCRITION_SUMMARY "
+include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${oooark_VERSION}")
+set(CPACK_GENERATOR "DEB")
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+set(CPACK_SET_DESTDIR TRUE)
+set(CPACK_PACKAGE_CONTACT "James Goppert james.goppert@gmail.com")
+set(CPACK_PACKAGE_DESCRITION_SUMMARY "
     The Open Object Oriented Autonomous Robotics Kit
 
     This library is useful for controller design for unmanned
@@ -90,11 +102,17 @@ set (CPACK_PACKAGE_DESCRITION_SUMMARY "
     demonstration blocks. Hardware in the loop simulation
     is enabled via the MAVLINK protocol.	
 	")
-set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set (CPACK_PACKAGE_VERSION_MAJOR ${oooark_VERSION_MAJOR})
-set (CPACK_PACKAGE_VERSION_MINOR ${oooark_VERSION_MINOR})
-set (CPACK_PACKAGE_VERSION_PATCH ${oooark_VERSION_PATCH})
-include (CPack)
+set(CPACK_SOURCE_IGNORE_FILES ${CPACK_SOURCE_IGNORE_FILES}
+	/.git/;/build/;~$;.*\\\\.bin$;.*\\\\.swp$)
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README")
+set(CPACK_PACKAGE_VERSION_MAJOR ${oooark_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${oooark_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${oooark_VERSION_PATCH})
+include(CPack)
+
+# add make dist target
+add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
 # find libraries with cmake modules
 find_package(Qt4)
@@ -130,16 +148,23 @@ if (JSBSIM_BUILD_FROM_SOURCE)
 endif()
 
 # data directory
-if(NOT DEFINED DATADIR)
+if(IN_SRC_BUILD)
+	message(STATUS "configuring for in source build")
 	set(DATADIR ${PROJECT_SOURCE_DIR}/data)
+	set(LIBDIR ${CMAKE_SOURCE_DIR}/data)
+	set(BINDIR ${CMAKE_BINARY_DIR}/bin)
+else()
+	message(STATUS "configuring for install build")
+	set(DATADIR ${CMAKE_INSTALL_PREFIX}/share/oooark/data)
+	set(LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+	set(BINDIR ${CMAKE_INSTALL_PREFIX}/bin)
 endif()
 
 # install data files
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/data"
-	# XXX : CMAKE_INSTALL_PREFIX is required for cpack to work correctly
-	# this is a bug in cmake or cpack
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/share/oooark
+	DESTINATION share/oooark
 	PATTERN "*.git*" EXCLUDE)
+
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/oooark-toolbox"
 	DESTINATION ${SCICOSLAB_CONTRIB_DIR}
 	PATTERN "*.git*" EXCLUDE)
@@ -147,7 +172,7 @@ install(DIRECTORY "${PROJECT_SOURCE_DIR}/oooark-toolbox"
 # pkgconfig
 install(FILES
 	oooark.pc
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig
+	DESTINATION lib/pkgconfig
 	)
 
 # custom commands for submodules
@@ -156,11 +181,15 @@ add_custom_command(OUTPUT  ${PROJECT_BINARY_DIR}/dir.stamp
 	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/dir.stamp
 	WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 
-add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/git.stamp
-	COMMAND git ARGS submodule init
-	COMMAND git ARGS submodule update
-	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp
-	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+if(IS_DIRECTORY .git)
+	add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/git.stamp
+		COMMAND git ARGS submodule init
+		COMMAND git ARGS submodule update
+		COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+else()
+	execute_process(COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp)
+endif()
 
 add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
 	COMMAND ./autogen.sh --no-configure
@@ -169,7 +198,7 @@ add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
 
 add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsim.stamp
 	COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
-	COMMAND make
+	COMMAND make -j8
 	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsim.stamp
 	DEPENDS ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
 	WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/jsbsim)
