@@ -86,7 +86,7 @@ set(SCICOSLAB_BLOCKS jsbsimBlocks;mavlinkBlocks)
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${oooark_VERSION}")
 set(CPACK_GENERATOR "DEB")
-set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_GENERATOR "TGZ")
 set(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 set(CPACK_SET_DESTDIR TRUE)
 set(CPACK_PACKAGE_CONTACT "James Goppert james.goppert@gmail.com")
@@ -102,13 +102,17 @@ set(CPACK_PACKAGE_DESCRITION_SUMMARY "
     demonstration blocks. Hardware in the loop simulation
     is enabled via the MAVLINK protocol.	
 	")
-list(APPEND CPACK_SOURCE_IGNORE_FILES "${CMAKE_BINARY_DIR}/* .git* *.bin")
+set(CPACK_SOURCE_IGNORE_FILES ${CPACK_SOURCE_IGNORE_FILES}
+	/.git/;/build/;~$;.*\\\\.bin$;.*\\\\.swp$)
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README")
 set(CPACK_PACKAGE_VERSION_MAJOR ${oooark_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${oooark_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${oooark_VERSION_PATCH})
 include(CPack)
+
+# add make dist target
+add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
 # find libraries with cmake modules
 find_package(Qt4)
