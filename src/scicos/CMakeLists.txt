@@ -54,10 +54,10 @@ configure_file(VERSION.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/VERSION)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce DESTINATION ${SCICOSLAB_CONTRIB_DIR}/oooark-toolbox/scicos)
 
-install(TARGETS oooarkScicos DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS oooarkScicos DESTINATION lib)
 
 install(FILES
     definitions.hpp
     utilities.hpp
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/include/oooark/scicos
+	DESTINATION include/oooark/scicos
     )

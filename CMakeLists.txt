@@ -83,10 +83,14 @@ set(OOOARK_LIBRARIES oooarkCommunication)
 set(SCICOSLAB_BLOCKS jsbsimBlocks;mavlinkBlocks)
 
 # installer
-include (InstallRequiredSystemLibraries)
-set (CPACK_PACKAGE_CONTACT "James Goppert james.goppert@gmail.com")
-set (CPACK_INSTALL_PREFIX "/usr/local")
-set (CPACK_PACKAGE_DESCRITION_SUMMARY "
+include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${oooark_VERSION}")
+set(CPACK_GENERATOR "DEB")
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+set(CPACK_SET_DESTDIR TRUE)
+set(CPACK_PACKAGE_CONTACT "James Goppert james.goppert@gmail.com")
+set(CPACK_PACKAGE_DESCRITION_SUMMARY "
     The Open Object Oriented Autonomous Robotics Kit
 
     This library is useful for controller design for unmanned
@@ -98,11 +102,13 @@ set (CPACK_PACKAGE_DESCRITION_SUMMARY "
     demonstration blocks. Hardware in the loop simulation
     is enabled via the MAVLINK protocol.	
 	")
-set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set (CPACK_PACKAGE_VERSION_MAJOR ${oooark_VERSION_MAJOR})
-set (CPACK_PACKAGE_VERSION_MINOR ${oooark_VERSION_MINOR})
-set (CPACK_PACKAGE_VERSION_PATCH ${oooark_VERSION_PATCH})
-include (CPack)
+list(APPEND CPACK_SOURCE_IGNORE_FILES "${CMAKE_BINARY_DIR}/* .git* *.bin")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README")
+set(CPACK_PACKAGE_VERSION_MAJOR ${oooark_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${oooark_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${oooark_VERSION_PATCH})
+include(CPack)
 
 # find libraries with cmake modules
 find_package(Qt4)
@@ -152,9 +158,7 @@ endif()
 
 # install data files
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/data"
-	# XXX : CMAKE_INSTALL_PREFIX is required for cpack to work correctly
-	# this is a bug in cmake or cpack
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/share/oooark
+	DESTINATION share/oooark
 	PATTERN "*.git*" EXCLUDE)
 
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/oooark-toolbox"
@@ -164,7 +168,7 @@ install(DIRECTORY "${PROJECT_SOURCE_DIR}/oooark-toolbox"
 # pkgconfig
 install(FILES
 	oooark.pc
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig
+	DESTINATION lib/pkgconfig
 	)
 
 # custom commands for submodules
