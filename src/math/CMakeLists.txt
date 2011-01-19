@@ -5,7 +5,7 @@ add_library(oooarkMath SHARED
 	GpsIns.cpp
 	)
 target_link_libraries(oooarkMath ${Boost_LIBRARIES} ${LAPACK_LIBRARIES})
-set_target_properties(oooarkMath PROPERTIES VERSION ${oooark_VERISON}
+set_target_properties(oooarkMath PROPERTIES VERSION ${oooark_VERSION}
 	SOVERSION ${oooark_SOVERSION})
 
 install(TARGETS oooarkMath DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

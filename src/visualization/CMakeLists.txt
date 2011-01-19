@@ -27,7 +27,7 @@ endif(QT_FOUND)
 
 add_library(oooarkVisualization SHARED ${oooarkVisualizationSource})
 
-set_target_properties(oooarkVisualization PROPERTIES VERSION ${oooark_VERISON}
+set_target_properties(oooarkVisualization PROPERTIES VERSION ${oooark_VERSION}
 	SOVERSION ${oooark_SOVERSION})
 
 install(TARGETS oooarkVisualization DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

@@ -38,7 +38,7 @@ add_library(oooarkScicos SHARED ${oooarkScicosSources})
 
 target_link_libraries(oooarkScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES})
 
-set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERISON}
+set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERSION}
     SOVERSION ${oooark_SOVERSION})
 
 add_custom_target(oooarkToolbox ALL
