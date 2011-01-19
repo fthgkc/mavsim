@@ -11,6 +11,7 @@ set(oooarkScicosSources
     utilities.cpp
     sci_jsbsimTrim.cpp
     sci_jsbsimComm.cpp
+    sci_insErrorDynamics.cpp
 	)
 
 if (SIMGEAR_FOUND)
