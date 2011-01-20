@@ -1,7 +1,7 @@
 mode(-1);
 lines(0);
 
-oooarkDataPath='/usr/local/share/oooark/data'
+oooarkDataPath='/hsl/homes/awkim/Projects/oooark/data'
 
 simgearBlocks=['sci_flightGearComm'];
 osgBlocks=['sci_jet','sci_car','sci_quad','sci_plane']';
@@ -9,7 +9,7 @@ jsbsimBlocks=['sci_jsbsimTrim','sci_jsbsimComm']';
 lapackBlocks=['sci_gpsIns']';
 mavlinkBlocks=['sci_mavlinkHilSensor','sci_mavlinkHilState','sci_mavlinkHilTracker']';
 
-link('/hsl/homes/jgoppert/Projects/oooark/build/src/scicos/liboooarkScicos.so',[jsbsimBlocks;mavlinkBlocks;simgearBlocks;osgBlocks;lapackBlocks]','c');
+link('/hsl/homes/awkim/Projects/oooark/build/src/scicos/liboooarkScicos.so',[jsbsimBlocks;mavlinkBlocks;simgearBlocks;osgBlocks;lapackBlocks]','c');
 
 genlib('lib_oooarkVis',pwd()+'/oooarkVis');
 create_palette('oooarkVis');
