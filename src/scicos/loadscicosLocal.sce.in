@@ -3,6 +3,7 @@ lines(0);
 
 oooarkDataPath='@DATADIR@'
 
+stdBlocks=['sci_insErrorDynamics'];
 simgearBlocks=['sci_flightGearComm'];
 osgBlocks=['sci_jet','sci_car','sci_quad','sci_plane']';
 jsbsimBlocks=['sci_jsbsimTrim','sci_jsbsimComm']';

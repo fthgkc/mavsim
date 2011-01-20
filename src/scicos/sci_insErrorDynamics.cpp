@@ -44,35 +44,32 @@ extern "C"
     void sci_insErrorDynamics(scicos_block *block, scicos::enumScicosFlags flag)
  {
 
-		// constants
-		
+	// constants
 
-	 	// data
+	// data
         double * u1=(double*)GetInPortPtrs(block,1);
 	double * u2=(double*)GetInPortPtrs(block,2);
-        double ** F=(double**)GetOutPortPtrs(block,1);
-	double ** G=(double**)GetOutPortPtrs(block,2);
+        double * F=(double*)GetOutPortPtrs(block,1);
+	double * G=(double*)GetOutPortPtrs(block,2);
         double * rpar=block->rpar;
 
-		// alias names
-		double & fn = u1[0];
-		double & fe = u1[1];
-		double & fd = u1[2];
+	// alias names
+	double & fn = u1[0];
+	double & fe = u1[1];
+	double & fd = u1[2];
 
-		double & lat = u2[0];
-		double & roll = u2[1];
-		double & pitch = u2[2];
-		double & yaw = u2[3];
-		double & Vn = u2[4];
-		double & Ve = u2[5];
-		double & Vd = u2[6];
+	double & lat = u2[0];
+	double & roll = u2[1];
+	double & pitch = u2[2];
+	double & yaw = u2[3];
+	double & Vn = u2[4];
+	double & Ve = u2[5];
+	double & Vd = u2[6];
 
-		double & Omega = rpar[0];
-		double & R = rpar[1];
-				
+	double & Omega = rpar[0];
+	double & R = rpar[1];
 			
        //handle flags
-
         if (flag==scicos::terminate)
         {
             std::cout << "terminating" << std::endl;
@@ -81,7 +78,7 @@ extern "C"
         {
             std::cout << "computing Output" << std::endl;
 	    memset((void *)F,0,81*sizeof(double));
-	    memset((void *)G,0,81*sizeof(double));
+	    memset((void *)G,0,36*sizeof(double));
 	   
 	    double clat = cos(lat);
 	    double slat = sin(lat);
@@ -93,67 +90,68 @@ extern "C"
 	    double cyaw = cos(yaw);
 	    double syaw = sin(yaw);
 
-	    F[0][1]=-(Omega*slat+Ve/R*tlat);
-	    F[0][2]=Vn/R;
-	    F[0][4]=1/R;
-	    F[0][6]=-Omega*slat;
-	    F[0][8]=-Ve/(R*R);
-	    F[1][0]=(Omega*slat+Ve/R*tlat);
-	    F[1][2]=Omega*clat+Ve/R;
-	    F[1][3]=-1/R;
-	    F[1][8]=Vn/(R*R);
-	    F[2][0]=-Vn/R;
-	    F[2][1]=-Omega*clat-Ve/R;
-	    F[2][4]=-tlat/R;
-	    F[2][6]=-Omega*clat-Ve/(R*clat*clat);
-	    F[2][8]=Ve*tlat/(R*R);
-	    F[3][1]=-fd;
-	    F[3][2]=fe;
-	    F[3][3]=Vd/R;
-	    F[3][4]=-2*(Omega*slat+Ve/R*tlat);
-	    F[3][5]=Vn/R;
-	    F[3][6]=-Ve*(2*Omega*clat+Ve/(R*clat*clat));
-	    F[3][8]=1/(R*R)*(Ve*Ve*tlat-Vn*Vd);
-	    F[4][0]=fd;
-	    F[4][2]=-fn;
-	    F[4][3]=(2*Omega*slat+Ve/R*tlat);
-	    F[4][4]=1/R*(Vn*tlat+Vd);
-	    F[4][5]=2*Omega*cos(lat)+Ve/R;
-	    F[4][6]=(2*Omega*(Vn*clat-Vd*slat)+Vn*Ve/(R*clat*clat));
-	    F[4][8]=-Ve/(R*R)*(Vn*tlat+Vd);
-	    F[5][0]=-fe;
-	    F[5][1]=fn;
-	    F[5][3]=-2*Vn/R;
-	    F[5][4]=-2*(Omega*clat+Ve/R);
-	    F[5][6]=2*Omega*Ve*sin(lat);
-	    F[5][8]=1/(R*R)*(Vn*Vn+Ve*Ve);
-	    F[6][3]=1/R;
-	    F[6][8]=-Vn/(R*R);
-	    F[7][4]=1/(R*clat);
-	    F[7][6]=Ve*tlat/(R*clat);
-	    F[7][8]=-Ve/(R*R*clat);
-	    F[8][5]=-1;
-	
-	    G[0][0]=-cpitch*cyaw;
-	    G[0][1]=-(-croll*syaw+sroll*spitch*cyaw);
-	    G[0][2]=-(sroll*syaw+croll*spitch*cyaw);
-	    G[1][0]=-cpitch*syaw;
-	    G[1][1]=-(croll*cyaw+sroll*spitch*syaw);
-	    G[1][2]=-(-sroll*cyaw+croll*spitch*syaw);
-	    G[2][0]=spitch;
-	    G[2][1]=-sroll*cpitch;
-	    G[2][2]=-croll*cpitch;
-	    G[3][3]=-G[0][0];
-	    G[3][4]=-G[0][1];
-	    G[3][5]=-G[0][2];
-	    G[4][3]=-G[1][0];
-	    G[4][4]=-G[1][1];
-	    G[4][5]=-G[1][2];
-	    G[5][3]=-G[2][0];
-	    G[5][4]=-G[2][1];
-	    G[5][5]=-G[2][2];
+	    int cols = 9;
 
+	    F[0+cols*1]=-(Omega*slat+Ve/R*tlat);
+	    F[0+cols*2]=Vn/R;
+	    F[0+cols*4]=1/R;
+	    F[0+cols*6]=-Omega*slat;
+	    F[0+cols*8]=-Ve/(R*R);
+	    F[1+cols*0]=(Omega*slat+Ve/R*tlat);
+	    F[1+cols*2]=Omega*clat+Ve/R;
+	    F[1+cols*3]=-1/R;
+	    F[1+cols*8]=Vn/(R*R);
+	    F[2+cols*0]=-Vn/R;
+	    F[2+cols*1]=-Omega*clat-Ve/R;
+	    F[2+cols*4]=-tlat/R;
+	    F[2+cols*6]=-Omega*clat-Ve/(R*clat*clat);
+	    F[2+cols*8]=Ve*tlat/(R*R);
+	    F[3+cols*1]=-fd;
+	    F[3+cols*2]=fe;
+	    F[3+cols*3]=Vd/R;
+	    F[3+cols*4]=-2*(Omega*slat+Ve/R*tlat);
+	    F[3+cols*5]=Vn/R;
+	    F[3+cols*6]=-Ve*(2*Omega*clat+Ve/(R*clat*clat));
+	    F[3+cols*8]=1/(R*R)*(Ve*Ve*tlat-Vn*Vd);
+	    F[4+cols*0]=fd;
+	    F[4+cols*2]=-fn;
+	    F[4+cols*3]=(2*Omega*slat+Ve/R*tlat);
+	    F[4+cols*4]=1/R*(Vn*tlat+Vd);
+	    F[4+cols*5]=2*Omega*cos(lat)+Ve/R;
+	    F[4+cols*6]=(2*Omega*(Vn*clat-Vd*slat)+Vn*Ve/(R*clat*clat));
+	    F[4+cols*8]=-Ve/(R*R)*(Vn*tlat+Vd);
+	    F[5+cols*0]=-fe;
+	    F[5+cols*1]=fn;
+	    F[5+cols*3]=-2*Vn/R;
+	    F[5+cols*4]=-2*(Omega*clat+Ve/R);
+	    F[5+cols*6]=2*Omega*Ve*sin(lat);
+	    F[5+cols*8]=1/(R*R)*(Vn*Vn+Ve*Ve);
+	    F[6+cols*3]=1/R;
+	    F[6+cols*8]=-Vn/(R*R);
+	    F[7+cols*4]=1/(R*clat);
+	    F[7+cols*6]=Ve*tlat/(R*clat);
+	    F[7+cols*8]=-Ve/(R*R*clat);
+	    F[8+cols*5]=-1;
 
+    	    cols = 6; 
+	    G[0+cols*0]=-cpitch*cyaw;
+	    G[0+cols*1]=-(-croll*syaw+sroll*spitch*cyaw);
+	    G[0+cols*2]=-(sroll*syaw+croll*spitch*cyaw);
+	    G[1+cols*0]=-cpitch*syaw;
+	    G[1+cols*1]=-(croll*cyaw+sroll*spitch*syaw);
+	    G[1+cols*2]=-(-sroll*cyaw+croll*spitch*syaw);
+	    G[2+cols*0]=spitch;
+	    G[2+cols*1]=-sroll*cpitch;
+	    G[2+cols*2]=-croll*cpitch;
+	    G[3+cols*3]=-G[0+cols*0];
+	    G[3+cols*4]=-G[0+cols*1];
+	    G[3+cols*5]=-G[0+cols*2];
+	    G[4+cols*3]=-G[1+cols*0];
+	    G[4+cols*4]=-G[1+cols*1];
+	    G[4+cols*5]=-G[1+cols*2];
+	    G[5+cols*3]=-G[2+cols*0];
+	    G[5+cols*4]=-G[2+cols*1];
+	    G[5+cols*5]=-G[2+cols*2];
 
 	}
         else

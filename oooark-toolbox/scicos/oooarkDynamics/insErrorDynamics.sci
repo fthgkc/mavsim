@@ -39,7 +39,7 @@ function [x,y,typ]=insErrorDynamics(job,arg1,arg2)
 // You should have received a copy of the GNU General Public License along
 // with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-
+mode(1)
 x=[];y=[];typ=[];
 
 select job
@@ -60,13 +60,13 @@ select job
 				'Omega (rad/s)';..
 				'R (unit distance)'];
 			[ok,Omega,R]=..
-				getvalue('Set GpsIns Parameters',labels,..
+				getvalue('Set Planet Parameters',labels,..
 				list('vec',1,'vec',1),exprs);
 			if ~ok then break,end
-			model.out=[9,9;9,9];
-			[model,graphics,ok]=check_io(model,graphics,model.in,model.out,model.evtin,[])
+				graphics.exprs=exprs;
+			[model,graphics,ok]=check_io(model,graphics,[3;7],[9;6],[1],[])
 			if ok then
-				model.rpar=[];
+				model.rpar=[Omega,R];
 				graphics.exprs=exprs;
 				x.graphics=graphics;
 				x.model=model;
@@ -78,10 +78,11 @@ select job
 		model=scicos_model()
 		model.sim=list('sci_insErrorDynamics',4)
 		model.evtin=[1];
-		model.in=[3;7]
-		model.out=[9,9;9,9]
-		model.blocktype='c'
-		model.dep_ut=[%t %f]
+		model.in=[3;7];
+		model.out=[9;6];
+		model.out2=[9;6];
+		model.blocktype='c';
+		model.dep_ut=[%t %f];
 
 		// gpsIns parameters
 		Omega = 7.292115e-5

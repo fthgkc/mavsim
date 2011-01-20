@@ -37,7 +37,7 @@ set(oooark_VERSION_PATCH 0)
 set(oooark_SOVERSION 0)
 
 set_default(MAVLINK_BUILD_FROM_SOURCE TRUE)
-set_default(JSBSIM_BUILD_FROM_SOURCE TRUE)
+set_default(JSBSIM_BUILD_FROM_SOURCE FALSE)
 set_default(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE TRUE)
 set_default(STATIC_LINKING FALSE)
 set_default(IN_SRC_BUILD FALSE)
@@ -80,7 +80,7 @@ set(configDepends
 	${PROJECT_BINARY_DIR}/git.stamp 
 	)
 set(OOOARK_LIBRARIES oooarkCommunication)
-set(SCICOSLAB_BLOCKS jsbsimBlocks;mavlinkBlocks)
+set(SCICOSLAB_BLOCKS stdBlocks;jsbsimBlocks;mavlinkBlocks)
 
 # installer
 include(InstallRequiredSystemLibraries)
