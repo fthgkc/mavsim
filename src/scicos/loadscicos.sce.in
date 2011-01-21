@@ -3,8 +3,8 @@ lines(0);
 
 oooarkDataPath='@DATADIR@'
 
-stdBlocks=['sci_insErrorDynamics'];
-simgearBlocks=['sci_flightGearComm'];
+stdBlocks=['sci_insErrorDynamics']';
+simgearBlocks=['sci_flightGearComm']';
 osgBlocks=['sci_jet','sci_car','sci_quad','sci_plane']';
 jsbsimBlocks=['sci_jsbsimTrim','sci_jsbsimComm']';
 lapackBlocks=['sci_gpsIns']';
@@ -28,4 +28,8 @@ genlib('lib_oooarkNav',pwd()+'/oooarkNav');
 //create_palette('oooarkNav');
 add_palette('oooark Navigation',pwd()+'/oooarkNav/oooarkNav.cosf');
 
-clear simgearBlocks osgBlocks jsbsimBlocks lapackBlocks mavlinkBlocks
+genlib('lib_oooarkLinear',pwd()+'/oooarkLinear');
+//create_palette('oooarkLinear');
+add_palette('oooark Linear',pwd()+'/oooarkLinear/oooarkLinear.cosf');
+
+clear stdBlocks simgearBlocks osgBlocks jsbsimBlocks lapackBlocks mavlinkBlocks

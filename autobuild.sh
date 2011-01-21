@@ -54,7 +54,6 @@ do
 	then
 		echo you chose to clean the build 
 		rm -rf build
-		exit 0
 
 	elif [ $OPT = "END" ] &> /dev/null
 	then

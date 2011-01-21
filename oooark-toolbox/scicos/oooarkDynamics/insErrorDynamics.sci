@@ -4,8 +4,8 @@ function [x,y,typ]=insErrorDynamics(job,arg1,arg2)
 //
 // USAGE:
 //
-// output 1: F
-// output 2: G
+// output 1: F (9x9)
+// output 2: G (9x6)
 //
 // input 1: (input u1)
 //  [1] fn (unit distance/s^2) (inertial)
@@ -13,13 +13,16 @@ function [x,y,typ]=insErrorDynamics(job,arg1,arg2)
 //  [3] fd (unit distance/s^2) (inertial)
 //	default unit distance is meters
 // input 2: (input u2)
-//  [1]  Lat 	(rad)
-//  [2]  Phi 	(rad)
-//  [3]  Theta 	(rad)
-//  [4]  Psi 	(rad)
-//  [5]  Vn 	(unit distance/s)
-//  [6]  Ve 	(unit distance/s)
-//  [7]  Vd 	(unit distance/s)
+//  [1]  Phi 	(rad)
+//  [2]  Theta 	(rad)
+//  [3]  Psi 	(rad)
+//  [4]  Vn 	(unit distance/s)
+//  [5]  Ve 	(unit distance/s)
+//  [6]  Vd 	(unit distance/s)
+//  [7]  Lat 	(rad)
+//  [8]  Lon 	(rad)
+//  [9]  alt 	(unit distance)
+
 //	default unit distance is meters
 //
 // AUTHOR:
@@ -63,7 +66,7 @@ select job
 				list('vec',1,'vec',1),exprs);
 			if ~ok then break,end
 				graphics.exprs=exprs;
-			[model,graphics,ok]=check_io(model,graphics,[3;7],[9;6],[1],[])
+			[model,graphics,ok]=check_io(model,graphics,[3;9],[9;9],[1],[])
 			if ok then
 				model.rpar=[Omega,R];
 				graphics.exprs=exprs;
@@ -77,8 +80,8 @@ select job
 		model=scicos_model()
 		model.sim=list('sci_insErrorDynamics',4)
 		model.evtin=[1];
-		model.in=[3;7];
-		model.out=[9;6];
+		model.in=[3;9];
+		model.out=[9;9];
 		model.out2=[9;6];
 		model.blocktype='c';
 		model.dep_ut=[%t %f];
