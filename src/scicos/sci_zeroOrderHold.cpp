@@ -21,25 +21,60 @@ extern "C"
 {
 
 #include <scicos/scicos_block4.h>
+#include "definitions.hpp"
+#include "stdio.h"
 
-void sci_zeroOrderHold(scicos_block *block,int flag)
+void sci_zeroOrderHold(scicos_block *block,scicos::enumScicosFlags flag)
 {
+    // get block data pointers, etc
     double *_z=GetDstate(block);
     double *_u1=GetRealInPortPtrs(block,1);
-    double *_u2=GetRealInPortPtrs(block,2);
+    double *_u2=NULL;
     double *_y1=GetRealOutPortPtrs(block,1);
+    int *_ipar=GetIparPtrs(block);
+    int & evtFlag = GetNevIn(block);
+
+    // conditional data based on size
+    if (GetNin(block) == 2) _u2=GetRealInPortPtrs(block,2);
+
+    // compute flags
+    int evtFlagTime = 1 << (_ipar[0]-1);
+    int evtFlagReset = 1 << (_ipar[1]-1);
   
+    // loop over all rows of data
     int i;
     for(i=0;i< GetInPortRows(block,1);i++){
-        if (flag ==1 || flag ==6 || flag ==4)
+        
+        if (flag ==scicos::computeOutput || flag ==scicos::reinitialize || flag ==scicos::initialize)
             _y1[i]=_z[i];
-        else if (flag == 2)
+
+        else if (flag == scicos::updateState)
         {
-            switch(GetNevIn(block))
+            if(evtFlag & evtFlagReset) // bitwise comparison for flag
             {
-                case 1: _z[i]=_u1[i]; break;
-                case 2: _z[i]=_u2[i]; break;
+                _z[i]=_u2[i];
             }
+            if(evtFlag & evtFlagTime)
+            {
+                _z[i]=_u1[i];
+            }
+            else
+            {
+                char msg[50];
+                sprintf(msg,"unhandled event flag %d\n",evtFlag);
+                Coserror(msg);
+            }
+        }
+        else if (flag == scicos::terminate)
+        {
+            printf("terminating");
+            end_scicos_sim(); // force termination
+        }
+        else
+        {
+            char msg[50];
+            sprintf(msg,"unhandled block flag %d\n",flag);
+            Coserror(msg);
         }
     }
 }

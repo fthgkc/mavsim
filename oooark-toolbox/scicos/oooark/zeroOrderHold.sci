@@ -74,17 +74,34 @@ case 'set' then
             ot=do_get_type(z)
         end
 
+        // input/output size/type
         if reset then   
             in=[out;out];
             it=[ot;ot];
         else 
-            in = out
+            in=out
             it=ot
         end
-        
+
+        // port for time
+        if inh then
+            evtPortTime = 0;
+        else
+            evtPortTime = 1;
+        end
+
+        // port for reset
+        if reset then
+            evtPortReset = evtPortTime + 1;
+        else
+            evtPortReset = 0;
+        end
+
+        // graphics
         if ok then
             [model,graphics,ok]=set_io(model,graphics,list(in,it),list(out,ot),ones(1-inh+reset,1),[])
             model.dstate=z
+            model.ipar=[evtPortTime;evtPortReset];
         end
 
         if ok then
@@ -100,12 +117,12 @@ case 'compile'
     z=model.dstate
     if size(z,'*')==1 then 
         z(1:sz(1),1:sz(2))=z
-//  elseif ~isequal(sz,size(z)) then
-//      error("state has size "+sci2exp(size(z))+" but input/output has size "+sci2exp(sz))
-//  elseif do_get_type(z)>1 then
-//     if ~isequal(do_get_type(z),typ) then
-//      error("state has type "+string(do_get_type(z))+" but input/output has type "+sci2exp(typ))
-//     end
+    //elseif ~isequal(sz,size(z)) then
+        //error("state has size "+sci2exp(size(z))+" but input/output has size "+sci2exp(sz))
+    //elseif do_get_type(z)>1 then
+        //if ~isequal(do_get_type(z),typ) then
+            //error("state has type "+string(do_get_type(z))+" but input/output has type "+sci2exp(typ))
+        //end
     elseif do_get_type(z)==1 then
         select typ
         case 2
@@ -141,7 +158,9 @@ case 'compile'
 case 'define' then
     z=0
     inh=0
-    reset=1
+    reset=0
+    evtPortTime=1
+    evtPortReset=0
     exprs=string([z;inh;reset])
     model=scicos_model()
     model.sim=list('sci_zeroOrderHold',4) 
@@ -149,8 +168,9 @@ case 'define' then
     model.in2=-2
     model.out=-1
     model.out2=-2
-    model.evtin=[1-inh;reset]
+    model.evtin=1
     model.dstate=z
+    model.ipar=[evtPortTime;evtPortReset];
     model.blocktype='d'
     model.dep_ut=[%f %f]
     gr_i='xstringb(orig(1),orig(2),''1/z'',sz(1),sz(2),''fill'')'
