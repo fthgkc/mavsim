@@ -12,6 +12,7 @@ set(oooarkScicosSources
     sci_jsbsimTrim.cpp
     sci_jsbsimComm.cpp
     sci_insErrorDynamics.cpp
+	sci_zeroOrderHold.cpp
 	)
 
 if (SIMGEAR_FOUND)
@@ -48,7 +49,9 @@ add_custom_target(oooarkToolbox ALL
 
 get_target_property(SCICOSLAB_LOCATION oooarkScicos LOCATION)
 
-configure_file(loadscicosLocal.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/scicos/loadscicos.sce)
+set(SCICOSLAB_INSTALL_SETTINGS 0)
+configure_file(loadscicos.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/scicos/loadscicos.sce)
+set(SCICOSLAB_INSTALL_SETTINGS 1)
 configure_file(loadscicos.sce.in ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce)
 
 configure_file(VERSION.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/VERSION)
