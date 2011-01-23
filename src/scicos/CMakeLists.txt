@@ -4,6 +4,7 @@ include_directories( "${PROJECT_SOURCE_DIR}/src" ${SCICOSLAB_INCLUDE_DIRS}
 link_directories( ${OSG_LIBRARY_DIRS} ) 
 
 set(oooarkScicosSources
+	definitions.cpp
 	sci_mavlinkHilSensor.cpp
 	sci_mavlinkHilState.cpp
 	sci_mavlinkHilTracker.cpp

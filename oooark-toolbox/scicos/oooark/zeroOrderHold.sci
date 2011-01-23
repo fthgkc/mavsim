@@ -110,50 +110,50 @@ case 'set' then
             break
         end
     end
-case 'compile'
-    model=arg1
-    sz=[model.in model.in2]
-    typ=model.intyp
-    z=model.dstate
-    if size(z,'*')==1 then 
-        z(1:sz(1),1:sz(2))=z
+//case 'compile'
+    //model=arg1
+    //sz=[model.in model.in2]
+    //typ=model.intyp
+    //z=model.dstate
+    //if size(z,'*')==1 then 
+        //z(1:sz(1),1:sz(2))=z
     //elseif ~isequal(sz,size(z)) then
         //error("state has size "+sci2exp(size(z))+" but input/output has size "+sci2exp(sz))
     //elseif do_get_type(z)>1 then
         //if ~isequal(do_get_type(z),typ) then
             //error("state has type "+string(do_get_type(z))+" but input/output has type "+sci2exp(typ))
         //end
-    elseif do_get_type(z)==1 then
-        select typ
-        case 2
-            z=z+0*%i
-        case 3
-            z=int32(z)
-        case 4
-            z=int16(z)
-        case 5
-            z=int8(z)
-        case 6
-            z=uint32(z)
-        case 7
-            z=uint16(z)
-        case 8
-            z=uint8(z)
-        case 9
-            z=z>0
-        end
-    end
+    //elseif do_get_type(z)==1 then
+        //select typ
+        //case 2
+            //z=z+0*%i
+        //case 3
+            //z=int32(z)
+        //case 4
+            //z=int16(z)
+        //case 5
+            //z=int8(z)
+        //case 6
+            //z=uint32(z)
+        //case 7
+            //z=uint16(z)
+        //case 8
+            //z=uint8(z)
+        //case 9
+            //z=z>0
+        //end
+    //end
 
-    if size(z,'*')==1 & typ==1 then
-        model.sim=list('sci_zeroOrderHold',4);
-        model.dstate=z(:);
-        model.odstate=list();
-    else
-        model.sim=list('sci_zeroOrderHold',4)
-        model.odstate=list(z);
-        model.dstate=[];
-    end
-    x=model
+    //if size(z,'*')==1 & typ==1 then
+        //model.sim=list('sci_zeroOrderHold',4);
+        //model.dstate=z(:);
+        //model.odstate=list();
+    //else
+        //model.sim=list('sci_zeroOrderHold',4)
+        //model.odstate=list(z);
+        //model.dstate=[];
+    //end
+    //x=model
 
 case 'define' then
     z=0
