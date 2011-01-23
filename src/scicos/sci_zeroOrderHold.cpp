@@ -30,13 +30,10 @@ void sci_zeroOrderHold(scicos_block *block,scicos::enumScicosFlags flag)
     // get block data pointers, etc
     double *_z=GetDstate(block);
     double *_u1=GetRealInPortPtrs(block,1);
-    double *_u2=NULL;
+    double *_u2=GetRealInPortPtrs(block,2);
     double *_y1=GetRealOutPortPtrs(block,1);
     int *_ipar=GetIparPtrs(block);
     int & evtFlag = GetNevIn(block);
-
-    // conditional data based on size
-    if (GetNin(block) == 2) _u2=GetRealInPortPtrs(block,2);
 
     // compute flags
     int evtFlagTime = scicos::evtPortNumToFlag(_ipar[0]);
@@ -57,8 +54,14 @@ void sci_zeroOrderHold(scicos_block *block,scicos::enumScicosFlags flag)
             else if (flag == scicos::updateState)
             {
                 // bitwise comparison for flag
-                if(evtFlag & evtFlagReset) memcpy(_z,_u2,nBytes);
-                else if(evtFlag & evtFlagTime) memcpy(_z,_u1,nBytes);
+                if(evtFlag & evtFlagReset)
+                {
+                    memcpy(_z,_u2,nBytes);
+                }
+                else if(evtFlag & evtFlagTime)
+                {
+                    memcpy(_z,_u1,nBytes);
+                }
                 else
                 {
                     printf("\nunhandled event flat %d\n",evtFlag);
@@ -71,8 +74,6 @@ void sci_zeroOrderHold(scicos_block *block,scicos::enumScicosFlags flag)
             }
             else if (flag == scicos::terminate)
             {
-                printf("terminating");
-                end_scicos_sim(); // force termination
             }
             else
             {
