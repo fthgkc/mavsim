@@ -74,11 +74,7 @@ void sci_insErrorDynamics(scicos_block *block, scicos::enumScicosFlags flag)
     double & R = rpar[1];
             
     //handle flags
-    if (flag==scicos::terminate)
-    {
-        std::cout << "terminating" << std::endl;
-    }
-    else if (flag==scicos::computeOutput)
+    if (flag==scicos::computeOutput)
     {
         memset((void *)F,0,81*sizeof(double));
         memset((void *)G,0,54*sizeof(double));
@@ -157,9 +153,15 @@ void sci_insErrorDynamics(scicos_block *block, scicos::enumScicosFlags flag)
         G[5+rowsG*4]=-G[2+rowsG*1];
         G[5+rowsG*5]=-G[2+rowsG*2];
     }
+    else if (flag==scicos::terminate)
+    {
+    }
+    else if (flag==scicos::initialize || flag==scicos::reinitialize)
+    {
+    }
     else
     {
-        std::cout << "unhandled flag: " << flag << std::endl;
+        std::cout << "unhandled block flag: " << flag << std::endl;
     }
 }
 
