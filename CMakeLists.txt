@@ -7,11 +7,15 @@ macro(find_or_build_from_source PACKAGE)
 	if (NOT ${PACKAGE}_BUILD_FROM_SOURCE)
 		find_package(${PACKAGE})
 	endif()
-
 	if (NOT ${PACKAGE}_FOUND)
 		set(${PACKAGE}_BUILD_FROM_SOURCE TRUE)
 		message(STATUS "could not find package ${PACKAGE}, building from source")
+		set(${PACKAGE}_FOUND TRUE)
+	else()
+		add_custom_command(OUTPUT ${PACKAGE}.stamp 
+			COMMAND touch ${PACKAGE}.stamp)
 	endif()
+	add_custom_target(${PACKAGE} DEPENDS ${PACKAGE}.stamp)
 endmacro(find_or_build_from_source)
 
 macro(set_default VAR DEFAULT)
@@ -36,9 +40,9 @@ set(oooark_VERSION_MINOR 2)
 set(oooark_VERSION_PATCH 0)
 set(oooark_SOVERSION 0)
 
-set_default(MAVLINK_BUILD_FROM_SOURCE TRUE)
+set_default(MAVLINK_BUILD_FROM_SOURCE FALSE)
 set_default(JSBSIM_BUILD_FROM_SOURCE FALSE)
-set_default(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE TRUE)
+set_default(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE FALSE)
 set_default(STATIC_LINKING FALSE)
 set_default(IN_SRC_BUILD FALSE)
 
@@ -75,10 +79,6 @@ if (Fortran_langurage_works)
 endif(Fortran_langurage_works)
 
 # initialize variables
-set(configDepends  
-	${PROJECT_BINARY_DIR}/dir.stamp 
-	${PROJECT_BINARY_DIR}/git.stamp 
-	)
 set(OOOARK_LIBRARIES oooarkCommunication)
 set(SCICOSLAB_BLOCKS stdBlocks;jsbsimBlocks;mavlinkBlocks)
 
@@ -124,27 +124,33 @@ find_package(OpenSceneGraph 2.8.3 COMPONENTS osgGA osgDB osgUtil osgViewer)
 find_package(LAPACK)
 find_package(SIMGEAR)
 find_package(SCICOSLAB)
-find_package(JSBSIM)
 find_or_build_from_source(BOOSTNUMERICBINDINGS)
 find_or_build_from_source(JSBSIM)
 find_or_build_from_source(MAVLINK)
 
 # build libraries from source if not found on system
-if (MAVLINK_BUILD_FROM_SOURCE)
-	set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
-	set(MAVLINK_FOUND TRUE)
-endif()
-
-if (BOOSTNUMERICBINDINGS_BUILD_FROM_SOURCE)
-	set(BOOSTNUMERICBINDINGS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/boost-numeric-bindings")
-	set(BOOSTNUMERICBINDINGS_FOUND TRUE)
-endif()
-
-if (JSBSIM_BUILD_FROM_SOURCE)
+if(JSBSIM_BUILD_FROM_SOURCE)
 	set(JSBSIM_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/src")
 	set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libjsbsim.a")
-	list(APPEND configDepends ${PROJECT_BINARY_DIR}/jsbsim.stamp)
-	set(JSBSIM_FOUND TRUE)
+	add_custom_command(OUTPUT JSBSIM.stamp 
+		COMMAND mkdir -p jsbsim
+		COMMAND cd ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim && ./autogen.sh --no-configure
+		COMMAND cd jsbsim && ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
+		COMMAND cd jsbsim && make -j8
+		COMMAND touch JSBSIM.stamp
+		DEPENDS GIT.stamp)
+endif()
+
+if(MAVLINK_BUILD_FROM_SOURCE)
+	set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
+	add_custom_command(OUTPUT MAVLINK.stamp 
+		COMMAND touch MAVLINK.stamp)
+endif()
+
+if(BOOSTNUMERICBINDINGS_BUILD_FROM_SOURCE)
+	set(BOOSTNUMERICBINDINGS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/boost-numeric-bindings")
+	add_custom_command(OUTPUT BOOSTNUMERICBINDINGS.stamp 
+		COMMAND touch BOOSTNUMERICBINDINGS.stamp)
 endif()
 
 # data directory
@@ -175,36 +181,17 @@ install(FILES
 	DESTINATION lib/pkgconfig
 	)
 
-# custom commands for submodules
-add_custom_command(OUTPUT  ${PROJECT_BINARY_DIR}/dir.stamp
-	COMMAND mkdir ARGS -p jsbsim
-	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/dir.stamp
-	WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
-
-if(IS_DIRECTORY .git)
-	add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/git.stamp
-		COMMAND git ARGS submodule init
-		COMMAND git ARGS submodule update
-		COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp
-		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+# git submodules
+if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
+	message(STATUS "git repository detected, will attempt to load submodules")
+	add_custom_command(OUTPUT GIT.stamp
+		COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule init
+		COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule update
+		COMMAND touch GIT.stamp)
 else()
-	execute_process(COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp)
+	execute_process(COMMAND touch GIT.stamp)
 endif()
 
-add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
-	COMMAND ./autogen.sh --no-configure
-	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
-	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim)
-
-add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsim.stamp
-	COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
-	COMMAND make -j8
-	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsim.stamp
-	DEPENDS ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
-	WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/jsbsim)
-
-# config dependencies
-add_custom_target(config ALL DEPENDS ${configDepends}) 
 
 # internal library list definition / dep summary
 message(STATUS "=======================================")

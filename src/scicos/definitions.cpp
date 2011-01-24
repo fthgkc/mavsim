@@ -1,13 +1,13 @@
 /*
- * definitions.hpp
+ * definitions.cpp
  * Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>
  *
- * definitions.hpp is free software: you can redistribute it and/or modify it
+ * This file is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * definitions.hpp is distributed in the hope that it will be useful, but
+ * This file is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
@@ -16,30 +16,19 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef definitions_HPP
-#define definitions_HPP
+extern "C" {
 
 namespace scicos
 {
 
-enum enumScicosFlags
+int evtPortNumToFlag(int portNum)
 {
-    computeDeriv=0,
-    computeOutput=1,
-    updateState=2,
-    outputTimeDelays=3,
-    initialize=4,
-    terminate=5,
-    reinitialize=6,
-    internal=7,
-    computeZeroCrossSurfsSetModes=8,
-    computeZeroCrossSurfs=9
-};
-
-int evtPortNumToFlag(int portNum);
+	if (portNum > 0) return 1 << (portNum-1); //  return the bit flag equivalent
+	else return -9; // if port is not there return a value that won't match
+}
 
 }
 
-#endif
+} // extern C
 
-// vim:ts=4:sw=4
+// vim:ts=4:sw=4:expandtab
