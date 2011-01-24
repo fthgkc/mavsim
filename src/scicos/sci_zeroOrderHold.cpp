@@ -34,10 +34,12 @@ void sci_zeroOrderHold(scicos_block *block,scicos::enumScicosFlags flag)
     double *_y1=GetRealOutPortPtrs(block,1);
     int *_ipar=GetIparPtrs(block);
     int & evtFlag = GetNevIn(block);
+    int & evtPortTime = _ipar[0];
+    int & evtPortReset = _ipar[1];
 
     // compute flags
-    int evtFlagTime = scicos::evtPortNumToFlag(_ipar[0]);
-    int evtFlagReset = scicos::evtPortNumToFlag(_ipar[1]);
+    int evtFlagTime = scicos::evtPortNumToFlag(evtPortTime);
+    int evtFlagReset = scicos::evtPortNumToFlag(evtPortReset);
   
     // loop over all rows of data
     int i,j;
@@ -54,11 +56,11 @@ void sci_zeroOrderHold(scicos_block *block,scicos::enumScicosFlags flag)
             else if (flag == scicos::updateState)
             {
                 // bitwise comparison for flag
-                if(evtFlag & evtFlagReset)
+                if(evtFlag & evtFlagReset && _u2)
                 {
                     memcpy(_z,_u2,nBytes);
                 }
-                else if(evtFlag & evtFlagTime)
+                else if(evtFlag & evtFlagTime && _u1)
                 {
                     memcpy(_z,_u1,nBytes);
                 }
