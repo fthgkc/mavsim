@@ -24,6 +24,7 @@ if (SIMGEAR_FOUND)
 endif(SIMGEAR_FOUND)
 
 add_library(oooarkCommunication SHARED ${oooarkCommunicationSources})
+add_dependencies(oooarkCommunication MAVLINK)
 target_link_libraries(oooarkCommunication ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
 set_target_properties(oooarkCommunication PROPERTIES 
 	VERSION ${oooark_VERSION} 
