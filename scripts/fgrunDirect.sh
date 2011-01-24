@@ -1,16 +1,19 @@
 #!/bin/bash
 if [ $# != 1 ]
 then
-	echo program for communicating with jsbsimcomm
+	echo program for communicating with flightgearcomm
+	echo this doesn't currently work for flightgear > 1.0
 	echo usage: $0 aircraft
 	exit
 fi
 aircraft=$1
-fgfs \
---fdm=external \
+gdb --args fgfs \
+--disable-sound \
+--native-fdm=socket,out,120,,5500,udp \
+--native-ctrls=socket,out,119,,5501,udp \
+--native-ctrls=socket,in,120,,5502,udp \
 --aircraft=$aircraft \
 --geometry=400x300 \
---native-fdm=socket,in,120,,5500,udp \
 --vc=30 \
 --altitude=1000 \
 --heading=90 \

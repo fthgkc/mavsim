@@ -37,7 +37,7 @@ set(oooark_VERSION_PATCH 0)
 set(oooark_SOVERSION 0)
 
 set_default(MAVLINK_BUILD_FROM_SOURCE TRUE)
-set_default(JSBSIM_BUILD_FROM_SOURCE FALSE)
+set_default(JSBSIM_BUILD_FROM_SOURCE TRUE)
 set_default(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE TRUE)
 set_default(STATIC_LINKING FALSE)
 set_default(IN_SRC_BUILD FALSE)
@@ -75,10 +75,6 @@ if (Fortran_langurage_works)
 endif(Fortran_langurage_works)
 
 # initialize variables
-set(configDepends  
-	${PROJECT_BINARY_DIR}/dir.stamp 
-	${PROJECT_BINARY_DIR}/git.stamp 
-	)
 set(OOOARK_LIBRARIES oooarkCommunication)
 set(SCICOSLAB_BLOCKS stdBlocks;jsbsimBlocks;mavlinkBlocks)
 
@@ -124,7 +120,6 @@ find_package(OpenSceneGraph 2.8.3 COMPONENTS osgGA osgDB osgUtil osgViewer)
 find_package(LAPACK)
 find_package(SIMGEAR)
 find_package(SCICOSLAB)
-find_package(JSBSIM)
 find_or_build_from_source(BOOSTNUMERICBINDINGS)
 find_or_build_from_source(JSBSIM)
 find_or_build_from_source(MAVLINK)
@@ -141,11 +136,25 @@ if (BOOSTNUMERICBINDINGS_BUILD_FROM_SOURCE)
 endif()
 
 if (JSBSIM_BUILD_FROM_SOURCE)
+
 	set(JSBSIM_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/src")
 	set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libjsbsim.a")
-	list(APPEND configDepends ${PROJECT_BINARY_DIR}/jsbsim.stamp)
 	set(JSBSIM_FOUND TRUE)
+
+	add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
+		COMMAND ./autogen.sh --no-configure
+		COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
+		DEPENDS dir.stamp
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim)
+
+	add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsim.stamp 
+		COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
+		COMMAND make -j8
+		COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsim.stamp
+		DEPENDS ${PROJECT_BINARY_DIR}/git.stamp ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
+		WORKING_DIRECTORY jsbsim)
 endif()
+add_custom_target(jsbsim DEPENDS jsbsim.stamp)
 
 # data directory
 if(IN_SRC_BUILD)
@@ -176,35 +185,21 @@ install(FILES
 	)
 
 # custom commands for submodules
-add_custom_command(OUTPUT  ${PROJECT_BINARY_DIR}/dir.stamp
+add_custom_command(OUTPUT  dir.stamp
 	COMMAND mkdir ARGS -p jsbsim
-	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/dir.stamp
-	WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
+	COMMAND touch ARGS dir.stamp)
 
-if(IS_DIRECTORY .git)
+if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
+	message(STATUS "git repository detected, will attempt to load submodules")
 	add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/git.stamp
 		COMMAND git ARGS submodule init
 		COMMAND git ARGS submodule update
 		COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 else()
-	execute_process(COMMAND touch ARGS ${PROJECT_BINARY_DIR}/git.stamp)
+	execute_process(COMMAND touch ARGS git.stamp)
 endif()
 
-add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
-	COMMAND ./autogen.sh --no-configure
-	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
-	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim)
-
-add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsim.stamp
-	COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
-	COMMAND make -j8
-	COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsim.stamp
-	DEPENDS ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
-	WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/jsbsim)
-
-# config dependencies
-add_custom_target(config ALL DEPENDS ${configDepends}) 
 
 # internal library list definition / dep summary
 message(STATUS "=======================================")

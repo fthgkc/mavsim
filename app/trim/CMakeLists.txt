@@ -30,6 +30,7 @@ set(trim_src
 
 add_definitions(-DUSE_QT4)
 add_executable(oooarkTrim ${trim_src})
+add_dependencies(oooarkTrim jsbsim)
 target_link_libraries(oooarkTrim ${OSG_LIBRARIES}
 	${QT_LIBRARIES} ${JSBSIM_LIBRARIES}
 	${OOOARK_LIBRARIES} ${Boost_LIBRARIES})
