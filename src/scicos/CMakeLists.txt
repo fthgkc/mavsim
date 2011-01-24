@@ -38,7 +38,7 @@ if (OPENSCENEGRAPH_FOUND)
 endif(OPENSCENEGRAPH_FOUND)
 
 add_library(oooarkScicos SHARED ${oooarkScicosSources})
-add_dependencies(oooarkScicos jsbsim)
+add_dependencies(oooarkScicos JSBSIM)
 
 target_link_libraries(oooarkScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES})
 

@@ -7,11 +7,14 @@ macro(find_or_build_from_source PACKAGE)
 	if (NOT ${PACKAGE}_BUILD_FROM_SOURCE)
 		find_package(${PACKAGE})
 	endif()
-
 	if (NOT ${PACKAGE}_FOUND)
 		set(${PACKAGE}_BUILD_FROM_SOURCE TRUE)
 		message(STATUS "could not find package ${PACKAGE}, building from source")
+		set(${PACKAGE}_FOUND TRUE)
+	else()
+		execute_process(COMMAND touch ARGS ${PROJECT_BINARY_DIR}/${PACKAGE}.stamp)
 	endif()
+	add_custom_target(${PACKAGE} DEPENDS ${PACKAGE}.stamp)
 endmacro(find_or_build_from_source)
 
 macro(set_default VAR DEFAULT)
@@ -37,7 +40,7 @@ set(oooark_VERSION_PATCH 0)
 set(oooark_SOVERSION 0)
 
 set_default(MAVLINK_BUILD_FROM_SOURCE TRUE)
-set_default(JSBSIM_BUILD_FROM_SOURCE TRUE)
+set_default(JSBSIM_BUILD_FROM_SOURCE FALSE)
 set_default(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE TRUE)
 set_default(STATIC_LINKING FALSE)
 set_default(IN_SRC_BUILD FALSE)
@@ -136,25 +139,23 @@ if (BOOSTNUMERICBINDINGS_BUILD_FROM_SOURCE)
 endif()
 
 if (JSBSIM_BUILD_FROM_SOURCE)
-
 	set(JSBSIM_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/src")
 	set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libjsbsim.a")
-	set(JSBSIM_FOUND TRUE)
-
-	add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
-		COMMAND ./autogen.sh --no-configure
-		COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
-		DEPENDS dir.stamp
-		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim)
-
-	add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/jsbsim.stamp 
-		COMMAND ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
-		COMMAND make -j8
-		COMMAND touch ARGS ${PROJECT_BINARY_DIR}/jsbsim.stamp
-		DEPENDS ${PROJECT_BINARY_DIR}/git.stamp ${PROJECT_BINARY_DIR}/jsbsimAutogen.stamp
-		WORKING_DIRECTORY jsbsim)
 endif()
-add_custom_target(jsbsim DEPENDS jsbsim.stamp)
+
+# source builds
+add_custom_command(OUTPUT JSBSIM.stamp 
+	COMMAND cd ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim && ./autogen.sh --no-configure
+	COMMAND cd jsbsim && ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
+	COMMAND cd jsbsim && make -j8
+	COMMAND touch ARGS JSBSIM.stamp
+	DEPENDS dir.stamp git.stamp)
+
+add_custom_command(OUTPUT MAVLINK.stamp 
+	COMMAND touch ARGS MAVLINK.stamp)
+
+add_custom_command(OUTPUT BOOSTNUMERICBINDINGS.stamp 
+	COMMAND touch ARGS BOOSTNUMERICBINDINGS.stamp)
 
 # data directory
 if(IN_SRC_BUILD)
