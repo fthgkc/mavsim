@@ -1,12 +1,12 @@
 mode(-1);
 lines(0);
 
-oooarkDataPath='/hsl/homes/jgoppert/Projects/oooark/data'
+oooarkDataPath='/hsl/homes/awkim/Projects/oooark/data'
 
 // whether or not to configure for final installation
 scicoslabInstallSettings = 0;
 
-stdBlocks=['sci_insErrorDynamics';'sci_zeroOrderHold'];
+stdBlocks=['sci_randn';'sci_insErrorDynamics';'sci_zeroOrderHold'];
 simgearBlocks=['sci_flightGearComm'];
 osgBlocks=['sci_jet';'sci_car';'sci_quad';'sci_plane'];
 jsbsimBlocks=['sci_jsbsimTrim';'sci_jsbsimComm'];
@@ -15,9 +15,9 @@ mavlinkBlocks=['sci_mavlinkHilSensor';'sci_mavlinkHilState';'sci_mavlinkHilTrack
 blocks=[stdBlocks;jsbsimBlocks;mavlinkBlocks;simgearBlocks;osgBlocks;lapackBlocks]';
 
 if (scicoslabInstallSettings) then
-	link('/hsl/homes/jgoppert/Projects/oooark/data/liboooarkScicos.so',blocks,'c');
+	link('/hsl/homes/awkim/Projects/oooark/data/liboooarkScicos.so',blocks,'c');
 else
-	link('/hsl/homes/jgoppert/Projects/oooark/build/src/scicos/liboooarkScicos.so',blocks,'c');
+	link('/hsl/homes/awkim/Projects/oooark/build/src/scicos/liboooarkScicos.so',blocks,'c');
 end
 
 genlib('lib_oooark',pwd()+'/oooark');

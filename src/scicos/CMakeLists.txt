@@ -9,11 +9,12 @@ set(oooarkScicosSources
 	sci_mavlinkHilState.cpp
 	sci_mavlinkHilTracker.cpp
 	sci_invPend.cpp
-    utilities.cpp
-    sci_jsbsimTrim.cpp
-    sci_jsbsimComm.cpp
-    sci_insErrorDynamics.cpp
+	utilities.cpp
+	sci_jsbsimTrim.cpp
+	sci_jsbsimComm.cpp
+	sci_insErrorDynamics.cpp
 	sci_zeroOrderHold.cpp
+	sci_randn.cpp
 	)
 
 if (SIMGEAR_FOUND)
