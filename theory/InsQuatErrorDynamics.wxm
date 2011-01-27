@@ -1,0 +1,277 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.6 ] */
+
+/* [wxMaxima: title   start ]
+Inertial Navigation Equations
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: section start ]
+Definitions
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(lrats);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratprint : false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(vect);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cross(u,v) := matrix([0,-v[3,1],v[2,1]],[v[3,1],0,-v[1,1]],[-v[2,1],v[1,1],0]).u;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_q_nb : transpose([a+da,b+db,c+db,d+db]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+q_nb : transpose([a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+quat2dcm(q) := matrix([q[1,1]*q[1,1]+q[2,1]*q[2,1]-q[3,1]*q[3,1]-q[4,1]*q[4,1],2*(q[2,1]*q[3,1]-q[1,1]*q[4,1]),2*(q[2,1]*q[4,1]+q[1,1]*q[3,1])],
+              [2*(q[2,1]*q[3,1]+q[1,1]*q[4,1]),q[1,1]*q[1,1]-q[2,1]*q[2,1]-q[3,1]*q[3,1]-q[4,1]*q[4,1],2*(q[3,1]*q[4,1]-q[1,1]*q[2,1])],
+              [2*(q[2,1]*q[4,1]-q[1,1]*q[3,1]),2*(q[3,1]*q[4,1]+q[1,1]*q[2,1]),q[1,1]*q[1,1]-q[2,1]*q[2,1]-q[3,1]*q[3,1]+q[4,1]*q[4,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+skew(q) := matrix([q[1,1],-q[2,1],-q[3,1],-q[4,1]],[q[2,1],q[1,1],-q[4,1],q[3,1]],
+[q[3,1],q[4,1],q[1,1],-q[2,1]],[q[4,1],-q[3,1],q[2,1],q[1,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+quat_diff(q,w):=.5*skew(q).transpose([0,w[1,1],w[2,1],w[3,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x : [da,db,dc,dd,dVn,dVe,dVd,dL,dl,dh];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C_nb : quat2dcm(q_nb);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_C_nb : quat2dcm(est_q_nb);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f_b : transpose([fx,fy,fz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_f_b : transpose([fx+dfx,fy+dfy,fz+dfz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+w_ie : transpose([Omega*cos(L),0,-Omega*sin(L)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_w_ie : transpose([Omega*cos(L+dL),0,-Omega*sin(L+dL)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+w_en : transpose([Ve/R,-Vn/R,-Ve*tan(L)/R]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_w_en : transpose([(Ve+dVe)/(R+dh),-(Vn+dVn)/(R+dh),-(Ve+dVe)*tan(L+dL)/(R+dh)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+w_ib : transpose([wx,wy,wz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_w_ib : transpose([wx+dwx,wy+dwy,wz+dwz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+w_nb : C_nb.w_ib - (w_ie + w_en);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_w_nb : est_C_nb.est_w_ib - (est_w_ie + est_w_en);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v_n : transpose([Vn,Ve,Vd]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_v_n : transpose([Vn+dVn,Ve+dVe,Vd+dVd]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g_n : transpose([0,0,g]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_g_n : transpose([0,0,g+dg]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Magnetometer Measurement Equation
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+This matrix represents the measurement magnetic field.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+mag : transpose([Hn,He,He]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+z is the error in measurement of the magnetic field due to attitude errors.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+z_mag : quat2dcm(est_q_nb).mag -quat2dcm(q_nb).v_n;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Note that this is the Jacobian for the measurment of attitude error.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+H_mag : factor(jacobian( [z_mag[1,1], z_mag[2,1], z_mag[3,1] ] ,[x[1,1],x[2,1]]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Substitution of zero for the current error which is the expectation value for the error yields the above simlification.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+H_mag : subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0],H_mag);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+State Dynamics
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+diff_q_nb : quat_diff(q_nb,w_nb);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff_v_n : express(C_nb.f_b - cross(2*w_ie + w_en,v_n)+g_n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff_L : Vn/R;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff_l : Ve/cos(L)/R;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff_h : -vD;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Estimated State Dynamics
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+est_diff_q_nb : quat_diff(est_q_nb,est_w_nb);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_diff_v_n : express(est_C_nb.est_f_b - cross(2*w_ie + w_en,est_v_n)+est_g_n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_diff_L : (Vn+dVn)/(R+dh);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_diff_l : (Ve+dVe)/cos(L+dL)/(R+dh);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_diff_h : -(vD+dvD);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Error State Dynamics
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+diff_d_q_nb : diff_q_nb - est_diff_q_nb;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Note there is no dependence on dc or dd here.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+diff_dv_n : diff_v_n - est_diff_v_n;|;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+The derivative of longitude may be expressed as:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+diff_dL : diff_L - est_diff_L;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+The derivative of latitude may be expressed as:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+diff_dl : diff_l - est_diff_l;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+The deriative of altitude may be expressed as:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+diff_dh : diff_h - est_diff_h;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Linearization of Error Dyanmics
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+By taking the jacobian of the state equations for the error dynamics we obtain the following. Note that currently vN,vE,vE error dynamics are note included.
+After substitution of the expected value for the state, zero error, into F we obtain:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+f : [diff_d_q_nb[1,1],diff_d_q_nb[2,1],diff_d_q_nb[3,1],diff_d_q_nb[4,1],diff_dv_n[1,1],diff_dv_n[2,1],diff_dv_n[3,1],diff_dL,diff_dl,diff_dh];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(f,x)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+The inputs to the ins error dynamics are the gyro and accelerometer measuremenmt errors.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+u : [dwx,dwy,dwz,dfx,dfy,dfz];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+G : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(f,u)));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
