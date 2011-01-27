@@ -6,7 +6,7 @@ oooarkDataPath='/hsl/homes/awkim/Projects/oooark/data'
 // whether or not to configure for final installation
 scicoslabInstallSettings = 0;
 
-stdBlocks=['sci_insErrorDynamicsQ';'sci_insErrorDynamics';'sci_zeroOrderHold'];
+stdBlocks=['sci_randn';'sci_insErrorDynamicsQ';'sci_insErrorDynamics';'sci_zeroOrderHold'];
 simgearBlocks=['sci_flightGearComm'];
 osgBlocks=['sci_jet';'sci_car';'sci_quad';'sci_plane'];
 jsbsimBlocks=['sci_jsbsimTrim';'sci_jsbsimComm'];

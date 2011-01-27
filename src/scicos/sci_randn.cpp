@@ -8,21 +8,20 @@ extern double C2F(urand)(int * p);
 void sci_randn(scicos_block *block,int flag)
 {
   double *y;
-  double *rpar;
   double *z;
   int *ipar;
   int ny,my,i,iy;
   double sr,si,tl;
-  double *u;
+  double *u1;
+  double *u2;
 
   my=GetOutPortRows(block,1);
   ny=GetOutPortCols(block,1);
   ipar=GetIparPtrs(block);
-  rpar=GetRparPtrs(block);
   y=GetRealOutPortPtrs(block,1);
   z=GetDstate(block);
-  u=(double *)GetInPortPtrs(block,1);
-
+  u1=(double *)GetInPortPtrs(block,1);
+  u2=(double *)GetInPortPtrs(block,2);
   if (flag==2||flag==4)
   {if (ipar[0]==0)
        {iy=(int)z[0];
@@ -43,7 +42,7 @@ void sci_randn(scicos_block *block,int flag)
     }
 
   if (flag==1||flag==6)
-      {for (i=0;i<my*ny;i++) *(y+i)=*(rpar+i)+(*(u+i+my*ny))*(*(z+i+1));
+      {for (i=0;i<my*ny;i++) *(y+i)=*(u1+i)+*(u2+i)*(*(z+i+1));
       }
 }
 
