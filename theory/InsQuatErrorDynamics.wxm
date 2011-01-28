@@ -145,7 +145,7 @@ Note that this is the Jacobian for the measurment of attitude error.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-H_mag : factor(jacobian( [z_mag[1,1], z_mag[2,1], z_mag[3,1] ] ,[x[1,1],x[2,1]]));
+H_mag : factor(jacobian( [z_mag[1,1], z_mag[2,1], z_mag[3,1] ] ,x));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
