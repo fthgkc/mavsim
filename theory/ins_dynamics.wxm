@@ -2,8 +2,22 @@
 /* [ Created with wxMaxima version 0.8.6 ] */
 
 /* [wxMaxima: title   start ]
-Inertial Navigation Equations
+Inertial Navigation Dynamics
    [wxMaxima: title   end   ] */
+
+/* [wxMaxima: section start ]
+Latex Notation
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+texput(da,"\\delta a");texput(db,"\\delta b");texput(dc,"\\delta c");texput(dd,"\\delta d");
+texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
+texput(dwx,"\\delta w_x");texput(dwy,"\\delta w_y");texput(dwz,"\\delta w_y");
+texput(dfx,"\\delta f_x");texput(dfy,"\\delta f_y");texput(dfz,"\\delta f_z");
+texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
+texput(Vn,"v_N");texput(Ve,"v_E");texput(Vd,"v_D");
+texput(dVn,"\delta v_N");texput(dVe,"\delta v_E");texput(dVd,"\delta v_D");
+/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
 Definitions
@@ -30,7 +44,7 @@ cross(u,v) := matrix([0,-v[3,1],v[2,1]],[v[3,1],0,-v[1,1]],[-v[2,1],v[1,1],0]).u
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_q_nb : transpose([a+da,b+db,c+db,d+db]);
+est_q_nb : transpose([a+da,b+db,c+dc,d+dd]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -271,6 +285,23 @@ u : [dwx,dwy,dwz,dfx,dfy,dfz];
 
 /* [wxMaxima: input   start ] */
 G : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(f,u)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+File Output
+
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+stringout("ins_dynamics_error_F.txt",F);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+stringout("ins_dynamics_error_G.txt",G);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+stringout("ins_dynamics_f.txt",tranpose(f));
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
