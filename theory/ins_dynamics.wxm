@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.6 ] */
+/* [ Created with wxMaxima version 0.8.5 ] */
 
 /* [wxMaxima: title   start ]
 Inertial Navigation Dynamics
@@ -33,6 +33,10 @@ load(lrats);
 
 /* [wxMaxima: input   start ] */
 ratprint : false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(f90);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -293,15 +297,19 @@ File Output
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-stringout("ins_dynamics_error_F.txt",F);
+with_stdout ("ins_dynamics_error_F.f90", f90(F));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-stringout("ins_dynamics_error_G.txt",G);
+with_stdout ("ins_dynamics_error_G.f90", f90(G));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-stringout("ins_dynamics_f.txt",tranpose(f));
+f : transpose(f);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("ins_dynamics_error_f.f90", f90(f));
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
