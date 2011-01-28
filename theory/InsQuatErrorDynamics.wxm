@@ -177,7 +177,7 @@ diff_l : Ve/cos(L)/R;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-diff_h : -vD;
+diff_h : -Vd;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -201,7 +201,7 @@ est_diff_l : (Ve+dVe)/cos(L+dL)/(R+dh);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_diff_h : -(vD+dvD);
+est_diff_h : -(Vd+dVd);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -209,7 +209,7 @@ Error State Dynamics
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-diff_d_q_nb : diff_q_nb - est_diff_q_nb;
+diff_d_q_nb : est_diff_q_nb - diff_q_nb;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -217,7 +217,7 @@ Note there is no dependence on dc or dd here.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-diff_dv_n : diff_v_n - est_diff_v_n;|;
+diff_dv_n : est_diff_v_n - diff_v_n;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -225,7 +225,7 @@ The derivative of longitude may be expressed as:
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-diff_dL : diff_L - est_diff_L;
+diff_dL : est_diff_L - diff_L;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -233,7 +233,7 @@ The derivative of latitude may be expressed as:
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-diff_dl : diff_l - est_diff_l;
+diff_dl : est_diff_l - diff_l;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -241,7 +241,7 @@ The deriative of altitude may be expressed as:
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-diff_dh : diff_h - est_diff_h;
+diff_dh : est_diff_h - diff_h;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]

@@ -82,7 +82,7 @@ void sci_insErrorDynamics(scicos_block *block, scicos::enumScicosFlags flag)
         double clat = cos(lat);
         double slat = sin(lat);
         double tlat = tan(lat);
-            double croll = cos(roll);
+        double croll = cos(roll);
         double sroll = sin(roll);
         double cpitch =  cos(pitch);
         double spitch = sin(pitch);
