@@ -15,8 +15,9 @@ set(oooarkScicosSources
 	sci_insErrorDynamics.cpp
 	sci_zeroOrderHold.cpp
 	sci_insErrorDynamicsQ.cpp
-	sci_randn
+	sci_randn.cpp
 	sci_insDynamicsQ.cpp
+	sci_geoMag.cpp
 	)
 
 if (SIMGEAR_FOUND)
