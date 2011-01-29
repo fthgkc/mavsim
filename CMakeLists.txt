@@ -79,7 +79,7 @@ if (Fortran_langurage_works)
 endif(Fortran_langurage_works)
 
 # initialize variables
-set(OOOARK_LIBRARIES oooarkCommunication)
+set(OOOARK_LIBRARIES oooarkNavigation oooarkCommunication)
 set(SCICOSLAB_BLOCKS stdBlocks;jsbsimBlocks;mavlinkBlocks)
 
 # installer
