@@ -66,7 +66,7 @@ select job
 				list('vec',1,'vec',1),exprs);
 			if ~ok then break,end
 				graphics.exprs=exprs;
-			[model,graphics,ok]=check_io(model,graphics,[3;9],[9;9],[1],[])
+			[model,graphics,ok]=check_io(model,graphics,[3;9],[9;9],[],[])
 			if ok then
 				model.rpar=[Omega,R];
 				graphics.exprs=exprs;
@@ -79,7 +79,7 @@ select job
 		// set model properties
 		model=scicos_model()
 		model.sim=list('sci_insErrorDynamics',4)
-		model.evtin=[1];
+		model.evtin=[];
 		model.in=[3;9];
 		model.out=[9;9];
 		model.out2=[9;6];
