@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.6 ] */
+/* [ Created with wxMaxima version 0.8.5 ] */
 
 /* [wxMaxima: title   start ]
 Inertial Navigation Dynamics
@@ -8,6 +8,8 @@ Inertial Navigation Dynamics
 /* [wxMaxima: section start ]
 Latex Notation
    [wxMaxima: section end   ] */
+
+/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 texput(da,"\\delta a");texput(db,"\\delta b");texput(dc,"\\delta c");texput(dd,"\\delta d");
@@ -19,9 +21,13 @@ texput(Vn,"v_N");texput(Ve,"v_E");texput(Vd,"v_D");
 texput(dVn,"\delta v_N");texput(dVe,"\delta v_E");texput(dVd,"\delta v_D");
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: fold    end   ] */
+
 /* [wxMaxima: section start ]
 Definitions
    [wxMaxima: section end   ] */
+
+/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 kill(all);
@@ -68,6 +74,10 @@ skew(q) := matrix([q[1,1],-q[2,1],-q[3,1],-q[4,1]],[q[2,1],q[1,1],-q[4,1],q[3,1]
 
 /* [wxMaxima: input   start ] */
 quat_diff(q,w):=.5*skew(q).transpose([0,w[1,1],w[2,1],w[3,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x : transpose([a,b,c,d,Vn,Ve,Vd,L,l,h]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -142,6 +152,8 @@ g_n : transpose([0,0,g]);
 est_g_n : transpose([0,0,g+dg]);
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: fold    end   ] */
+
 /* [wxMaxima: section start ]
 Magnetometer Measurement Equation
    [wxMaxima: section end   ] */
@@ -151,7 +163,11 @@ This matrix represents the measurement magnetic field.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-mag : transpose([Hn,He,He]);
+mag_dec_dip : transpose([cos(dip)*sin(dec),cos(dip)*sin(dec),sin(dip)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mag : transpose([Bx,By,Bz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -159,7 +175,7 @@ z is the error in measurement of the magnetic field due to attitude errors.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-z_mag : quat2dcm(est_q_nb).mag -quat2dcm(q_nb).v_n;
+z_mag : quat2dcm(est_q_nb).mag;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -167,7 +183,7 @@ Note that this is the Jacobian for the measurment of attitude error.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-H_mag : factor(jacobian( [z_mag[1,1], z_mag[2,1], z_mag[3,1] ] ,dx));
+H_mag : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,10)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
