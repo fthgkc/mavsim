@@ -332,5 +332,9 @@ with_stdout ("ins_dynamics_error_G.f90", f90(G));
 with_stdout ("ins_dynamics_f.f90", f90(f));
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: input   start ] */
+with_stdout ("ins_dynamics_H_mag.f90", f90(H_mag));
+/* [wxMaxima: input   end   ] */
+
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
