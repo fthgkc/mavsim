@@ -1,27 +1,37 @@
-function [x,y,typ]=q2Cnb(job,arg1,arg2)
+function [x,y,typ]=quat2EulerDcm(job,arg1,arg2)
 //
-// insQmagH.sci
+// quat2EulerDcm.sci
 //
 // USAGE:
 //
 // output 1: Cnb (3x3)
 //
-// input 1: (input u1)
-//  [1] a
-//  [2] b
-//  [3] c
-//  [4] d
+// output 2: euler angles
+//  [1] phi (rad) <roll>
+//  [2] theta (rad) <pitch>
+//  [3] psi (rad) <yaw>
+//
+// output 3: euler angle rates
+//  [1] phiRate (rad/s) <roll rate>
+//  [2] thetaRate (rad/s) <pitch rate>
+//  [3] psiRate (rad/s) <yaw rate>
+//
+// input 1: (quaternion from nav to body frame)
+//  [1] a : cos(angle/2)
+//  [2] b : sin(angle/2) * vx 
+//  [3] c : sin(angle/2) * vy
+//  [4] d : sing(angle/2)* vz
 //
 // AUTHOR:
 //
-// Copyright (C) Alan Kim 2011
+// Copyright (C) Alan Kim, James Goppert 2011
 //
-// q2Cnb.sci is free software: you can redistribute it and/or modify it
+// This file is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// insErrorDynamicsQ.sci is distributed in the hope that it will be useful, but
+// This file is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
@@ -45,19 +55,18 @@ select job
 	case 'define' then
 		// set model properties
 		model=scicos_model()
-		model.sim=list('sci_q2Cnb',4)
+		model.sim=list('sci_quat2EulerDcm',4)
 		model.evtin=[];
-		model.in=[4];
-		model.out=[3];
-		model.out2=[3];
+		model.in=[4;3];
+		model.in2=[1;1];
+		model.out=[3;3;3];
+		model.out2=[3;1;1];
 		model.blocktype='c';
 		model.dep_ut=[%t %f];
-		exprs = 'q2Cnb';	
-		// initialize strings for gui
-
+		exprs = 'quat2EulerDcm';	
 
 		// setup icon
-	  	gr_i=['xstringb(orig(1),orig(2),''q2Cnb'',sz(1),sz(2),''fill'');']
+	  	gr_i=['xstringb(orig(1),orig(2),''quat2EulerDcm'',sz(1),sz(2),''fill'');']
 	  	x=standard_define([5 2],model,exprs,gr_i)
 	end
 endfunction
