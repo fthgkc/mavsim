@@ -20,6 +20,7 @@ set(oooarkScicosSources
 	sci_geoMag.cpp
 	sci_insQmagH.cpp
 	sci_quat2EulerDcm.cpp
+	sci_initBearing.cpp
 	)
 
 if (SIMGEAR_FOUND)
