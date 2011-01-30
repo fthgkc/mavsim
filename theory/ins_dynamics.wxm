@@ -67,7 +67,7 @@ skew(q) := matrix([q[1,1],-q[2,1],-q[3,1],-q[4,1]],[q[2,1],q[1,1],-q[4,1],q[3,1]
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-quat_diff(q,w):=.5*skew(q).transpose([0,w[1,1],w[2,1],w[3,1]]);
+quat_diff(q,w):=-.5*skew(q).transpose([0,w[1,1],w[2,1],w[3,1]]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -167,19 +167,19 @@ d_mag_dec_dip : mag_dec_dip_est - mag_dec_dip;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-R : d_mag_dec_dip.transpose(d_mag_dec_dip);
+R_mag_dec_dip : d_mag_dec_dip.transpose(d_mag_dec_dip);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-R_expand : expand(trigexpand(R));
+R_mag_dec_dip_expand : expand(trigexpand(R_mag_dec_dip));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-R_expand2 : subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip],R_expand);
+R_mag_dec_dip_expand2 : subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip],R_mag_dec_dip_expand);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-R_expand3 : subst([sin(dip)^3=0],R_expand2);
+R_mag_dec_dip_expand3 : subst([sin(dip)^3=0],R_mag_dec_dip_expand2);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -267,7 +267,7 @@ est_diff_h : -(Vd+dVd);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_f : [est_diff_q_nb[1,1],est_diff_q_nb[2,1],est_diff_q_nb[3,1],est_diff_q_nb[4,1],est_diff_v_n[1,1],est_diff_v_n[2,1],est_diff_v_n[3,1],est_diff_L,est_diff_l,est_diff_h];
+est_f : transpose([est_diff_q_nb[1,1],est_diff_q_nb[2,1],est_diff_q_nb[3,1],est_diff_q_nb[4,1],est_diff_v_n[1,1],est_diff_v_n[2,1],est_diff_v_n[3,1],est_diff_L,est_diff_l,est_diff_h]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]

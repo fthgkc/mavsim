@@ -37,6 +37,7 @@ extern "C"
 #include <scicos/scicos_block4.h>
 #include <math.h>
 #include "definitions.hpp"
+#include <stdio.h>
 
 void sci_quat2EulerDcm(scicos_block *block, scicos::enumScicosFlags flag)
 {
@@ -86,39 +87,63 @@ void sci_quat2EulerDcm(scicos_block *block, scicos::enumScicosFlags flag)
         const double bb = b*b;
         const double cc = c*c;
         const double dd = d*d;
+        static const double gimbalLockTol = 1e-3;
+        static const double normalTol = 1e-3;
+        static const double pi_2 = M_PI/2;
 
         c11 = aa+bb-cc-dd;
         c21 = 2*(b*c+a*d);
         c31 = 2*(b*d-a*c);
         c12 = 2*(b*c-a*d);
         c22 = aa-bb+cc-dd;
-        c23 = 2*(c*d+a*b);
+        c32 = 2*(c*d+a*b);
         c13 = 2*(b*d+a*c);
         c23 = 2*(c*d-a*b);
         c33 = aa-bb-cc+dd;
 
-        theta = asin(-c31);
+        // calculate theta (pitch)
+        if (c31>1) theta = -pi_2;
+        else if (c31<-1) theta = pi_2;
+        else theta = asin(-c31);
 
-        if ( abs(theta-M_PI) < 1e-5 )
+        // if pitch is close to 90 deg
+        if ( abs(theta-M_PI/2) < gimbalLockTol )
         {
             phi = 0;
-            psi = atan((c23 - c12)/(c13 + c22));
+            psi = atan2(c23 - c12,c13 + c22);
+            phiRate = 0;
+            psiRate = -wx;
         }
-        else if ( abs(theta+M_PI) < 1e-5 )
+        // if pitch is clost to -90 deg
+        else if ( abs(theta+M_PI/2) < gimbalLockTol )
         {
             phi = 0;
-            psi = atan((c23 + c12)/(c13 - c22));
+            psi = atan2(c23 + c12,c13 - c22);
+            phiRate = 0;
+            psiRate = wx;
         }
         else
         {
-            phi = atan(c32/c33);
-            psi = atan(c21/c11);
+            phi = atan2(c32,c33);
+            psi = atan2(c21,c11);
+            phiRate = (wy*sin(phi) + wz*cos(phi))*tan(theta) + wx;
+            psiRate = (wy*sin(phi) + wz*cos(phi))/cos(theta);
         }
 
-        phiRate = (wy*sin(phi) + wz*cos(phi))*tan(theta) + wx;
+        // make psi 0 -> 2*pi
+        if (psi < 0) psi += 2*M_PI;
+
+        // euler rates
         thetaRate = (wy*cos(phi) - wz*sin(phi));
-        psiRate = (wy*sin(phi) + wz*cos(phi))/cos(theta);
-   }
+
+        // debug
+        //printf("phi\t:\t%f\n",phi);
+        //printf("theta\t:\t%f\n",theta);
+        //printf("psi\t:\t%f\n",psi);
+        //printf("phiRate\t:\t%f\n",phiRate);
+        //printf("thetaRate\t:\t%f\n",thetaRate);
+        //printf("psiRate\t:\t%f\n",psiRate);
+    }
     else if (flag==scicos::terminate)
     {
     }
