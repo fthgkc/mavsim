@@ -18,6 +18,8 @@ set(oooarkScicosSources
 	sci_randn.cpp
 	sci_insDynamicsQ.cpp
 	sci_geoMag.cpp
+	sci_insQmagH.cpp
+	sci_q2Cnb
 	)
 
 if (SIMGEAR_FOUND)
