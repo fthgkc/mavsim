@@ -84,26 +84,175 @@ F(7,7) = 0
 F(7,8) = 0
 F(7,9) = 0
 F(7,10) = 0
-F(8,1) = 0
-F(8,2) = 0
-F(8,3) = 0
-F(8,4) = 0
-F(8,5) = 1/R
-F(8,6) = 0
-F(8,7) = 0
-F(8,8) = 0
-F(8,9) = 0
-F(8,10) = -Vn/R**2
-F(9,1) = 0
-F(9,2) = 0
-F(9,3) = 0
-F(9,4) = 0
-F(9,5) = 0
-F(9,6) = 1/(cos(L)*R)
-F(9,7) = 0
-F(9,8) = Ve*sin(L)/(cos(L)**2*R)
-F(9,9) = 0
-F(9,10) = -Ve/(cos(L)*R**2)
+F(8,1) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(8,2) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(8,3) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(8,4) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(8,5) = matrix([1/(sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*cos(dec&
+)*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*cos(dip)**2)&
+,1/(sin(d_dec+dec)**2*cos(d_dip+dip)**2+(-sin(dec)-cos(dec))*cos(&
+dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)*sin(dec)*cos(dip)**2)&
+,1/((sin(d_dec+dec)*cos(d_dip+dip)-cos(dec)*cos(dip))*sin(d_dip+d&
+ip)-sin(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)*cos(dip)*sin(&
+dip))],[1/(sin(d_dec+dec)**2*cos(d_dip+dip)**2+(-sin(dec)-cos(dec&
+))*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)*sin(dec)*cos(d&
+ip)**2),1/(sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*sin(dec)*cos(dip&
+)*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)**2*cos(dip)**2),1/((sin(&
+d_dec+dec)*cos(d_dip+dip)-sin(dec)*cos(dip))*sin(d_dip+dip)-sin(d&
+ip)*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)*cos(dip)*sin(dip))],[1&
+/((sin(d_dec+dec)*cos(d_dip+dip)-cos(dec)*cos(dip))*sin(d_dip+dip&
+)-sin(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)*cos(dip)*sin(di&
+p)),1/((sin(d_dec+dec)*cos(d_dip+dip)-sin(dec)*cos(dip))*sin(d_di&
+p+dip)-sin(dip)*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)*cos(dip)*s&
+in(dip)),1/(sin(d_dip+dip)**2-2*sin(dip)*sin(d_dip+dip)+sin(dip)*&
+*2)])
+F(8,6) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(8,7) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(8,8) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(8,9) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(8,10) = matrix([-Vn/(sin(d_dec+dec)**4*cos(d_dip+dip)**4-4*cos(&
+dec)*cos(dip)*sin(d_dec+dec)**3*cos(d_dip+dip)**3+6*cos(dec)**2*c&
+os(dip)**2*sin(d_dec+dec)**2*cos(d_dip+dip)**2-4*cos(dec)**3*cos(&
+dip)**3*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**4*cos(dip)**4),-V&
+n/(sin(d_dec+dec)**4*cos(d_dip+dip)**4+(-2*sin(dec)-2*cos(dec))*c&
+os(dip)*sin(d_dec+dec)**3*cos(d_dip+dip)**3+(sin(dec)**2+4*cos(de&
+c)*sin(dec)+cos(dec)**2)*cos(dip)**2*sin(d_dec+dec)**2*cos(d_dip+&
+dip)**2+(-2*cos(dec)*sin(dec)**2-2*cos(dec)**2*sin(dec))*cos(dip)&
+**3*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*sin(dec)**2*cos(dip&
+)**4),-Vn/((sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*cos(dec)*cos(di&
+p)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*cos(dip)**2)*sin(d_d&
+ip+dip)**2+(-2*sin(dip)*sin(d_dec+dec)**2*cos(d_dip+dip)**2+4*cos&
+(dec)*cos(dip)*sin(dip)*sin(d_dec+dec)*cos(d_dip+dip)-2*cos(dec)*&
+*2*cos(dip)**2*sin(dip))*sin(d_dip+dip)+sin(dip)**2*sin(d_dec+dec&
+)**2*cos(d_dip+dip)**2-2*cos(dec)*cos(dip)*sin(dip)**2*sin(d_dec+&
+dec)*cos(d_dip+dip)+cos(dec)**2*cos(dip)**2*sin(dip)**2)],[-Vn/(s&
+in(d_dec+dec)**4*cos(d_dip+dip)**4+(-2*sin(dec)-2*cos(dec))*cos(d&
+ip)*sin(d_dec+dec)**3*cos(d_dip+dip)**3+(sin(dec)**2+4*cos(dec)*s&
+in(dec)+cos(dec)**2)*cos(dip)**2*sin(d_dec+dec)**2*cos(d_dip+dip)&
+**2+(-2*cos(dec)*sin(dec)**2-2*cos(dec)**2*sin(dec))*cos(dip)**3*&
+sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*sin(dec)**2*cos(dip)**4&
+),-Vn/(sin(d_dec+dec)**4*cos(d_dip+dip)**4-4*sin(dec)*cos(dip)*si&
+n(d_dec+dec)**3*cos(d_dip+dip)**3+6*sin(dec)**2*cos(dip)**2*sin(d&
+_dec+dec)**2*cos(d_dip+dip)**2-4*sin(dec)**3*cos(dip)**3*sin(d_de&
+c+dec)*cos(d_dip+dip)+sin(dec)**4*cos(dip)**4),-Vn/((sin(d_dec+de&
+c)**2*cos(d_dip+dip)**2-2*sin(dec)*cos(dip)*sin(d_dec+dec)*cos(d_&
+dip+dip)+sin(dec)**2*cos(dip)**2)*sin(d_dip+dip)**2+(-2*sin(dip)*&
+sin(d_dec+dec)**2*cos(d_dip+dip)**2+4*sin(dec)*cos(dip)*sin(dip)*&
+sin(d_dec+dec)*cos(d_dip+dip)-2*sin(dec)**2*cos(dip)**2*sin(dip))&
+*sin(d_dip+dip)+sin(dip)**2*sin(d_dec+dec)**2*cos(d_dip+dip)**2-2&
+*sin(dec)*cos(dip)*sin(dip)**2*sin(d_dec+dec)*cos(d_dip+dip)+sin(&
+dec)**2*cos(dip)**2*sin(dip)**2)],[-Vn/((sin(d_dec+dec)**2*cos(d_&
+dip+dip)**2-2*cos(dec)*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos&
+(dec)**2*cos(dip)**2)*sin(d_dip+dip)**2+(-2*sin(dip)*sin(d_dec+de&
+c)**2*cos(d_dip+dip)**2+4*cos(dec)*cos(dip)*sin(dip)*sin(d_dec+de&
+c)*cos(d_dip+dip)-2*cos(dec)**2*cos(dip)**2*sin(dip))*sin(d_dip+d&
+ip)+sin(dip)**2*sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*cos(dec)*co&
+s(dip)*sin(dip)**2*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*cos(&
+dip)**2*sin(dip)**2),-Vn/((sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*&
+sin(dec)*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)**2*cos(d&
+ip)**2)*sin(d_dip+dip)**2+(-2*sin(dip)*sin(d_dec+dec)**2*cos(d_di&
+p+dip)**2+4*sin(dec)*cos(dip)*sin(dip)*sin(d_dec+dec)*cos(d_dip+d&
+ip)-2*sin(dec)**2*cos(dip)**2*sin(dip))*sin(d_dip+dip)+sin(dip)**&
+2*sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*sin(dec)*cos(dip)*sin(dip&
+)**2*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)**2*cos(dip)**2*sin(di&
+p)**2),-Vn/(sin(d_dip+dip)**4-4*sin(dip)*sin(d_dip+dip)**3+6*sin(&
+dip)**2*sin(d_dip+dip)**2-4*sin(dip)**3*sin(d_dip+dip)+sin(dip)**&
+4)])
+F(9,1) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(9,2) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(9,3) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(9,4) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(9,5) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(9,6) = matrix([1/((sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*cos(de&
+c)*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*cos(dip)**2&
+)*cos(L)),1/((sin(d_dec+dec)**2*cos(d_dip+dip)**2+(-sin(dec)-cos(&
+dec))*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)*sin(dec)*co&
+s(dip)**2)*cos(L)),1/(((sin(d_dec+dec)*cos(d_dip+dip)-cos(dec)*co&
+s(dip))*sin(d_dip+dip)-sin(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos&
+(dec)*cos(dip)*sin(dip))*cos(L))],[1/((sin(d_dec+dec)**2*cos(d_di&
+p+dip)**2+(-sin(dec)-cos(dec))*cos(dip)*sin(d_dec+dec)*cos(d_dip+&
+dip)+cos(dec)*sin(dec)*cos(dip)**2)*cos(L)),1/((sin(d_dec+dec)**2&
+*cos(d_dip+dip)**2-2*sin(dec)*cos(dip)*sin(d_dec+dec)*cos(d_dip+d&
+ip)+sin(dec)**2*cos(dip)**2)*cos(L)),1/(((sin(d_dec+dec)*cos(d_di&
+p+dip)-sin(dec)*cos(dip))*sin(d_dip+dip)-sin(dip)*sin(d_dec+dec)*&
+cos(d_dip+dip)+sin(dec)*cos(dip)*sin(dip))*cos(L))],[1/(((sin(d_d&
+ec+dec)*cos(d_dip+dip)-cos(dec)*cos(dip))*sin(d_dip+dip)-sin(dip)&
+*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)*cos(dip)*sin(dip))*cos(L)&
+),1/(((sin(d_dec+dec)*cos(d_dip+dip)-sin(dec)*cos(dip))*sin(d_dip&
++dip)-sin(dip)*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)*cos(dip)*si&
+n(dip))*cos(L)),1/((sin(d_dip+dip)**2-2*sin(dip)*sin(d_dip+dip)+s&
+in(dip)**2)*cos(L))])
+F(9,7) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(9,8) = matrix([Ve*sin(L)/((sin(d_dec+dec)**2*cos(d_dip+dip)**2-&
+2*cos(dec)*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*cos&
+(dip)**2)*cos(L)**2),Ve*sin(L)/((sin(d_dec+dec)**2*cos(d_dip+dip)&
+**2+(-sin(dec)-cos(dec))*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+c&
+os(dec)*sin(dec)*cos(dip)**2)*cos(L)**2),Ve*sin(L)/(((sin(d_dec+d&
+ec)*cos(d_dip+dip)-cos(dec)*cos(dip))*sin(d_dip+dip)-sin(dip)*sin&
+(d_dec+dec)*cos(d_dip+dip)+cos(dec)*cos(dip)*sin(dip))*cos(L)**2)&
+],[Ve*sin(L)/((sin(d_dec+dec)**2*cos(d_dip+dip)**2+(-sin(dec)-cos&
+(dec))*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)*sin(dec)*c&
+os(dip)**2)*cos(L)**2),Ve*sin(L)/((sin(d_dec+dec)**2*cos(d_dip+di&
+p)**2-2*sin(dec)*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)*&
+*2*cos(dip)**2)*cos(L)**2),Ve*sin(L)/(((sin(d_dec+dec)*cos(d_dip+&
+dip)-sin(dec)*cos(dip))*sin(d_dip+dip)-sin(dip)*sin(d_dec+dec)*co&
+s(d_dip+dip)+sin(dec)*cos(dip)*sin(dip))*cos(L)**2)],[Ve*sin(L)/(&
+((sin(d_dec+dec)*cos(d_dip+dip)-cos(dec)*cos(dip))*sin(d_dip+dip)&
+-sin(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)*cos(dip)*sin(dip&
+))*cos(L)**2),Ve*sin(L)/(((sin(d_dec+dec)*cos(d_dip+dip)-sin(dec)&
+*cos(dip))*sin(d_dip+dip)-sin(dip)*sin(d_dec+dec)*cos(d_dip+dip)+&
+sin(dec)*cos(dip)*sin(dip))*cos(L)**2),Ve*sin(L)/((sin(d_dip+dip)&
+**2-2*sin(dip)*sin(d_dip+dip)+sin(dip)**2)*cos(L)**2)])
+F(9,9) = matrix([0,0,0],[0,0,0],[0,0,0])
+F(9,10) = matrix([-Ve/((sin(d_dec+dec)**4*cos(d_dip+dip)**4-4*cos&
+(dec)*cos(dip)*sin(d_dec+dec)**3*cos(d_dip+dip)**3+6*cos(dec)**2*&
+cos(dip)**2*sin(d_dec+dec)**2*cos(d_dip+dip)**2-4*cos(dec)**3*cos&
+(dip)**3*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**4*cos(dip)**4)*c&
+os(L)),-Ve/((sin(d_dec+dec)**4*cos(d_dip+dip)**4+(-2*sin(dec)-2*c&
+os(dec))*cos(dip)*sin(d_dec+dec)**3*cos(d_dip+dip)**3+(sin(dec)**&
+2+4*cos(dec)*sin(dec)+cos(dec)**2)*cos(dip)**2*sin(d_dec+dec)**2*&
+cos(d_dip+dip)**2+(-2*cos(dec)*sin(dec)**2-2*cos(dec)**2*sin(dec)&
+)*cos(dip)**3*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*sin(dec)*&
+*2*cos(dip)**4)*cos(L)),-Ve/(((sin(d_dec+dec)**2*cos(d_dip+dip)**&
+2-2*cos(dec)*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*c&
+os(dip)**2)*sin(d_dip+dip)**2+(-2*sin(dip)*sin(d_dec+dec)**2*cos(&
+d_dip+dip)**2+4*cos(dec)*cos(dip)*sin(dip)*sin(d_dec+dec)*cos(d_d&
+ip+dip)-2*cos(dec)**2*cos(dip)**2*sin(dip))*sin(d_dip+dip)+sin(di&
+p)**2*sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*cos(dec)*cos(dip)*sin&
+(dip)**2*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*cos(dip)**2*si&
+n(dip)**2)*cos(L))],[-Ve/((sin(d_dec+dec)**4*cos(d_dip+dip)**4+(-&
+2*sin(dec)-2*cos(dec))*cos(dip)*sin(d_dec+dec)**3*cos(d_dip+dip)*&
+*3+(sin(dec)**2+4*cos(dec)*sin(dec)+cos(dec)**2)*cos(dip)**2*sin(&
+d_dec+dec)**2*cos(d_dip+dip)**2+(-2*cos(dec)*sin(dec)**2-2*cos(de&
+c)**2*sin(dec))*cos(dip)**3*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec&
+)**2*sin(dec)**2*cos(dip)**4)*cos(L)),-Ve/((sin(d_dec+dec)**4*cos&
+(d_dip+dip)**4-4*sin(dec)*cos(dip)*sin(d_dec+dec)**3*cos(d_dip+di&
+p)**3+6*sin(dec)**2*cos(dip)**2*sin(d_dec+dec)**2*cos(d_dip+dip)*&
+*2-4*sin(dec)**3*cos(dip)**3*sin(d_dec+dec)*cos(d_dip+dip)+sin(de&
+c)**4*cos(dip)**4)*cos(L)),-Ve/(((sin(d_dec+dec)**2*cos(d_dip+dip&
+)**2-2*sin(dec)*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)**&
+2*cos(dip)**2)*sin(d_dip+dip)**2+(-2*sin(dip)*sin(d_dec+dec)**2*c&
+os(d_dip+dip)**2+4*sin(dec)*cos(dip)*sin(dip)*sin(d_dec+dec)*cos(&
+d_dip+dip)-2*sin(dec)**2*cos(dip)**2*sin(dip))*sin(d_dip+dip)+sin&
+(dip)**2*sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*sin(dec)*cos(dip)*&
+sin(dip)**2*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)**2*cos(dip)**2&
+*sin(dip)**2)*cos(L))],[-Ve/(((sin(d_dec+dec)**2*cos(d_dip+dip)**&
+2-2*cos(dec)*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*c&
+os(dip)**2)*sin(d_dip+dip)**2+(-2*sin(dip)*sin(d_dec+dec)**2*cos(&
+d_dip+dip)**2+4*cos(dec)*cos(dip)*sin(dip)*sin(d_dec+dec)*cos(d_d&
+ip+dip)-2*cos(dec)**2*cos(dip)**2*sin(dip))*sin(d_dip+dip)+sin(di&
+p)**2*sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*cos(dec)*cos(dip)*sin&
+(dip)**2*sin(d_dec+dec)*cos(d_dip+dip)+cos(dec)**2*cos(dip)**2*si&
+n(dip)**2)*cos(L)),-Ve/(((sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*s&
+in(dec)*cos(dip)*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)**2*cos(di&
+p)**2)*sin(d_dip+dip)**2+(-2*sin(dip)*sin(d_dec+dec)**2*cos(d_dip&
++dip)**2+4*sin(dec)*cos(dip)*sin(dip)*sin(d_dec+dec)*cos(d_dip+di&
+p)-2*sin(dec)**2*cos(dip)**2*sin(dip))*sin(d_dip+dip)+sin(dip)**2&
+*sin(d_dec+dec)**2*cos(d_dip+dip)**2-2*sin(dec)*cos(dip)*sin(dip)&
+**2*sin(d_dec+dec)*cos(d_dip+dip)+sin(dec)**2*cos(dip)**2*sin(dip&
+)**2)*cos(L)),-Ve/((sin(d_dip+dip)**4-4*sin(dip)*sin(d_dip+dip)**&
+3+6*sin(dip)**2*sin(d_dip+dip)**2-4*sin(dip)**3*sin(d_dip+dip)+si&
+n(dip)**4)*cos(L))])
 F(10,1) = 0
 F(10,2) = 0
 F(10,3) = 0

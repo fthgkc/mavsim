@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.5 ] */
+/* [ Created with wxMaxima version 0.8.6 ] */
 
 /* [wxMaxima: title   start ]
 Inertial Navigation Dynamics
@@ -8,8 +8,6 @@ Inertial Navigation Dynamics
 /* [wxMaxima: section start ]
 Latex Notation
    [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 texput(da,"\\delta a");texput(db,"\\delta b");texput(dc,"\\delta c");texput(dd,"\\delta d");
@@ -21,13 +19,9 @@ texput(Vn,"v_N");texput(Ve,"v_E");texput(Vd,"v_D");
 texput(dVn,"\delta v_N");texput(dVe,"\delta v_E");texput(dVd,"\delta v_D");
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: fold    end   ] */
-
 /* [wxMaxima: section start ]
 Definitions
    [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 kill(all);
@@ -152,8 +146,6 @@ g_n : transpose([0,0,g]);
 est_g_n : transpose([0,0,g+dg]);
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: fold    end   ] */
-
 /* [wxMaxima: section start ]
 Magnetometer Measurement Equation
    [wxMaxima: section end   ] */
@@ -163,11 +155,39 @@ This matrix represents the measurement magnetic field.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-mag_dec_dip : transpose([cos(dip)*sin(dec),cos(dip)*sin(dec),sin(dip)]);
+mag_dec_dip : transpose([cos(dip)*cos(dec),cos(dip)*sin(dec),sin(dip)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mag_dec_dip_est : transpose([cos(dip+d_dip)*sin(dec+d_dec),cos(dip+d_dip)*sin(dec+d_dec),sin(dip+d_dip)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_mag_dec_dip : mag_dec_dip_est - mag_dec_dip;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+R : d_mag_dec_dip.transpose(d_mag_dec_dip);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+R_expand : expand(trigexpand(R));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+R_expand2 : subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip],R_expand);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+R_expand3 : subst([sin(dip)^3=0],R_expand2);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 mag : transpose([Bn,Be,Bd]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mag = mag_dec_dip;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -175,24 +195,24 @@ z is the error in measurement of the magnetic field due to attitude errors.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-z_mag : transpose(quat2dcm(est_q_nb)).mag;
+z_mag : transpose(quat2dcm(q_nb)).mag;
 /* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-Note that this is the Jacobian for the measurment of attitude error.
-   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
 H_mag : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,10)));
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: comment start ]
-Substitution of zero for the current error which is the expectation value for the error yields the above simlification.
-   [wxMaxima: comment end   ] */
+/* [wxMaxima: input   start ] */
+z_mag_inc_dec : transpose([asin(z_mag[3,1]),atan(z_mag[2,1]/z_mag[1,1])]);
+/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-H_mag : subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0],H_mag);
+H_mag_inc_dec : jacobian(makelist(z_mag_inc_dec[i,1],i,1,2),makelist(x[i,1],i,10));
 /* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Note that this is the Jacobian for the measurment of attitude error.
+   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: section start ]
 State Dynamics
