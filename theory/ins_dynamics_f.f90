@@ -20,6 +20,27 @@ f(6,1) = Vn*(-Ve*tan(L)/R-2*Omega*sin(L))-Vd*(Ve/R+2*Omega*cos(L)&
 )+2*(c*d-a*b)*fz+(-d**2-c**2-b**2+a**2)*fy+2*(a*d+b*c)*fx
 f(7,1) = Ve*(Ve/R+2*Omega*cos(L))+Vn**2/R+g+(d**2-c**2-b**2+a**2)&
 *fz+2*(c*d+a*b)*fy+2*(b*d-a*c)*fx
-f(8,1) = Vn/R
-f(9,1) = Ve/(cos(L)*R)
+f(8,1) = matrix([Vn/(sin(d_dec+dec)*cos(d_dip+dip)-cos(dec)*cos(d&
+ip))**2,Vn/((sin(d_dec+dec)*cos(d_dip+dip)-cos(dec)*cos(dip))*(si&
+n(d_dec+dec)*cos(d_dip+dip)-sin(dec)*cos(dip))),Vn/((sin(d_dec+de&
+c)*cos(d_dip+dip)-cos(dec)*cos(dip))*(sin(d_dip+dip)-sin(dip)))],&
+[Vn/((sin(d_dec+dec)*cos(d_dip+dip)-cos(dec)*cos(dip))*(sin(d_dec&
++dec)*cos(d_dip+dip)-sin(dec)*cos(dip))),Vn/(sin(d_dec+dec)*cos(d&
+_dip+dip)-sin(dec)*cos(dip))**2,Vn/((sin(d_dec+dec)*cos(d_dip+dip&
+)-sin(dec)*cos(dip))*(sin(d_dip+dip)-sin(dip)))],[Vn/((sin(d_dec+&
+dec)*cos(d_dip+dip)-cos(dec)*cos(dip))*(sin(d_dip+dip)-sin(dip)))&
+,Vn/((sin(d_dec+dec)*cos(d_dip+dip)-sin(dec)*cos(dip))*(sin(d_dip&
++dip)-sin(dip))),Vn/(sin(d_dip+dip)-sin(dip))**2])
+f(9,1) = matrix([Ve/((sin(d_dec+dec)*cos(d_dip+dip)-cos(dec)*cos(&
+dip))**2*cos(L)),Ve/((sin(d_dec+dec)*cos(d_dip+dip)-cos(dec)*cos(&
+dip))*(sin(d_dec+dec)*cos(d_dip+dip)-sin(dec)*cos(dip))*cos(L)),V&
+e/((sin(d_dec+dec)*cos(d_dip+dip)-cos(dec)*cos(dip))*(sin(d_dip+d&
+ip)-sin(dip))*cos(L))],[Ve/((sin(d_dec+dec)*cos(d_dip+dip)-cos(de&
+c)*cos(dip))*(sin(d_dec+dec)*cos(d_dip+dip)-sin(dec)*cos(dip))*co&
+s(L)),Ve/((sin(d_dec+dec)*cos(d_dip+dip)-sin(dec)*cos(dip))**2*co&
+s(L)),Ve/((sin(d_dec+dec)*cos(d_dip+dip)-sin(dec)*cos(dip))*(sin(&
+d_dip+dip)-sin(dip))*cos(L))],[Ve/((sin(d_dec+dec)*cos(d_dip+dip)&
+-cos(dec)*cos(dip))*(sin(d_dip+dip)-sin(dip))*cos(L)),Ve/((sin(d_&
+dec+dec)*cos(d_dip+dip)-sin(dec)*cos(dip))*(sin(d_dip+dip)-sin(di&
+p))*cos(L)),Ve/((sin(d_dip+dip)-sin(dip))**2*cos(L))])
 f(10,1) = -Vd
