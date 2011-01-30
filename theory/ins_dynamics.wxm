@@ -167,7 +167,7 @@ mag_dec_dip : transpose([cos(dip)*sin(dec),cos(dip)*sin(dec),sin(dip)]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-mag : transpose([Bx,By,Bz]);
+mag : transpose([Bn,Be,Bd]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -175,7 +175,7 @@ z is the error in measurement of the magnetic field due to attitude errors.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-z_mag : quat2dcm(est_q_nb).mag;
+z_mag : transpose(quat2dcm(est_q_nb)).mag;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
