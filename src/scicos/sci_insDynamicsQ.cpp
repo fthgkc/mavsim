@@ -47,7 +47,7 @@ void sci_insDynamicsQ(scicos_block *block, scicos::enumScicosFlags flag)
     double * u1=(double*)GetInPortPtrs(block,1);
     double * u2=(double*)GetInPortPtrs(block,2);
     double * u3=(double*)GetInPortPtrs(block,3);
-    double * y1=(double*)GetOutPortPtrs(block,1);
+    double * f=(double*)GetOutPortPtrs(block,1);
     double * rpar=block->rpar;
 
     // aliases
@@ -81,31 +81,9 @@ void sci_insDynamicsQ(scicos_block *block, scicos::enumScicosFlags flag)
         const double sinL = sin(L);
         const double tanL = sinL/cosL;
         const double R = Re+alt;
-        const double aa=a*a, ab=a*b, ac=a*c, ad=a*d;
-        const double bb=b*b, bc=b*c, bd=b*d;
-        const double cc=c*c, cd=c*d;
-        const double dd=d*d;
+        const double aa=a*a, bb=b*b, cc=c*c, dd=d*d;
 
-        // This was all hand converted from ins_dynamics_f.f90 that was generated
-        // via maxima in the theory folder.
-        y1[0] = -0.5*(-d*(Ve*tanL/R+Omega*sinL+(dd-cc-bb+aa)*wz+2*(cd+ab)*wy+2*(bd-ac)*wx)
-                -c*(Vn/R+2*(cd-ab)*wz+(-dd-cc-bb+aa)*wy+2*(ad+bc)*wx)-b*(-Ve/R-Omega*cosL
-                +2*(bd+ac)*wz+2*(bc-ad)*wy+(-dd-cc+bb+aa)*wx));
-        y1[1] = -0.5*(c*(Ve*tanL/R+Omega*sinL+(dd-cc-bb+aa)*wz+2*(cd+ab)*wy+2*(bd-ac)*wx)
-                -d*(Vn/R+2*(cd-ab)*wz+(-dd-cc-bb+aa)*wy+2*(ad+bc)*wx)+a*(-Ve/R-Omega*cosL
-                +2*(bd+ac)*wz+2*(bc-ad)*wy+(-dd-cc+bb+aa)*wx));
-        y1[2] = -0.5*(-b*(Ve*tanL/R+Omega*sinL+(dd-cc-bb+aa)*wz+2*(cd+ab)*wy+2*(bd-ac)*wx)
-                +a*(Vn/R+2*(cd-ab)*wz+(-dd-cc-bb+aa)*wy+2*(ad+bc)*wx)+d*(-Ve/R-Omega*cosL
-                +2*(bd+ac)*wz+2*(bc-ad)*wy+(-dd-cc+bb+aa)*wx));
-        y1[3] = -0.5*(a*(Ve*tanL/R+Omega*sinL+(dd-cc-bb+aa)*wz+2*(cd+ab)*wy+2*(bd-ac)*wx)
-                +b*(Vn/R+2*(cd-ab)*wz+(-dd-cc-bb+aa)*wy+2*(ad+bc)*wx)-c*(-Ve/R-Omega*cosL
-                +2*(bd+ac)*wz+2*(bc-ad)*wy+(-dd-cc+bb+aa)*wx));
-        y1[4] = -Ve*(-Ve*tanL/R-2*Omega*sinL)-Vd*Vn/R+2*(bd+ac)*fz+2*(bc-ad)*fy+(-dd-cc+bb+aa)*fx;
-        y1[5] = Vn*(-Ve*tanL/R-2*Omega*sinL)-Vd*(Ve/R+2*Omega*cosL)+2*(cd-ab)*fz+(-dd-cc-bb+aa)*fy+2*(ad+bc)*fx;
-        y1[6] = Ve*(Ve/R+2*Omega*cosL)+Vn*Vn/R+g+(dd-cc-bb+aa)*fz+2*(cd+ab)*fy+2*(bd-ac)*fx;
-        y1[7] = Vn/R;
-        y1[8] = Ve/(cosL*R);
-        y1[9] = -Vd;
+        #include "navigation/ins_dynamics_f.hpp"
     }
     else if (flag==scicos::terminate)
     {

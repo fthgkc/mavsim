@@ -49,7 +49,7 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
     // data
     double * u1=(double*)GetInPortPtrs(block,1);
     double * u2=(double*)GetInPortPtrs(block,2);
-    double * H=(double*)GetOutPortPtrs(block,1);
+    double * H_mag=(double*)GetOutPortPtrs(block,1);
 
     // alias names
     double & Bn = u1[0];
@@ -72,22 +72,20 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
     //handle flags
     if (flag==scicos::computeOutput)
     {
-        memset((void *)H,0,30*sizeof(double));
+        memset((void *)H_mag,0,30*sizeof(double));
 
-        static const int rowsH = 3;
-
-        H[1-1+rowsH*(1-1)] = 2*(Be*d-Bd*c+a*Bn);
-        H[1-1+rowsH*(2-1)] = 2*(Bd*d+Be*c+b*Bn);
-        H[1-1+rowsH*(3-1)] = -2*(Bn*c-b*Be+a*Bd);
-        H[1-1+rowsH*(4-1)] = -2*(Bn*d-a*Be-b*Bd);
-        H[2-1+rowsH*(1-1)] = -2*(Bn*d-a*Be-b*Bd);
-        H[2-1+rowsH*(2-1)] = 2*(Bn*c-b*Be+a*Bd);
-        H[2-1+rowsH*(3-1)] = 2*(Bd*d-Be*c+b*Bn);
-        H[2-1+rowsH*(4-1)] = -2*(Be*d-Bd*c+a*Bn);
-        H[3-1+rowsH*(1-1)] = 2*(Bn*c-b*Be+a*Bd);
-        H[3-1+rowsH*(2-1)] = 2*(Bn*d-a*Be-b*Bd);
-        H[3-1+rowsH*(3-1)] = 2*(Be*d-Bd*c+a*Bn);
-        H[3-1+rowsH*(4-1)] = 2*(Bd*d+Be*c+b*Bn);
+        H_mag[0,0] = 2*(Be*d-Bd*c+a*Bn);
+        H_mag[0,1] = 2*(Bd*d+Be*c+b*Bn);
+        H_mag[0,2] = -2*(Bn*c-b*Be+a*Bd);
+        H_mag[0,3] = -2*(Bn*d-a*Be-b*Bd);
+        H_mag[1,0] = -2*(Bn*d-a*Be-b*Bd);
+        H_mag[1,1] = 2*(Bn*c-b*Be+a*Bd);
+        H_mag[1,2] = 2*(Bd*d-Be*c+b*Bn);
+        H_mag[1,3] = -2*(Be*d-Bd*c+a*Bn);
+        H_mag[2,0] = 2*(Bn*c-b*Be+a*Bd);
+        H_mag[2,1] = 2*(Bn*d-a*Be-b*Bd);
+        H_mag[2,2] = 2*(Be*d-Bd*c+a*Bn);
+        H_mag[2,3] = 2*(Bd*d+Be*c+b*Bn);
    }
     else if (flag==scicos::terminate)
     {

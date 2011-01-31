@@ -1,5 +1,6 @@
 #!/bin/bash
-maxima -p lisp -b ins_dynamics.wxm
+srcPath=../src/navigation/
+maxima -p lispconfig -b ins_dynamics.wxm
 cat ins_dynamics_f.f90 | sed \
 	-e "s/^f(/f[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -17,7 +18,8 @@ cat ins_dynamics_f.f90 | sed \
 	-e "s/\[9,/\[8,/g" \
 	-e "s/\[10,/\[9,/g" \
 	-e "s/,1\]/\]/g" \
-	> ins_dynamics_f.cpp
+	-e "/^.*] = 0;$/d" \
+	> ${srcPath}/ins_dynamics_f.hpp
 
 cat ins_dynamics_error_F.f90 | sed \
 	-e "s/^F(/F[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
@@ -27,6 +29,7 @@ cat ins_dynamics_error_F.f90 | sed \
 	-e "s/secL\*\*2/secLsecL/g" \
 	-e "s/R\*\*2/RR/g" \
 	-e "s/cosL\*\*2/cosLcosL/g" \
+	-e "/^.*] = 0;$/d" \
 	-e "s/\[1,/\[0,/g" \
 	-e "s/\[2,/\[1,/g" \
 	-e "s/\[3,/\[2,/g" \
@@ -47,7 +50,8 @@ cat ins_dynamics_error_F.f90 | sed \
 	-e "s/,8\]/,7\]/g" \
 	-e "s/,9\]/,8\]/g" \
 	-e "s/,10\]/,9\]/g" \
-	> ins_dynamics_error_F.cpp
+	-e "s/,/+rowsF\*/g" \
+	> ${srcPath}/ins_dynamics_error_F.hpp
 
 cat ins_dynamics_error_G.f90 | sed \
 	-e "s/^G(/G[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
@@ -58,6 +62,7 @@ cat ins_dynamics_error_G.f90 | sed \
 	-e "s/secL\**2/secLsecL/g" \
 	-e "s/R\*\*2/RR/g" \
 	-e "s/cosL\*\*2/cosLcosL/g" \
+	-e "/^.*] = 0;$/d" \
 	-e "s/\[1,/\[0,/g" \
 	-e "s/\[2,/\[1,/g" \
 	-e "s/\[3,/\[2,/g" \
@@ -78,7 +83,8 @@ cat ins_dynamics_error_G.f90 | sed \
 	-e "s/,8\]/,7\]/g" \
 	-e "s/,9\]/,8\]/g" \
 	-e "s/,10\]/,9\]/g" \
-	> ins_dynamics_error_G.cpp
+	-e "s/,/+rowsG\*/g" \
+	> ${srcPath}/ins_dynamics_error_G.hpp
 
 cat ins_dynamics_H_mag.f90 | sed \
 	-e "s/^H_mag(/H_mag[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
@@ -89,6 +95,7 @@ cat ins_dynamics_H_mag.f90 | sed \
 	-e "s/secL\**2/secLsecL/g" \
 	-e "s/R\*\*2/RR/g" \
 	-e "s/cosL\*\*2/cosLcosL/g" \
+	-e "/^.*] = 0;$/d" \
 	-e "s/\[1,/\[0,/g" \
 	-e "s/\[2,/\[1,/g" \
 	-e "s/\[3,/\[2,/g" \
@@ -109,6 +116,7 @@ cat ins_dynamics_H_mag.f90 | sed \
 	-e "s/,8\]/,7\]/g" \
 	-e "s/,9\]/,8\]/g" \
 	-e "s/,10\]/,9\]/g" \
-	> ins_dynamics_H_mag.cpp
+	-e "s/,/+rowsH\*/g" \
+	> ${srcPath}/ins_dynamics_H_mag.hpp
 
 rm -rf *.f90
