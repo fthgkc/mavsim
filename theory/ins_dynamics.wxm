@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.6 ] */
+/* [ Created with wxMaxima version 0.8.5 ] */
 
 /* [wxMaxima: title   start ]
 Inertial Navigation Dynamics
@@ -44,7 +44,7 @@ load(vect);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-cross(u,v) := matrix([0,-v[3,1],v[2,1]],[v[3,1],0,-v[1,1]],[-v[2,1],v[1,1],0]).u;
+cross(u,v) := matrix([0,-u[3,1],u[2,1]],[u[3,1],0,-u[1,1]],[-u[2,1],u[1,1],0]).v;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
