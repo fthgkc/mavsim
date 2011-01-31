@@ -80,8 +80,6 @@ void sci_quat2EulerDcm(scicos_block *block, scicos::enumScicosFlags flag)
     double & thetaRate = y3[1];
     double & psiRate = y3[2];
 
-    wz = -wz; // TODO: FIX ME
-            
     //handle flags
     if (flag==scicos::computeOutput)
     {
