@@ -145,7 +145,7 @@ mag_dec_dip : transpose([cos(dip)*cos(dec),cos(dip)*sin(dec),sin(dip)]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-mag_dec_dip_est : transpose([cos(dip+d_dip)*sin(dec+d_dec),cos(dip+d_dip)*sin(dec+d_dec),sin(dip+d_dip)]);
+mag_dec_dip_est : transpose([cos(dip+d_dip)*cos(dec+d_dec),cos(dip+d_dip)*sin(dec+d_dec),sin(dip+d_dip)]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -153,7 +153,7 @@ d_mag_dec_dip : mag_dec_dip_est - mag_dec_dip;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-R_mag_dec_dip : trigsimp(subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip,d_dec^2=sigDec^2,d_dip^2=sigDip^2,d_dip=0,d_dec=0],expand(trigexpand(d_mag_dec_dip.transpose(d_mag_dec_dip)))));
+R_mag : trigsimp(subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip,d_dec^2=sigDec^2,d_dip^2=sigDip^2,d_dip=0,d_dec=0],expand(trigexpand(d_mag_dec_dip.transpose(d_mag_dec_dip)))));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -328,6 +328,10 @@ with_stdout ("ins_dynamics_f.f90", f90(f));
 
 /* [wxMaxima: input   start ] */
 with_stdout ("ins_dynamics_H_mag.f90", f90(H_mag));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("ins_dynamics_R_mag.f90", f90(R_mag));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]

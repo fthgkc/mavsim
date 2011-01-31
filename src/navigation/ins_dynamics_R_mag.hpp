@@ -1,0 +1,9 @@
+R_mag[0+rowsR*0] = (cosDec2*cosDip2*sigDec2+cosDec2*cosDip2)*sigDip2+cosDec2*cosDip2*sigDec2;
+R_mag[0+rowsR*1] = (cosDec*sinDec*cosDip2-cosDec*sinDec*cosDip2*sigDec2)*sigDip2-cosDec*sinDec*cosDip2*sigDec2;
+R_mag[0+rowsR*2] = -cosDec*cosDip*sinDip*sigDip2;
+R_mag[1+rowsR*0] = (cosDec*sinDec*cosDip2-cosDec*sinDec*cosDip2*sigDec2)*sigDip2-cosDec*sinDec*cosDip2*sigDec2;
+R_mag[1+rowsR*1] = (cosDec2*cosDip2*sigDec2+cosDec2*cosDip2)*sigDip2+cosDec2*cosDip2*sigDec2;
+R_mag[1+rowsR*2] = -sinDec*cosDip*sinDip*sigDip2;
+R_mag[2+rowsR*0] = -cosDec*cosDip*sinDip*sigDip2;
+R_mag[2+rowsR*1] = -sinDec*cosDip*sinDip*sigDip2;
+R_mag[2+rowsR*2] = cosDip2*sigDip2;

@@ -1,12 +1,12 @@
 /*sci_insQmagH.cpp
  * Copyright (C) Alan Kim, James Goppert 2011 
  * 
- * sci_insErrorDynamics.cpp is free software: you can redistribute it and/or modify it
+ * This file is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * sci_insErrorDynamics.cpp is distributed in the hope that it will be useful, but
+ * This file is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
@@ -15,15 +15,11 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * u1: fn, fe, fd
- * u2: roll, pitch, yaw, Vn, Ve, Vd, Lat, Lon, alt
+ * u1: dip, sigma dip, dec, digma dec (rad)
+ * u2: x (state)
  *
- * Out1 = F (9x9)
- * Out2 = G (9x6)
- *
- * for del_x_dot = F*del_x + G*u
- * where u del_x is the error state of INS
- * and u is the inputs to the INS error dynamics
+ * Out1 = H_mag (3x10)
+ * Out2 = R_mag (3x3)
  *
  */
 
@@ -50,11 +46,13 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
     double * u1=(double*)GetInPortPtrs(block,1);
     double * u2=(double*)GetInPortPtrs(block,2);
     double * H_mag=(double*)GetOutPortPtrs(block,1);
+    double * R_mag=(double*)GetOutPortPtrs(block,2);
 
     // alias names
-    double & Bn = u1[0];
-    double & Be = u1[1];
-    double & Bd = u1[2];
+    double & dip = u1[0];
+    double & sigDip = u1[1];
+    double & dec = u1[2];
+    double & sigDec = u1[3];
 
     // Note that l = lon, and not in the equations but left here
     // for ease of use with full state vector x
@@ -73,19 +71,20 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
     if (flag==scicos::computeOutput)
     {
         memset((void *)H_mag,0,30*sizeof(double));
+        double sigDec2 = sigDec*sigDec;
+        double sigDip2 = sigDip*sigDip;
+        double cosDec = cos(dec), sinDec = sin(dec);
+        double cosDec2 = cosDec*cosDec, sinDec2 = sinDec*sinDec;
+        double cosDip = cos(dip), sinDip = sin(dip);
+        double cosDip2 = cosDip*cosDip, sinDip2 = sinDip*sinDip;
+        double Bn = cosDec*cosDip;
+        double Be = sinDec*cosDip;
+        double Bd = sinDip;
 
-        H_mag[0,0] = 2*(Be*d-Bd*c+a*Bn);
-        H_mag[0,1] = 2*(Bd*d+Be*c+b*Bn);
-        H_mag[0,2] = -2*(Bn*c-b*Be+a*Bd);
-        H_mag[0,3] = -2*(Bn*d-a*Be-b*Bd);
-        H_mag[1,0] = -2*(Bn*d-a*Be-b*Bd);
-        H_mag[1,1] = 2*(Bn*c-b*Be+a*Bd);
-        H_mag[1,2] = 2*(Bd*d-Be*c+b*Bn);
-        H_mag[1,3] = -2*(Be*d-Bd*c+a*Bn);
-        H_mag[2,0] = 2*(Bn*c-b*Be+a*Bd);
-        H_mag[2,1] = 2*(Bn*d-a*Be-b*Bd);
-        H_mag[2,2] = 2*(Be*d-Bd*c+a*Bn);
-        H_mag[2,3] = 2*(Bd*d+Be*c+b*Bn);
+        static const int rowsH = 3;
+        #include "navigation/ins_dynamics_H_mag.hpp" 
+        static const int rowsR = 3;
+        #include "navigation/ins_dynamics_R_mag.hpp" 
    }
     else if (flag==scicos::terminate)
     {

@@ -4,37 +4,42 @@ function [x,y,typ]=insQmagH(job,arg1,arg2)
 //
 // USAGE:
 //
-// output 1: H (3x10)
+// output 1: 
+//  H_mag (3x10), measurement matrix
+//
+// output 2: 
+//  R_mag (3x3), measurement covariance
 //
 // input 1: (input u1)
-//  [1] Bx  (body)
-//  [2] By  (body)
-//  [3] Bz  (body)
-//	default unit distance is meters
-// input 2: (input u2)
+//  [1] inclination (rad)
+//  [2] std deviaton of inclination (rad)
+//  [3] declination rad)
+//  [4] std deviaton of declination (rad)
+//
+// input 2: (navigation state)
 //  [1]  a      quaternion
-//  [2]  b 	quaternion
-//  [3]  c	quaternion
+//  [2]  b 		quaternion
+//  [3]  c		quaternion
 //  [4]  d      quaternion
-//  [4]  Vn 	(unit distance/s)
-//  [5]  Ve 	(unit distance/s)
-//  [6]  Vd 	(unit distance/s)
-//  [7]  Lat 	(rad)
-//  [8]  Lon 	(rad)
-//  [9]  alt 	(unit distance)
-
+//  [5]  Vn 	(unit distance/s)
+//  [6]  Ve 	(unit distance/s)
+//  [7]  Vd 	(unit distance/s)
+//  [8]  Lat 	(rad)
+//  [9]  Lon 	(rad)
+// [10]  alt 	(unit distance)
+//
 //	default unit distance is meters
 //
 // AUTHOR:
 //
-// Copyright (C) Alan Kim 2011
+// Copyright (C) Alan Kim, James Goppert  2011
 //
-// insErrorDynamicsQ.sci is free software: you can redistribute it and/or modify it
+// This file is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// insErrorDynamicsQ.sci is distributed in the hope that it will be useful, but
+// This file is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
@@ -61,9 +66,9 @@ select job
 		model=scicos_model()
 		model.sim=list('sci_insQmagH',4)
 		model.evtin=[];
-		model.in=[3;10];
-		model.out=[3];
-		model.out2=[10];
+		model.in=[4;10];
+		model.out=[3;3];
+		model.out2=[10;3];
 		model.blocktype='c';
 		model.dep_ut=[%t %f];
 

@@ -119,4 +119,35 @@ cat ins_dynamics_H_mag.f90 | sed \
 	-e "s/,/+rowsH\*/g" \
 	> ${srcPath}/ins_dynamics_H_mag.hpp
 
+cat ins_dynamics_R_mag.f90 | sed \
+	-e "s/^R_mag(/R_mag[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
+	-e "s/cos(dec)/cosDec/g" -e "s/sin(dec)/sinDec/g" \
+	-e "s/cos(dip)/cosDip/g" -e "s/sin(dip)/sinDip/g" \
+	-e "s/cosDec\*\*2/cosDec2/g" -e "s/sinDec\*\*2/cosDec2/g" \
+	-e "s/cosDip\*\*2/cosDip2/g" -e "s/sinDip\*\*2/cosDip2/g" \
+	-e "s/sigDip\*\*2/sigDip2/g" -e "s/sigDec\*\*2/sigDec2/g" \
+	-e "/^.*] = 0;$/d" \
+	-e "s/\[1,/\[0,/g" \
+	-e "s/\[2,/\[1,/g" \
+	-e "s/\[3,/\[2,/g" \
+	-e "s/\[4,/\[3,/g" \
+	-e "s/\[5,/\[4,/g" \
+	-e "s/\[6,/\[5,/g" \
+	-e "s/\[7,/\[6,/g" \
+	-e "s/\[8,/\[7,/g" \
+	-e "s/\[9,/\[8,/g" \
+	-e "s/\[10,/\[9,/g" \
+	-e "s/,1\]/,0\]/g" \
+	-e "s/,2\]/,1\]/g" \
+	-e "s/,3\]/,2\]/g" \
+	-e "s/,4\]/,3\]/g" \
+	-e "s/,5\]/,4\]/g" \
+	-e "s/,6\]/,5\]/g" \
+	-e "s/,7\]/,6\]/g" \
+	-e "s/,8\]/,7\]/g" \
+	-e "s/,9\]/,8\]/g" \
+	-e "s/,10\]/,9\]/g" \
+	-e "s/,/+rowsR\*/g" \
+	> ${srcPath}/ins_dynamics_R_mag.hpp
+
 rm -rf *.f90
