@@ -1,29 +1,46 @@
-function [x,y,typ]=initBearing(job,arg1,arg2)
+function [x,y,typ]=waypointGuidance(job,arg1,arg2)
 //
-// initBearing.sci
+// waypointGuidance.sci
 //
-// USAGE: Calcualte initial bearing from point 1 to point 2
+// USAGE: Calculate command errors for waypoint guidance.
 //
-// output 1: Bearing in radians
-//
-// input 1: (input u1)
-//  [1] Lat1
-//  [2] Lon1
+// input 1: (destination)
+//  [1] Lat
+//  [2] Lon
 //  
-// input 2: (input u2)
-//  [1] Lat2
-//  [2] Lon2
+// input 2: (state x) 
+//  [1]  Vt
+//  [2]  Alpha
+//  [3]  Theta
+//  [4]  Q
+//  [5]  Alt
+//  [6]  Beta
+//  [7]  Phi
+//  [8]  P
+//  [9]  R
+//  [10] Psi
+//  [11] Longitude
+//  [12] Latitude,
+//  [13] Rpm(if prop)
+//   // not allowed currently [14] PropPitch (if prop)
+//
+// output 1: command error
+//  [1] eH (altitude error)
+//  [2] eV (true velocity error)
+//  [3] eR (yaw rate error)
+//  [4] ePsi (heading error)
+//  [5] ePhi (roll error)
 //
 // AUTHOR:
 //
-// Copyright (C) Alan Kim 2011
+// Copyright (C) Alan Kimi, James Goppert 2011
 //
-// initBearing.sci is free software: you can redistribute it and/or modify it
+// This file is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// insErrorDynamicsQ.sci is distributed in the hope that it will be useful, but
+// This file is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
@@ -48,17 +65,17 @@ select job
 	case 'define' then
 		// set model properties
 		model=scicos_model()
-		model.sim=list('sci_initBearing',4)
+		model.sim=list('sci_waypointGuidance',4)
 		model.evtin=[];
-		model.in=[2;2];
-		model.out=[1];
+		model.in=[2;13];
+		model.out=[5];
 		model.blocktype='c';
 		model.dep_ut=[%t %f];
 
-        exprs='initBearing';
+        exprs='waypointGuidance';
 
 		// setup icon
-	  	gr_i=['xstringb(orig(1),orig(2),''initBearing'',sz(1),sz(2),''fill'');']
+	  	gr_i=['xstringb(orig(1),orig(2),''waypointGuidance'',sz(1),sz(2),''fill'');']
 	  	x=standard_define([5 2],model,exprs,gr_i)
 	end
 endfunction

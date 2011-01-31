@@ -1,4 +1,4 @@
-/*sci_initBearing.cpp
+/*sci_waypointGuidance.cpp
  * Copyright (C) Alan Kim, James Goppert 2011 
  * 
  * This file is free software: you can redistribute it and/or modify it
@@ -15,10 +15,10 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * u1: lat, lon
- * u2: lat, lon 
+ * u1: lat, lon (destination)
+ * u2: x 
  *
- * Out1 = bearing
+ * Out1 = eH, eV, eR, ePsi, ePhi
  *
  */
 
@@ -36,7 +36,7 @@ extern "C"
 #include <math.h>
 #include "definitions.hpp"
 
-void sci_initBearing(scicos_block *block, scicos::enumScicosFlags flag)
+void sci_waypointGuidance(scicos_block *block, scicos::enumScicosFlags flag)
 {
 
     // constants
@@ -47,23 +47,46 @@ void sci_initBearing(scicos_block *block, scicos::enumScicosFlags flag)
     double * y1=(double*)GetOutPortPtrs(block,1);
 
     // alias names
-    double & lat1 = u1[0];
-    double & lon1 = u1[1];
+    double & lat2   = u1[0];
+    double & lon2   = u1[1];
 
-    double & lat2 = u2[0];
-    double & lon2 = u2[1];
+    double & Vt     = u2[0];
+    double & alpha  = u2[1];
+    double & theta  = u2[2];
+    double & Q      = u2[3];
+    double & alt    = u2[4];
+    double & beta   = u2[5];
+    double & phi    = u2[6];
+    double & P      = u2[7];
+    double & R      = u2[8];
+    double & psi    = u2[9];
+    double & lon1   = u2[10];
+    double & lat1   = u2[11];
 
-    double & psi = y1[0];
-            
+    double & eH     = y1[0];
+    double & eV     = y1[1];
+    double & eR     = y1[2];
+    double & ePsi   = y1[3];
+    double & ePhi   = y1[4];
+
     //handle flags
     if (flag==scicos::computeOutput)
     {
-        const double dLat = lat2-lat1;
-        const double dLon = lon2-lon1;
-        const double y = sin(dLon) * cos(lat2);
-        const double x = cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2)*cos(dLon);
-        psi = atan2(y,x);
-        if(psi < 0) psi+=2*M_PI;
+        double dLat = lat2-lat1;
+        double dLon = lon2-lon1;
+        double y = sin(dLon) * cos(lat2);
+        double x = cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2)*cos(dLon);
+        double psiB = atan2(y,x);
+        //if(psiB < 0) psi+=2*M_PI;
+
+        ePsi = psiB - psi;
+        if (ePsi > M_PI) ePsi -= 2*M_PI;
+        else if (ePsi < -M_PI) ePsi += 2*M_PI;
+
+        eH = 1000 - alt;
+        eV = 45 - Vt;
+        eR = 0 - R;
+        ePhi = 0 - phi;
    }
     else if (flag==scicos::terminate)
     {
