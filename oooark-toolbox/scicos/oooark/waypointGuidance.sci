@@ -7,6 +7,8 @@ function [x,y,typ]=waypointGuidance(job,arg1,arg2)
 // input 1: (destination)
 //  [1] Lat
 //  [2] Lon
+//  [3] Altitude
+//  [4] Velocity
 //  
 // input 2: (state x) 
 //  [1]  Vt
@@ -67,7 +69,7 @@ select job
 		model=scicos_model()
 		model.sim=list('sci_waypointGuidance',4)
 		model.evtin=[];
-		model.in=[2;13];
+		model.in=[4;13];
 		model.out=[5];
 		model.blocktype='c';
 		model.dep_ut=[%t %f];

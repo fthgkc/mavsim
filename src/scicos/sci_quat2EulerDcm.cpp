@@ -47,15 +47,16 @@ void sci_quat2EulerDcm(scicos_block *block, scicos::enumScicosFlags flag)
     // data
     double * u1=(double*)GetInPortPtrs(block,1);
     double * u2=(double*)GetInPortPtrs(block,2);
+
     double * y1=(double*)GetOutPortPtrs(block,1);
     double * y2=(double*)GetOutPortPtrs(block,2);
     double * y3=(double*)GetOutPortPtrs(block,3);
 
     // alias names
-    double & a = u1[0];
-    double & b = u1[1];
-    double & c = u1[2];
-    double & d = u1[3];
+    double & a0 = u1[0];
+    double & b0 = u1[1];
+    double & c0 = u1[2];
+    double & d0 = u1[3];
 
     double & wx = u2[0];
     double & wy = u2[1];
@@ -83,10 +84,19 @@ void sci_quat2EulerDcm(scicos_block *block, scicos::enumScicosFlags flag)
     //handle flags
     if (flag==scicos::computeOutput)
     {
+        // normalize quaternions
+        // this is a bit paranoid and can be ignored if you trust the user
+        const double qNorm = sqrt(a0*a0+b0*b0+c0*c0+d0*d0); 
+        const double a = a0/qNorm;
+        const double b = b0/qNorm;
+        const double c = c0/qNorm;
+        const double d = d0/qNorm;
+
         const double aa = a*a;
         const double bb = b*b;
         const double cc = c*c;
         const double dd = d*d;
+
         static const double gimbalLockTol = 1e-3;
         static const double normalTol = 1e-3;
         static const double pi_2 = M_PI/2;

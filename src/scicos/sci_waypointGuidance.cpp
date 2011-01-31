@@ -15,7 +15,7 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * u1: lat, lon (destination)
+ * u1: lat, lon, alt, velocity (destination)
  * u2: x 
  *
  * Out1 = eH, eV, eR, ePsi, ePhi
@@ -49,6 +49,8 @@ void sci_waypointGuidance(scicos_block *block, scicos::enumScicosFlags flag)
     // alias names
     double & lat2   = u1[0];
     double & lon2   = u1[1];
+    double & alt2   = u1[2];
+    double & Vt2    = u1[3];
 
     double & Vt     = u2[0];
     double & alpha  = u2[1];
@@ -83,8 +85,8 @@ void sci_waypointGuidance(scicos_block *block, scicos::enumScicosFlags flag)
         if (ePsi > M_PI) ePsi -= 2*M_PI;
         else if (ePsi < -M_PI) ePsi += 2*M_PI;
 
-        eH = 1000 - alt;
-        eV = 45 - Vt;
+        eH = alt2 - alt;
+        eV = Vt2 - Vt;
         eR = 0 - R;
         ePhi = 0 - phi;
    }
