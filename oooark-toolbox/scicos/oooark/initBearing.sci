@@ -4,7 +4,7 @@ function [x,y,typ]=initBearing(job,arg1,arg2)
 //
 // USAGE: Calcualte initial bearing from point 1 to point 2
 //
-// output 1: Bearing in degrees (0-360)
+// output 1: Bearing in radians
 //
 // input 1: (input u1)
 //  [1] Lat1
@@ -13,8 +13,6 @@ function [x,y,typ]=initBearing(job,arg1,arg2)
 // input 2: (input u2)
 //  [1] Lat2
 //  [2] Lon2
-
-//	default unit distance is meters
 //
 // AUTHOR:
 //

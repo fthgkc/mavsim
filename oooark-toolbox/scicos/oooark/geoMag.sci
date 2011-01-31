@@ -13,10 +13,6 @@ function [x,y,typ]=geoMag(job,arg1,arg2)
 //  [1] lat 	(rad)
 //  [2] lon 	(rad)
 //  [3] alt 	(m)
-//  [4] phi 	(rad)
-//  [5] theta 	(rad)
-//  [6] psi 	(rad)
-//  
 //
 // AUTHOR:
 //
@@ -59,7 +55,7 @@ select job
 				list('vec',1,'vec',1),exprs);
 			if ~ok then break,end
 				graphics.exprs=exprs;
-			[model,graphics,ok]=check_io(model,graphics,[6],[3],[],[])
+			[model,graphics,ok]=check_io(model,graphics,[3],[3],[],[])
 			if ok then
 				model.rpar=decYear;
 				model.ipar=nTerms;
@@ -73,7 +69,7 @@ select job
 		// set model properties
 		model=scicos_model()
 		model.sim=list('sci_geoMag',4)
-		model.in=[6];
+		model.in=[3];
 		model.out=[3];
 		model.blocktype='c';
 		model.dep_ut=[%t %f];

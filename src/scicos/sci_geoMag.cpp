@@ -16,11 +16,9 @@
  *
  *
  * Input: 
- *  u1: (imu) fx, fy, fz, wx, wy, wz 
- *  u2: (gravity model) g
- *  u3: (state) a, b, c, d, Vn, Ve, Ve, L, l, h
+ *  u1: lat lon alt
  * Output:
- *  y1: (state derivative)
+ *  y1: inclination, decliation, field strength
  *
  */
 
@@ -56,9 +54,6 @@ void sci_geoMag(scicos_block *block, scicos::enumScicosFlags flag)
     double & lat   = u1[0];
     double & lon   = u1[1];
     double & alt   = u1[2];
-    double & phi   = u1[3];
-    double & theta = u1[4];
-    double & psi   = u1[5];
     
     double & dip = y1[0];
     double & dec = y1[1];

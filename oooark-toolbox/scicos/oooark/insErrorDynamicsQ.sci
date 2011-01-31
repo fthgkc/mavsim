@@ -65,7 +65,7 @@ select job
 			labels=[..
 				'Omega (rad/s)';..
 				'Re (unit distance)'];
-			[ok,Omega,Re]=..
+			[ok,Omega,Re,exprs]=..
 				getvalue('Set Planet Parameters',labels,..
 				list('vec',1,'vec',1),exprs);
 			if ~ok then break,end
