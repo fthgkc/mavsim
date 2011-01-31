@@ -10,13 +10,15 @@ function [x,y,typ]=insQmagH(job,arg1,arg2)
 // output 2: 
 //  R_mag (3x3), measurement covariance
 //
-// input 1: (input u1)
-//  [1] inclination (rad)
-//  [2] std deviaton of inclination (rad)
-//  [3] declination rad)
-//  [4] std deviaton of declination (rad)
+// input 1: (local magnetic field direction)
+//  [1] dip, inclination (rad)
+//  [2] dec, declination rad)
 //
-// input 2: (navigation state)
+// input 2: (std. deviation for local magnetic field direction)
+//  [1] std deviaton of dip, inclination (rad)
+//  [2] std deviaton of dec, declination (rad)
+//
+// input 3: (navigation state)
 //  [1]  a      quaternion
 //  [2]  b 		quaternion
 //  [3]  c		quaternion
@@ -66,7 +68,7 @@ select job
 		model=scicos_model()
 		model.sim=list('sci_insQmagH',4)
 		model.evtin=[];
-		model.in=[4;10];
+		model.in=[2;2;10];
 		model.out=[3;3];
 		model.out2=[10;3];
 		model.blocktype='c';

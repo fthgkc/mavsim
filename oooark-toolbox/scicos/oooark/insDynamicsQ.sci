@@ -4,19 +4,6 @@ function [x,y,typ]=insDynamicsQ(job,arg1,arg2)
 //
 // USAGE:
 //
-// output 1: (state derivative)
-//  [1]  d/dt a     quaternion rate
-//  [2]  d/dt b 	quaternion rate
-//  [3]  d/dt c		quaternion rate
-//  [4]  d/dt d     quaternion rate
-//  [5]  d/dt Vn 	(unit distance/s^2)
-//  [6]  d/dt Ve 	(unit distance/s^2)
-//  [7]  d/dt Vd 	(unit distance/s^2)
-//  [8]  d/dt Lat 	(rad/s)
-//  [9]  d/dt Lon 	(rad/s)
-// [10]  d/dt alt 	(unit distance/s)
-//
-//
 // input 1: (imu data)
 //  [1] fx (unit distance/s^2) (body)
 //  [2] fy (unit distance/s^2) (body)
@@ -40,6 +27,18 @@ function [x,y,typ]=insDynamicsQ(job,arg1,arg2)
 //  [8]  Lat 	(rad)
 //  [9]  Lon 	(rad)
 // [10]  alt 	(unit distance)
+//
+// output 1: (state derivative)
+//  [1]  d/dt a     quaternion rate
+//  [2]  d/dt b 	quaternion rate
+//  [3]  d/dt c		quaternion rate
+//  [4]  d/dt d     quaternion rate
+//  [5]  d/dt Vn 	(unit distance/s^2)
+//  [6]  d/dt Ve 	(unit distance/s^2)
+//  [7]  d/dt Vd 	(unit distance/s^2)
+//  [8]  d/dt Lat 	(rad/s)
+//  [9]  d/dt Lon 	(rad/s)
+// [10]  d/dt alt 	(unit distance/s)
 //
 //	default unit distance is meters
 //

@@ -15,8 +15,9 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * u1: dip, sigma dip, dec, digma dec (rad)
- * u2: x (state)
+ * u1: dip (inclination), dec (declination) (rad)
+ * u2: sig dip, sig dec (rad)
+ * u3: x (state)
  *
  * Out1 = H_mag (3x10)
  * Out2 = R_mag (3x3)
@@ -45,32 +46,34 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
     // data
     double * u1=(double*)GetInPortPtrs(block,1);
     double * u2=(double*)GetInPortPtrs(block,2);
+    double * u3=(double*)GetInPortPtrs(block,3);
     double * H_mag=(double*)GetOutPortPtrs(block,1);
     double * R_mag=(double*)GetOutPortPtrs(block,2);
 
     // alias names
     double & dip = u1[0];
-    double & sigDip = u1[1];
-    double & dec = u1[2];
-    double & sigDec = u1[3];
+    double & dec = u1[1];
+    double & sigDip = u2[0];
+    double & sigDec = u2[1];
 
     // Note that l = lon, and not in the equations but left here
     // for ease of use with full state vector x
-    double & a      = u2[0];
-    double & b      = u2[1];
-    double & c      = u2[2];
-    double & d      = u2[3];
-    double & Vn     = u2[4];
-    double & Ve     = u2[5];
-    double & Vd     = u2[6];
-    double & L      = u2[7];
-    double & l      = u2[8];
-    double & alt    = u2[9];
+    double & a      = u3[0];
+    double & b      = u3[1];
+    double & c      = u3[2];
+    double & d      = u3[3];
+    double & Vn     = u3[4];
+    double & Ve     = u3[5];
+    double & Vd     = u3[6];
+    double & L      = u3[7];
+    double & l      = u3[8];
+    double & alt    = u3[9];
             
     //handle flags
     if (flag==scicos::computeOutput)
     {
         memset((void *)H_mag,0,30*sizeof(double));
+        memset((void *)R_mag,0,9*sizeof(double));
         double sigDec2 = sigDec*sigDec;
         double sigDip2 = sigDip*sigDip;
         double cosDec = cos(dec), sinDec = sin(dec);

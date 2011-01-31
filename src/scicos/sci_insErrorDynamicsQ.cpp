@@ -18,8 +18,8 @@
  * u1: fn, fe, fd
  * u2: roll, pitch, yaw, Vn, Ve, Vd, Lat, Lon, alt
  *
- * Out1 = F (9x9)
- * Out2 = G (9x6)
+ * Out1 = F (10x10)
+ * Out2 = G (10x6)
  *
  * for del_x_dot = F*del_x + G*u
  * where u del_x is the error state of INS
@@ -100,7 +100,7 @@ void sci_insErrorDynamicsQ(scicos_block *block, scicos::enumScicosFlags flag)
         const double RR = R*R;
 
         const int rowsF = 10;
-        const int rowsG = 6;
+        const int rowsG = 10;
 
         #include "navigation/ins_dynamics_error_F.hpp"
         #include "navigation/ins_dynamics_error_G.hpp"

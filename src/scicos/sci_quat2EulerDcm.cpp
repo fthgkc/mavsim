@@ -19,8 +19,8 @@
  * u2: wx, wy, wz (body angular rates)
  *
  * y1: C_nb
- * y1: euler
- * y2: eulerRates
+ * y2: euler
+ * y3: eulerRates
  *
  */
 
