@@ -6,20 +6,6 @@ Inertial Navigation Dynamics
    [wxMaxima: title   end   ] */
 
 /* [wxMaxima: section start ]
-Latex Notation
-   [wxMaxima: section end   ] */
-
-/* [wxMaxima: input   start ] */
-texput(da,"\\delta a");texput(db,"\\delta b");texput(dc,"\\delta c");texput(dd,"\\delta d");
-texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
-texput(dwx,"\\delta w_x");texput(dwy,"\\delta w_y");texput(dwz,"\\delta w_y");
-texput(dfx,"\\delta f_x");texput(dfy,"\\delta f_y");texput(dfz,"\\delta f_z");
-texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
-texput(Vn,"v_N");texput(Ve,"v_E");texput(Vd,"v_D");
-texput(dVn,"\delta v_N");texput(dVe,"\delta v_E");texput(dVd,"\delta v_D");
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: section start ]
 Definitions
    [wxMaxima: section end   ] */
 
@@ -167,19 +153,7 @@ d_mag_dec_dip : mag_dec_dip_est - mag_dec_dip;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-R_mag_dec_dip : d_mag_dec_dip.transpose(d_mag_dec_dip);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-R_mag_dec_dip_expand : expand(trigexpand(R_mag_dec_dip));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-R_mag_dec_dip_expand2 : subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip],R_mag_dec_dip_expand);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-R_mag_dec_dip_expand3 : subst([sin(dip)^3=0],R_mag_dec_dip_expand2);
+R_mag_dec_dip : trigsimp(subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip,d_dec^2=sigDec^2,d_dip^2=sigDip^2,d_dip=0,d_dec=0],expand(trigexpand(d_mag_dec_dip.transpose(d_mag_dec_dip)))));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -354,6 +328,20 @@ with_stdout ("ins_dynamics_f.f90", f90(f));
 
 /* [wxMaxima: input   start ] */
 with_stdout ("ins_dynamics_H_mag.f90", f90(H_mag));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Latex Notation
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+texput(da,"\\delta a");texput(db,"\\delta b");texput(dc,"\\delta c");texput(dd,"\\delta d");
+texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
+texput(dwx,"\\delta w_x");texput(dwy,"\\delta w_y");texput(dwz,"\\delta w_y");
+texput(dfx,"\\delta f_x");texput(dfy,"\\delta f_y");texput(dfz,"\\delta f_z");
+texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
+texput(Vn,"v_N");texput(Ve,"v_E");texput(Vd,"v_D");
+texput(dVn,"\delta v_N");texput(dVe,"\delta v_E");texput(dVd,"\delta v_D");
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
