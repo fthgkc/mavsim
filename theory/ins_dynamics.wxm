@@ -159,11 +159,8 @@ R_mag_n : trigsimp(subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=
 /* [wxMaxima: comment start ]
 Note that R_mag_n is the covariance of the error in the navigation frame. To get the covariance in the body frame
 which is measureed you can used the C_nb matrix for a similarity transformation.
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
 R_mag : transpose(C_nb).R_mag_n.C_nb;
-/* [wxMaxima: input   end   ] */
+   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
 mag : transpose([Bn,Be,Bd]);
@@ -302,6 +299,14 @@ After substitution of the expected value for the state, zero error, into F we ob
 F : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,1,10),makelist(dx[i,1],i,1,10))));
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: input   start ] */
+F_att : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,1,4),makelist(dx[i,1],i,1,4))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F_vp : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,5,10),makelist(dx[i,1],i,5,10))));
+/* [wxMaxima: input   end   ] */
+
 /* [wxMaxima: comment start ]
 The inputs to the ins error dynamics are the gyro and accelerometer measuremenmt errors.
    [wxMaxima: comment end   ] */
@@ -310,9 +315,13 @@ The inputs to the ins error dynamics are the gyro and accelerometer measuremenmt
 G : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,1,10),makelist(u[i,1],i,1,6))));
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: section start ]
-Observability
-   [wxMaxima: section end   ] */
+/* [wxMaxima: input   start ] */
+G_att : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,1,4),makelist(u[i,1],i,1,6))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+G_vp : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,5,10),makelist(u[i,1],i,1,6))));
+/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
 File Output
@@ -324,7 +333,23 @@ with_stdout ("ins_dynamics_error_F.f90", f90(F));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
+with_stdout ("ins_dynamics_error_F_att.f90", f90(F_att));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("ins_dynamics_error_F_vp.f90", f90(F_vp));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
 with_stdout ("ins_dynamics_error_G.f90", f90(G));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("ins_dynamics_error_G_att.f90", f90(G_att));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("ins_dynamics_error_G_vp.f90", f90(G_vp));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -333,10 +358,6 @@ with_stdout ("ins_dynamics_f.f90", f90(f));
 
 /* [wxMaxima: input   start ] */
 with_stdout ("ins_dynamics_H_mag.f90", f90(H_mag));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-with_stdout ("ins_dynamics_R_mag.f90", f90(R_mag));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
