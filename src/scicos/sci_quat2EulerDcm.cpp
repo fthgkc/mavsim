@@ -147,12 +147,12 @@ void sci_quat2EulerDcm(scicos_block *block, scicos::enumScicosFlags flag)
         thetaRate = (wy*cos(phi) - wz*sin(phi));
 
         // debug
-        //printf("phi\t:\t%f\n",phi);
-        //printf("theta\t:\t%f\n",theta);
-        //printf("psi\t:\t%f\n",psi);
-        //printf("phiRate\t:\t%f\n",phiRate);
-        //printf("thetaRate\t:\t%f\n",thetaRate);
-        //printf("psiRate\t:\t%f\n",psiRate);
+        printf("phi\t:\t%f\n",phi);
+        printf("theta\t:\t%f\n",theta);
+        printf("psi\t:\t%f\n",psi);
+        printf("phiRate\t:\t%f\n",phiRate);
+        printf("thetaRate\t:\t%f\n",thetaRate);
+        printf("psiRate\t:\t%f\n",psiRate);
     }
     else if (flag==scicos::terminate)
     {

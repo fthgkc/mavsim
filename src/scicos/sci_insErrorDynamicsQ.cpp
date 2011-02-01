@@ -99,8 +99,8 @@ void sci_insErrorDynamicsQ(scicos_block *block, scicos::enumScicosFlags flag)
         const double ddd = dd*d;
         const double RR = R*R;
 
-        const int rowsF = 10;
-        const int rowsG = 10;
+        const int rows_F = 10;
+        const int rows_G = 10;
 
         #include "navigation/ins_dynamics_error_F.hpp"
         #include "navigation/ins_dynamics_error_G.hpp"

@@ -50,7 +50,7 @@ cat ins_dynamics_error_F.f90 | sed \
 	-e "s/,8\]/,7\]/g" \
 	-e "s/,9\]/,8\]/g" \
 	-e "s/,10\]/,9\]/g" \
-	-e "s/,/+rowsF\*/g" \
+	-e "s/,/+rows_F\*/g" \
 	> ${srcPath}/ins_dynamics_error_F.hpp
 
 cat ins_dynamics_error_G.f90 | sed \
@@ -83,7 +83,7 @@ cat ins_dynamics_error_G.f90 | sed \
 	-e "s/,8\]/,7\]/g" \
 	-e "s/,9\]/,8\]/g" \
 	-e "s/,10\]/,9\]/g" \
-	-e "s/,/+rowsG\*/g" \
+	-e "s/,/+rows_G\*/g" \
 	> ${srcPath}/ins_dynamics_error_G.hpp
 
 cat ins_dynamics_H_mag.f90 | sed \
@@ -116,11 +116,11 @@ cat ins_dynamics_H_mag.f90 | sed \
 	-e "s/,8\]/,7\]/g" \
 	-e "s/,9\]/,8\]/g" \
 	-e "s/,10\]/,9\]/g" \
-	-e "s/,/+rowsH\*/g" \
+	-e "s/,/+rows_H_mag\*/g" \
 	> ${srcPath}/ins_dynamics_H_mag.hpp
 
-cat ins_dynamics_R_mag.f90 | sed \
-	-e "s/^R_mag(/R_mag[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
+cat ins_dynamics_R_mag_n.f90 | sed \
+	-e "s/^R_mag_n(/R_mag_n[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "s/cos(dec)/cosDec/g" -e "s/sin(dec)/sinDec/g" \
 	-e "s/cos(dip)/cosDip/g" -e "s/sin(dip)/sinDip/g" \
 	-e "s/cosDec\*\*2/cosDec2/g" -e "s/sinDec\*\*2/cosDec2/g" \
@@ -147,7 +147,7 @@ cat ins_dynamics_R_mag.f90 | sed \
 	-e "s/,8\]/,7\]/g" \
 	-e "s/,9\]/,8\]/g" \
 	-e "s/,10\]/,9\]/g" \
-	-e "s/,/+rowsR\*/g" \
-	> ${srcPath}/ins_dynamics_R_mag.hpp
+	-e "s/,/+rows_R_mag_n\*/g" \
+	> ${srcPath}/ins_dynamics_R_mag_n.hpp
 
 rm -rf *.f90
