@@ -53,6 +53,70 @@ cat ins_dynamics_error_F.f90 | sed \
 	-e "s/,/+rows_F\*/g" \
 	> ${srcPath}/ins_dynamics_error_F.hpp
 
+cat ins_dynamics_error_F_att.f90 | sed \
+	-e "s/^F_att(/F_att[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
+	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
+	-e "s/cos(L)/cosL/g" -e "s/sin(L)/sinL/g" -e "s/tan(L)/tanL/g" \
+	-e "s/sec(L)/secL/g" \
+	-e "s/secL\*\*2/secLsecL/g" \
+	-e "s/R\*\*2/RR/g" \
+	-e "s/cosL\*\*2/cosLcosL/g" \
+	-e "/^.*] = 0;$/d" \
+	-e "s/\[1,/\[0,/g" \
+	-e "s/\[2,/\[1,/g" \
+	-e "s/\[3,/\[2,/g" \
+	-e "s/\[4,/\[3,/g" \
+	-e "s/\[5,/\[4,/g" \
+	-e "s/\[6,/\[5,/g" \
+	-e "s/\[7,/\[6,/g" \
+	-e "s/\[8,/\[7,/g" \
+	-e "s/\[9,/\[8,/g" \
+	-e "s/\[10,/\[9,/g" \
+	-e "s/,1\]/,0\]/g" \
+	-e "s/,2\]/,1\]/g" \
+	-e "s/,3\]/,2\]/g" \
+	-e "s/,4\]/,3\]/g" \
+	-e "s/,5\]/,4\]/g" \
+	-e "s/,6\]/,5\]/g" \
+	-e "s/,7\]/,6\]/g" \
+	-e "s/,8\]/,7\]/g" \
+	-e "s/,9\]/,8\]/g" \
+	-e "s/,10\]/,9\]/g" \
+	-e "s/,/+rows_F_att\*/g" \
+	> ${srcPath}/ins_dynamics_error_F_att.hpp
+
+cat ins_dynamics_error_F_vp.f90 | sed \
+	-e "s/^F_vp(/F_vp[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
+	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
+	-e "s/cos(L)/cosL/g" -e "s/sin(L)/sinL/g" -e "s/tan(L)/tanL/g" \
+	-e "s/sec(L)/secL/g" \
+	-e "s/secL\*\*2/secLsecL/g" \
+	-e "s/R\*\*2/RR/g" \
+	-e "s/cosL\*\*2/cosLcosL/g" \
+	-e "/^.*] = 0;$/d" \
+	-e "s/\[1,/\[0,/g" \
+	-e "s/\[2,/\[1,/g" \
+	-e "s/\[3,/\[2,/g" \
+	-e "s/\[4,/\[3,/g" \
+	-e "s/\[5,/\[4,/g" \
+	-e "s/\[6,/\[5,/g" \
+	-e "s/\[7,/\[6,/g" \
+	-e "s/\[8,/\[7,/g" \
+	-e "s/\[9,/\[8,/g" \
+	-e "s/\[10,/\[9,/g" \
+	-e "s/,1\]/,0\]/g" \
+	-e "s/,2\]/,1\]/g" \
+	-e "s/,3\]/,2\]/g" \
+	-e "s/,4\]/,3\]/g" \
+	-e "s/,5\]/,4\]/g" \
+	-e "s/,6\]/,5\]/g" \
+	-e "s/,7\]/,6\]/g" \
+	-e "s/,8\]/,7\]/g" \
+	-e "s/,9\]/,8\]/g" \
+	-e "s/,10\]/,9\]/g" \
+	-e "s/,/+rows_F_vp\*/g" \
+	> ${srcPath}/ins_dynamics_error_F_vp.hpp
+
 cat ins_dynamics_error_G.f90 | sed \
 	-e "s/^G(/G[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -85,6 +149,72 @@ cat ins_dynamics_error_G.f90 | sed \
 	-e "s/,10\]/,9\]/g" \
 	-e "s/,/+rows_G\*/g" \
 	> ${srcPath}/ins_dynamics_error_G.hpp
+
+cat ins_dynamics_error_G_att.f90 | sed \
+	-e "s/^G_att(/G_att[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
+	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
+	-e "s/a\*\*3/aaa/g" -e "s/b\*\*3/bbb/g" -e "s/c\*\*3/ccc/g" -e "s/d\*\*3/ddd/g" \
+	-e "s/cos(L)/cosL/g" -e "s/sin(L)/sinL/g" -e "s/tan(L)/tanL/g" \
+	-e "s/sec(L)/secL/g" \
+	-e "s/secL\**2/secLsecL/g" \
+	-e "s/R\*\*2/RR/g" \
+	-e "s/cosL\*\*2/cosLcosL/g" \
+	-e "/^.*] = 0;$/d" \
+	-e "s/\[1,/\[0,/g" \
+	-e "s/\[2,/\[1,/g" \
+	-e "s/\[3,/\[2,/g" \
+	-e "s/\[4,/\[3,/g" \
+	-e "s/\[5,/\[4,/g" \
+	-e "s/\[6,/\[5,/g" \
+	-e "s/\[7,/\[6,/g" \
+	-e "s/\[8,/\[7,/g" \
+	-e "s/\[9,/\[8,/g" \
+	-e "s/\[10,/\[9,/g" \
+	-e "s/,1\]/,0\]/g" \
+	-e "s/,2\]/,1\]/g" \
+	-e "s/,3\]/,2\]/g" \
+	-e "s/,4\]/,3\]/g" \
+	-e "s/,5\]/,4\]/g" \
+	-e "s/,6\]/,5\]/g" \
+	-e "s/,7\]/,6\]/g" \
+	-e "s/,8\]/,7\]/g" \
+	-e "s/,9\]/,8\]/g" \
+	-e "s/,10\]/,9\]/g" \
+	-e "s/,/+rows_G_att\*/g" \
+	> ${srcPath}/ins_dynamics_error_G_att.hpp
+
+cat ins_dynamics_error_G_vp.f90 | sed \
+	-e "s/^G_vp(/G_vp[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
+	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
+	-e "s/a\*\*3/aaa/g" -e "s/b\*\*3/bbb/g" -e "s/c\*\*3/ccc/g" -e "s/d\*\*3/ddd/g" \
+	-e "s/cos(L)/cosL/g" -e "s/sin(L)/sinL/g" -e "s/tan(L)/tanL/g" \
+	-e "s/sec(L)/secL/g" \
+	-e "s/secL\**2/secLsecL/g" \
+	-e "s/R\*\*2/RR/g" \
+	-e "s/cosL\*\*2/cosLcosL/g" \
+	-e "/^.*] = 0;$/d" \
+	-e "s/\[1,/\[0,/g" \
+	-e "s/\[2,/\[1,/g" \
+	-e "s/\[3,/\[2,/g" \
+	-e "s/\[4,/\[3,/g" \
+	-e "s/\[5,/\[4,/g" \
+	-e "s/\[6,/\[5,/g" \
+	-e "s/\[7,/\[6,/g" \
+	-e "s/\[8,/\[7,/g" \
+	-e "s/\[9,/\[8,/g" \
+	-e "s/\[10,/\[9,/g" \
+	-e "s/,1\]/,0\]/g" \
+	-e "s/,2\]/,1\]/g" \
+	-e "s/,3\]/,2\]/g" \
+	-e "s/,4\]/,3\]/g" \
+	-e "s/,5\]/,4\]/g" \
+	-e "s/,6\]/,5\]/g" \
+	-e "s/,7\]/,6\]/g" \
+	-e "s/,8\]/,7\]/g" \
+	-e "s/,9\]/,8\]/g" \
+	-e "s/,10\]/,9\]/g" \
+	-e "s/,/+rows_G_vp\*/g" \
+	> ${srcPath}/ins_dynamics_error_G_vp.hpp
 
 cat ins_dynamics_H_mag.f90 | sed \
 	-e "s/^H_mag(/H_mag[/g" -e "s/$/;/g" -e "s/) =/] =/g" \

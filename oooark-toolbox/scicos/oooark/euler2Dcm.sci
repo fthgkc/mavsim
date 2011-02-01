@@ -1,22 +1,19 @@
-function [x,y,typ]=geoMag(job,arg1,arg2)
+function [x,y,typ]=euler2Dcm(job,arg1,arg2)
 //
-// geoMag.sci
+// euler2Dcm.sci
 //
 // USAGE:
 //
-// output 1: (unit vector of magnetic field direction)
-//  [1]  dip (rad)
-//  [2]  dec (rad)
-//  [3]  H0a (nT)
+// input 1: euler angles
+//  [1] phi (rad) <roll>
+//  [2] theta (rad) <pitch>
+//  [3] psi (rad) <yaw>
 //
-// input 1: (euler angles)
-//  [1] lat 	(rad)
-//  [2] lon 	(rad)
-//  [3] alt 	(m)
+// output 1: Cnb (3x3)
 //
 // AUTHOR:
 //
-// Copyright (C) James Goppert Alan Kim 2011
+// Copyright (C) James Goppert 2011
 //
 // This file is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
@@ -44,51 +41,20 @@ select job
 	 	[x,y]=standard_origin(arg1)
 	case 'set' then
 		x=arg1;
-		graphics=arg1.graphics;exprs=graphics.exprs
-		model=arg1.model;
-		while %t do
-			labels=[..
-				'Decimal Year';..
-				'Number of Terms'];
-			[ok,decYear,nTerms]=..
-				getvalue('Set WMM Parameters',labels,..
-				list('vec',1,'vec',1),exprs);
-			if ~ok then break,end
-				graphics.exprs=exprs;
-			[model,graphics,ok]=check_io(model,graphics,[3],[3],[],[])
-			if ok then
-				model.rpar=decYear;
-				model.ipar=nTerms;
-				graphics.exprs=exprs;
-				x.graphics=graphics;
-				x.model=model;
-				break
-			end
-		end
 	case 'define' then
 		// set model properties
 		model=scicos_model()
-		model.sim=list('sci_geoMag',4)
+		model.sim=list('sci_euler2Dcm',4)
+		model.evtin=[];
 		model.in=[3];
 		model.out=[3];
+		model.out2=[3];
 		model.blocktype='c';
 		model.dep_ut=[%t %f];
-
-		// geoMag parameters
-		decYear = 2011.1;
-		nTerms = 12;
-		
-		model.rpar=decYear;
-		model.ipar=nTerms;
-		
-		// initialize strings for gui
-		exprs=[
-			strcat(sci2exp(decYear)),..
-			strcat(sci2exp(nTerms))];
-;
+		exprs = 'euler2Dcm';	
 
 		// setup icon
-	  	gr_i=['xstringb(orig(1),orig(2),''geoMag'',sz(1),sz(2),''fill'');']
+	  	gr_i=['xstringb(orig(1),orig(2),''euler2Dcm'',sz(1),sz(2),''fill'');']
 	  	x=standard_define([5 2],model,exprs,gr_i)
 	end
 endfunction

@@ -83,7 +83,8 @@ public:
     GeoMag(std::string file, int maxDeg);
     virtual ~GeoMag();
     void update(float alt, float glat, float glon, float time);
-    float dec, dip, ti, gv;
+    float dec, dip; // in degrees
+	float ti, gv;
 };
 
 }

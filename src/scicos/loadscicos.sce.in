@@ -6,7 +6,17 @@ oooarkDataPath='@DATADIR@'
 // whether or not to configure for final installation
 scicoslabInstallSettings = @SCICOSLAB_INSTALL_SETTINGS@;
 
-stdBlocks=['sci_waypointGuidance';'sci_quat2EulerDcm';'sci_insQmagH';'sci_geoMag';'sci_insDynamicsQ';'sci_randn';'sci_insErrorDynamics';'sci_insErrorDynamicsQ';'sci_zeroOrderHold'];
+stdBlocks=[
+'sci_euler2Dcm';..
+'sci_waypointGuidance';..
+'sci_quat2EulerDcm';..
+'sci_insQmagH';..
+'sci_geoMag';..
+'sci_insDynamicsQ';..
+'sci_randn';..
+'sci_insErrorDynamics';..
+'sci_insErrorDynamicsQ';..
+'sci_zeroOrderHold'];
 simgearBlocks=['sci_flightGearComm'];
 osgBlocks=['sci_jet';'sci_car';'sci_quad';'sci_plane'];
 jsbsimBlocks=['sci_jsbsimTrim';'sci_jsbsimComm'];
