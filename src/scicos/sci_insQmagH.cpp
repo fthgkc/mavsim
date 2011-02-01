@@ -20,7 +20,8 @@
  * u3: x (state)
  *
  * Out1 = H_mag (3x10)
- * Out2 = R_mag (3x3)
+ * Out2 = R_mag_n (3x3) : note this is in the navigation frame,
+ *   you can use C_nb for a similarity transformation
  *
  */
 
@@ -48,7 +49,7 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
     double * u2=(double*)GetInPortPtrs(block,2);
     double * u3=(double*)GetInPortPtrs(block,3);
     double * H_mag=(double*)GetOutPortPtrs(block,1);
-    double * R_mag=(double*)GetOutPortPtrs(block,2);
+    double * R_mag_n=(double*)GetOutPortPtrs(block,2);
 
     // alias names
     double & dip = u1[0];
@@ -73,7 +74,7 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
     if (flag==scicos::computeOutput)
     {
         memset((void *)H_mag,0,30*sizeof(double));
-        memset((void *)R_mag,0,9*sizeof(double));
+        memset((void *)R_mag_n,0,9*sizeof(double));
         double sigDec2 = sigDec*sigDec;
         double sigDip2 = sigDip*sigDip;
         double cosDec = cos(dec), sinDec = sin(dec);
@@ -84,10 +85,10 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
         double Be = sinDec*cosDip;
         double Bd = sinDip;
 
-        static const int rowsH = 3;
+        static const int rows_H_mag = 3;
         #include "navigation/ins_dynamics_H_mag.hpp" 
-        static const int rowsR = 3;
-        #include "navigation/ins_dynamics_R_mag.hpp" 
+        static const int rows_R_mag_n = 3;
+        #include "navigation/ins_dynamics_R_mag_n.hpp" 
    }
     else if (flag==scicos::terminate)
     {

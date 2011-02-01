@@ -8,7 +8,10 @@ function [x,y,typ]=insQmagH(job,arg1,arg2)
 //  H_mag (3x10), measurement matrix
 //
 // output 2: 
-//  R_mag (3x3), measurement covariance
+//  R_mag_n (3x3), measurement covariance
+
+// 	Note: This is in the navigation frame, use
+//  	C_nb to perform a similarity transformation
 //
 // input 1: (local magnetic field direction)
 //  [1] dip, inclination (rad)

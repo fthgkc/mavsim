@@ -43,7 +43,7 @@ q_nb : transpose([a,b,c,d]);
 
 /* [wxMaxima: input   start ] */
 quat2dcm(q) := matrix([q[1,1]*q[1,1]+q[2,1]*q[2,1]-q[3,1]*q[3,1]-q[4,1]*q[4,1],2*(q[2,1]*q[3,1]-q[1,1]*q[4,1]),2*(q[2,1]*q[4,1]+q[1,1]*q[3,1])],
-              [2*(q[2,1]*q[3,1]+q[1,1]*q[4,1]),q[1,1]*q[1,1]-q[2,1]*q[2,1]-q[3,1]*q[3,1]-q[4,1]*q[4,1],2*(q[3,1]*q[4,1]-q[1,1]*q[2,1])],
+              [2*(q[2,1]*q[3,1]+q[1,1]*q[4,1]),q[1,1]*q[1,1]-q[2,1]*q[2,1]+q[3,1]*q[3,1]-q[4,1]*q[4,1],2*(q[3,1]*q[4,1]-q[1,1]*q[2,1])],
               [2*(q[2,1]*q[4,1]-q[1,1]*q[3,1]),2*(q[3,1]*q[4,1]+q[1,1]*q[2,1]),q[1,1]*q[1,1]-q[2,1]*q[2,1]-q[3,1]*q[3,1]+q[4,1]*q[4,1]]);
 /* [wxMaxima: input   end   ] */
 
@@ -53,7 +53,7 @@ skew(q) := matrix([q[1,1],-q[2,1],-q[3,1],-q[4,1]],[q[2,1],q[1,1],-q[4,1],q[3,1]
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-quat_diff(q,w):=-.5*skew(q).transpose([0,w[1,1],w[2,1],w[3,1]]);
+quat_diff(q,w):=.5*skew(q).transpose([0,w[1,1],w[2,1],w[3,1]]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -145,15 +145,24 @@ mag_dec_dip : transpose([cos(dip)*cos(dec),cos(dip)*sin(dec),sin(dip)]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-mag_dec_dip_est : transpose([cos(dip+d_dip)*cos(dec+d_dec),cos(dip+d_dip)*sin(dec+d_dec),sin(dip+d_dip)]);
+est_mag_dec_dip : transpose([cos(dip+d_dip)*cos(dec+d_dec),cos(dip+d_dip)*sin(dec+d_dec),sin(dip+d_dip)]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_mag_dec_dip : mag_dec_dip_est - mag_dec_dip;
+d_mag_dec_dip : est_mag_dec_dip - mag_dec_dip;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-R_mag : trigsimp(subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip,d_dec^2=sigDec^2,d_dip^2=sigDip^2,d_dip=0,d_dec=0],expand(trigexpand(d_mag_dec_dip.transpose(d_mag_dec_dip)))));
+R_mag_n : trigsimp(subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip,d_dec^2=sigDec^2,d_dip^2=sigDip^2,d_dip=0,d_dec=0],expand(trigexpand(d_mag_dec_dip.transpose(d_mag_dec_dip)))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Note that R_mag_n is the covariance of the error in the navigation frame. To get the covariance in the body frame
+which is measureed you can used the C_nb matrix for a similarity transformation.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+R_mag : transpose(C_nb).R_mag_n.C_nb;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -174,14 +183,6 @@ z_mag : transpose(quat2dcm(q_nb)).mag;
 
 /* [wxMaxima: input   start ] */
 H_mag : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,10)));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-z_mag_inc_dec : transpose([asin(z_mag[3,1]),atan(z_mag[2,1]/z_mag[1,1])]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-H_mag_inc_dec : jacobian(makelist(z_mag_inc_dec[i,1],i,1,2),makelist(x[i,1],i,10));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -310,6 +311,10 @@ G : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,df
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
+Observability
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: section start ]
 File Output
 
    [wxMaxima: section end   ] */
@@ -332,6 +337,10 @@ with_stdout ("ins_dynamics_H_mag.f90", f90(H_mag));
 
 /* [wxMaxima: input   start ] */
 with_stdout ("ins_dynamics_R_mag.f90", f90(R_mag));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("ins_dynamics_R_mag_n.f90", f90(R_mag_n));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
