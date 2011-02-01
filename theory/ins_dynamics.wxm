@@ -133,60 +133,6 @@ est_g_n : transpose([0,0,g+dg]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
-Magnetometer Measurement Equation
-   [wxMaxima: section end   ] */
-
-/* [wxMaxima: comment start ]
-This matrix represents the measurement magnetic field.
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-mag_dec_dip : transpose([cos(dip)*cos(dec),cos(dip)*sin(dec),sin(dip)]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-est_mag_dec_dip : transpose([cos(dip+d_dip)*cos(dec+d_dec),cos(dip+d_dip)*sin(dec+d_dec),sin(dip+d_dip)]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-d_mag_dec_dip : est_mag_dec_dip - mag_dec_dip;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-R_mag_n : trigsimp(subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip,d_dec^2=sigDec^2,d_dip^2=sigDip^2,d_dip=0,d_dec=0],expand(trigexpand(d_mag_dec_dip.transpose(d_mag_dec_dip)))));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-Note that R_mag_n is the covariance of the error in the navigation frame. To get the covariance in the body frame
-which is measureed you can used the C_nb matrix for a similarity transformation.
-R_mag : transpose(C_nb).R_mag_n.C_nb;
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-mag : transpose([Bn,Be,Bd]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-mag = mag_dec_dip;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-z is the error in measurement of the magnetic field due to attitude errors.
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-z_mag : transpose(quat2dcm(q_nb)).mag;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-H_mag : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,10)));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-Note that this is the Jacobian for the measurment of attitude error.
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: section start ]
 State Dynamics
    [wxMaxima: section end   ] */
 
@@ -316,17 +262,85 @@ G : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,df
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-G_att : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,1,4),makelist(u[i,1],i,1,6))));
+G_att : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,1,4),makelist(u[i,1],i,1,3))));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-G_vp : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,5,10),makelist(u[i,1],i,1,6))));
+G_vp : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,5,10),makelist(u[i,1],i,4,6))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Magnetometer Measurement Equation
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+This matrix represents the measurement magnetic field.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+mag_dec_dip : transpose([cos(dip)*cos(dec),cos(dip)*sin(dec),sin(dip)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_mag_dec_dip : transpose([cos(dip+d_dip)*cos(dec+d_dec),cos(dip+d_dip)*sin(dec+d_dec),sin(dip+d_dip)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_mag_dec_dip : est_mag_dec_dip - mag_dec_dip;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+R_mag_n : trigsimp(subst([cos(d_dec)=1,sin(d_dec)=d_dec,cos(d_dip)=1,sin(d_dip)=d_dip,d_dec^2=sigDec^2,d_dip^2=sigDip^2,d_dip=0,d_dec=0],expand(trigexpand(d_mag_dec_dip.transpose(d_mag_dec_dip)))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Note that R_mag_n is the covariance of the error in the navigation frame. To get the covariance in the body frame
+which is measureed you can used the C_nb matrix for a similarity transformation.
+R_mag : transpose(C_nb).R_mag_n.C_nb;
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+mag : transpose([Bn,Be,Bd]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mag = mag_dec_dip;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+z is the error in measurement of the magnetic field due to attitude errors.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+z_mag : transpose(quat2dcm(q_nb)).mag;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H_mag : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,10)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Note that this is the Jacobian for the measurment of attitude error.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: section start ]
+GPS Measurement Equation
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+z_gps : transpose([Vn,Ve,Vd,L,l,h]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H_gps : factor(jacobian(makelist(z_gps[i,1],i,1,6),makelist(x[i,1],i,10)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
 File Output
 
    [wxMaxima: section end   ] */
+
+/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 with_stdout ("ins_dynamics_error_F.f90", f90(F));
@@ -364,9 +378,13 @@ with_stdout ("ins_dynamics_H_mag.f90", f90(H_mag));
 with_stdout ("ins_dynamics_R_mag_n.f90", f90(R_mag_n));
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: fold    end   ] */
+
 /* [wxMaxima: section start ]
 Latex Notation
    [wxMaxima: section end   ] */
+
+/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 texput(da,"\\delta a");texput(db,"\\delta b");texput(dc,"\\delta c");texput(dd,"\\delta d");
@@ -377,6 +395,8 @@ texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
 texput(Vn,"v_N");texput(Ve,"v_E");texput(Vd,"v_D");
 texput(dVn,"\delta v_N");texput(dVe,"\delta v_E");texput(dVd,"\delta v_D");
 /* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: fold    end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$

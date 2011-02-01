@@ -116,21 +116,21 @@ void sci_quat2EulerDcm(scicos_block *block, scicos::enumScicosFlags flag)
         else if (c31<-1) theta = pi_2;
         else theta = asin(-c31);
 
-        // if pitch is close to 90 deg
-        if ( abs(theta-M_PI/2) < gimbalLockTol )
-        {
-            phi = 0;
-            psi = atan2(c23 - c12,c13 + c22);
-            phiRate = 0;
-            psiRate = -wx;
-        }
-        // if pitch is clost to -90 deg
-        else if ( abs(theta+M_PI/2) < gimbalLockTol )
+        // if pitch is close to - 90 deg
+        if ( theta < gimbalLockTol - M_PI/2)
         {
             phi = 0;
             psi = atan2(c23 + c12,c13 - c22);
             phiRate = 0;
             psiRate = wx;
+        }
+        // if pitch is clost to 90 deg
+        else if ( theta > M_PI/2 - gimbalLockTol)
+        {   
+            phi = 0;
+            psi = atan2(c23 - c12,c13 + c22);
+            phiRate = 0;
+            psiRate = -wx;
         }
         else
         {

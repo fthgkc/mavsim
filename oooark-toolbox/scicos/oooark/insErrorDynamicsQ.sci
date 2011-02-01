@@ -4,17 +4,18 @@ function [x,y,typ]=insErrorDynamicsQ(job,arg1,arg2)
 //
 // USAGE:
 //
-// output 1: F (9x9)
-// output 2: G (9x6)
+// output 1: F (10x10)
+// output 2: G (10x6)
 //
 // input 1: (input u1)
-//  [1] fx (unit distance/s^2) (body)
-//  [2] fy (unit distance/s^2) (body)
-//  [3] fz (unit distance/s^2) (body)
-//  [4] wx (rad/s) 		(body)
-//  [5] wy (rad/s)		(body)
-//  [6] wz (rad/s)	        (body)
-//	default unit distance is meters
+//	[1] wx (rad/s) 		(body)
+//  [2] wy (rad/s)		(body)
+//  [3] wz (rad/s)	        (body)
+//  [4] fx (unit distance/s^2) (body)
+//  [5] fy (unit distance/s^2) (body)
+//  [6] fz (unit distance/s^2) (body)
+// //	default unit distance is meters
+//
 // input 2: (input u2)
 //  [1]  a      quaternion
 //  [2]  b 	quaternion
@@ -31,7 +32,7 @@ function [x,y,typ]=insErrorDynamicsQ(job,arg1,arg2)
 //
 // AUTHOR:
 //
-// Copyright (C) Alan Kim 2011
+// Copyright (C) Alan Kim, James Goppert 2011
 //
 // insErrorDynamicsQ.sci is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the

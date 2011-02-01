@@ -5,12 +5,12 @@ function [x,y,typ]=insDynamicsQ(job,arg1,arg2)
 // USAGE:
 //
 // input 1: (imu data)
-//  [1] fx (unit distance/s^2) (body)
-//  [2] fy (unit distance/s^2) (body)
-//  [3] fz (unit distance/s^2) (body)
-//  [4] wx (rad/s) 		(body)
-//  [5] wy (rad/s)		(body)
-//  [6] wz (rad/s)	    (body)
+//  [1] wx (rad/s) 		(body)
+//  [2] wy (rad/s)		(body)
+//  [3] wz (rad/s)	    (body)
+//  [4] fx (unit distance/s^2) (body)
+//  [5] fy (unit distance/s^2) (body)
+//  [6] fz (unit distance/s^2) (body)
 //	default unit distance is meters
 //
 // input 2: (gravity model)

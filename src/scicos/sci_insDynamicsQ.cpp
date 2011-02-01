@@ -51,13 +51,14 @@ void sci_insDynamicsQ(scicos_block *block, scicos::enumScicosFlags flag)
     double * rpar=block->rpar;
 
     // aliases
-    //
-    double & fx     = u1[0];
-    double & fy     = u1[1];
-    double & fz     = u1[2];
-    double & wx     = u1[3];
-    double & wy     = u1[4];
-    double & wz     = u1[5];
+    double & wx     = u1[0];
+    double & wy     = u1[1];
+    double & wz     = u1[2];
+
+    double & fx     = u1[3];
+    double & fy     = u1[4];
+    double & fz     = u1[5];
+
     double & g      = u2[0];
     double & Omega = rpar[0];
     double & Re = rpar[1];
