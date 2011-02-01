@@ -18,7 +18,7 @@
  * Input: 
  *  u1: lat lon alt
  * Output:
- *  y1: inclination, decliation, field strength
+ *  y1: inclination (rad), decliation(rad), field strength(nT)
  *
  */
 
@@ -102,9 +102,9 @@ void sci_geoMag(scicos_block *block, scicos::enumScicosFlags flag)
         //std::cout << "computing Output" << std::endl;
         if(geoMag)
         {
-            geoMag->update(lat,lon,alt,decYear);
-            dip = geoMag->dip;
-            dec = geoMag->dec;
+            geoMag->update(lat*180/M_PI,lon*180/M_PI,alt,decYear);
+            dip = geoMag->dip*M_PI/180;
+            dec = geoMag->dec*M_PI/180;
             H0  = geoMag->ti;
         }
     }

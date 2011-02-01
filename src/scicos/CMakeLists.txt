@@ -21,6 +21,7 @@ set(oooarkScicosSources
 	sci_insQmagH.cpp
 	sci_quat2EulerDcm.cpp
 	sci_waypointGuidance.cpp
+	sci_euler2Dcm.cpp
 	)
 
 if (SIMGEAR_FOUND)
