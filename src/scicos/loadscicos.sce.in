@@ -12,10 +12,9 @@ stdBlocks=[
 'sci_quat2EulerDcm';..
 'sci_insQmagH';..
 'sci_geoMag';..
-'sci_insDynamicsQ';..
 'sci_randn';..
+'sci_insDynamics';..
 'sci_insErrorDynamics';..
-'sci_insErrorDynamicsQ';..
 'sci_zeroOrderHold'];
 simgearBlocks=['sci_flightGearComm'];
 osgBlocks=['sci_jet';'sci_car';'sci_quad';'sci_plane'];

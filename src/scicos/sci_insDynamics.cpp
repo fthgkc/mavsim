@@ -1,4 +1,4 @@
-/*sci_insDynamicsQ.cpp
+/*sci_insDynamics.cpp
  * Copyright (C) James Goppert 2011 
  * 
  * This file is free software: you can redistribute it and/or modify it
@@ -38,8 +38,9 @@ extern "C"
 #include <math.h>
 #include "definitions.hpp"
 
-void sci_insDynamicsQ(scicos_block *block, scicos::enumScicosFlags flag)
+void sci_insDynamics(scicos_block *block, scicos::enumScicosFlags flag)
 {
+    enum ins_mode {INS_FULL_STATE=0,INS_ATT_STATE=1,INS_VP_STATE=2};
 
     // constants
 
@@ -49,6 +50,7 @@ void sci_insDynamicsQ(scicos_block *block, scicos::enumScicosFlags flag)
     double * u3=(double*)GetInPortPtrs(block,3);
     double * f=(double*)GetOutPortPtrs(block,1);
     double * rpar=block->rpar;
+    int * ipar=block->ipar;
 
     // aliases
     double & wx     = u1[0];
@@ -60,8 +62,11 @@ void sci_insDynamicsQ(scicos_block *block, scicos::enumScicosFlags flag)
     double & fz     = u1[5];
 
     double & g      = u2[0];
+
     double & Omega = rpar[0];
     double & Re = rpar[1];
+    int & mode = ipar[0];
+
     // Note that l = lon, and not in the equations but left here
     // for ease of use with full state vector x
     double & a      = u3[0];
@@ -84,7 +89,22 @@ void sci_insDynamicsQ(scicos_block *block, scicos::enumScicosFlags flag)
         const double R = Re+alt;
         const double aa=a*a, bb=b*b, cc=c*c, dd=d*d;
 
-        #include "navigation/ins_dynamics_f.hpp"
+        if (mode == INS_FULL_STATE)
+        {
+            #include "navigation/ins_dynamics_f.hpp"
+        }
+        else if (mode == INS_ATT_STATE)
+        {
+            #include "navigation/ins_dynamics_f_att.hpp"
+        }
+        else if (mode == INS_VP_STATE)
+        {
+            #include "navigation/ins_dynamics_f_vp.hpp"
+        }
+        else
+        {
+            Coserror((char *)"unknown mode for insErrorDynamics block");
+        }
     }
     else if (flag==scicos::terminate)
     {

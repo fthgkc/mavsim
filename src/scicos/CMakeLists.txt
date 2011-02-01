@@ -13,10 +13,9 @@ set(oooarkScicosSources
 	sci_jsbsimTrim.cpp
 	sci_jsbsimComm.cpp
 	sci_insErrorDynamics.cpp
+	sci_insDynamics.cpp
 	sci_zeroOrderHold.cpp
-	sci_insErrorDynamicsQ.cpp
 	sci_randn.cpp
-	sci_insDynamicsQ.cpp
 	sci_geoMag.cpp
 	sci_insQmagH.cpp
 	sci_quat2EulerDcm.cpp

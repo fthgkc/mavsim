@@ -1,6 +1,6 @@
-function [x,y,typ]=insDynamicsQ(job,arg1,arg2)
+function [x,y,typ]=insDynamics(job,arg1,arg2)
 //
-// gpsIns.sci
+// insDynamics.sci
 //
 // USAGE:
 //
@@ -77,15 +77,31 @@ select job
 		while %t do
 			labels=[..
 				'Omega (rad/s)';..
-				'Re (unit distance)'];
-			[ok,Omega,Re,exprs]=..
+				'Re (unit distance)';..
+				'state mode: full(0), attitude(1), velocity position(2)'];
+			[ok,Omega,Re,stateMode,exprs]=..
 				getvalue('Set Planet Parameters',labels,..
-				list('vec',1,'vec',1),exprs);
+				list('vec',1,'vec',1,'vec',1),exprs);
 			if ~ok then break,end
 				graphics.exprs=exprs;
-			[model,graphics,ok]=check_io(model,graphics,[6;1;10],[10],[],[])
+
+			// set sizes based on mode
+			if stateMode==0 then
+				nOut=10;
+			elseif stateMode==1 then
+				nOut=4;
+			elseif stateMode==2 then
+				nOut=6;
+			else
+				disp('invalid mode in insDynamcis block');
+				error('invalid mode in insDynamics block');
+			end
+
+			model.out=[nOut];
+			[model,graphics,ok]=check_io(model,graphics,[6;1;10],[nOut],[],[])
 			if ok then
 				model.rpar=[Omega,Re];
+				model.ipar=stateMode;
 				graphics.exprs=exprs;
 				x.graphics=graphics;
 				x.model=model;
@@ -94,27 +110,32 @@ select job
 		end
 	case 'define' then
 		// set model properties
-		model=scicos_model()
-		model.sim=list('sci_insDynamicsQ',4)
+		model=scicos_model();
+		model.sim=list('sci_insDynamics',4);
 		model.in=[6;1;10];
-		model.out=[10];
+
+		nOut=10;
+		model.out=[nOut];
 		model.blocktype='c';
 		model.dep_ut=[%f %t];
 
 		// gpsIns parameters
-		Omega = 7.292115e-5
+		Omega = 7.292115e-5;
 		Re=6378137;
+		stateMode=0; // full state
 		
 		model.rpar=[Omega,Re];
+		model.ipar=stateMode;
 		
 		// initialize strings for gui
-		exprs=[
+		exprs=[..
 			strcat(sci2exp(Omega)),..
-			strcat(sci2exp(Re))];
+			strcat(sci2exp(Re)),..
+			strcat(sci2exp(stateMode))];
 ;
 
 		// setup icon
-	  	gr_i=['xstringb(orig(1),orig(2),[''ins dyanmics'';''quaternions''],sz(1),sz(2),''fill'');']
+	  	gr_i=['xstringb(orig(1),orig(2),[''ins dynamics'';''quaternions''],sz(1),sz(2),''fill'');']
 	  	x=standard_define([5 2],model,exprs,gr_i)
 	end
 endfunction

@@ -1,9 +1,0 @@
-G_vp[0+rows_G_vp*3] = -dd-cc+bb+aa;
-G_vp[0+rows_G_vp*4] = 2*b*c-2*a*d;
-G_vp[0+rows_G_vp*5] = 2*b*d+2*a*c;
-G_vp[1+rows_G_vp*3] = 2*a*d+2*b*c;
-G_vp[1+rows_G_vp*4] = -dd+cc-bb+aa;
-G_vp[1+rows_G_vp*5] = 2*c*d-2*a*b;
-G_vp[2+rows_G_vp*3] = 2*b*d-2*a*c;
-G_vp[2+rows_G_vp*4] = 2*c*d+2*a*b;
-G_vp[2+rows_G_vp*5] = dd-cc-bb+aa;
