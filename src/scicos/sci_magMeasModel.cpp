@@ -1,4 +1,4 @@
-/*sci_insQmagH.cpp
+/*sci_magMeasModel.cpp
  * Copyright (C) Alan Kim, James Goppert 2011 
  * 
  * This file is free software: you can redistribute it and/or modify it
@@ -39,8 +39,9 @@ extern "C"
 #include <math.h>
 #include "definitions.hpp"
 
-void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
+void sci_magMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
 {
+    enum ins_mode {INS_FULL_STATE=0,INS_ATT_STATE=1,INS_VP_STATE=2};
 
     // constants
 
@@ -50,6 +51,7 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
     double * u3=(double*)GetInPortPtrs(block,3);
     double * H_mag=(double*)GetOutPortPtrs(block,1);
     double * R_mag_n=(double*)GetOutPortPtrs(block,2);
+    int * ipar=block->ipar;
 
     // alias names
     double & dip = u1[0];
@@ -63,17 +65,12 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
     double & b      = u3[1];
     double & c      = u3[2];
     double & d      = u3[3];
-    double & Vn     = u3[4];
-    double & Ve     = u3[5];
-    double & Vd     = u3[6];
-    double & L      = u3[7];
-    double & l      = u3[8];
-    double & alt    = u3[9];
             
+    int & mode = ipar[0];
+
     //handle flags
     if (flag==scicos::computeOutput)
-    {
-        memset((void *)H_mag,0,30*sizeof(double));
+   {
         memset((void *)R_mag_n,0,9*sizeof(double));
         double sigDec2 = sigDec*sigDec;
         double sigDip2 = sigDip*sigDip;
@@ -86,10 +83,24 @@ void sci_insQmagH(scicos_block *block, scicos::enumScicosFlags flag)
         double Bd = sinDip;
 
         static const int rows_H_mag = 3;
-        #include "navigation/ins_dynamics_H_mag.hpp" 
         static const int rows_R_mag_n = 3;
+
+        if (mode == INS_FULL_STATE)
+        {
+            memset((void *)H_mag,0,30*sizeof(double));
+        }
+        else if (mode == INS_ATT_STATE)
+        {
+            memset((void *)H_mag,0,12*sizeof(double));
+        }
+        else
+        {
+            Coserror((char *)"unknown mode for insErrorDynamics block");
+        }
+
+        #include "navigation/ins_dynamics_H_mag.hpp" 
         #include "navigation/ins_dynamics_R_mag_n.hpp" 
-   }
+    }
     else if (flag==scicos::terminate)
     {
     }

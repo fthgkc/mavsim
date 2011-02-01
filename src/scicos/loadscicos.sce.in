@@ -10,7 +10,7 @@ stdBlocks=[
 'sci_euler2Dcm';..
 'sci_waypointGuidance';..
 'sci_quat2EulerDcm';..
-'sci_insQmagH';..
+'sci_magMeasModel';..
 'sci_geoMag';..
 'sci_randn';..
 'sci_insDynamics';..

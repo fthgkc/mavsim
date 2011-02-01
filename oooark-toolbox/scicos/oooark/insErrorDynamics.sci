@@ -5,24 +5,30 @@ function [x,y,typ]=insErrorDynamics(job,arg1,arg2)
 // USAGE:
 //
 // input 1: (imu data)
-//  [1] wx (rad/s) 		(body)
-//  [2] wy (rad/s)		(body)
-//  [3] wz (rad/s)	    (body)
-//  [4] fx (unit distance/s^2) (body)
-//  [5] fy (unit distance/s^2) (body)
-//  [6] fz (unit distance/s^2) (body)
-//	default unit distance is meters
 //
-// input 2: (input u2)
-//  [1]  Phi 	(rad)
-//  [2]  Theta 	(rad)
-//  [3]  Psi 	(rad)
-//  [4]  Vn 	(unit distance/s)
-//  [5]  Ve 	(unit distance/s)
-//  [6]  Vd 	(unit distance/s)
-//  [7]  Lat 	(rad)
-//  [8]  Lon 	(rad)
-//  [9]  alt 	(unit distance)
+//    mode 0  mode 1  mode 2
+//  	full   att.  vel/pos
+// 		[1]  	[1] 	[ ] 	 wx     (quaternion)
+// 		[2]   	[2] 	[ ] 	 wy 	(quaternion)
+// 		[3]   	[3] 	[ ] 	 wz		(quaternion)
+// 		[4]   	[ ] 	[1] 	 fx     (quaternion)
+// 		[5]   	[ ] 	[2] 	 fy 	(unit distance/s)
+// 		[6]   	[ ] 	[3] 	 fz 	(unit distance/s)
+//
+// input 2: (state) 
+//
+//    mode 0  mode 1  mode 2
+//  	full   att.  vel/pos
+// 		[1]  	[1] 	[ ] 	 a      (quaternion)
+// 		[2]   	[2] 	[ ] 	 b 		(quaternion)
+// 		[3]   	[3] 	[ ] 	 c		(quaternion)
+// 		[4]   	[4] 	[ ] 	 d      (quaternion)
+// 		[5]   	[ ] 	[1] 	 Vn 	(unit distance/s)
+// 		[6]   	[ ] 	[2] 	 Ve 	(unit distance/s)
+// 		[7]   	[ ] 	[3] 	 Vd 	(unit distance/s)
+// 		[8]   	[ ] 	[4] 	 Lat 	(rad)
+// 		[9]   	[ ] 	[5] 	 Lon 	(rad)
+// 		[10]   	[ ] 	[6] 	 alt 	(unit distance)
 //
 //	default unit distance is meters
 //
@@ -32,11 +38,11 @@ function [x,y,typ]=insErrorDynamics(job,arg1,arg2)
 //
 // mode: 1 (attitude state)
 // 	output 1: F (4x4)
-// 	output 2: G (4x3)  u: (gyros, accels)
+// 	output 2: G (4x3)  u: (gyros)
 //
 // mode: 2 (velocity/position state)
 // 	output 1: F (6x6)
-// 	output 2: G (6x3)  u: (gyros, accels)
+// 	output 2: G (6x3)  u: (accels)
 //
 // AUTHOR:
 //

@@ -1,15 +1,23 @@
-function [x,y,typ]=insQmagH(job,arg1,arg2)
+function [x,y,typ]=magMeasModel(job,arg1,arg2)
 //
-// insQmagH.sci
+// magMeasModel.sci
 //
 // USAGE:
 //
 // output 1: 
-//  H_mag (3x10), measurement matrix
+//
+// 	mode 0 (full state)
+//
+//  	H_mag (3x10), measurement matrix
+//
+// 	mode 1 (att (quaternion) state)
+//
+//  	H_mag (3x4), measurement matrix
 //
 // output 2: 
+//
 //  R_mag_n (3x3), measurement covariance
-
+//
 // 	Note: This is in the navigation frame, use
 //  	C_nb to perform a similarity transformation
 //
@@ -21,19 +29,11 @@ function [x,y,typ]=insQmagH(job,arg1,arg2)
 //  [1] std deviaton of dip, inclination (rad)
 //  [2] std deviaton of dec, declination (rad)
 //
-// input 3: (navigation state)
+// input 3: (quaternion from body to navigation frame q_nb)
 //  [1]  a      quaternion
 //  [2]  b 		quaternion
 //  [3]  c		quaternion
 //  [4]  d      quaternion
-//  [5]  Vn 	(unit distance/s)
-//  [6]  Ve 	(unit distance/s)
-//  [7]  Vd 	(unit distance/s)
-//  [8]  Lat 	(rad)
-//  [9]  Lon 	(rad)
-// [10]  alt 	(unit distance)
-//
-//	default unit distance is meters
 //
 // AUTHOR:
 //
@@ -54,6 +54,9 @@ function [x,y,typ]=insQmagH(job,arg1,arg2)
 //
 x=[];y=[];typ=[];
 
+// globals
+in=[2;2;4];
+
 select job
 	case 'plot' then
 	 	standard_draw(arg1)
@@ -65,22 +68,53 @@ select job
 	 	[x,y]=standard_origin(arg1)
 	case 'set' then
 		x=arg1;
+		graphics=arg1.graphics;exprs=graphics.exprs
+		model=arg1.model;
+		while %t do
+			labels=['state mode: full(0), attitude(1)'];
+			[ok,stateMode,exprs]=getvalue('Set State Mode',labels,list('vec',1),exprs);
 
+			if ~ok then break,end
+				graphics.exprs=exprs;
+
+			// set sizes based on mode
+			if stateMode==0 then
+				out=[3;3]
+				out2=[10;3]
+			elseif stateMode==1 then
+				out=[3;3]
+				out2=[4;3]
+			else
+				disp('invalid mode in insDynamcis block')
+				error('invalid mode in insDynamics block')
+			end
+			model.out=out;
+			model.out2=out2;
+			model.in=in;
+			[model,graphics,ok]=check_io(model,graphics,in,out,[],[])
+			if ok then
+				model.ipar=stateMode;
+				graphics.exprs=exprs;
+				x.graphics=graphics;
+				x.model=model;
+				break
+			end
+		end
 	case 'define' then
 		// set model properties
-		model=scicos_model()
-		model.sim=list('sci_insQmagH',4)
-		model.evtin=[];
-		model.in=[2;2;10];
+		model=scicos_model();
+		model.sim=list('sci_magMeasModel',4);
+		model.in=in;
+		stateMode=0;	
+		model.ipar=stateMode;
 		model.out=[3;3];
 		model.out2=[10;3];
 		model.blocktype='c';
 		model.dep_ut=[%t %f];
-
-        exprs='insQmagH';
+		exprs=[strcat(sci2exp(stateMode))];
 
 		// setup icon
-	  	gr_i=['xstringb(orig(1),orig(2),''insQmagH'',sz(1),sz(2),''fill'');']
+	  	gr_i=['xstringb(orig(1),orig(2),''magMeasModel'',sz(1),sz(2),''fill'');']
 	  	x=standard_define([5 2],model,exprs,gr_i)
 	end
 endfunction

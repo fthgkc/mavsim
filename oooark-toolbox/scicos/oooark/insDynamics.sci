@@ -17,28 +17,34 @@ function [x,y,typ]=insDynamics(job,arg1,arg2)
 //  [1]  g       (unit distance/s^2) (body)
 //
 // input 3: (state) 
-//  [1]  a      quaternion
-//  [2]  b 		quaternion
-//  [3]  c		quaternion
-//  [4]  d      quaternion
-//  [5]  Vn 	(unit distance/s)
-//  [6]  Ve 	(unit distance/s)
-//  [7]  Vd 	(unit distance/s)
-//  [8]  Lat 	(rad)
-//  [9]  Lon 	(rad)
-// [10]  alt 	(unit distance)
+//
+//    mode 0  mode 1  mode 2
+//  	full   att.  vel/pos
+// 		[1]  	[1] 	[ ] 	 a      (quaternion)
+// 		[2]   	[2] 	[ ] 	 b 		(quaternion)
+// 		[3]   	[3] 	[ ] 	 c		(quaternion)
+// 		[4]   	[4] 	[ ] 	 d      (quaternion)
+// 		[5]   	[ ] 	[1] 	 Vn 	(unit distance/s)
+// 		[6]   	[ ] 	[2] 	 Ve 	(unit distance/s)
+// 		[7]   	[ ] 	[3] 	 Vd 	(unit distance/s)
+// 		[8]   	[ ] 	[4] 	 Lat 	(rad)
+// 		[9]   	[ ] 	[5] 	 Lon 	(rad)
+// 		[10]   	[ ] 	[6] 	 alt 	(unit distance)
 //
 // output 1: (state derivative)
-//  [1]  d/dt a     quaternion rate
-//  [2]  d/dt b 	quaternion rate
-//  [3]  d/dt c		quaternion rate
-//  [4]  d/dt d     quaternion rate
-//  [5]  d/dt Vn 	(unit distance/s^2)
-//  [6]  d/dt Ve 	(unit distance/s^2)
-//  [7]  d/dt Vd 	(unit distance/s^2)
-//  [8]  d/dt Lat 	(rad/s)
-//  [9]  d/dt Lon 	(rad/s)
-// [10]  d/dt alt 	(unit distance/s)
+//
+// 	  mode 0  mode 1  mode 2
+//  	full   att.  vel/pos
+// 		[1]  	[1] 	[ ] 	 d/dt a    	(quaternion)
+// 		[2]   	[2] 	[ ] 	 d/dt b 	(quaternion)
+// 		[3]   	[3] 	[ ] 	 d/dt c		(quaternion)
+// 		[4]   	[4] 	[ ] 	 d/dt d     (quaternion)
+// 		[5]   	[ ] 	[1] 	 d/dt Vn 	(unit distance/s)
+// 		[6]   	[ ] 	[2] 	 d/dt Ve 	(unit distance/s)
+// 		[7]   	[ ] 	[3] 	 d/dt Vd 	(unit distance/s)
+// 		[8]   	[ ] 	[4] 	 d/dt Lat 	(rad)
+// 		[9]   	[ ] 	[5] 	 d/dt Lon 	(rad)
+// 		[10]   	[ ] 	[6] 	 d/dt alt 	(unit distance)
 //
 //	default unit distance is meters
 //
@@ -88,17 +94,21 @@ select job
 			// set sizes based on mode
 			if stateMode==0 then
 				nOut=10;
+				nIn=[6;1;10]
 			elseif stateMode==1 then
 				nOut=4;
+				nIn=[3;1;4]
 			elseif stateMode==2 then
 				nOut=6;
+				nIn=[3;1;6]
 			else
 				disp('invalid mode in insDynamcis block');
 				error('invalid mode in insDynamics block');
 			end
 
 			model.out=[nOut];
-			[model,graphics,ok]=check_io(model,graphics,[6;1;10],[nOut],[],[])
+			model.in=[nIn];
+			[model,graphics,ok]=check_io(model,graphics,nIn,nOut,[],[])
 			if ok then
 				model.rpar=[Omega,Re];
 				model.ipar=stateMode;
@@ -112,12 +122,14 @@ select job
 		// set model properties
 		model=scicos_model();
 		model.sim=list('sci_insDynamics',4);
-		model.in=[6;1;10];
 
 		nOut=10;
-		model.out=[nOut];
+		nIn=[6;1;10]
+
+		model.in=nIn;
+		model.out=nOut;
 		model.blocktype='c';
-		model.dep_ut=[%f %t];
+		model.dep_ut=[%t %f];
 
 		// gpsIns parameters
 		Omega = 7.292115e-5;
