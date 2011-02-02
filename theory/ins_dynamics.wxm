@@ -1,31 +1,13 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.5 ] */
+/* [ Created with wxMaxima version 0.8.6 ] */
 
 /* [wxMaxima: title   start ]
 Inertial Navigation Dynamics
    [wxMaxima: title   end   ] */
 
-/* [wxMaxima: input   start ] */
-C1(a) := matrix([1,0,0],[0,cos(a),sin(a)],[0,-sin(a),cos(a)]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-C2(a) := matrix([cos(a),0,-sin(a)],[0,1,0],[sin(a),0,cos(a)]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-C3(a) := matrix([cos(a),-sin(a),0],[sin(a),cos(a),0],[0,0,1]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-C_bn : C1(phi).C2(theta).C3(psi);
-/* [wxMaxima: input   end   ] */
-
 /* [wxMaxima: section start ]
 Definitions
    [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 kill(all);
@@ -60,18 +42,61 @@ q_nb : transpose([a,b,c,d]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-quat2dcm(q) := matrix([q[1,1]*q[1,1]+q[2,1]*q[2,1]-q[3,1]*q[3,1]-q[4,1]*q[4,1],2*(q[2,1]*q[3,1]-q[1,1]*q[4,1]),2*(q[2,1]*q[4,1]+q[1,1]*q[3,1])],
-              [2*(q[2,1]*q[3,1]+q[1,1]*q[4,1]),q[1,1]*q[1,1]-q[2,1]*q[2,1]+q[3,1]*q[3,1]-q[4,1]*q[4,1],2*(q[3,1]*q[4,1]-q[1,1]*q[2,1])],
-              [2*(q[2,1]*q[4,1]-q[1,1]*q[3,1]),2*(q[3,1]*q[4,1]+q[1,1]*q[2,1]),q[1,1]*q[1,1]-q[2,1]*q[2,1]-q[3,1]*q[3,1]+q[4,1]*q[4,1]]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 skew(q) := matrix([q[1,1],-q[2,1],-q[3,1],-q[4,1]],[q[2,1],q[1,1],-q[4,1],q[3,1]],
 [q[3,1],q[4,1],q[1,1],-q[2,1]],[q[4,1],-q[3,1],q[2,1],q[1,1]]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
+quatProd(q,p) := skew(q).p;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+quatConj(q) := transpose([q[1,1],-q[2,1],-q[3,1],-q[4,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We use the quaternion rotation equation: v_n = q_nb * v_b * conjugate(q_nb)
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+quatRot(q,v) := quatProd(quatProd(q,transpose([0,v[1,1],v[2,1],v[3,1]])),quatConj(q));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v : transpose([vx,vy,vz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Now we can express the quaternion rotation in terms of the quaternion and components of v.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp(quatRot(q,v));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Note that these terms are linear in terms of vx, vy, vz and we may use the jacobian to form a direction cosine matrix
+without loss of genarlity.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+quat2dcm(q) := jacobian(makelist(ratsimp(quatRot(q,v))[i,1],i,2,4),makelist(v[i,1],i,1,3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Now we can 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+quat2dcm(q_nb);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
 quat_diff(q,w):=.5*skew(q).transpose([0,w[1,1],w[2,1],w[3,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp(quat2dcm(q_nb).v);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -84,6 +109,54 @@ dx : transpose([da,db,dc,dd,dVn,dVe,dVd,dL,dl,dh]);
 
 /* [wxMaxima: input   start ] */
 u : transpose([dwx,dwy,dwz,dfx,dfy,dfz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+To obtain the direction cosine matrix in terms of euler angles we first start with the single axis rotation matrices. These can be derived by hand.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+C1n_euler(a) := matrix([1,0,0],[0,cos(a),sin(a)],[0,-sin(a),cos(a)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C21_euler(a) := matrix([cos(a),0,-sin(a)],[0,1,0],[sin(a),0,cos(a)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Cb2_euler(a) := matrix([cos(a),-sin(a),0],[sin(a),cos(a),0],[0,0,1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We can compose the body 3-2-1 direction cosine matrix using the direction cosine chain rule.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+C_bn_euler : Cb2_euler(phi).C21_euler(theta).C1n_euler(psi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We can obtain C_nb via the transpose.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+C_nb_euler : transpose(C_bn_euler);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+The euler angles can be obtains from the C_nb matrix using the following equation.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+C_nb_2_euler(C) := trigreduce(transpose([atan(C[1,2]/C[1,1]),asin(C[1,3]),atan(-C[2,3]/C[3,3])]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We can verify that this is the correct equation by symbolically checking it.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+C_nb_2_euler(C_nb_euler);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -150,13 +223,9 @@ g_n : transpose([0,0,g]);
 est_g_n : transpose([0,0,g+dg]);
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: fold    end   ] */
-
 /* [wxMaxima: section start ]
 State Dynamics
    [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 diff_q_nb : quat_diff(q_nb,w_nb);
@@ -190,13 +259,9 @@ f_att : transpose(makelist(f[i,1],i,1,4));
 f_vp : transpose(makelist(f[i,1],i,5,10));
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: fold    end   ] */
-
 /* [wxMaxima: section start ]
 Estimated State Dynamics
    [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 est_diff_q_nb : quat_diff(est_q_nb,est_w_nb);
@@ -222,13 +287,9 @@ est_diff_h : -(Vd+dVd);
 est_f : transpose([est_diff_q_nb[1,1],est_diff_q_nb[2,1],est_diff_q_nb[3,1],est_diff_q_nb[4,1],est_diff_v_n[1,1],est_diff_v_n[2,1],est_diff_v_n[3,1],est_diff_L,est_diff_l,est_diff_h]);
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: fold    end   ] */
-
 /* [wxMaxima: section start ]
 Error State Dynamics
    [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 diff_d_q_nb : est_diff_q_nb - diff_q_nb;
@@ -270,17 +331,9 @@ diff_dh : est_diff_h - diff_h;
 df : transpose([diff_d_q_nb[1,1],diff_d_q_nb[2,1],diff_d_q_nb[3,1],diff_d_q_nb[4,1],diff_dv_n[1,1],diff_dv_n[2,1],diff_dv_n[3,1],diff_dL,diff_dl,diff_dh]);
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
-b
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: fold    end   ] */
-
 /* [wxMaxima: section start ]
 Linearization of Error Dyanmics
    [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: comment start ]
 By taking the jacobian of the state equations for the error dynamics we obtain the following. Note that currently vN,vE,vE error dynamics are note included.
@@ -315,13 +368,9 @@ G_att : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=
 G_vp : ratsimp(subst([da=0,db=0,dc=0,dd=0,dVn=0,dVe=0,dVd=0,dl=0,dL=0,dh=0,dfx=0,dfy=0,dfz=0,dwx=0,dwy=0,dwz=0],jacobian(makelist(df[i,1],i,5,10),makelist(u[i,1],i,4,6))));
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: fold    end   ] */
-
 /* [wxMaxima: section start ]
 Magnetometer Measurement
    [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: comment start ]
 This matrix represents the measurement magnetic field.
@@ -373,13 +422,9 @@ H_mag : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,10)));
 Note that this is the Jacobian for the measurment of attitude error.
    [wxMaxima: comment end   ] */
 
-/* [wxMaxima: fold    end   ] */
-
 /* [wxMaxima: section start ]
 GPS Measurement
    [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 z_gps : transpose([Vn,Ve,Vd,L,l,h]);
@@ -401,13 +446,9 @@ R_gps: subst([dVn^2=sigVel^2,dVe^2=sigVel^2,dVd^2=sigVel^2,dPosLat^2=sigPos^2,dP
 H_gps : factor(jacobian(makelist(z_gps[i,1],i,1,6),makelist(x[i,1],i,10)));
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: fold    end   ] */
-
 /* [wxMaxima: section start ]
 File Output
    [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
 
 /* [wxMaxima: input   start ] */
 with_stdout ("ins_error_dynamics_F.f90", f90(F));
@@ -461,14 +502,6 @@ with_stdout ("ins_dynamics_H_gps.f90", f90(H_gps));
 with_stdout ("ins_dynamics_R_gps.f90", f90(R_gps));
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: fold    end   ] */
-
-/* [wxMaxima: section start ]
-Latex Notation
-   [wxMaxima: section end   ] */
-
-/* [wxMaxima: fold    start ] */
-
 /* [wxMaxima: input   start ] */
 texput(da,"\\delta a");texput(db,"\\delta b");texput(dc,"\\delta c");texput(dd,"\\delta d");
 texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
@@ -478,8 +511,6 @@ texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
 texput(Vn,"v_N");texput(Ve,"v_E");texput(Vd,"v_D");
 texput(dVn,"\delta v_N");texput(dVe,"\delta v_E");texput(dVd,"\delta v_D");
 /* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: fold    end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
