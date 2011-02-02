@@ -4,13 +4,23 @@ include_directories( "${PROJECT_SOURCE_DIR}/src" ${SCICOSLAB_INCLUDE_DIRS}
 link_directories( ${OSG_LIBRARY_DIRS} ) 
 
 set(oooarkScicosSources
+	definitions.cpp
 	sci_mavlinkHilSensor.cpp
 	sci_mavlinkHilState.cpp
 	sci_mavlinkHilTracker.cpp
 	sci_invPend.cpp
-    utilities.cpp
-    sci_jsbsimTrim.cpp
-    sci_jsbsimComm.cpp
+	utilities.cpp
+	sci_jsbsimTrim.cpp
+	sci_jsbsimComm.cpp
+	sci_insErrorDynamics.cpp
+	sci_insDynamics.cpp
+	sci_zeroOrderHold.cpp
+	sci_randn.cpp
+	sci_geoMag.cpp
+	sci_magMeasModel.cpp
+	sci_quat2EulerDcm.cpp
+	sci_waypointGuidance.cpp
+	sci_euler2Dcm.cpp
 	)
 
 if (SIMGEAR_FOUND)
@@ -35,10 +45,11 @@ if (OPENSCENEGRAPH_FOUND)
 endif(OPENSCENEGRAPH_FOUND)
 
 add_library(oooarkScicos SHARED ${oooarkScicosSources})
+add_dependencies(oooarkScicos JSBSIM)
 
 target_link_libraries(oooarkScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES})
 
-set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERISON}
+set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERSION}
     SOVERSION ${oooark_SOVERSION})
 
 add_custom_target(oooarkToolbox ALL
@@ -47,18 +58,19 @@ add_custom_target(oooarkToolbox ALL
 
 get_target_property(SCICOSLAB_LOCATION oooarkScicos LOCATION)
 
-if (IN_SRC_BUILD)
-	configure_file(loadscicosLocal.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/scicos/loadscicos.sce)
-else()
-	configure_file(loadscicos.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/scicos/loadscicos.sce)
-endif()
+set(SCICOSLAB_INSTALL_SETTINGS 0)
+configure_file(loadscicos.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/scicos/loadscicos.sce)
+set(SCICOSLAB_INSTALL_SETTINGS 1)
+configure_file(loadscicos.sce.in ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce)
 
 configure_file(VERSION.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/VERSION)
 
-install(TARGETS oooarkScicos DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce DESTINATION ${SCICOSLAB_CONTRIB_DIR}/oooark-toolbox/scicos)
+
+install(TARGETS oooarkScicos DESTINATION lib)
 
 install(FILES
     definitions.hpp
     utilities.hpp
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/include/oooark/scicos
+	DESTINATION include/oooark/scicos
     )

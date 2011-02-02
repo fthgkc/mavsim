@@ -33,6 +33,13 @@ Building from Source:
 
 		For debian sid/squeeze and ubuntu maverick:
 		sudo apt-get install cmake libqt4-dev simgear-dev liblapack-dev libboost-all-dev libopenscenegraph-dev gfortran
+		
+		If you need to build jsbsim from source (most likely since you need jsbsim-advtrim branch from oooark)
+		sudo apt-get install libtool automake
+
+		Install scicoslab 4.4:
+		Download from www.scicoslab.org 
+		Or if you are using debian and you have hsl.dynalias.com on your package list: sudo apt-get install scicoslab-gtk	
 
 	Build the code:
 	

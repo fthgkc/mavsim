@@ -9,7 +9,7 @@ include(LibFindMacros)
 
 # Include dir
 find_path(JSBSIM_INCLUDE_DIR
-	NAMES FGFDMExec.h
+	NAMES initialization/FGTrimmer.h
 	PATHS 
 		/usr/include/JSBSim
 		/usr/include/jsbsim

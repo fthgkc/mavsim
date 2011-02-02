@@ -1,0 +1,4 @@
+f[0] = 0.5*(-d*(Ve*tanL/R+Omega*sinL+(dd-cc-bb+aa)*wz+2*(c*d+a*b)*wy+2*(b*d-a*c)*wx)-c*(Vn/R+2*(c*d-a*b)*wz+(-dd+cc-bb+aa)*wy+2*(a*d+b*c)*wx)-b*(-Ve/R-Omega*cosL+2*(b*d+a*c)*wz+2*(b*c-a*d)*wy+(-dd-cc+bb+aa)*wx));
+f[1] = 0.5*(c*(Ve*tanL/R+Omega*sinL+(dd-cc-bb+aa)*wz+2*(c*d+a*b)*wy+2*(b*d-a*c)*wx)-d*(Vn/R+2*(c*d-a*b)*wz+(-dd+cc-bb+aa)*wy+2*(a*d+b*c)*wx)+a*(-Ve/R-Omega*cosL+2*(b*d+a*c)*wz+2*(b*c-a*d)*wy+(-dd-cc+bb+aa)*wx));
+f[2] = 0.5*(-b*(Ve*tanL/R+Omega*sinL+(dd-cc-bb+aa)*wz+2*(c*d+a*b)*wy+2*(b*d-a*c)*wx)+a*(Vn/R+2*(c*d-a*b)*wz+(-dd+cc-bb+aa)*wy+2*(a*d+b*c)*wx)+d*(-Ve/R-Omega*cosL+2*(b*d+a*c)*wz+2*(b*c-a*d)*wy+(-dd-cc+bb+aa)*wx));
+f[3] = 0.5*(a*(Ve*tanL/R+Omega*sinL+(dd-cc-bb+aa)*wz+2*(c*d+a*b)*wy+2*(b*d-a*c)*wx)+b*(Vn/R+2*(c*d-a*b)*wz+(-dd+cc-bb+aa)*wy+2*(a*d+b*c)*wx)-c*(-Ve/R-Omega*cosL+2*(b*d+a*c)*wz+2*(b*c-a*d)*wy+(-dd-cc+bb+aa)*wx));

@@ -60,9 +60,11 @@ private:
 	};
 	SolverCallback * callback;
 	boost::thread * trimThread;
+	JSBSim::FGNelderMead * solver;
     osg::ref_ptr<osg::Group> sceneRoot;
     void loadModel(const std::string & name);
     oooark::visualization::Jet * plane;
+	void stopSolver();
     template <class varType>
     void prompt(const std::string & str, varType & var)
     {

@@ -6,3 +6,5 @@ Makelib
 *.la
 lib
 names
+VERSION
+Data

@@ -364,7 +364,7 @@ void GpsIns::updateGps(const vector<double> &z)
 
         //kalman gain
         inverse = prod3(H,P,trans(H))+Rk;
-        inverse = pinv(inverse);
+        inverse = inv(inverse); // don't use pinv since it is square
         kalman = prod3(P,trans(H),inverse);
 
         //correct xErr and P

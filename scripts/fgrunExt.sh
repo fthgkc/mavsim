@@ -1,9 +1,7 @@
 #!/bin/bash
-#--native-ctrls=socket,out,119,,5501,udp \
-#--native-ctrls=socket,in,120,,5502,udp \
-#--disable-textures \
 if [ $# != 1 ]
 then
+	echo program for communicating with jsbsimcomm
 	echo usage: $0 aircraft
 	exit
 fi

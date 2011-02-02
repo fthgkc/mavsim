@@ -36,6 +36,8 @@ enum enumScicosFlags
     computeZeroCrossSurfs=9
 };
 
+int evtPortNumToFlag(int portNum);
+
 }
 
 #endif
