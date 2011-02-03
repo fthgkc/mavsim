@@ -143,6 +143,7 @@ find_package(SCICOSLAB)
 find_or_build_from_source(BOOSTNUMERICBINDINGS thirdParty/boost-numeric-bindings FOUND_GIT_REPO)
 find_or_build_from_source(JSBSIM thirdParty/jsbsim FOUND_GIT_REPO)
 find_or_build_from_source(MAVLINK thirdParty/mavlink FOUND_GIT_REPO)
+find_or_build_from_source(EASYSTAR data/easystar FOUND_GIT_REPO)
 
 # build libraries from source if not found on system
 if(JSBSIM_BUILD_FROM_SOURCE)
@@ -166,6 +167,12 @@ if(BOOSTNUMERICBINDINGS_BUILD_FROM_SOURCE)
 	set(BOOSTNUMERICBINDINGS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/boost-numeric-bindings")
 	add_custom_command(OUTPUT BOOSTNUMERICBINDINGS_BUILD.stamp 
 		COMMAND touch BOOSTNUMERICBINDINGS_BUILD.stamp)
+endif()
+
+if(EASYSTAR_BUILD_FROM_SOURCE)
+	set(EASYSTAR_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/data/easystar")
+	add_custom_command(OUTPUT EASYSTAR_BUILD.stamp 
+		COMMAND touch EASYSTAR_BUILD.stamp)
 endif()
 
 # data directory
