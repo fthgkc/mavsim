@@ -4,26 +4,25 @@ project (oooark)
 
 # marcos
 macro(find_or_build_from_source PACKAGE PACKAGE_PATH IS_GIT_SUBMODULE)
-	add_custom_target(${PACKAGE} DEPENDS ${PACKAGE}.stamp)
-	set(${PACKAGE}_PATH ${PROJECT_SOURCE_DIR}/${PACKAGE_PATH})
+	add_custom_target(${PACKAGE})
 	if (NOT ${PACKAGE}_BUILD_FROM_SOURCE)
 		find_package(${PACKAGE})
 	endif()
 	if (NOT ${PACKAGE}_FOUND)
 		set(${PACKAGE}_BUILD_FROM_SOURCE TRUE)
 		message(STATUS "could not find package ${PACKAGE}, building from source")
+		add_custom_target(${PACKAGE}_BUILD DEPENDS ${PACKAGE}_BUILD.stamp)
+		add_dependencies(${PACKAGE} ${PACKAGE}_BUILD)
 		set(${PACKAGE}_FOUND TRUE)
 		if (${IS_GIT_SUBMODULE})
 			message(STATUS "${PACKAGE} detected as git submodule, will attempt to initialize it")
 			add_custom_command(OUTPUT ${PACKAGE}_GIT.stamp 
-				COMMAND git submodule init ${PACKAGE}_PATH}
-				COMMAND git submodule update ${PACKAGE}_PATH}
+				COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule init ${PACKAGE_PATH}
+				COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule update ${PACKAGE_PATH}
 				COMMAND touch ${PACKAGE}_GIT.stamp)
-			add_dependencies(${PACKAGE} ${PACKAGE}_GIT.stamp)
+			add_custom_target(${PACKAGE}_GIT DEPENDS ${PACKAGE}_GIT.stamp)
+			add_dependencies(${PACKAGE}_BUILD ${PACKAGE}_GIT)
 		endif()
-	else()
-		add_custom_command(OUTPUT ${PACKAGE}.stamp 
-			COMMAND touch ${PACKAGE}.stamp)
 	endif()
 endmacro(find_or_build_from_source)
 
@@ -141,9 +140,9 @@ find_package(OpenSceneGraph 2.8.3 COMPONENTS osgGA osgDB osgUtil osgViewer)
 find_package(LAPACK)
 find_package(SIMGEAR)
 find_package(SCICOSLAB)
-find_or_build_from_source(BOOSTNUMERICBINDINGS thirdParty/boostnumericbindings FOUND_GIT_REPO)
+find_or_build_from_source(BOOSTNUMERICBINDINGS thirdParty/boost-numeric-bindings FOUND_GIT_REPO)
 find_or_build_from_source(JSBSIM thirdParty/jsbsim FOUND_GIT_REPO)
-find_or_build_from_source(MAVLINK thirdParty/boostnumericbindings FOUND_GIT_REPO)
+find_or_build_from_source(MAVLINK thirdParty/mavlink FOUND_GIT_REPO)
 
 # build libraries from source if not found on system
 if(JSBSIM_BUILD_FROM_SOURCE)
@@ -154,19 +153,19 @@ if(JSBSIM_BUILD_FROM_SOURCE)
 		COMMAND cd ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim && ./autogen.sh --no-configure
 		COMMAND cd jsbsim && ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
 		COMMAND cd jsbsim && make -j8
-		COMMAND touch JSBSIM.stamp)
+		COMMAND touch JSBSIM_BUILD.stamp)
 endif()
 
 if(MAVLINK_BUILD_FROM_SOURCE)
 	set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
-	add_custom_command(OUTPUT MAVLINK.stamp 
-		COMMAND touch MAVLINK.stamp)
+	add_custom_command(OUTPUT MAVLINK_BUILD.stamp 
+		COMMAND touch MAVLINK_BUILD.stamp)
 endif()
 
 if(BOOSTNUMERICBINDINGS_BUILD_FROM_SOURCE)
 	set(BOOSTNUMERICBINDINGS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/boost-numeric-bindings")
-	add_custom_command(OUTPUT BOOSTNUMERICBINDINGS.stamp 
-		COMMAND touch BOOSTNUMERICBINDINGS.stamp)
+	add_custom_command(OUTPUT BOOSTNUMERICBINDINGS_BUILD.stamp 
+		COMMAND touch BOOSTNUMERICBINDINGS_BUILD.stamp)
 endif()
 
 # data directory
