@@ -21,6 +21,17 @@
 
 void getIpars(int nStrings, int nInts, int * ipar, char *** stringArray, int ** intArray);
 
+extern "C"
+{
+
+void cMatrix2FortranVector(double ** cMatrix, const int & rows, const int & cols, double * fMatrix);
+
+void allocateCMatrix(double ** cMatrix, const int & rows, const int & cols);
+
+void freeCMatrix(double ** matrix, const int & rows, const int & cols);
+
+}
+
 #endif
 
 // vim:ts=4:sw=4

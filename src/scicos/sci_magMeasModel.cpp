@@ -31,6 +31,7 @@
 #include "math/GpsIns.hpp"
 #include "utilities.hpp"
 #include <stdexcept>
+#include <cstdio>
 
 extern "C"
 {
@@ -49,8 +50,8 @@ void sci_magMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
     double * u1=(double*)GetInPortPtrs(block,1);
     double * u2=(double*)GetInPortPtrs(block,2);
     double * u3=(double*)GetInPortPtrs(block,3);
-    double * H_mag=(double*)GetOutPortPtrs(block,1);
-    double * R_mag_n=(double*)GetOutPortPtrs(block,2);
+    double * y1=(double*)GetOutPortPtrs(block,1);
+    double * y2=(double*)GetOutPortPtrs(block,2);
     int * ipar=block->ipar;
 
     // alias names
@@ -68,10 +69,15 @@ void sci_magMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
             
     int & mode = ipar[0];
 
+    // static data
+    static double ** H_mag;
+    static double R_mag_n[3][3];
+    static double H_mag_full[10][3];
+    static double H_mag_att[4][3];
+
     //handle flags
     if (flag==scicos::computeOutput)
-   {
-        memset((void *)R_mag_n,0,9*sizeof(double));
+    {
         double sigDec2 = sigDec*sigDec;
         double sigDip2 = sigDip*sigDip;
         double cosDec = cos(dec), sinDec = sin(dec);
@@ -82,30 +88,31 @@ void sci_magMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
         double Be = sinDec*cosDip;
         double Bd = sinDip;
 
-        static const int rows_H_mag = 3;
-        static const int rows_R_mag_n = 3;
-
-        if (mode == INS_FULL_STATE)
-        {
-            memset((void *)H_mag,0,30*sizeof(double));
-        }
-        else if (mode == INS_ATT_STATE)
-        {
-            memset((void *)H_mag,0,12*sizeof(double));
-        }
-        else
-        {
-            Coserror((char *)"unknown mode for insErrorDynamics block");
-        }
-
-        #include "navigation/ins_dynamics_H_mag.hpp" 
-        #include "navigation/ins_dynamics_R_mag_n.hpp" 
+        // we can use the same file for both modes
+        // this works since non zero elements are ignored and 
+        // the states are the first 4 (quaternions in ATT mode)
+        #include "navigation/ins_H_mag.hpp" 
+        #include "navigation/ins_R_mag_n.hpp" 
     }
     else if (flag==scicos::terminate)
     {
     }
     else if (flag==scicos::initialize || flag==scicos::reinitialize)
     {
+        // determine sizes
+        if (mode == INS_FULL_STATE)
+        {
+            H_mag = &(H_mag_full[0]);
+        }
+        else if (mode == INS_ATT_STATE)
+        {
+            H_mag = &(H_mag_att[0]);
+        }
+        else
+        {
+            Coserror((char *)"unknown mode for magMeasModel block");
+            return;
+        }
     }
     else
     {

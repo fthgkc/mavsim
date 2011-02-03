@@ -18,6 +18,7 @@ set(oooarkScicosSources
 	sci_randn.cpp
 	sci_geoMag.cpp
 	sci_magMeasModel.cpp
+	sci_gpsMeasModel.cpp
 	sci_quat2EulerDcm.cpp
 	sci_waypointGuidance.cpp
 	sci_euler2Dcm.cpp
@@ -43,11 +44,11 @@ if (OPENSCENEGRAPH_FOUND)
 		sci_quad.cpp
 	)
 endif(OPENSCENEGRAPH_FOUND)
-
+set(CMAKE_C_FLAGS -lpthread)
 add_library(oooarkScicos SHARED ${oooarkScicosSources})
 add_dependencies(oooarkScicos JSBSIM)
 
-target_link_libraries(oooarkScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES})
+target_link_libraries(oooarkScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES} -lpthread)
 
 set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERSION}
     SOVERSION ${oooark_SOVERSION})

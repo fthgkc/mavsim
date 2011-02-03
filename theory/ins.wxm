@@ -2,7 +2,7 @@
 /* [ Created with wxMaxima version 0.8.6 ] */
 
 /* [wxMaxima: title   start ]
-Inertial Navigation Dynamics
+Inertial Navigation Equations
    [wxMaxima: title   end   ] */
 
 /* [wxMaxima: section start ]
@@ -11,6 +11,16 @@ Definitions
 
 /* [wxMaxima: input   start ] */
 kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+texput(da,"\\delta a");texput(db,"\\delta b");texput(dc,"\\delta c");texput(dd,"\\delta d");
+texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
+texput(dwx,"\\delta w_x");texput(dwy,"\\delta w_y");texput(dwz,"\\delta w_y");
+texput(dfx,"\\delta f_x");texput(dfy,"\\delta f_y");texput(dfz,"\\delta f_z");
+texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
+texput(Vn,"v_N");texput(Ve,"v_E");texput(Vd,"v_D");
+texput(dVn,"\delta v_N");texput(dVe,"\delta v_E");texput(dVd,"\delta v_D");
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -160,11 +170,11 @@ C_nb_2_euler(C_nb_euler);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C_nb : quat2dcm(q_nb);
+C_nb_quat : quat2dcm(q_nb);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_C_nb : quat2dcm(est_q_nb);
+est_C_nb_quat : quat2dcm(est_q_nb);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -200,11 +210,11 @@ est_w_ib : transpose([wx+dwx,wy+dwy,wz+dwz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-w_nb : C_nb.w_ib - (w_ie + w_en);
+w_nb : C_nb_quat.w_ib - (w_ie + w_en);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_nb : est_C_nb.est_w_ib - (est_w_ie + est_w_en);
+est_w_nb : est_C_nb_quat.est_w_ib - (est_w_ie + est_w_en);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -232,7 +242,7 @@ diff_q_nb : quat_diff(q_nb,w_nb);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-diff_v_n : express(C_nb.f_b - cross(2*w_ie + w_en,v_n)+g_n);
+diff_v_n : express(C_nb_quat.f_b - cross(2*w_ie + w_en,v_n)+g_n);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -268,7 +278,7 @@ est_diff_q_nb : quat_diff(est_q_nb,est_w_nb);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_diff_v_n : express(est_C_nb.est_f_b - cross(2*w_ie + w_en,est_v_n)+est_g_n);
+est_diff_v_n : express(est_C_nb_quat.est_f_b - cross(2*w_ie + w_en,est_v_n)+est_g_n);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -418,9 +428,9 @@ z_mag : transpose(quat2dcm(q_nb)).mag;
 H_mag : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,10)));
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: comment start ]
-Note that this is the Jacobian for the measurment of attitude error.
-   [wxMaxima: comment end   ] */
+/* [wxMaxima: input   start ] */
+H_mag_att : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,4)));
+/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
 GPS Measurement
@@ -444,6 +454,10 @@ R_gps: subst([dVn^2=sigVel^2,dVe^2=sigVel^2,dVd^2=sigVel^2,dPosLat^2=sigPos^2,dP
 
 /* [wxMaxima: input   start ] */
 H_gps : factor(jacobian(makelist(z_gps[i,1],i,1,6),makelist(x[i,1],i,10)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H_gps_vp : factor(jacobian(makelist(z_gps[i,1],i,1,6),makelist(x[i,1],i,5,10)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -487,29 +501,35 @@ with_stdout ("ins_dynamics_f_vp.f90", f90(f_vp));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("ins_dynamics_H_mag.f90", f90(H_mag));
+with_stdout ("ins_H_mag.f90", f90(H_mag));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("ins_dynamics_R_mag_n.f90", f90(R_mag_n));
+with_stdout ("ins_H_mag_att.f90", f90(H_mag_att));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("ins_dynamics_H_gps.f90", f90(H_gps));
+with_stdout ("ins_R_mag_n.f90", f90(R_mag_n));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("ins_dynamics_R_gps.f90", f90(R_gps));
+with_stdout ("ins_H_gps.f90", f90(H_gps));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-texput(da,"\\delta a");texput(db,"\\delta b");texput(dc,"\\delta c");texput(dd,"\\delta d");
-texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
-texput(dwx,"\\delta w_x");texput(dwy,"\\delta w_y");texput(dwz,"\\delta w_y");
-texput(dfx,"\\delta f_x");texput(dfy,"\\delta f_y");texput(dfz,"\\delta f_z");
-texput(dl,"\\delta l");texput(dL,"\\delta L");texput(dh,"\\delta h");
-texput(Vn,"v_N");texput(Ve,"v_E");texput(Vd,"v_D");
-texput(dVn,"\delta v_N");texput(dVe,"\delta v_E");texput(dVd,"\delta v_D");
+with_stdout ("ins_H_gps_vp.f90", f90(H_gps_vp));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("ins_R_gps.f90", f90(R_gps));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("ins_C_nb_quat.f90", f90(C_nb_quat));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("ins_C_nb_euler.f90", f90(C_nb_euler));
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
