@@ -3,7 +3,9 @@ cmake_minimum_required (VERSION 2.6)
 project (oooark)
 
 # marcos
-macro(find_or_build_from_source PACKAGE)
+macro(find_or_build_from_source PACKAGE PACKAGE_PATH IS_GIT_SUBMODULE)
+	add_custom_target(${PACKAGE} DEPENDS ${PACKAGE}.stamp)
+	set(${PACKAGE}_PATH ${PROJECT_SOURCE_DIR}/${PACKAGE_PATH})
 	if (NOT ${PACKAGE}_BUILD_FROM_SOURCE)
 		find_package(${PACKAGE})
 	endif()
@@ -11,11 +13,18 @@ macro(find_or_build_from_source PACKAGE)
 		set(${PACKAGE}_BUILD_FROM_SOURCE TRUE)
 		message(STATUS "could not find package ${PACKAGE}, building from source")
 		set(${PACKAGE}_FOUND TRUE)
+		if (${IS_GIT_SUBMODULE})
+			message(STATUS "${PACKAGE} detected as git submodule, will attempt to initialize it")
+			add_custom_command(OUTPUT ${PACKAGE}_GIT.stamp 
+				COMMAND git submodule init ${PACKAGE}_PATH}
+				COMMAND git submodule update ${PACKAGE}_PATH}
+				COMMAND touch ${PACKAGE}_GIT.stamp)
+			add_dependencies(${PACKAGE} ${PACKAGE}_GIT.stamp)
+		endif()
 	else()
 		add_custom_command(OUTPUT ${PACKAGE}.stamp 
 			COMMAND touch ${PACKAGE}.stamp)
 	endif()
-	add_custom_target(${PACKAGE} DEPENDS ${PACKAGE}.stamp)
 endmacro(find_or_build_from_source)
 
 macro(set_default VAR DEFAULT)
@@ -114,6 +123,14 @@ include(CPack)
 # add make dist target
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
+# git submodules
+if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
+	message(STATUS "git repository detected, will attempt to load submodules")
+	set(FOUND_GIT_REPO TRUE)
+else()
+	set(FOUND_GIT_REPO FALSE)
+endif()
+
 # find libraries with cmake modules
 find_package(Qt4)
 set(QT_USE_QTOPENGL TRUE)
@@ -124,9 +141,9 @@ find_package(OpenSceneGraph 2.8.3 COMPONENTS osgGA osgDB osgUtil osgViewer)
 find_package(LAPACK)
 find_package(SIMGEAR)
 find_package(SCICOSLAB)
-find_or_build_from_source(BOOSTNUMERICBINDINGS)
-find_or_build_from_source(JSBSIM)
-find_or_build_from_source(MAVLINK)
+find_or_build_from_source(BOOSTNUMERICBINDINGS thirdParty/boostnumericbindings FOUND_GIT_REPO)
+find_or_build_from_source(JSBSIM thirdParty/jsbsim FOUND_GIT_REPO)
+find_or_build_from_source(MAVLINK thirdParty/boostnumericbindings FOUND_GIT_REPO)
 
 # build libraries from source if not found on system
 if(JSBSIM_BUILD_FROM_SOURCE)
@@ -137,22 +154,19 @@ if(JSBSIM_BUILD_FROM_SOURCE)
 		COMMAND cd ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim && ./autogen.sh --no-configure
 		COMMAND cd jsbsim && ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
 		COMMAND cd jsbsim && make -j8
-		COMMAND touch JSBSIM.stamp
-		DEPENDS GIT.stamp)
+		COMMAND touch JSBSIM.stamp)
 endif()
 
 if(MAVLINK_BUILD_FROM_SOURCE)
 	set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
 	add_custom_command(OUTPUT MAVLINK.stamp 
-		COMMAND touch MAVLINK.stamp
-		DEPENDS GIT.stamp)
+		COMMAND touch MAVLINK.stamp)
 endif()
 
 if(BOOSTNUMERICBINDINGS_BUILD_FROM_SOURCE)
 	set(BOOSTNUMERICBINDINGS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/boost-numeric-bindings")
 	add_custom_command(OUTPUT BOOSTNUMERICBINDINGS.stamp 
-		COMMAND touch BOOSTNUMERICBINDINGS.stamp
-		DEPENDS GIT.stamp)
+		COMMAND touch BOOSTNUMERICBINDINGS.stamp)
 endif()
 
 # data directory
@@ -183,18 +197,7 @@ install(FILES
 	DESTINATION lib/pkgconfig
 	)
 
-# git submodules
-if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
-	message(STATUS "git repository detected, will attempt to load submodules")
-	add_custom_command(OUTPUT GIT.stamp
-		COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule init
-		COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule update
-		COMMAND touch GIT.stamp)
-else()
-	execute_process(COMMAND touch GIT.stamp)
-endif()
-
-
+#
 # internal library list definition / dep summary
 message(STATUS "=======================================")
 message(STATUS "\tLIBRARY\t\t\tBUILDING")

@@ -17,7 +17,7 @@ set(oooarkScicosSources
 	sci_zeroOrderHold.cpp
 	sci_randn.cpp
 	sci_geoMag.cpp
-	sci_magMeasModel.cpp
+	#sci_magMeasModel.cpp
 	sci_gpsMeasModel.cpp
 	sci_quat2EulerDcm.cpp
 	sci_waypointGuidance.cpp
