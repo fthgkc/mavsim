@@ -16,12 +16,8 @@ macro(find_or_build_from_source PACKAGE PACKAGE_PATH IS_GIT_SUBMODULE)
 		set(${PACKAGE}_FOUND TRUE)
 		if (${IS_GIT_SUBMODULE})
 			message(STATUS "${PACKAGE} detected as git submodule, will attempt to initialize it")
-			add_custom_command(OUTPUT ${PACKAGE}_GIT.stamp 
-				COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule init ${PACKAGE_PATH}
-				COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule update ${PACKAGE_PATH}
-				COMMAND touch ${PACKAGE}_GIT.stamp)
-			add_custom_target(${PACKAGE}_GIT DEPENDS ${PACKAGE}_GIT.stamp)
-			add_dependencies(${PACKAGE}_BUILD ${PACKAGE}_GIT)
+			list(APPEND GIT_SUBMODULES ${PACKAGE_PATH})
+			add_dependencies(${PACKAGE}_BUILD GIT)
 		endif()
 	endif()
 endmacro(find_or_build_from_source)
@@ -126,6 +122,10 @@ add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
 	message(STATUS "git repository detected, will attempt to load submodules")
 	set(FOUND_GIT_REPO TRUE)
+	add_custom_command(OUTPUT GIT.stamp 
+		COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule init ${GIT_SUBMODULES}
+		COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule update ${GIT_SUBMODULES})
+	add_custom_target(GIT DEPENDS GIT.stamp)
 else()
 	set(FOUND_GIT_REPO FALSE)
 endif()
