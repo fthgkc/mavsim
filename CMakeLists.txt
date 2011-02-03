@@ -144,13 +144,15 @@ endif()
 if(MAVLINK_BUILD_FROM_SOURCE)
 	set(MAVLINK_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/mavlink/include")
 	add_custom_command(OUTPUT MAVLINK.stamp 
-		COMMAND touch MAVLINK.stamp)
+		COMMAND touch MAVLINK.stamp
+		DEPENDS GIT.stamp)
 endif()
 
 if(BOOSTNUMERICBINDINGS_BUILD_FROM_SOURCE)
 	set(BOOSTNUMERICBINDINGS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/boost-numeric-bindings")
 	add_custom_command(OUTPUT BOOSTNUMERICBINDINGS.stamp 
-		COMMAND touch BOOSTNUMERICBINDINGS.stamp)
+		COMMAND touch BOOSTNUMERICBINDINGS.stamp
+		DEPENDS GIT.stamp)
 endif()
 
 # data directory
