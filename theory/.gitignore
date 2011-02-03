@@ -1,4 +1,1 @@
-*.f90
-*.cpp
-*.hpp
-ins_dynamics_img
+*_img

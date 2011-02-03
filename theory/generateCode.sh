@@ -2,7 +2,7 @@
 srcPath=../src/navigation/
 maxima -p lispconfig -b ins.wxm
 
-cat ins_dynamics_f.f90 | sed \
+cat code/ins_dynamics_f.f90 | sed \
 	-e "s/^f(/f[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -22,7 +22,7 @@ cat ins_dynamics_f.f90 | sed \
 	-e "s/,1\]/\]/g" \
 	> ${srcPath}/ins_dynamics_f.hpp
 
-cat ins_dynamics_f_att.f90 | sed \
+cat code/ins_dynamics_f_att.f90 | sed \
 	-e "s/^f_att(/f[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -42,7 +42,7 @@ cat ins_dynamics_f_att.f90 | sed \
 	-e "s/,1\]/\]/g" \
 	> ${srcPath}/ins_dynamics_f_att.hpp
 
-cat ins_dynamics_f_vp.f90 | sed \
+cat code/ins_dynamics_f_vp.f90 | sed \
 	-e "s/^f_vp(/f[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -62,7 +62,7 @@ cat ins_dynamics_f_vp.f90 | sed \
 	-e "s/,1\]/\]/g" \
 	> ${srcPath}/ins_dynamics_f_vp.hpp
 
-cat ins_error_dynamics_F.f90 | sed \
+cat code/ins_error_dynamics_F.f90 | sed \
 	-e "s/^F(/F[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -94,7 +94,7 @@ cat ins_error_dynamics_F.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_error_dynamics_F.hpp
 
-cat ins_error_dynamics_F_att.f90 | sed \
+cat code/ins_error_dynamics_F_att.f90 | sed \
 	-e "s/^F_att(/F[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -126,7 +126,7 @@ cat ins_error_dynamics_F_att.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_error_dynamics_F_att.hpp
 
-cat ins_error_dynamics_F_vp.f90 | sed \
+cat code/ins_error_dynamics_F_vp.f90 | sed \
 	-e "s/^F_vp(/F[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -158,7 +158,7 @@ cat ins_error_dynamics_F_vp.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_error_dynamics_F_vp.hpp
 
-cat ins_error_dynamics_G.f90 | sed \
+cat code/ins_error_dynamics_G.f90 | sed \
 	-e "s/^G(/G[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -191,7 +191,7 @@ cat ins_error_dynamics_G.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_error_dynamics_G.hpp
 
-cat ins_error_dynamics_G_att.f90 | sed \
+cat code/ins_error_dynamics_G_att.f90 | sed \
 	-e "s/^G_att(/G[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -224,7 +224,7 @@ cat ins_error_dynamics_G_att.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_error_dynamics_G_att.hpp
 
-cat ins_error_dynamics_G_vp.f90 | sed \
+cat code/ins_error_dynamics_G_vp.f90 | sed \
 	-e "s/^G_vp(/G[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -257,7 +257,7 @@ cat ins_error_dynamics_G_vp.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_error_dynamics_G_vp.hpp
 
-cat ins_H_mag.f90 | sed \
+cat code/ins_H_mag.f90 | sed \
 	-e "s/^H_mag(/H_mag[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -290,7 +290,7 @@ cat ins_H_mag.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_H_mag.hpp
 
-cat ins_H_mag_att.f90 | sed \
+cat code/ins_H_mag_att.f90 | sed \
 	-e "s/^H_mag_att(/H_mag[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -323,7 +323,7 @@ cat ins_H_mag_att.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_H_mag_att.hpp
 
-cat ins_R_mag_n.f90 | sed \
+cat code/ins_R_mag_n.f90 | sed \
 	-e "s/^R_mag_n(/R_mag_n[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/cos(dec)/cosDec/g" -e "s/sin(dec)/sinDec/g" \
@@ -340,7 +340,7 @@ cat ins_R_mag_n.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_R_mag_n.hpp
 
-cat ins_H_gps.f90 | sed \
+cat code/ins_H_gps.f90 | sed \
 	-e "s/^H_gps(/H_gps[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/\[1,/\[0,/g" \
@@ -366,7 +366,7 @@ cat ins_H_gps.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_H_gps.hpp
 
-cat ins_H_gps_vp.f90 | sed \
+cat code/ins_H_gps_vp.f90 | sed \
 	-e "s/^H_gps_vp(/H_gps[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/\[1,/\[0,/g" \
@@ -392,7 +392,7 @@ cat ins_H_gps_vp.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_H_gps_vp.hpp
 
-cat ins_R_gps.f90 | sed \
+cat code/ins_R_gps.f90 | sed \
 	-e "s/^R_gps(/R_gps[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/\[1,/\[0,/g" \
@@ -404,7 +404,7 @@ cat ins_R_gps.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_R_gps.hpp
 
-cat ins_C_nb_quat.f90 | sed \
+cat code/ins_C_nb_quat.f90 | sed \
 	-e "s/^C_nb_quat(/C_nb_quat[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "/^.*] = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
@@ -417,7 +417,7 @@ cat ins_C_nb_quat.f90 | sed \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_C_nb_quat.hpp
 
-cat ins_C_nb_euler.f90 | sed \
+cat code/ins_C_nb_euler.f90 | sed \
 	-e "s/^C_nb_euler(/C_nb_euler[/g" -e "s/$/;/g" -e "s/) =/] =/g" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
 	-e "/^.*] = 0;$/d" \
@@ -429,5 +429,3 @@ cat ins_C_nb_euler.f90 | sed \
 	-e "s/,3\]/,2\]/g" \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_C_nb_euler.hpp
-
-rm -rf *.f90
