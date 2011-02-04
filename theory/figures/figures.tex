@@ -1,0 +1,36 @@
+\documentclass{article}
+
+\usepackage{xcolor}
+\definecolor{darkblue}{rgb}{0,0,0.5} 
+\usepackage{transparent}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{natbib}
+\usepackage[colorlinks=true,
+        urlcolor=darkblue,
+        anchorcolor=darkblue,
+        linkcolor=darkblue,
+        citecolor=darkblue,
+        pdfauthor={James Goppert},
+        pdfkeywords={James, Goppertk},
+        pdftitle={Figures},
+        pdfsubject={Describes how to include an SVG image easily in LaTeX using Inkscape}] {hyperref}
+\usepackage{url}
+\usepackage[protrusion=true,expansion=true]{microtype}
+
+\usepackage[T1]{fontenc}
+\usepackage[adobe-utopia]{mathdesign}
+
+\usepackage{verbatim}
+
+\begin{document}
+
+\begin{figure}
+	\centering
+	\def\svgwidth{\columnwidth}
+	\input{opticalFlowSensor.pdf_tex}
+\end{figure}
+
+
+
+\end{document}
