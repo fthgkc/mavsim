@@ -26,11 +26,11 @@ dot(u,v) := u[1,1]*v[1,1]+u[2,1]*v[2,1]+u[3,1]*v[3,1];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-gamma : acos(dot(up_N,C_nb_quat.neg_bz_B));
+alpha : atan(dPixel/f);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-sin(gamma) = d/h;
+gamma : acos(dot(up_N,C_nb_quat.neg_bz_B));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -38,27 +38,19 @@ d : h*tan(gamma);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-alpha:atan(dPixel/f);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-tan(gamma+alpha)=(dGround+d)/(h-c_y);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 dGround : trigexpand((h-c_y)*tan(gamma+alpha)-d);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-pX : dGroundX/dGround;
+pX : cos(psi_quat)*vN/dGround;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-pY : dGroundY/dGround;
+pY : sin(psi_quat)*vE/dGround;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-H_opt : jacobian([pX,pY],[dGroundX,dGroundY]);
+H_optical : jacobian([pX,pY],[vN,vE]);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
