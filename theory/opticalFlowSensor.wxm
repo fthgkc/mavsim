@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.6 ] */
+/* [ Created with wxMaxima version 0.8.5 ] */
 
 /* [wxMaxima: title   start ]
 Optical Flow Sensor
@@ -30,7 +30,35 @@ gamma : acos(dot(up_N,C_nb_quat.neg_bz_B));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d = h - xcm_z;
+sin(gamma) = d/h;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d : h*tan(gamma);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+alpha:atan(dPixel/f);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tan(gamma+alpha)=(dGround+d)/(h-c_y);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dGround : trigexpand((h-c_y)*tan(gamma+alpha)-d);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pX : dGroundX/dGround;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pY : dGroundY/dGround;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H_opt : jacobian([pX,pY],[dGroundX,dGroundY]);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
