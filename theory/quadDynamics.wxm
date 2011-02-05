@@ -1,0 +1,150 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.5 ] */
+
+/* [wxMaxima: input   start ] */
+batch("common.wxm");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Nonlinear Measurement Equation
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: subsect start ]
+
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+Aircraft Control and Simulation book 'Stevens and Lewis' 
+p.110 : Equations
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+phi_dot: P + tan(theta)*( Q*sin(phi) + R*cos(phi));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+theta_dot : Q*cos(phi) - R*sin(phi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+psi_dot : (Q*sin(phi) + R*cos(phi))/cos(theta);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P_dot : (Jxz*(Jx - Jy + Jz)*P*Q - (Jz*(Jz - Jy) + (Jxz)^2)*Q*R + Jz*l + Jxz*n)/Gamma;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Q_dot: ((Jz- Jx)*P*R - Jxz*(P*P-R*R)+m)/Jy;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+R_dot : (((Jx-Jy)*Jx+(Jxz)^2)*P*Q - Jxz*(Jx-Jy+Jz)*Q*R+Jxz*l+Jx*n)/Gamma;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Gamma:Jx*Jz - (Jxz)^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+J : matrix([Jx,-Jxy,-Jxz],[-Jxy,Jy,-Jyz],[-Jxz,-Jyz,Jz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v_cm_b : transpose([U,V,W]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+w_;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M_b_AT : genmatrix(M_b_AT,3,1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F_b_AT : genmatrix(F_b_AT,3,1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C_nb_euler.v_cm_b;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+invert(J);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+b_w_ib_b : invert(J).(M_b_AT - cross(w_ib,J.w_ib));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fullratsimp(subst([Jyz=0,Jxy=0],b_w_ib_b)[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P_dot;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Q_dot;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+state : transpose([V_t, alpha, theta, Q, pow, beta, phi, P, R]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Need: alpha, beta, Vt on page 115 Eqns 2.5-2.9 ; derive/check equations 
+Need: Power ; model for the motors RESEARCH
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: comment start ]
+The input will be expressed in terms of motor thrust ratios where delta_FB_LR represents Thrust(F + B) / Thrust(L +R)
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+input : transpose([delta_FB_LR,delta_F_B, delta_L_R, T_sum]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+When finding G we need to express dstate in terms of the input ratios and thrust sums. This means we need to substitute
+all occurences of T_i with the ratios.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+As a rough example The equation in the x direction should be ((T1+T2+T3+T4)*sin(phi)-D)/m = Vt_dot
+Which can be expressed (T_sum*sin(phi)-D)/m = Vt_dot
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Vt_dot : (T_sum*sin(phi)-D)/m;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+This equations is not complete yet as it assumes velocity is in the horizontal direction, which is 
+only true for the desired trim condition.
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_state : transpose([Vt_dot,0,theta_dot,b_w_ib_b[2,1],0,0,phi_dot,b_w_ib_b[1,1],b_w_ib_b[3,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F_quad : jacobian(makelist(d_state[i,1],i,9),makelist(state[i,1],i,1,9));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+G_quad : jacobian(makelist(d_state[i,1],i,9),makelist(input[i,1],i,1,4));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -114,11 +114,11 @@ x : transpose([a,b,c,d,Vn,Ve,Vd,L,l,h]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-dx : transpose([da,db,dc,dd,dVn,dVe,dVd,dL,dl,dh]);
+ex : transpose([ea,eb,ec,ed,eVn,eVe,eVd,eL,el,eh]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-u : transpose([dwx,dwy,dwz,dfx,dfy,dfz]);
+u : transpose([eP,eQ,eR,efx,efy,efz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -194,7 +194,7 @@ f_b : transpose([fx,fy,fz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_f_b : transpose([fx+dfx,fy+dfy,fz+dfz]);
+est_f_b : transpose([fx+efx,fy+efy,fz+efz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -202,7 +202,7 @@ w_ie : transpose([Omega*cos(L),0,-Omega*sin(L)]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_ie : transpose([Omega*cos(L+dL),0,-Omega*sin(L+dL)]);
+est_w_ie : transpose([Omega*cos(L+eL),0,-Omega*sin(L+eL)]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -210,15 +210,15 @@ w_en : transpose([Ve/R,-Vn/R,-Ve*tan(L)/R]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_en : transpose([(Ve+dVe)/(R+dh),-(Vn+dVn)/(R+dh),-(Ve+dVe)*tan(L+dL)/(R+dh)]);
+est_w_en : transpose([(Ve+eVe)/(R+eh),-(Vn+eVn)/(R+eh),-(Ve+eVe)*tan(L+eL)/(R+eh)]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-w_ib : transpose([wx,wy,wz]);
+w_ib : transpose([P,Q,R]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_ib : transpose([wx+dwx,wy+dwy,wz+dwz]);
+est_w_ib : transpose([P+eP,Q+eQ,R+eR]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -234,7 +234,7 @@ v_n : transpose([Vn,Ve,Vd]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_v_n : transpose([Vn+dVn,Ve+dVe,Vd+dVd]);
+est_v_n : transpose([Vn+eVn,Ve+eVe,Vd+eVd]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -242,7 +242,7 @@ g_n : transpose([0,0,g]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_g_n : transpose([0,0,g+dg]);
+est_g_n : transpose([0,0,g+eg]);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
