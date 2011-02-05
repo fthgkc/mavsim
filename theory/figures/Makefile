@@ -11,9 +11,11 @@ build/figures.pdf: opticalFlowSensor.svg
 	done; \
 	cd build && pdflatex ../figures.tex
 
+build/figures.jpg: build/figures.pdf
+	@convert -density 300 $^ $@
+
 clean:
 	@rm -rf build
 
 view: build/figures.pdf
 	@evince $<
-	

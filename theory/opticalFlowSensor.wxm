@@ -5,9 +5,33 @@
 Optical Flow Sensor
    [wxMaxima: title   end   ] */
 
+/* [wxMaxima: input   start ] */
+batch("common.wxm");
+/* [wxMaxima: input   end   ] */
+
 /* [wxMaxima: section start ]
 Nonlinear Measurement Equation
    [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+up_N : transpose([0,0,1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+neg_bz_B : transpose([0,0,-1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dot(u,v) := u[1,1]*v[1,1]+u[2,1]*v[2,1]+u[3,1]*v[3,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gamma : acos(dot(up_N,C_nb_quat.neg_bz_B));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d = h - xcm_z;
+/* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
