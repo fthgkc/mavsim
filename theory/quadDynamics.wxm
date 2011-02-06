@@ -1,5 +1,9 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.5 ] */
+/* [ Created with wxMaxima version 0.8.6 ] */
+
+/* [wxMaxima: title   start ]
+Quadrotor Dynamics
+   [wxMaxima: title   end   ] */
 
 /* [wxMaxima: input   start ] */
 batch("common.wxm");
@@ -9,50 +13,9 @@ batch("common.wxm");
 Nonlinear Measurement Equation
    [wxMaxima: section end   ] */
 
-/* [wxMaxima: subsect start ]
-
-   [wxMaxima: subsect end   ] */
-
 /* [wxMaxima: comment start ]
-Aircraft Control and Simulation book 'Stevens and Lewis' 
-p.110 : Equations
+The inertia matrix J
    [wxMaxima: comment end   ] */
-
-/* [wxMaxima: comment start ]
-
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: comment start ]
-
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-phi_dot: P + tan(theta)*( Q*sin(phi) + R*cos(phi));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-theta_dot : Q*cos(phi) - R*sin(phi);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-psi_dot : (Q*sin(phi) + R*cos(phi))/cos(theta);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-P_dot : (Jxz*(Jx - Jy + Jz)*P*Q - (Jz*(Jz - Jy) + (Jxz)^2)*Q*R + Jz*l + Jxz*n)/Gamma;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-Q_dot: ((Jz- Jx)*P*R - Jxz*(P*P-R*R)+m)/Jy;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-R_dot : (((Jx-Jy)*Jx+(Jxz)^2)*P*Q - Jxz*(Jx-Jy+Jz)*Q*R+Jxz*l+Jx*n)/Gamma;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-Gamma:Jx*Jz - (Jxz)^2;
-/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 J : matrix([Jx,-Jxy,-Jxz],[-Jxy,Jy,-Jyz],[-Jxz,-Jyz,Jz]);
@@ -60,10 +23,6 @@ J : matrix([Jx,-Jxy,-Jxz],[-Jxy,Jy,-Jyz],[-Jxz,-Jyz,Jz]);
 
 /* [wxMaxima: input   start ] */
 v_cm_b : transpose([U,V,W]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-w_;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -75,55 +34,52 @@ F_b_AT : genmatrix(F_b_AT,3,1);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C_nb_euler.v_cm_b;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-invert(J);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 b_w_ib_b : invert(J).(M_b_AT - cross(w_ib,J.w_ib));
 /* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Checked against Aircraft Control and Simulation book 'Stevens and Lewis'  p.110
+   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
 fullratsimp(subst([Jyz=0,Jxy=0],b_w_ib_b)[1]);
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
-P_dot;
-/* [wxMaxima: input   end   ] */
+/* [wxMaxima: comment start ]
+We now construct the state vector for the dynamcis in the stability axis.
+   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Q_dot;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-state : transpose([V_t, alpha, theta, wy, pow, beta, phi, wx, wz]);
+x : transpose([V_t, alpha, theta, wy, pow, beta, phi, wx, wz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
 Need: alpha, beta, Vt on page 115 Eqns 2.5-2.9 ; derive/check equations 
 Need: Power ; model for the motors RESEARCH
-   [wxMaxima: comment end   ] */
 
-/* [wxMaxima: comment start ]
 The input will be expressed in terms of motor thrust ratios where delta_FB_LR represents Thrust(F + B) / Thrust(L +R)
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-input : transpose([delta_FB_LR,delta_F_B, delta_L_R, T_sum]);
+u : transpose([delta_FB_LR,delta_F_B, delta_L_R, T_sum]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
 When finding G we need to express dstate in terms of the input ratios and thrust sums. This means we need to substitute
 all occurences of T_i with the ratios.
-As a rough example The equation in the x direction should be ((T1+T2+T3+T4)*sin(phi)-D)/m = Vt_dot
-Which can be expressed (T_sum*sin(phi)-D)/m = Vt_dot;
+As a rough example The equation in the x direction should be:
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Vt_dot : (T_sum*sin(phi)-D)/m;
+Vt_dot : ((T1+T2+T3+T4)*sin(phi)-D)/m;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Which can be expressed using T_sum
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Vt_dot : subst(T1+T2+T3+T4=T_sum,Vt_dot);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -132,15 +88,23 @@ only true for the desired trim condition.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-d_state : transpose([Vt_dot,0,theta_dot,b_w_ib_b[2,1],0,0,phi_dot,b_w_ib_b[1,1],b_w_ib_b[3,1]]);
+d_x : transpose([Vt_dot,0,theta_dot,b_w_ib_b[2,1],0,0,phi_dot,b_w_ib_b[1,1],b_w_ib_b[3,1]]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F_quad : jacobian(makelist(d_state[i,1],i,length(d_state)),makelist(state[i,1],i,1,length(state)));
+F_quad : fullratsimp(jacobian(makelist(d_x[i,1],i,length(d_x)),makelist(x[i,1],i,1,length(x))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Assuming that the quad is symmetric about the x and y axis this simplifies to:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+F_quad_symmetric: subst([Jxy=0,Jyz=0,Jxz=0],F_quad);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-G_quad : jacobian(makelist(d_state[i,1],i,9),makelist(input[i,1],i,1,4));
+G_quad : jacobian(makelist(d_x[i,1],i,9),makelist(u[i,1],i,1,length(u)));
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

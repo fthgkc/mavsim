@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.5 ] */
+/* [ Created with wxMaxima version 0.8.6 ] */
 
 /* [wxMaxima: title   start ]
 Inertial Navigation Equations
@@ -11,6 +11,34 @@ kill(all);
 
 /* [wxMaxima: input   start ] */
 batch("common.wxm");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Definitions
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+x : transpose([a,b,c,d,Vn,Ve,Vd,L,l,h]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_x : x + transpose([e_a,e_b,e_c,e_d,e_Vn,e_Ve,e_Vd,e_L,e_l,e_h]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e_x : est_x - x;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+u : transpose([wx,wy,wz,fx,fy,fz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_u : transpose([wx+e_wx,wy+e_wy,wz+e_wz,fx+e_fx,fy+e_fy,fz+e_fz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e_u : est_u - u;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -161,17 +189,17 @@ The inputs to the ins error dynamics are the gyro and accelerometer measuremenmt
 
 /* [wxMaxima: input   start ] */
 G : ratsimp(subst(zeroErrors,jacobian(makelist(e_f[i,1],i,1,10),
-makelist(u[i,1],i,1,6))));
+makelist(e_u[i,1],i,1,6))));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 G_att : ratsimp(subst(zeroErrors,jacobian(makelist(e_f[i,1],i,1,4),
-makelist(u[i,1],i,1,3))));
+makelist(e_u[i,1],i,1,3))));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 G_vp : ratsimp(subst(zeroErrors,jacobian(makelist(e_f[i,1],i,5,10),
-makelist(u[i,1],i,4,6))));
+makelist(e_u[i,1],i,4,6))));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
