@@ -122,7 +122,7 @@ all occurences of T_i with the ratios.
 
 /* [wxMaxima: input   start ] */
 As a rough example The equation in the x direction should be ((T1+T2+T3+T4)*sin(phi)-D)/m = Vt_dot
-Which can be expressed (T_sum*sin(phi)-D)/m = Vt_dot
+Which can be expressed (T_sum*sin(phi)-D)/m = Vt_dot;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -131,7 +131,7 @@ Vt_dot : (T_sum*sin(phi)-D)/m;
 
 /* [wxMaxima: input   start ] */
 This equations is not complete yet as it assumes velocity is in the horizontal direction, which is 
-only true for the desired trim condition.
+only true for the desired trim condition.;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
