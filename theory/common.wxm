@@ -34,6 +34,11 @@ cross(u,v) := matrix([0,-u[3,1],u[2,1]],[u[3,1],0,-u[1,1]],[-u[2,1],u[1,1],0]).v
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
+jacobianMatrix(f,x) := jacobian(makelist(f[i,1],i,1,length(f)),
+makelist(x[i,1],i,1,length(x)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
 est_q_nb : transpose([a+e_a,b+e_b,c+e_c,d+e_d]);
 /* [wxMaxima: input   end   ] */
 
@@ -108,7 +113,7 @@ e_x : transpose([e_a,e_b,e_c,e_d,e_Vn,e_Ve,e_Vd,e_L,e_l,e_h]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-u : transpose([e_P,e_Q,e_R,e_fx,e_fy,e_fz]);
+u : transpose([e_wx,e_wy,e_wz,e_fx,e_fy,e_fz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -204,11 +209,11 @@ est_w_en : transpose([(Ve+e_Ve)/(R+e_h),-(Vn+e_Vn)/(R+e_h),-(Ve+e_Ve)*tan(L+e_L)
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-w_ib : transpose([P,Q,R]);
+w_ib : transpose([wx,wy,wz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_ib : transpose([P+e_P,Q+e_Q,R+e_R]);
+est_w_ib : transpose([wx+e_wx,wy+e_wy,wz+e_wz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

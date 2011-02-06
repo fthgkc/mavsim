@@ -64,7 +64,7 @@ est_diff_v_n : express(est_C_nb_quat.est_f_b - cross(2*w_ie + w_en,est_v_n)+est_
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_diff_L : (Vn+e_Vn)/(R+eh);
+est_diff_L : (Vn+e_Vn)/(R+e_h);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -137,8 +137,7 @@ After substitution of the expected value for the state, zero error, into F we ob
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-zeroErrors : [e_a=0,e_b=0,e_c=0,e_d=0,e_Vn=0,e_Ve=0,e_Vd=0,
-e_l=0,e_L=0,e_h=0,e_fx=0,e_fy=0,e_fz=0,e_P=0,e_Q=0,e_R=0];
+zeroErrors : [e_a=0,e_b=0,e_c=0,e_d=0,e_Vn=0,e_Ve=0,e_Vd=0,e_l=0,e_L=0,e_h=0,e_fx=0,e_fy=0,e_fz=0,e_wx=0,e_wy=0,e_wz=0];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -197,7 +196,7 @@ e_mag_dec_dip : est_mag_dec_dip - mag_dec_dip;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-R_mag_n : trigsimp(subst([cos(e_dec)=1,sin(e_dec)=dec,
+R_mag_n : trigsimp(subst([cos(e_dec)=1,sin(e_dec)=e_dec,
 cos(e_dip)=1,sin(e_dip)=e_dip,e_dec^2=sigDec^2,
 e_dip^2=sigDip^2,e_dip=0,e_dec=0],
 expand(trigexpand(e_mag_dec_dip.transpose(e_mag_dec_dip)))));

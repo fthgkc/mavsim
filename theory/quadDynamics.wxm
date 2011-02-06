@@ -99,7 +99,7 @@ Q_dot;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-state : transpose([V_t, alpha, theta, Q, pow, beta, phi, P, R]);
+state : transpose([V_t, alpha, theta, wy, pow, beta, phi, wx, wz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -118,28 +118,25 @@ input : transpose([delta_FB_LR,delta_F_B, delta_L_R, T_sum]);
 /* [wxMaxima: comment start ]
 When finding G we need to express dstate in terms of the input ratios and thrust sums. This means we need to substitute
 all occurences of T_i with the ratios.
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
 As a rough example The equation in the x direction should be ((T1+T2+T3+T4)*sin(phi)-D)/m = Vt_dot
 Which can be expressed (T_sum*sin(phi)-D)/m = Vt_dot;
-/* [wxMaxima: input   end   ] */
+   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
 Vt_dot : (T_sum*sin(phi)-D)/m;
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
+/* [wxMaxima: comment start ]
 This equations is not complete yet as it assumes velocity is in the horizontal direction, which is 
-only true for the desired trim condition.;
-/* [wxMaxima: input   end   ] */
+only true for the desired trim condition.
+   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
 d_state : transpose([Vt_dot,0,theta_dot,b_w_ib_b[2,1],0,0,phi_dot,b_w_ib_b[1,1],b_w_ib_b[3,1]]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F_quad : jacobian(makelist(d_state[i,1],i,9),makelist(state[i,1],i,1,9));
+F_quad : jacobian(makelist(d_state[i,1],i,length(d_state)),makelist(state[i,1],i,1,length(state)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
