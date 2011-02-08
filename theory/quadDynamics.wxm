@@ -76,36 +76,89 @@ RPM(dutycyle,KV,batVolt) := dutycycle*KV*2*pi/60*batVolt;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-T(rho,dutycycle,R,liftCurveSlope,nBlades,chord,KV,theta_tau,phi_tau,batVolt) := rho/4*(dutycycle*KV*2*pi/60*batVolt)^2*R^3*
+Thrust(dutycycle) := rho/4*(RPM(dutycycle,KV,batVolt))^2*rBlade^3*
 liftCurveSlope*nBlades*chord*(theta_tau-phi_tau);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-pi:3.14159;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-T1:T(1.225,1,0.125,2*pi,2,0.025,850,10*pi/180,8.5*pi/180,15);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-T1/9.81/.875;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
 http://www.aveox.com/DC.aspx  Equations for torque calculation in terms of RPM
+I = Current 
+Inl = No load current 
+J = Torque (oz-in/A) 
+Kb = Voltage constant (Volt/1000 RPM) 
+Kt = Torque constant (oz-In/A) 
+Pi = Power input (Watts)  
+Rm = Terminal resistance 
+RPM = Revolutions/minute 
+V = Voltage
+
+Torque constant: Kt=Kb x 1.345 
+Current draw of motor: I = [V-(Kb x kRPM)]/Rm 
+Torque output of motor: J = (Kt x I) - (Kt x Inl) 
+RPM of motor: kRPM = (V - RmI) / Kb 
+KV = 1000/Kb
+Kb = 1000/KV
+0.000968504759=1.345
+J = (
+
+CHeck current draw of motor equation.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Torque(Kb,I,Inl,V,RPM,Rm):= 1.345*Kb*((V-(Kb*RPM/1000))/Rm-Inl);
+Torque(dutycycle):= 0.968504759/KV*((batVolt*dutycycle)/Rm-Inl);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 Torque(1,1,1,1,1,1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M_b_AT_quad : transpose([(T_L - T_R)*dm , (T_F-T_B)*dm, t_L+t_R-t_F-t_B]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T_L : Thrust(dutycycle_L);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T_R: Thrust(dutycycle_R);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T_F: Thrust(dutycycle_F);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T_B: Thrust(dutycycle_B);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+t_R: Torque(dutycycle_R);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+t_L: Torque(dutycycle_L);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+t_F: Torque(dutycycle_F);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+t_B: Torque(dutycycle_B);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M_b_AT_quad : factor(expand(fullratsimp(transpose([(T_L - T_R)*dm , (T_F-T_B)*dm, t_L+t_R-t_F-t_B]))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([(dutycycle_R-dutycycle_L)=delta_RL,(dutycycle_F-dutycycle_B)=delta_FB,
+(dutycycle_R+dutycycle_L-dutycycle_F-dutycycle_B)=delta_LR_FB],M_b_AT_quad);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -175,6 +228,7 @@ F_quad_symmetric: subst([Jxy=0,Jyz=0,Jxz=0,F_b_T[3,1]=T_sum,F_b_T[1,1]=0,F_b_T[2
 /* [wxMaxima: input   start ] */
 G_quad : jacobian(makelist(subst([M_b_AT[1,1]=T_sum],d_x[i,1]),i,length(d_x)),makelist(u[i,1],i,1,length(u)));
 /* [wxMaxima: input   end   ] */
+
 
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
