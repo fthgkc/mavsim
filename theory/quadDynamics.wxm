@@ -1,9 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.6 ] */
-
-/* [wxMaxima: title   start ]
-Quadrotor Dynamics
-   [wxMaxima: title   end   ] */
+/* [ Created with wxMaxima version 0.8.7 ] */
 
 /* [wxMaxima: input   start ] */
 batch("common.wxm");
@@ -61,7 +57,7 @@ The input will be expressed in terms of motor thrust ratios where delta_FB_LR re
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-u : transpose([delta_FB_LR,delta_F_B, delta_L_R, T_sum]);
+u : transpose([delta_LR_FB,delta_F_B, delta_L_R, T_sum]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -87,9 +83,67 @@ This equations is not complete yet as it assumes velocity is in the horizontal d
 only true for the desired trim condition.
    [wxMaxima: comment end   ] */
 
+/* [wxMaxima: comment start ]
+'Bond Graph Dynamic Modeling and Stabilization of a Quad-Rotor Helicopter'
+ page 3 equations for Thrust vs Rpm
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+T(rho,dutycycle,R,liftCurveSlope,nBlades,chord,KV,theta_tau,phi_tau,batVolt) := rho/4*(dutycycle*KV*2*pi/60*batVolt)^2*R^3*
+liftCurveSlope*nBlades*chord*(theta_tau-phi_tau);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pi:3.14159;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T1:T(1.225,1,0.125,2*pi,2,0.025,850,10*pi/180,8.5*pi/180,15);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+T1/9.81/.875;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+http://www.aveox.com/DC.aspx  Equations for torque calculation in terms of RPM
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Torque(Kb,Kt,I,Inl,V,RPM,Rm,P):= Kt*((V-(Kb*RPM/1000))/Rm-Inl);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Kt:Kb*1.345;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Torque(850/1000,Kt,I,0,11.1,;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F_w_A : transpose([D,C,L]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F_w_AT : C3(beta).C2(alpha).F_b_AT - F_w_A;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C_wb : C2(alpha).C3(beta);
+/* [wxMaxima: input   end   ] */
+
 /* [wxMaxima: input   start ] */
 d_x : transpose([Vt_dot,0,theta_dot,b_w_ib_b[2,1],0,0,phi_dot,b_w_ib_b[1,1],b_w_ib_b[3,1]]);
 /* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Linearization of Dynamics
+   [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
 F_quad : fullratsimp(jacobian(makelist(d_x[i,1],i,length(d_x)),makelist(x[i,1],i,1,length(x))));

@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.6 ] */
+/* [ Created with wxMaxima version 0.8.7 ] */
 
 /* [wxMaxima: title   start ]
 Common Equations
@@ -168,15 +168,15 @@ To obtain the direction cosine matrix in terms of euler angles we first start wi
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-C1n_euler(a) := matrix([1,0,0],[0,cos(a),sin(a)],[0,-sin(a),cos(a)]);
+C1(a) := matrix([1,0,0],[0,cos(a),sin(a)],[0,-sin(a),cos(a)]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C21_euler(a) := matrix([cos(a),0,-sin(a)],[0,1,0],[sin(a),0,cos(a)]);
+C2(a) := matrix([cos(a),0,-sin(a)],[0,1,0],[sin(a),0,cos(a)]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-Cb2_euler(a) := matrix([cos(a),-sin(a),0],[sin(a),cos(a),0],[0,0,1]);
+C3(a) := matrix([cos(a),sin(a),0],[-sin(a),cos(a),0],[0,0,1]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -184,7 +184,7 @@ We can compose the body 3-2-1 direction cosine matrix using the direction cosine
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-C_bn_euler : Cb2_euler(phi).C21_euler(theta).C1n_euler(psi);
+C_bn_euler : C1(phi).C2(theta).C3(psi);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
