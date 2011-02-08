@@ -26,7 +26,7 @@ M_b_AT : genmatrix(M_b_AT,3,1);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F_b_AT : genmatrix(F_b_AT,3,1);
+F_b_T : genmatrix(F_b_T,3,1);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -46,7 +46,7 @@ We now construct the state vector for the dynamcis in the stability axis.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-x : transpose([V_t, alpha, theta, wy, pow, beta, phi, wx, wz]);
+x : transpose([V_t, alpha, theta, wy, beta, phi, wx, wz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -66,27 +66,14 @@ all occurences of T_i with the ratios.
 As a rough example The equation in the x direction should be:
    [wxMaxima: comment end   ] */
 
-/* [wxMaxima: input   start ] */
-Vt_dot : ((T1+T2+T3+T4)*sin(phi)-D)/m;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-Which can be expressed using T_sum
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-Vt_dot : subst(T1+T2+T3+T4=T_sum,Vt_dot);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-This equations is not complete yet as it assumes velocity is in the horizontal direction, which is 
-only true for the desired trim condition.
-   [wxMaxima: comment end   ] */
-
 /* [wxMaxima: comment start ]
 'Bond Graph Dynamic Modeling and Stabilization of a Quad-Rotor Helicopter'
  page 3 equations for Thrust vs Rpm
    [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+RPM(dutycyle,KV,batVolt) := dutycycle*KV*2*pi/60*batVolt;
+/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 T(rho,dutycycle,R,liftCurveSlope,nBlades,chord,KV,theta_tau,phi_tau,batVolt) := rho/4*(dutycycle*KV*2*pi/60*batVolt)^2*R^3*
@@ -114,15 +101,11 @@ http://www.aveox.com/DC.aspx  Equations for torque calculation in terms of RPM
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Torque(Kb,Kt,I,Inl,V,RPM,Rm,P):= Kt*((V-(Kb*RPM/1000))/Rm-Inl);
+Torque(Kb,I,Inl,V,RPM,Rm):= 1.345*Kb*((V-(Kb*RPM/1000))/Rm-Inl);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-Kt:Kb*1.345;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-Torque(850/1000,Kt,I,0,11.1,;
+Torque(1,1,1,1,1,1);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -130,15 +113,47 @@ F_w_A : transpose([D,C,L]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F_w_AT : C3(beta).C2(alpha).F_b_AT - F_w_A;
+C_wb : C3(beta).C2(-alpha);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C_wb : C2(alpha).C3(beta);
+F_w : C_wb.F_b_T - F_w_A + m*C_wb.C_bn_euler.g_n;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_x : transpose([Vt_dot,0,theta_dot,b_w_ib_b[2,1],0,0,phi_dot,b_w_ib_b[1,1],b_w_ib_b[3,1]]);
+v_rel_w : transpose([Vt,0,0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dw_v_rel_w : transpose([d_Vt,0,0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+w_wb : transpose([0,0,d_beta]) + C3(beta).transpose([0,-d_alpha,0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+db_v_rel_w : dw_v_rel_w + cross(w_wb,v_rel_w);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eqn_d_v_w(i) := m*db_v_rel_w[i,1] = F_w[i,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq_d_Vt : rhs(solve(eqn_d_v_w(1),d_Vt)[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq_d_beta : rhs(solve(eqn_d_v_w(2),d_beta)[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq_d_alpha : rhs(solve(eqn_d_v_w(3),d_alpha)[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x : transpose([eq_d_Vt,eq_d_alpha,d_theta,b_w_ib_b[2,1],eq_d_beta,d_phi,b_w_ib_b[1,1],b_w_ib_b[3,1]]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -154,11 +169,11 @@ Assuming that the quad is symmetric about the x and y axis this simplifies to:
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-F_quad_symmetric: subst([Jxy=0,Jyz=0,Jxz=0],F_quad);
+F_quad_symmetric: subst([Jxy=0,Jyz=0,Jxz=0,F_b_T[3,1]=T_sum,F_b_T[1,1]=0,F_b_T[2,1]=0],F_quad);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-G_quad : jacobian(makelist(d_x[i,1],i,9),makelist(u[i,1],i,1,length(u)));
+G_quad : jacobian(makelist(subst([M_b_AT[1,1]=T_sum],d_x[i,1]),i,length(d_x)),makelist(u[i,1],i,1,length(u)));
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
