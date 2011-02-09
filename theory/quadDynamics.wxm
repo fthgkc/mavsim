@@ -57,7 +57,7 @@ The input will be expressed in terms of motor thrust ratios where delta_FB_LR re
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-u : transpose([delta_LR_FB,delta_Fsq_Bsq,delta_Rsq_Lsq, T_sumSq]);
+u : transpose([delta_LR_FB,delta_Fsq_Bsq,delta_Lsq_Rsq, T_sumSq]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -155,7 +155,7 @@ t_B : Torque(dutycycle_B);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-M_b_AT_quad : fullratsubst([dutycycle_R^2-dutycycle_L^2=delta_Rsq_Lsq,
+M_b_AT_quad : fullratsubst([dutycycle_L^2-dutycycle_R^2=delta_Lsq_Rsq,
 dutycycle_F^2-dutycycle_B^2=delta_Fsq_Bsq,
 (dutycycle_R+dutycycle_L-dutycycle_F-dutycycle_B)=delta_LR_FB],
 factor(expand(fullratsimp(
@@ -239,7 +239,7 @@ d_x : transpose([eq_d_Vt,eq_d_alpha,d_theta,b_w_ib_b[2,1],eq_d_beta,d_phi,b_w_ib
 quadAssumptions : [F_b_T[3,1]=T_F+T_B+T_L+T_R,F_b_T[2,1]=0,F_b_T[1,1]=0,
     Jxy=0,Jyz=0,Jxz=0,dutycycle_F^2+dutycycle_B^2+dutycycle_L^2+dutycycle_R^2=T_sumSq,
 dutycycle_L+dutycycle_R-dutycyle_F-dutycycle_B=delta_LR_FB,
-dutycycle_R^2-dutycycle_L^2=delta_Rsq_Lsq,
+dutycycle_L^2-dutycycle_R^2=delta_Lsq_Rsq,
 dutycycle_F^2-dutycycle_B^2=delta_Fsq_Bsq,
 M_b_AT[1,1]=M_b_AT_quad[1,1],M_b_AT[2,1]=M_b_AT_quad[2,1],M_b_AT[3,1]=M_b_AT_quad[3,1]];
 /* [wxMaxima: input   end   ] */
@@ -284,11 +284,11 @@ g=9.81,T_sumSq=2,m=1,pi=3.14159,Jx=1,Jy=1,Jz=1,KV=850,batVolt=11.1,Rm=350,dm=.5]
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F_quad_forward : subst(forward_constants,F_quad_trim);
+quad_forward_F : subst(forward_constants,F_quad_trim);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-G_quad_forward : subst(forward_constants,G_quad_trim);
+quad_forward_G : subst(forward_constants,G_quad_trim);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -304,7 +304,7 @@ u;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C_quad : jacobian(makelist(z_quad[i,1],i,1,length(z_quad)),makelist(x[i,1],i,1,length(x)));
+quad_C : jacobian(makelist(z_quad[i,1],i,1,length(z_quad)),makelist(x[i,1],i,1,length(x)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -312,15 +312,15 @@ Fortran Output
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/quad_F_forward.f90", f90(F_quad_forward));
+with_stdout ("code/quad_forward_F.f90", f90(quad_forward_F));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/quad_G_forward.f90", f90(G_quad_forward));
+with_stdout ("code/quad_forward_G.f90", f90(quad_forward_G));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/quad_C.f90", f90(C_quad));
+with_stdout ("code/quad_C.f90", f90(quad_C));
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

@@ -1,5 +1,6 @@
 #!/bin/bash
 srcPath=../src/navigation/
+sciPath=.
 maxima -p lispconfig -b ins.wxm
 
 cat code/ins_dynamics_f.f90 | sed \
@@ -155,3 +156,18 @@ cat code/ins_C_nb_euler.f90 | sed \
 	> ${srcPath}/ins_C_nb_euler.hpp
 
 maxima -p lispconfig -b quadDynamics.wxm
+
+cat code/quad_forward_F.f90 | sed \
+	-e "s/$/;/g" \
+	> ${sciPath}/quad.sci
+
+cat code/quad_forward_G.f90 | sed \
+	-e "s/$/;/g" \
+	>> ${sciPath}/quad.sci
+
+cat code/quad_C.f90 | sed \
+	-e "s/$/;/g" \
+	>> ${sciPath}/quad.sci
+
+echo "quad_forward_ss = syslin('c',quad_forward_F,quad_forward_G,quad_C);" >> ${sciPath}/quad.sci
+
