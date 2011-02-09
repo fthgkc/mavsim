@@ -1,6 +1,7 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
 /* [ Created with wxMaxima version 0.8.7 ] */
 
+/* [wxMaxima: hide output   ] */
 /* [wxMaxima: input   start ] */
 batch("common.wxm");
 /* [wxMaxima: input   end   ] */
@@ -57,7 +58,7 @@ The input will be expressed in terms of motor thrust ratios where delta_FB_LR re
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-u : transpose([delta_LR_FB,delta_F_B, delta_L_R, T_sum]);
+u : transpose([delta_LR_FB,delta_Fsq_Bsq,delta_Rsq_Lsq, T_sum]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -153,12 +154,13 @@ M_b_AT_quad : factor(expand(fullratsimp(transpose([(T_L - T_R)*dm , (T_F-T_B)*dm
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-subst([(dutycycle_R-dutycycle_L)=delta_RL,(dutycycle_F-dutycycle_B)=delta_FB,
+M_b_AT_quad : fullratsubst([dutycycle_R^2-dutycycle_L^2=delta_Rsq_Lsq,
+dutycycle_F^2-dutycycle_B^2=delta_Fsq_Bsq,
 (dutycycle_R+dutycycle_L-dutycycle_F-dutycycle_B)=delta_LR_FB],M_b_AT_quad);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-B
+B;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -226,9 +228,17 @@ F_quad_symmetric: subst([Jxy=0,Jyz=0,Jxz=0,F_b_T[3,1]=T_sum,F_b_T[1,1]=0,F_b_T[2
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-G_quad : jacobian(makelist(subst([M_b_AT[1,1]=T_sum],d_x[i,1]),i,length(d_x)),makelist(u[i,1],i,1,length(u)));
+
+G_quad : jacobian(makelist(
+    fullratsimp(subst([M_b_AT[1,1]=M_b_AT_quad[1,1],M_b_AT[2,1]=M_b_AT_quad[2,1],M_b_AT[3,1]=M_b_AT_quad[3,1]],d_x))[i,1],
+    i,length(d_x)),makelist(u[i,1],i,1,length(u)));
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: input   start ] */
+G_quad_symmetric : jacobian(makelist(
+    fullratsimp(subst([M_b_AT[1,1]=M_b_AT_quad[1,1],M_b_AT[2,1]=M_b_AT_quad[2,1],M_b_AT[3,1]=M_b_AT_quad[3,1],Jxy=0,Jyz=0,Jxz=0],d_x))[i,1],
+    i,length(d_x)),makelist(u[i,1],i,1,length(u)));
+/* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
