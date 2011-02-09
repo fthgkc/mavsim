@@ -30,6 +30,10 @@ load(vect);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
+C_nb : genmatrix(C_nb,3,3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
 f_b : transpose([fx,fy,fz]);
 /* [wxMaxima: input   end   ] */
 

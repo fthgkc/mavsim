@@ -1,7 +1,6 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
 /* [ Created with wxMaxima version 0.8.7 ] */
 
-/* [wxMaxima: hide output   ] */
 /* [wxMaxima: input   start ] */
 batch("common.wxm");
 /* [wxMaxima: input   end   ] */
@@ -47,7 +46,7 @@ We now construct the state vector for the dynamcis in the stability axis.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-x : transpose([V_t, alpha, theta, wy, beta, phi, wx, wz]);
+x : transpose([Vt, alpha, theta, wy, beta, phi, wx, wz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -58,7 +57,7 @@ The input will be expressed in terms of motor thrust ratios where delta_FB_LR re
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-u : transpose([delta_LR_FB,delta_Fsq_Bsq,delta_Rsq_Lsq, T_sum]);
+u : transpose([delta_LR_FB,delta_Fsq_Bsq,delta_Rsq_Lsq, T_sumSq]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -77,8 +76,22 @@ RPM(dutycyle,KV,batVolt) := dutycycle*KV*2*pi/60*batVolt;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-Thrust(dutycycle) := rho/4*(RPM(dutycycle,KV,batVolt))^2*rBlade^3*
+ThrustFull(dutycycle) := rho/4*(RPM(dutycycle,KV,batVolt))^2*rBlade^3*
 liftCurveSlope*nBlades*chord*(theta_tau-phi_tau);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Most of these are constants so we will substitute the constant terms as gamma.
+Gamma = (chord*pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlades*rBlade^3)/3600
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Thrust(dutycycle) := fullratsubst([(chord*pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlades*rBlade^3)/3600=GammaT],ThrustFull(dutycycle));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+GammaT(rho,theta_tau,phi_tau,batVolt,KV,liftCurveSlope,nBlades,rBlade) :=
+(chord*pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlades*rBlade^3)/3600;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -110,57 +123,43 @@ Torque(dutycycle):= 0.968504759/KV*((batVolt*dutycycle)/Rm-Inl);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-Torque(1,1,1,1,1,1);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-M_b_AT_quad : transpose([(T_L - T_R)*dm , (T_F-T_B)*dm, t_L+t_R-t_F-t_B]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 T_L : Thrust(dutycycle_L);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-T_R: Thrust(dutycycle_R);
+T_R : Thrust(dutycycle_R);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-T_F: Thrust(dutycycle_F);
+T_F : Thrust(dutycycle_F);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-T_B: Thrust(dutycycle_B);
+T_B : Thrust(dutycycle_B);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-t_R: Torque(dutycycle_R);
+t_L : Torque(dutycycle_L);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-t_L: Torque(dutycycle_L);
+t_R : Torque(dutycycle_R);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-t_F: Torque(dutycycle_F);
+t_F : Torque(dutycycle_F);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-t_B: Torque(dutycycle_B);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-M_b_AT_quad : factor(expand(fullratsimp(transpose([(T_L - T_R)*dm , (T_F-T_B)*dm, t_L+t_R-t_F-t_B]))));
+t_B : Torque(dutycycle_B);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 M_b_AT_quad : fullratsubst([dutycycle_R^2-dutycycle_L^2=delta_Rsq_Lsq,
 dutycycle_F^2-dutycycle_B^2=delta_Fsq_Bsq,
-(dutycycle_R+dutycycle_L-dutycycle_F-dutycycle_B)=delta_LR_FB],M_b_AT_quad);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-B;
+(dutycycle_R+dutycycle_L-dutycycle_F-dutycycle_B)=delta_LR_FB],
+factor(expand(fullratsimp(
+transpose([(T_L - T_R)*dm , (T_F-T_B)*dm, t_L+t_R-t_F-t_B])))));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -211,12 +210,25 @@ eq_d_alpha : rhs(solve(eqn_d_v_w(3),d_alpha)[1]);
 d_x : transpose([eq_d_Vt,eq_d_alpha,d_theta,b_w_ib_b[2,1],eq_d_beta,d_phi,b_w_ib_b[1,1],b_w_ib_b[3,1]]);
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: input   start ] */
+quadAssumptions : [F_b_T[3,1]=T_F+T_B+T_L+T_R,F_b_T[2,1]=0,F_b_T[1,1]=0,
+    Jxy=0,Jyz=0,Jxz=0,dutycycle_F^2+dutycycle_B^2+dutycycle_L^2+dutycycle_R^2=T_sumSq,
+dutycycle_L+dutycycle_R-dutycyle_F-dutycycle_B=delta_LR_FB,
+dutycycle_R^2-dutycycle_L^2=delta_Rsq_Lsq,
+dutycycle_F^2-dutycycle_B^2=delta_Fsq_Bsq,
+M_b_AT[1,1]=M_b_AT_quad[1,1],M_b_AT[2,1]=M_b_AT_quad[2,1],M_b_AT[3,1]=M_b_AT_quad[3,1]];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_quad : fullratsubst(quadAssumptions,d_x);
+/* [wxMaxima: input   end   ] */
+
 /* [wxMaxima: section start ]
 Linearization of Dynamics
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-F_quad : fullratsimp(jacobian(makelist(d_x[i,1],i,length(d_x)),makelist(x[i,1],i,1,length(x))));
+F_quad : fullratsimp(jacobian(makelist(d_x_quad[i,1],i,length(d_x_quad)),makelist(x[i,1],i,1,length(x))));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -224,20 +236,7 @@ Assuming that the quad is symmetric about the x and y axis this simplifies to:
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-F_quad_symmetric: subst([Jxy=0,Jyz=0,Jxz=0,F_b_T[3,1]=T_sum,F_b_T[1,1]=0,F_b_T[2,1]=0],F_quad);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-
-G_quad : jacobian(makelist(
-    fullratsimp(subst([M_b_AT[1,1]=M_b_AT_quad[1,1],M_b_AT[2,1]=M_b_AT_quad[2,1],M_b_AT[3,1]=M_b_AT_quad[3,1]],d_x))[i,1],
-    i,length(d_x)),makelist(u[i,1],i,1,length(u)));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-G_quad_symmetric : jacobian(makelist(
-    fullratsimp(subst([M_b_AT[1,1]=M_b_AT_quad[1,1],M_b_AT[2,1]=M_b_AT_quad[2,1],M_b_AT[3,1]=M_b_AT_quad[3,1],Jxy=0,Jyz=0,Jxz=0],d_x))[i,1],
-    i,length(d_x)),makelist(u[i,1],i,1,length(u)));
+G_quad : jacobian(makelist(d_x_quad[i,1],i,length(d_x_quad)),makelist(u[i,1],i,1,length(u)));
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
