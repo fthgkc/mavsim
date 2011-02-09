@@ -167,7 +167,28 @@ Check these equaitons.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-F_w_A : transpose([-D,-C,-L]);
+Cl : 2*pi*alpha;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Assuming an uncambered lifting surface ( the frame) we can estimate the drag polar as:
+home.anadolu.edu.tr/~mcavcar/common/Aerodynamicforces.pdf
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Cd : Cd0 + K_cd_cl*Cl^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+NOTE: This is probably wrong
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Cs : 2*pi*beta;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F_w_A : transpose([-Cd*.5*rho*Vt^2*s_frame,-Cs*.5*rho*Vt^2*s_frame,-Cl*.5*rho*Vt^2*s_frame]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -224,7 +245,7 @@ M_b_AT[1,1]=M_b_AT_quad[1,1],M_b_AT[2,1]=M_b_AT_quad[2,1],M_b_AT[3,1]=M_b_AT_qua
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_x_quad : fullratsubst(quadAssumptions,d_x);
+d_x_quad : fullratsimp(trigsimp(fullratsubst(quadAssumptions,d_x)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -232,8 +253,8 @@ Linearization of Dynamics
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-F_quad : fullratsimp(jacobian(makelist(d_x_quad[i,1],i,length(d_x_quad)),
-makelist(x[i,1],i,1,length(x))));
+F_quad : jacobian(makelist(d_x_quad[i,1],i,length(d_x_quad)),
+makelist(x[i,1],i,1,length(x)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -245,11 +266,11 @@ G_quad : jacobian(makelist(d_x_quad[i,1],i,length(d_x_quad)),makelist(u[i,1],i,1
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-trimAssumptions : [wx=0,wy=0,wz=0,beta=0,phi=0,theta-alpha=gamma,gamma=0];
+trimAssumptions : [wx=0,wy=0,wz=0,beta=0,phi=0,alpha=theta];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F_quad_trim : fullratsubst(trimAssumptions,trigsimp(trigreduce(F_quad)));
+F_quad_trim : fullratsimp(subst([beta=0,phi=0,wx=0,wy=0,wz=0,theta-alpha=gamma],trigsimp(trigreduce(F_quad))));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -257,7 +278,49 @@ G_quad_trim : fullratsubst(trimAssumptions,trigsimp(trigreduce(G_quad)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-GammaT(rho,theta_tau,phi_tau,batVolt,KV,liftCurveSlope,nBlades,rBlade);
+forward_constants : [Vt=10,alpha=10*pi/180,theta=10*pi/180,
+K_cd_cl=.1,rho=1.225,Cd0=.001,s_frame=.1,gamma=0,GammaT=1,
+g=9.81,T_sumSq=2,m=1,pi=3.14159,Jx=1,Jy=1,Jz=1,KV=850,batVolt=11.1,Rm=350,dm=.5];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F_quad_forward : subst(forward_constants,F_quad_trim);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+G_quad_forward : subst(forward_constants,G_quad_trim);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We can't observe alpha or beta
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+z_quad : transpose([x[1,1],x[3,1],x[4,1],x[6,1],x[7,1],x[8,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+u;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C_quad : jacobian(makelist(z_quad[i,1],i,1,length(z_quad)),makelist(x[i,1],i,1,length(x)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Fortran Output
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/quad_F_forward.f90", f90(F_quad_forward));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/quad_G_forward.f90", f90(G_quad_forward));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/quad_C.f90", f90(C_quad));
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

@@ -429,3 +429,5 @@ cat code/ins_C_nb_euler.f90 | sed \
 	-e "s/,3\]/,2\]/g" \
 	-e "s/,/\]\[/g" \
 	> ${srcPath}/ins_C_nb_euler.hpp
+
+maxima -p lispconfig -b quadDynamics.wxm
