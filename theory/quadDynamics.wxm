@@ -72,7 +72,7 @@ As a rough example The equation in the x direction should be:
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-RPM(dutycyle,KV,batVolt) := dutycycle*KV*2*pi/60*batVolt;
+RPM(dutycyle,KV,batVolt) := dutycycle*KV*2*%pi/60*batVolt;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -86,12 +86,12 @@ Gamma = (chord*pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlade
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Thrust(dutycycle) := fullratsubst([(chord*pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlades*rBlade^3)/3600=GammaT],ThrustFull(dutycycle));
+Thrust(dutycycle) := fullratsubst([(chord*%pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlades*rBlade^3)/3600=GammaT],ThrustFull(dutycycle));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 GammaT(rho,theta_tau,phi_tau,batVolt,KV,liftCurveSlope,nBlades,rBlade) :=
-(chord*pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlades*rBlade^3)/3600;
+(chord*%pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlades*rBlade^3)/3600;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -167,7 +167,7 @@ Check these equaitons.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Cl : 2*pi*alpha;
+Cl : 2*%pi*alpha;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -184,11 +184,11 @@ NOTE: This is probably wrong
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Cs : 2*pi*beta;
+Cs : 2*%pi*beta;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F_w_A : transpose([-Cd*.5*rho*Vt^2*s_frame,-Cs*.5*rho*Vt^2*s_frame,-Cl*.5*rho*Vt^2*s_frame]);
+F_w_A : transpose([-Cd*.5*rho*Vt^2*s_frame,-Cs*.5*rho*Vt^2*s_frame_sid,-Cl*.5*rho*Vt^2*s_frame]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -248,6 +248,62 @@ M_b_AT[1,1]=M_b_AT_quad[1,1],M_b_AT[2,1]=M_b_AT_quad[2,1],M_b_AT[3,1]=M_b_AT_qua
 d_x_quad : fullratsimp(trigsimp(fullratsubst(quadAssumptions,d_x)));
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: input   start ] */
+d_x_quad_trim_eq : subst([phi=0,beta=0,wx=0,wy=0,wz=0,alpha=theta],d_x_quad);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T_sumSq_trim : rhs(solve(d_x_quad_trim_eq[1,1],T_sumSq)[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+theta_sol:trigsimp(subst([T_sumSq=T_sumSq_trim],d_x_quad_trim_eq[2,1]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+theta_sol_num:ratnumer(theta_sol);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+K was calculated by K=1/pi/AR/e where e (Oswald efficiency factor) is assumed to be 0.7 
+Cd0 was assumed to be the value of Cd0 of a cube. 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+eq1 : expand(subst([rho=1.225,s_frame=.5,K_cd_cl=0.45,Cd0=1.05,Vt=2,g=9.81,m=1],[theta_sol_num]))[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+plot2d(subst([theta=deg*%pi/180],eq1),[deg,-80,0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+float(fullratsimp(subst([theta=-10*%pi/180,rho=1.225,s_frame=.5,K_cd_cl=0.45,Cd0=1.05,Vt=2,g=9.81,m=1],T_sumSq_trim)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(rho=1.225,theta_tau=,phi_tau,batVolt,KV,liftCurveSlope,nBlades,rBlade):=
+(chord*%pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlades*rBlade^3)/3600
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve([theta_sol_num=0],[theta]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve([theta_sol],[theta]);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+algsys([d_x_quad_trim_eq[1,1],d_x_quad_trim_eq[2,1]],[Vt]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_quad_trim_eq[2,1];
+/* [wxMaxima: input   end   ] */
+
 /* [wxMaxima: section start ]
 Linearization of Dynamics
    [wxMaxima: section end   ] */
@@ -278,9 +334,9 @@ G_quad_trim : fullratsubst(trimAssumptions,trigsimp(trigreduce(G_quad)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-forward_constants : [Vt=10,alpha=10*pi/180,theta=10*pi/180,
+forward_constants : [Vt=10,alpha=10*%pi/180,theta=10*%pi/180,
 K_cd_cl=.1,rho=1.225,Cd0=.001,s_frame=.1,gamma=0,GammaT=1,
-g=9.81,T_sumSq=2,m=1,pi=3.14159,Jx=1,Jy=1,Jz=1,KV=850,batVolt=11.1,Rm=350,dm=.5];
+g=9.81,T_sumSq=2,m=1,Jx=1,Jy=1,Jz=1,KV=850,batVolt=11.1,Rm=350,dm=.5];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -322,6 +378,7 @@ with_stdout ("code/quad_forward_G.f90", f90(quad_forward_G));
 /* [wxMaxima: input   start ] */
 with_stdout ("code/quad_C.f90", f90(quad_C));
 /* [wxMaxima: input   end   ] */
+
 
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
