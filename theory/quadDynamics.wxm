@@ -1,6 +1,7 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
 /* [ Created with wxMaxima version 0.8.7 ] */
 
+/* [wxMaxima: hide output   ] */
 /* [wxMaxima: input   start ] */
 batch("common.wxm");
 /* [wxMaxima: input   end   ] */
@@ -272,7 +273,7 @@ Cd0 was assumed to be the value of Cd0 of a cube.
 /* [wxMaxima: input   start ] */
 forward_constants : [GammaT=GammaT(rho,theta_tau,phi_tau,batVolt,KV,liftCurveSlope,nBlades,rBlade),
 Vt=2,alpha=theta,K_cd_cl=.45,rho=1.225,Cd0=1.05,s_frame=.5,s_frame_side=0.05,gamma=0,
-g=9.81,T_sumSq=2,m=1,Jx=1,Jy=1,Jz=1,KV=850,batVolt=11.1,Rm=350,dm=.5,theta_tau=10*%pi/180,
+g=9.81,m=1,Jx=1,Jy=1,Jz=1,KV=850,batVolt=11.1,Rm=350,dm=.5,theta_tau=10*%pi/180,
 phi_tau=0,nBlades=2,rBlade=0.125,liftCurveSlope=2*%pi,chord=0.025];
 /* [wxMaxima: input   end   ] */
 
@@ -285,7 +286,27 @@ plot2d(subst([theta=deg*%pi/180],eq1),[deg,-20,0]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-float(fullratsimp(subst([theta=-10*%pi/180,rho=1.225,s_frame=.5,K_cd_cl=0.45,Cd0=1.05,Vt=2,g=9.81,m=1],T_sumSq_trim)));
+T_sumSq_trim_val: subst([theta=-9.8*%pi/180],T_sumSq_trim);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+forward_constants2 : [T_sumSq=T_sumSq_trim_val,GammaT=GammaT(rho,theta_tau,phi_tau,batVolt,KV,liftCurveSlope,nBlades,rBlade),
+Vt=2,alpha=theta,K_cd_cl=.45,rho=1.225,Cd0=1.05,s_frame=.5,s_frame_side=0.05,gamma=0,
+g=9.81,m=1,Jx=1,Jy=1,Jz=1,KV=850,batVolt=11.1,Rm=350,dm=.5,theta_tau=10*%pi/180,
+phi_tau=0,nBlades=2,rBlade=0.125,liftCurveSlope=2*%pi,chord=0.025,theta=-9.8*%pi/180,
+delta_Fsq_Bsq=0,delta_Lsq_Rsq=0,delta_LR_FB=0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Evaluating dx of quad at trim with theta=-9.8 to make sure the matrix elements are zero.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+float(subst(forward_constants2,d_x_quad_trim_eq));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+float(fullratsimp(subst([theta=-9.8*%pi/180,rho=1.225,s_frame=.5,K_cd_cl=0.45,Cd0=1.05,Vt=2,g=9.81,m=1],T_sumSq_trim)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -330,11 +351,11 @@ G_quad_trim : fullratsubst(trimAssumptions,trigsimp(trigreduce(G_quad)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-quad_forward_F : float(subst(theta=-9.8*%pi/180,subst(forward_constants,F_quad_trim)));
+quad_forward_F : float(subst(theta=-9.8*%pi/180,subst(forward_constants2,F_quad_trim)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-quad_forward_G : float(subst(theta=-9.8*%pi/180,subst(forward_constants,G_quad_trim)));
+quad_forward_G : float(subst(theta=-9.8*%pi/180,subst(forward_constants2,G_quad_trim)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
