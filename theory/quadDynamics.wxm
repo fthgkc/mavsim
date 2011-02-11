@@ -1,7 +1,6 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
 /* [ Created with wxMaxima version 0.8.7 ] */
 
-/* [wxMaxima: hide output   ] */
 /* [wxMaxima: input   start ] */
 batch("common.wxm");
 /* [wxMaxima: input   end   ] */
@@ -268,14 +267,8 @@ theta_sol_num:ratnumer(theta_sol);
 /* [wxMaxima: comment start ]
 K was calculated by K=1/pi/AR/e where e (Oswald efficiency factor) is assumed to be 0.7 
 Cd0 was assumed to be the value of Cd0 of a cube. 
+Rm=V/I Ohm's law, where V=11.1V and I=0.9A (No load current)
    [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-forward_constants : [GammaT=GammaT(rho,theta_tau,phi_tau,batVolt,KV,liftCurveSlope,nBlades,rBlade),
-Vt=2,alpha=theta,K_cd_cl=.45,rho=1.225,Cd0=1.05,s_frame=.5,s_frame_side=0.05,gamma=0,
-g=9.81,m=1,Jx=1,Jy=1,Jz=1,KV=850,batVolt=11.1,Rm=350,dm=.5,theta_tau=10*%pi/180,
-phi_tau=0,nBlades=2,rBlade=0.125,liftCurveSlope=2*%pi,chord=0.025];
-/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 eq1 : expand(subst(forward_constants,[theta_sol_num]))[1];
@@ -292,7 +285,7 @@ T_sumSq_trim_val: subst([theta=-9.8*%pi/180],T_sumSq_trim);
 /* [wxMaxima: input   start ] */
 forward_constants2 : [T_sumSq=T_sumSq_trim_val,GammaT=GammaT(rho,theta_tau,phi_tau,batVolt,KV,liftCurveSlope,nBlades,rBlade),
 Vt=2,alpha=theta,K_cd_cl=.45,rho=1.225,Cd0=1.05,s_frame=.5,s_frame_side=0.05,gamma=0,
-g=9.81,m=1,Jx=1,Jy=1,Jz=1,KV=850,batVolt=11.1,Rm=350,dm=.5,theta_tau=10*%pi/180,
+g=9.81,m=1,Jx=1,Jy=1,Jz=1,KV=850,batVolt=11.1,Rm=12.3,dm=.5,theta_tau=10*%pi/180,
 phi_tau=0,nBlades=2,rBlade=0.125,liftCurveSlope=2*%pi,chord=0.025,theta=-9.8*%pi/180,
 delta_Fsq_Bsq=0,delta_Lsq_Rsq=0,delta_LR_FB=0];
 /* [wxMaxima: input   end   ] */
@@ -373,6 +366,46 @@ u;
 /* [wxMaxima: input   start ] */
 quad_C : jacobian(makelist(z_quad[i,1],i,1,length(z_quad)),makelist(x[i,1],i,1,length(x)));
 /* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+  LR_FB                                  F_B                            L_R                               SUM  
+    0                        - 755.35399 - 157.04114s - 3.375D-14s     0                          - 70.362132 + 5.4495196s     
+    -                          -----------------------------------     -                          --------------------------   
+                                             2            3   4                                                           2   Vt
+    1                              5.2100047s + 6.7328328s + s         1                          5.2100047 +6.7328328 s+s   
+                                                                                                                               
+    0                          16.008271                               0                          0                            
+    -                          ---------                               -                          -                          theta
+                                    2                                                                                          
+    1                              s                                   1                          1                            
+                                                                                                                               
+    0                          16.008271                               0                          0                             
+    -                          ---------                               -                          -                          wy   
+    1                              s                                   1                          1                            
+                                                                                                                               
+  - 0.0001776 + 1.776D-15s     0                                       16.008271 + 3.553D-15s     0                            
+    ----------------------     -                                       ----------------------     -                          phi   
+               2                                                                  2                                            
+              s                1                                                 s                1                            
+                                                                                                                               
+    0                          0                                       16.008271                  0                            
+    -                          -                                       ---------                  -                          wx    
+    1                          1                                           s                      1                            
+                                                                                                                               
+    0.0010283                  0                                       0                          0                            
+    ---------                  -                                       -                          -                          wz  
+        s                      1                                       1                          1         
+
+Longitudinal SubSystem 
+1) wy with F_B (Pitch rate)
+2) Theta with wy 
+3) Vt with theta (Velocity)
+
+Lateral SubSystem
+1) wx with L_R (ROll rate)
+2) phi with wx
+3) wz with LR_FB
+   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: section start ]
 Fortran Output
