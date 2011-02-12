@@ -1,7 +1,7 @@
 #!/bin/bash
 srcPath=../src/navigation/
 sciPath=.
-maxima -p lispconfig -b ins.wxm
+maxima -b navigation.wxm
 
 cat code/ins_dynamics_f.f90 | sed \
 	-e "s/$/;/g" \
@@ -155,7 +155,7 @@ cat code/ins_C_nb_euler.f90 | sed \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
 	> ${srcPath}/ins_C_nb_euler.hpp
 
-maxima -p lispconfig -b quadDynamics.wxm
+maxima -b quadDynamics.wxm
 
 cat code/quad_forward_F.f90 | sed \
 	-e "s/$/;/g" \

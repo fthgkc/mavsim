@@ -10,75 +10,79 @@ Definitions
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-kill(all);
+kill(all)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-load(lrats);
+load(lrats)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-ratprint : false;
+ratprint : false$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-load(f90);
+load(f90)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-load(vect);
+load(vect)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C_nb : genmatrix(C_nb,3,3);
+C_nb : genmatrix(C_nb,3,3)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-f_b : transpose([fx,fy,fz]);
+f_b : transpose([fx,fy,fz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_f_b : transpose([fx+e_fx,fy+e_fy,fz+e_fz]);
+est_f_b : transpose([fx+e_fx,fy+e_fy,fz+e_fz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-w_ie : transpose([Omega*cos(L),0,-Omega*sin(L)]);
+w_ie : transpose([Omega*cos(L),0,-Omega*sin(L)])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_ie : transpose([Omega*cos(L+e_L),0,-Omega*sin(L+e_L)]);
+est_w_ie : transpose([Omega*cos(L+e_L),0,-Omega*sin(L+e_L)])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-w_en : transpose([Ve/R,-Vn/R,-Ve*tan(L)/R]);
+w_en : transpose([Ve/R,-Vn/R,-Ve*tan(L)/R])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_en : transpose([(Ve+e_Ve)/(R+e_h),-(Vn+e_Vn)/(R+e_h),-(Ve+e_Ve)*tan(L+e_L)/(R+e_h)]);
+est_w_en : transpose([(Ve+e_Ve)/(R+e_h),-(Vn+e_Vn)/(R+e_h),-(Ve+e_Ve)*tan(L+e_L)/(R+e_h)])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-w_ib : transpose([wx,wy,wz]);
+w_ib : transpose([wx,wy,wz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_ib : transpose([wx+e_wx,wy+e_wy,wz+e_wz]);
+est_w_ib : transpose([wx+e_wx,wy+e_wy,wz+e_wz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-v_n : transpose([Vn,Ve,Vd]);
+v_n : transpose([Vn,Ve,Vd])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_v_n : transpose([Vn+e_Vn,Ve+e_Ve,Vd+e_Vd]);
+est_v_n : transpose([Vn+e_Vn,Ve+e_Ve,Vd+e_Vd])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-g_n : transpose([0,0,g]);
+g_n : transpose([0,0,g])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_g_n : transpose([0,0,g+e_g]);
+est_g_n : transpose([0,0,g+e_g])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vector2list(v) := makelist(v[i,1],i,1,length(v))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -86,12 +90,12 @@ Vector / Matrices
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-cross(u,v) := matrix([0,-u[3,1],u[2,1]],[u[3,1],0,-u[1,1]],[-u[2,1],u[1,1],0]).v;
+cross(u,v) := matrix([0,-u[3,1],u[2,1]],[u[3,1],0,-u[1,1]],[-u[2,1],u[1,1],0]).v$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 skew(q) := matrix([q[1,1],-q[2,1],-q[3,1],-q[4,1]],[q[2,1],q[1,1],-q[4,1],q[3,1]],
-[q[3,1],q[4,1],q[1,1],-q[2,1]],[q[4,1],-q[3,1],q[2,1],q[1,1]]);
+[q[3,1],q[4,1],q[1,1],-q[2,1]],[q[4,1],-q[3,1],q[2,1],q[1,1]])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -99,11 +103,11 @@ Quaternions
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-quatProd(q,p) := skew(q).p;
+quatProd(q,p) := skew(q).p$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-quatConj(q) := transpose([q[1,1],-q[2,1],-q[3,1],-q[4,1]]);
+quatConj(q) := transpose([q[1,1],-q[2,1],-q[3,1],-q[4,1]])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -111,11 +115,11 @@ We use the quaternion rotation equation: v_n = q_nb * v_b * conjugate(q_nb)
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-quatRot(q,v) := quatProd(quatProd(q,transpose([0,v[1,1],v[2,1],v[3,1]])),quatConj(q));
+quatRot(q,v) := quatProd(quatProd(q,transpose([0,v[1,1],v[2,1],v[3,1]])),quatConj(q))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-quat_diff(q,w):=.5*skew(q).transpose([0,w[1,1],w[2,1],w[3,1]]);
+quat_diff(q,w):=.5*skew(q).transpose([0,w[1,1],w[2,1],w[3,1]])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -127,11 +131,11 @@ Now we can express the quaternion rotation in terms of the quaternion and compon
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-v : transpose([vx,vy,vz]);
+v : transpose([vx,vy,vz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-ratsimp(quatRot(q,v));
+ratsimp(quatRot(q,v))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -140,27 +144,27 @@ without loss of genarlity.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-quat2dcm(q) := jacobian(makelist(ratsimp(quatRot(q,v))[i,1],i,2,4),makelist(v[i,1],i,1,3));
+quat2dcm(q) := jacobian(makelist(ratsimp(quatRot(q,v))[i,1],i,2,4),makelist(v[i,1],i,1,3))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-kill(v);
+kill(v)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-q_nb : transpose([a,b,c,d]);
+q_nb : transpose([a,b,c,d])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_q_nb : transpose([a+e_a,b+e_b,c+e_c,d+e_d]);
+est_q_nb : transpose([a+e_a,b+e_b,c+e_c,d+e_d])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C_nb_quat : quat2dcm(q_nb);
+C_nb_quat : quat2dcm(q_nb)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_C_nb_quat : fullratsimp(C_nb_quat_est : quat2dcm(est_q_nb));
+est_C_nb_quat : fullratsimp(C_nb_quat_est : quat2dcm(est_q_nb))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -172,15 +176,15 @@ To obtain the direction cosine matrix in terms of euler angles we first start wi
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-C1(a) := matrix([1,0,0],[0,cos(a),sin(a)],[0,-sin(a),cos(a)]);
+C1(a) := matrix([1,0,0],[0,cos(a),sin(a)],[0,-sin(a),cos(a)])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C2(a) := matrix([cos(a),0,-sin(a)],[0,1,0],[sin(a),0,cos(a)]);
+C2(a) := matrix([cos(a),0,-sin(a)],[0,1,0],[sin(a),0,cos(a)])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C3(a) := matrix([cos(a),sin(a),0],[-sin(a),cos(a),0],[0,0,1]);
+C3(a) := matrix([cos(a),sin(a),0],[-sin(a),cos(a),0],[0,0,1])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -188,7 +192,7 @@ We can compose the body 3-2-1 direction cosine matrix using the direction cosine
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-C_bn_euler : C1(phi).C2(theta).C3(psi);
+C_bn_euler : C1(%phi).C2(%theta).C3(%psi)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -196,7 +200,7 @@ We can obtain C_nb via the transpose.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-C_nb_euler : transpose(C_bn_euler);
+C_nb_euler : transpose(C_bn_euler)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -204,7 +208,7 @@ The euler angles can be obtains from the C_nb matrix using the following equatio
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-C_nb_2_euler(C) := trigreduce(transpose([atan(C[1,2]/C[1,1]),asin(C[1,3]),atan(-C[2,3]/C[3,3])]));
+C_nb_2_euler(C) := trigreduce(transpose([atan(C[1,2]/C[1,1]),asin(C[1,3]),atan(-C[2,3]/C[3,3])]))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -212,7 +216,7 @@ We can verify that this is the correct equation by symbolically checking it.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-C_nb_2_euler(C_nb_euler);
+C_nb_2_euler(C_nb_euler)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -220,15 +224,15 @@ Quaternions to Euler Angles
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-phi_quat : atan(C_nb_quat[1,2]/C_nb_quat[1,1]);
+phi_quat : atan(C_nb_quat[1,2]/C_nb_quat[1,1])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-theta_quat : asin(C_nb_quat[1,3]);
+theta_quat : asin(C_nb_quat[1,3])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-psi_quat : atan(-C_nb_quat[2,3]/C_nb_quat[3,3]);
+psi_quat : atan(-C_nb_quat[2,3]/C_nb_quat[3,3])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -241,15 +245,15 @@ p.110 : Equations
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-d_phi: wx + tan(theta)*( wy*sin(phi) + wz*cos(phi));
+d_phi: wx + tan(%theta)*( wy*sin(%phi) + wz*cos(%phi))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_theta : wy*cos(phi) - wz*sin(phi);
+d_theta : wy*cos(%phi) - wz*sin(%phi)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_psi: (wy*sin(phi) + wz*cos(phi))/cos(theta);
+d_psi: (wy*sin(%phi) + wz*cos(%phi))/cos(%theta)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -257,11 +261,11 @@ Computed Quantities
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-w_nb : C_nb_quat.w_ib - (w_ie + w_en);
+w_nb : C_nb_quat.w_ib - (w_ie + w_en)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_nb : est_C_nb_quat.est_w_ib - (est_w_ie + est_w_en);
+est_w_nb : est_C_nb_quat.est_w_ib - (est_w_ie + est_w_en)$
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
