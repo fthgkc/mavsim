@@ -1,7 +1,19 @@
 #!/bin/bash
+
+if [ $# == 1 ]
+then
+	if [ $1 == 'm' ]
+	then
+		echo running maxima
+		maxima -b navigation.wxm
+		maxima -b quadrotor.wxm
+	fi
+else
+	echo nArgs : $#
+fi
+
 srcPath=../src/navigation/
 sciPath=.
-maxima -b navigation.wxm
 
 cat code/ins_dynamics_f.f90 | sed \
 	-e "s/$/;/g" \
@@ -155,19 +167,15 @@ cat code/ins_C_nb_euler.f90 | sed \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
 	> ${srcPath}/ins_C_nb_euler.hpp
 
-maxima -b quadDynamics.wxm
 
-cat code/quad_forward_F.f90 | sed \
+cat code/quad_wind_dynamics.f90 | sed \
 	-e "s/$/;/g" \
-	> ${sciPath}/quad.sci
+	-e "s/(motor)/_motor/g" \
+	-e "s/(T)/_T/g" \
+	-e "s/(Q)/_Q/g" \
+	-e "s/%//g" \
+	-e "s/pi/%pi/g" \
+	> ${sciPath}/quad_wind_dynamics.sci
 
-cat code/quad_forward_G.f90 | sed \
-	-e "s/$/;/g" \
-	>> ${sciPath}/quad.sci
-
-cat code/quad_C.f90 | sed \
-	-e "s/$/;/g" \
-	>> ${sciPath}/quad.sci
-
-echo "quad_forward_ss = syslin('c',quad_forward_F,quad_forward_G,quad_C);" >> ${sciPath}/quad.sci
-
+echo "quad_wind_dynamics_ss = syslin('c',F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad);" \
+>> ${sciPath}/quad_wind_dynamics.sci

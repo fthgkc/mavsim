@@ -23,9 +23,9 @@ Kinematics
 
 /* [wxMaxima: input   start ] */
 F_w_A : genmatrix(F_w_A_,3,1)$ 
-F_b_T : genmatrix(F_b_A_,3,1)$
+F_b_T : genmatrix(F_b_T_,3,1)$
 M_b_A : genmatrix(M_b_A_,3,1)$ 
-M_b_T : genmatrix(M_b_A_,3,1)$
+M_b_T : genmatrix(M_b_T_,3,1)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
