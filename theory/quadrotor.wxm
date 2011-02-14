@@ -128,9 +128,9 @@ Airframe Dynamics
 
 /* [wxMaxima: input   start ] */
 T_sumSq_eq : dutycycle_F^2+dutycycle_B^2+dutycycle_L^2+dutycycle_R^2$
-delta_LR_FB_eq : dutycycle_L^2+dutycycle_R^2-dutycycle_F^2-dutycycle_B^2$
-delta_Lsq_Rsq_eq : dutycycle_L^2-dutycycle_R^2$
 delta_Fsq_Bsq_eq : dutycycle_F^2-dutycycle_B^2$
+delta_Lsq_Rsq_eq : dutycycle_L^2-dutycycle_R^2$
+delta_LR_FB_eq : dutycycle_L^2+dutycycle_R^2-dutycycle_F^2-dutycycle_B^2$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -155,7 +155,7 @@ d_x_wind_quad_trim_eq : factor(fullratsubst([%phi=0,%beta=0,wx=0,wy=0,wz=0,%alph
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-mix_eq : [T_sumSq_eq=T_sumSq,delta_LR_FB_eq=delta_LR_FB,delta_Fsq_Bsq_eq=delta_Fsq_Bsq,delta_Lsq_Rsq_eq=delta_Lsq_Rsq];
+mix_eq : [T_sumSq_eq=T_sumSq,delta_Fsq_Bsq_eq=delta_Fsq_Bsq,delta_Lsq_Rsq_eq=delta_Lsq_Rsq,delta_LR_FB_eq=delta_LR_FB];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -172,10 +172,6 @@ T_sumSq_trim : rhs(solve(d_x_wind_quad_trim_eq[1,1],T_sumSq)[1]);
 
 /* [wxMaxima: input   start ] */
 theta_eq : ratnumer(fullratsimp(subst([T_sumSq=T_sumSq_trim],d_x_wind_quad_trim_eq[2,1])));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-f90(theta_trim=theta_eq(theta));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: subsect start ]
@@ -228,11 +224,8 @@ Now we create the control premixing matrix. This decouples the equations of moti
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-u : matrix(
-[-dutycycle_Fc^2+dutycycle_Rc^2+dutycycle_Lc^2-dutycycle_Bc^2],
-[dutycycle_Fc^2-dutycycle_Bc^2],
-[dutycycle_Lc^2-dutycycle_Rc^2],
-[dutycycle_Rc^2+dutycycle_Lc^2+dutycycle_Fc^2+dutycycle_Bc^2]);
+u : subst([dutycycle_R=dutycycle_Rc,dutycycle_L=dutycycle_Lc,dutycycle_F=dutycycle_Fc,dutycycle_B=dutycycle_Bc],
+transpose([T_sumSq_eq,delta_Fsq_Bsq_eq,delta_Lsq_Rsq_eq,delta_LR_FB_eq]));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -259,8 +252,7 @@ We can't observe alpha or beta
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-z_wind_quad : transpose([x_wind_quad[1,1],x_wind_quad[3,1],
-x_wind_quad[4,1],x_wind_quad[6,1],x_wind_quad[7,1],x_wind_quad[8,1]]);
+z_wind_quad : transpose([Vt,%theta,wy,h,%phi,wx,%psi,wz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -268,7 +260,7 @@ C_wind_quad : jacobian(vector2list(z_wind_quad),vector2list(x_wind_quad));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-D_wind_quad : zeromatrix(6,4);
+D_wind_quad : zeromatrix(8,4);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]

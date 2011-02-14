@@ -1,3 +1,5 @@
+clc; clear;
+
 beta=0 // deg
 KV=850 // rpm/Volts 
 batVolt=11.1 //Volts
@@ -39,4 +41,17 @@ alpha=theta;
 
 T_sumSq_trim=-((1800*%pi^2*rho*theta^2*K_cd_cl+450*rho*Cd0)*s_frame*Vt^2)/(%pi^3*cos(theta)*rho*batVolt^2*KV^2*rBlade^4*C_T)
 
-exec quad_wind_dynamics.sci
+exec quad_wind_dynamics.sci;
+
+// renaming for convenience
+ss = quad_wind_dynamics.ss;
+
+// close wy, wx, wz loops with FB/ LR/ LR_FB inputs
+ss1 = ss/.tf2ss(full(sparse([2,3;3,6;4,7],[1,1,1],[4,8])));
+ss1tf = clean(ss2tf(ss1),1e-8);
+
+// plots
+scf(1);
+subplot(1,3,1); bode(ss1(3,2),.01,100,.1,'pitch rate');
+subplot(1,3,2); bode(ss1(6,3),.01,100,.1,'roll rate');
+subplot(1,3,3); bode(ss1(7,4),.01,100,.1,'yaw rate');
