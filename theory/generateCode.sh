@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function usage
+{
+	echo usage: 
+	echo $0 m : run with maxima and generate code
+	echo $0 n : generated code
+}
+
 if [ $# == 1 ]
 then
 	if [ $1 == 'm' ]
@@ -7,9 +14,16 @@ then
 		echo running maxima
 		maxima -b navigation.wxm
 		maxima -b quadrotor.wxm
+	elif [ $1 == 'n' ] 
+	then
+		echo running without maxima
+	else
+		usage
+		exit
 	fi
 else
-	echo nArgs : $#
+	usage
+	exit
 fi
 
 srcPath=../src/navigation/
