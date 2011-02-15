@@ -6,16 +6,16 @@ Attitude Heading Reference System
    [wxMaxima: title   end   ] */
 
 /* [wxMaxima: input   start ] */
-batchload("common.wxm");
+batchload("common.wxm")$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
-Magnetometer Self-Alignment
+Magnetometer Online Self Calibration
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
 z[mag] : diag_matrix(s[x],s[y],s[z]).
-(transpose([H[X],H[Y],H[Z]])+transpose([b[x],b[y],b[z]]));
+(C_nb_quat.transpose([H[N],H[E],H[D]])+transpose([b[x],b[y],b[z]]));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -23,19 +23,24 @@ depends([s,b],t)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-x[mag] : transpose([s[x],s[y],s[z],b[x],b[y],b[z],diff(b[x],t),diff(b[y],t),diff(b[z],t)])$
+x[sb] : transpose([s[x],s[y],s[z],b[x],b[y],b[z],
+diff(b[x],t),diff(b[y],t),diff(b[z],t)])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-z[mag];
+x[q] : transpose([a,b,c,d])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x[mag] : addrow(x[q],x[sb])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x[mag] : addrow(quat_diff(q_nb,est_w_ib),transpose(diff(x[sb],t)))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 H[mag] : jacobian(vector2list(z[mag]),vector2list(x[mag]));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-H[mag].x[mag];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -43,7 +48,7 @@ We can model the dynamics as a random walk process.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-A : jacobian(vector2list(diff(x[mag],t)),vector2list(x[mag]));
+A : jacobian(vector2list(d_x[mag]),vector2list(x[mag]));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -51,7 +56,8 @@ We verify that the system is observable using the observability grammian.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-O[mag] : addrow(H[mag],H[mag].A);
+O[mag] : fullratsimp(addrow(H[mag],addrow(H[mag].A,
+addrow(H[mag].A.A,H[mag].A.A.A))))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -61,7 +67,12 @@ desired for estimation and correction.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-transpose(x[mag]).echelon(transpose(O[mag]));
+Oss[mag] : transpose(x[mag]).subst([a=1,b=0,c=0,d=0,s[x]=1,s[y]=1,s[z]=1,
+H[N]=0,H[E]=1,H[D]=0,wz=0,wy=0,wx=0],echelon(transpose(O[mag])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+rank(Oss[mag]);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
