@@ -1,0 +1,73 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+xc_dot_eq : Ac*xc+Bc*(u-yp);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+yc_eq : Cc*xc+Dc*(u-yp);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+xp_dot_eq : Ap*xp+Bp*yc;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+yp_eq : Cp*xp+Dp*yc;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+yp=yp_eq;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fb_sol : algsys([xc_dot=xc_dot_eq,yc=yc_eq,yp=yp_eq,xp_dot=xp_dot_eq],[yp,yc,xc_dot,xp_dot])[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expand(rhs(fb_sol[3]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expand(rhs(fb_sol[4]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x : transpose([xp,xc]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x_dot_eq : transpose([rhs(fb_sol[4]),rhs(fb_sol[3])]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+y_eq : [rhs(fb_sol[1])];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vector2list(v) := makelist(v[i,1],i,1,length(v))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A:jacobian(vector2list(x_dot_eq),vector2list(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B:jacobian(vector2list(x_dot_eq),[u]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C:jacobian(y_eq,vector2list(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+D:jacobian(y_eq,[u]);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -47,7 +47,10 @@ exec quad_wind_dynamics.sci;
 ss = quad_wind_dynamics.ss;
 
 // close wy, wx, wz loops with FB/ LR/ LR_FB inputs
-ss1 = ss/.tf2ss(full(sparse([2,3;3,6;4,7],[1,1,1],[4,8])));
+H_tf = zeros(4,8);
+H_tf(3,6) = 1;
+H = tf2ss(H_tf);
+ss1 = ss/.H
 ss1tf = clean(ss2tf(ss1),1e-8);
 
 // plots
