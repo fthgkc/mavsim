@@ -1,52 +1,48 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
 /* [ Created with wxMaxima version 0.8.7 ] */
 
+/* [wxMaxima: title   start ]
+State Space Unity Feedback
+   [wxMaxima: title   end   ] */
+
 /* [wxMaxima: input   start ] */
 kill(all);
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: comment start ]
+Maxima can't solve the implicit non-commutative equation for y[c], so we do this by hand.
+y[c] = C[c].x[c] + D[c].(u-y)
+y = C[p].x[p] + D[p].y[c]
+y[c] = C[c].x[c] + D[c].(u-C[p].x[p] + D[p].y[c])
+y[c] = (I-D[c]D[p])^-1 . (C[c].x[c] + D[c].u-D[c].C[p].x[p])
+   [wxMaxima: comment end   ] */
+
 /* [wxMaxima: input   start ] */
-xc_dot_eq : Ac*xc+Bc*(u-yp);
+den_eq : (I-D[c].D[p])^-1;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-yc_eq : Cc*xc+Dc*(u-yp);
+y[c] : den . (C[c].x[c] + D[c].u-D[c].C[p].x[p]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-xp_dot_eq : Ap*xp+Bp*yc;
+y : C[p].x[p] + D[p].y[c];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-yp_eq : Cp*xp+Dp*yc;
+d_x[p] : A[c].x[c] + B[c].(u-y);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-yp=yp_eq;
+d_x[c] : A[p].x[p] + B[p].y[c];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-fb_sol : algsys([xc_dot=xc_dot_eq,yc=yc_eq,yp=yp_eq,xp_dot=xp_dot_eq],[yp,yc,xc_dot,xp_dot])[1];
+x : transpose([x[p],x[c]]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-expand(rhs(fb_sol[3]));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-expand(rhs(fb_sol[4]));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-x : transpose([xp,xc]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-x_dot_eq : transpose([rhs(fb_sol[4]),rhs(fb_sol[3])]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-y_eq : [rhs(fb_sol[1])];
+d_x : transpose([d_x[p],d_x[c]]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -54,19 +50,23 @@ vector2list(v) := makelist(v[i,1],i,1,length(v))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-A:jacobian(vector2list(x_dot_eq),vector2list(x));
+A : jacobian(vector2list(d_x),vector2list(x));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-B:jacobian(vector2list(x_dot_eq),[u]);
+B : jacobian(vector2list(d_x),[u]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C:jacobian(y_eq,vector2list(x));
+C : jacobian([y],vector2list(x));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-D:jacobian(y_eq,[u]);
+D : jacobian([y],[u]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f90(den_eq,A,B,C,D);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

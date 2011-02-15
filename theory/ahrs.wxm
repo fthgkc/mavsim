@@ -6,7 +6,7 @@ Attitude Heading Reference System
    [wxMaxima: title   end   ] */
 
 /* [wxMaxima: input   start ] */
-batchload("common.wxm")$
+batchload("common.wxm");
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -19,7 +19,7 @@ z[mag] : diag_matrix(s[x],s[y],s[z]).
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-depends([s,b],t)$
+depends([s,b],t);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -36,19 +36,39 @@ x[mag] : addrow(x[q],x[sb])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_x[mag] : addrow(quat_diff(q_nb,est_w_ib),transpose(diff(x[sb],t)))$
+u[mag] : transpose([e_wx,e_wy,e_wz])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We can model the gyro bias dynamics as a random walk process, the scale factors as stationary, and the quaternion with quaternion differential.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x[mag] : addrow(quat_diff(q_nb,est_w_ib),transpose(diff(x[sb],t)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 H[mag] : jacobian(vector2list(z[mag]),vector2list(x[mag]));
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: comment start ]
-We can model the dynamics as a random walk process.
-   [wxMaxima: comment end   ] */
+/* [wxMaxima: input   start ] */
+R[mag] : genmatrix(R_mag,3,3);
+/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-A : jacobian(vector2list(d_x[mag]),vector2list(x[mag]));
+P[mag] : matrix([genmatrix(P_q,4,4),zeromatrix(4,9)],[zeromatrix(9,4),diagmatrix(9,1)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H[mag].P[mag].transpose(H[mag]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A : subst([e_wx=0,e_wy=0,e_wz=0],jacobian(vector2list(d_x[mag]),vector2list(x[mag])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B[mag] : jacobian(vector2list(d_x[mag]),vector2list(u[mag]));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -56,8 +76,8 @@ We verify that the system is observable using the observability grammian.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-O[mag] : fullratsimp(addrow(H[mag],addrow(H[mag].A,
-addrow(H[mag].A.A,H[mag].A.A.A))))$
+O[mag] : fullratsimp(factor(addrow(H[mag],addrow(H[mag].A,
+addrow(H[mag].A.A,H[mag].A.A.A)))))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -67,8 +87,11 @@ desired for estimation and correction.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Oss[mag] : transpose(x[mag]).subst([a=1,b=0,c=0,d=0,s[x]=1,s[y]=1,s[z]=1,
-H[N]=0,H[E]=1,H[D]=0,wz=0,wy=0,wx=0],echelon(transpose(O[mag])));
+Oss[mag] : echelon(transpose(O[mag]))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([s[x]=1,s[y]=1,s[z]=1,b[x]=0,b[y]=0,b[z]=0,a=1,b=0,c=0,d=0],Oss[mag]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
