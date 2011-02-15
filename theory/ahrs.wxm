@@ -1,0 +1,68 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: title   start ]
+Attitude Heading Reference System
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+batchload("common.wxm");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Magnetometer Self-Alignment
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+z[mag] : diag_matrix(s[x],s[y],s[z]).
+(transpose([H[X],H[Y],H[Z]])+transpose([b[x],b[y],b[z]]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+depends([s,b],t)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x[mag] : transpose([s[x],s[y],s[z],b[x],b[y],b[z],diff(b[x],t),diff(b[y],t),diff(b[z],t)])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+z[mag];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H[mag] : jacobian(vector2list(z[mag]),vector2list(x[mag]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H[mag].x[mag];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We can model the dynamics as a random walk process.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A : jacobian(vector2list(diff(x[mag],t)),vector2list(x[mag]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We verify that the system is observable using the observability grammian.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+O[mag] : addrow(H[mag],H[mag].A);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Now we can compute the observable subspace. Using the reduced row echelon form of the transpose
+of the observability grammian. Note that the scale factors and biases are observable as 
+desired for estimation and correction.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(x[mag]).echelon(transpose(O[mag]));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
