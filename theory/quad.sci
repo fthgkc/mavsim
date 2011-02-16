@@ -66,41 +66,55 @@ exec unityFeedback.sce;
 open = quad_wind_dynamics;
 
 // close wy, wx, wz loops with FB/ LR/ LR_FB inputs
-//H.tf = [0 0 0 0 0 0 0 0;
-		//0 0 0.5 0 0 0 0 0;
-		//0 0 0 0 0 0.4 0 0;
-		//0 0 0 0 0 0 0 1.0];
-H.tf = [(%s+19.9)/(%s+20)];
+H.tf = [0.2 + 0/%s + .1*%s/(%s+20),0,0; // wy, pid with low pass on deriv
+		0,0.2 + 0/%s + .1*%s/(%s+20),0; // wx, pid with low pass on deriv
+		0,0,0.2 + 0/%s + .1*%s/(%s+20)]; // wz, pid with low pass on deriv
+
 H.ss = tf2ss(H.tf);
-closed.ss = unityFeedback(open.ss([6],[3]),H.ss);
+closed.ss = unityFeedback(open.ss([3,6,8],[2,3,4]),H.ss);
 closed.tf = clean(ss2tf(closed.ss),1e-8);
 
 // plots
 scf(1);
-//sys.i = 1; sys.j = 1; sys.name = "wy rate";
-//sys.ss = closed.ss(sys.i,sys.j);
-//sys.tf = clean(ss2tf(sys.ss));
-//sys.phase_margin = min(180 + p_margin(sys.ss));
-//sys.gain_margin = g_margin(sys.ss);
-//wy=sys;
 
-sys.i = 1; sys.j = 1; sys.name = "wx rate";
-sys.ss = closed.ss(sys.i,sys.j);
-sys.tf = clean(ss2tf(sys.ss));
-sys.phase_margin = min(180 + p_margin(sys.ss));
-sys.gain_margin = g_margin(sys.ss);
+// wy
+sys.i = 1; sys.j = 1; sys.name = "wy rate";
+sys.H.ss = H.ss;
+sys.H.tf = clean(ss2tf(H.ss),1e-8);
+sys.open.ss=open.ss(6,3);
+sys.open.tf=clean(ss2tf(sys.open.ss),1e-8);
+sys.closed.ss = closed.ss(sys.i,sys.j);
+sys.closed.tf = clean(ss2tf(sys.closed.ss));
+sys.phase_margin = min(180 + p_margin(sys.closed.ss));
+sys.gain_margin = g_margin(sys.closed.ss);
+wy=sys;
+
+// wx
+sys.i = 2; sys.j = 2; sys.name = "wx rate";
+sys.H.ss = H.ss;
+sys.H.tf = clean(ss2tf(H.ss),1e-8);
+sys.open.ss=open.ss(6,3);
+sys.open.tf=clean(ss2tf(sys.open.ss),1e-8);
+sys.closed.ss = closed.ss(sys.i,sys.j);
+sys.closed.tf = clean(ss2tf(sys.closed.ss));
+sys.phase_margin = min(180 + p_margin(sys.closed.ss));
+sys.gain_margin = g_margin(sys.closed.ss);
 wx=sys;
 
-//sys.i = 3; sys.j = 3; sys.name = "wz rate";
-//sys.ss = closed.ss(sys.i,sys.j);
-//sys.tf = clean(ss2tf(sys.ss));
-//sys.phase_margin = min(180 + p_margin(sys.ss));
-//sys.gain_margin = g_margin(sys.ss);
-//wz=sys;
+// wz
+sys.i = 3; sys.j = 3; sys.name = "wz rate";
+sys.H.ss = H.ss;
+sys.H.tf = clean(ss2tf(H.ss),1e-8);
+sys.open.ss=open.ss(6,3);
+sys.open.tf=clean(ss2tf(sys.open.ss),1e-8);
+sys.closed.ss = closed.ss(sys.i,sys.j);
+sys.closed.tf = clean(ss2tf(sys.closed.ss));
+sys.phase_margin = min(180 + p_margin(sys.closed.ss));
+sys.gain_margin = g_margin(sys.closed.ss);
+wz=sys;
 
 // plots
-//sys = wy; disp(sys.name); disp(sys); if (sys.tf ~= 0) subplot(1,3,sys.i); bode(sys.ss,.01,100,.1,sys.name); end
-sys = wx; disp(sys.name); disp(sys); if (sys.tf ~= 0) subplot(1,3,sys.i); bode(sys.ss,.01,100,.1,sys.name); end
-//sys = wz; disp(sys.name); disp(sys); if (sys.tf ~= 0) subplot(1,3,sys.i); bode(sys.ss,.01,100,.1,sys.name); end
-
+sys = wy; disp(sys.name); disp(sys); if (sys.closed.tf ~= 0) subplot(1,3,sys.i); bode(sys.closed.ss,.01,1000,.1,sys.name); end
+sys = wx; disp(sys.name); disp(sys); if (sys.closed.tf ~= 0) subplot(1,3,sys.i); bode(sys.closed.ss,.01,1000,.1,sys.name); end
+sys = wz; disp(sys.name); disp(sys); if (sys.closed.tf ~= 0) subplot(1,3,sys.i); bode(sys.closed.ss,.01,1000,.1,sys.name); end
 

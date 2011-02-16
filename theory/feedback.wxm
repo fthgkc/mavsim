@@ -30,11 +30,11 @@ y : C[p].x[p] + D[p].y[c];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_x[p] : A[c].x[c] + B[c].(u-y);
+d_x[c] : A[c].x[c] + B[c].(u-y);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_x[c] : A[p].x[p] + B[p].y[c];
+d_x[p] : A[p].x[p] + B[p].y[c];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
