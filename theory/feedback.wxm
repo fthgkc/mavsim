@@ -65,9 +65,5 @@ C : jacobian([y],vector2list(x));
 D : jacobian([y],[u]);
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
-f90(den_eq,A,B,C,D);
-/* [wxMaxima: input   end   ] */
-
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
