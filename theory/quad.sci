@@ -66,12 +66,15 @@ exec unityFeedback.sce;
 open = quad_wind_dynamics;
 
 // close wy, wx, wz loops with FB/ LR/ LR_FB inputs
-H.tf = [0.2 + 0/%s + .1*%s/(%s+20),0,0; // wy, pid with low pass on deriv
-		0,0.2 + 0/%s + .1*%s/(%s+20),0; // wx, pid with low pass on deriv
-		0,0,0.2 + 0/%s + .1*%s/(%s+20)]; // wz, pid with low pass on deriv
+H1.tf = diag([
+		0; // leave input unclosed
+		0.2 + 0/%s + .1*%s/(%s+20); 	// wy, pid with low pass on deriv
+		0.2 + 0/%s + .1*%s/(%s+20); 	// wx, pid with low pass on deriv
+		0.2 + 0/%s + .1*%s/(%s+20)  	// wz, pid with low pass on deriv
+]); 
 
-H.ss = tf2ss(H.tf);
-closed.ss = unityFeedback(open.ss([3,6,8],[2,3,4]),H.ss);
+H1.ss = tf2ss(H1.tf);
+closed.ss = unityFeedback(open.ss,H1.ss);
 closed.tf = clean(ss2tf(closed.ss),1e-8);
 
 // plots
@@ -79,8 +82,6 @@ scf(1);
 
 // wy
 sys.i = 1; sys.j = 1; sys.name = "wy rate";
-sys.H.ss = H.ss;
-sys.H.tf = clean(ss2tf(H.ss),1e-8);
 sys.open.ss=open.ss(6,3);
 sys.open.tf=clean(ss2tf(sys.open.ss),1e-8);
 sys.closed.ss = closed.ss(sys.i,sys.j);
@@ -91,8 +92,6 @@ wy=sys;
 
 // wx
 sys.i = 2; sys.j = 2; sys.name = "wx rate";
-sys.H.ss = H.ss;
-sys.H.tf = clean(ss2tf(H.ss),1e-8);
 sys.open.ss=open.ss(6,3);
 sys.open.tf=clean(ss2tf(sys.open.ss),1e-8);
 sys.closed.ss = closed.ss(sys.i,sys.j);
@@ -103,8 +102,6 @@ wx=sys;
 
 // wz
 sys.i = 3; sys.j = 3; sys.name = "wz rate";
-sys.H.ss = H.ss;
-sys.H.tf = clean(ss2tf(H.ss),1e-8);
 sys.open.ss=open.ss(6,3);
 sys.open.tf=clean(ss2tf(sys.open.ss),1e-8);
 sys.closed.ss = closed.ss(sys.i,sys.j);

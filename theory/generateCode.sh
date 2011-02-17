@@ -198,3 +198,19 @@ quad_wind_dynamics.names.x = ['Vt','alpha','theta''wy','h','beta','phi','wx','ps
 quad_wind_dynamics.names.y = ['Vt','theta','wy','h','phi','wx','psi','wz']; \
 quad_wind_dynamics.names.u = ['sum_sq','F_B_sq','L_R_sq','RL_FB_sq']; \
 " >> ${sciPath}/quad_wind_dynamics.sci
+
+echo "
+function [ss] = unit_feedback(G,H)
+	[Ap,Bp,Cp,Dp] = abcd(G);
+	[Ac,Bc,Cc,Dc] = abcd(H);
+	$(`cat code/feedback.f90`)
+	$(cat code/feedback.f90 | sed \
+		-e "s/$/;/g" \
+		-e "s/\[p\]/p/g" \
+		-e "s/\[c\]/c/g" \
+		-e "s/\[f\]/f/g" | echo)
+	ss = syslin('c',A,B,C,D);
+endfunction
+" > ${sciPath}/unitFeedback.sce
+
+

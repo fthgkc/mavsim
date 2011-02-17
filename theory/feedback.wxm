@@ -26,7 +26,7 @@ y[c] : den . (C[c].x[c] + D[c].u-D[c].C[p].x[p]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-y : C[p].x[p] + D[p].y[c];
+y : C[p].x[p] + D[p].u;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -50,19 +50,23 @@ vector2list(v) := makelist(v[i,1],i,1,length(v))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-A : jacobian(vector2list(d_x),vector2list(x));
+A_eq : jacobian(vector2list(d_x),vector2list(x));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-B : jacobian(vector2list(d_x),[u]);
+B_eq : jacobian(vector2list(d_x),[u]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C : jacobian([y],vector2list(x));
+C_eq : jacobian([y],vector2list(x));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-D : jacobian([y],[u]);
+D_eq : jacobian([y],[u]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/feedback.f90", f90(A=A_eq,B=B_eq,C=C_eq,D=D_eq))$
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
