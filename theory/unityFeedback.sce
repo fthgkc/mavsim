@@ -1,14 +1,16 @@
-function ss = unityFeedback(G,H)
-  	[Ap,Bp,Cp,Dp] = abcd(G);
-  	[Ac,Bc,Cc,Dc] = abcd(H);
-	mode(1)
-	size(Dc)
-	size(Dp)
-  	den=1/(eye(size(Dc,1),size(Dp,2))-Dc * Dp);
-	A = [Ap-Bp * den * Dc * Cp,Bp * den * Cc;
-		Bc * Dp * den * Dc * Cp-Bc * Cp,Ac-Bc * Dp * den * Cc];
-	B = [Bp * den * Dc;Bc-Bc * Dp * den * Dc];
-	C = [Cp-Dp * den * Dc * Cp,Dp * den * Cc];
-	D = [Dp * den * Dc];
-  	ss = syslin('c',A,B,C,D);
+function [ss] = unit_feedback(G,H)
+
+[Ap,Bp,Cp,Dp] = abcd(G);
+[Ac,Bc,Cc,Dc] = abcd(H);
+A(1,1) = Ap-Bp * den * Dc * Cp;
+A(1,2) = Bp * den * Cc;
+A(2,1) = -Bc * Cp;
+A(2,2) = Ac;
+B(1,1) = Bp * den * Dc;
+B(2,1) = Bc-Bc * Dp;
+C(1,1) = Cp;
+C(1,2) = 0;
+D(1,1) = Dp;
+ss = syslin('c',A,B,C,D);
+
 endfunction
