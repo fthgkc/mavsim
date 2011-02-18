@@ -182,36 +182,11 @@ cat code/ins_C_nb_euler.f90 | sed \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
 	> ${srcPath}/ins_C_nb_euler.hpp
 
-
-echo "\
-$(cat code/quad_wind_dynamics.f90 | sed \
+cat code/quad_wind_dynamics.f90 | sed \
 	-e "s/$/;/g" \
 	-e "s/(motor)/_motor/g" \
 	-e "s/(T)/_T/g" \
 	-e "s/(Q)/_Q/g" \
 	-e "s/%//g" \
-	-e "s/pi/%pi/g")
-quad_wind_dynamics.ss = syslin('c',F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad);
-quad_wind_dynamics.tf = clean(ss2tf(quad_wind_dynamics.ss),1e-8);
-quad_wind_dynamics.names.x = ['Vt','alpha','theta''wy','h','beta','phi','wx','psi','wz','dcL','dcR','dcF','dcB'];
-quad_wind_dynamics.names.y = ['Vt','theta','wy','h','phi','wx','psi','wz'];
-quad_wind_dynamics.names.u = ['sum_sq','F_B_sq','L_R_sq','RL_FB_sq'];
-" > ${sciPath}/quad_wind_dynamics.sci
-
-echo "\
-function [ss] = unit_feedback(G,H)
-
-[Ap,Bp,Cp,Dp] = abcd(G);
-[Ac,Bc,Cc,Dc] = abcd(H);
-$(cat code/feedback.f90 | sed \
-	-e "s/\./*/g" \
-	-e "s/$/;/g" \
-	-e "s/(p)/p/g" \
-	-e "s/(c)/c/g" \
-	-e "s/(f)/f/g")
-ss = syslin('c',A,B,C,D);
-
-endfunction\
-" > ${sciPath}/unityFeedback.sce
-
-
+	-e "s/pi/%pi/g" \
+	> ${sciPath}/quad_wind_dynamics.sci

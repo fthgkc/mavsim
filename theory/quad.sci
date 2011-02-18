@@ -59,6 +59,12 @@ s_frame*Vt^2)/(%pi^3*cos(theta)*rho*batVolt^2*KV^2*rBlade^4*C_T)
 // include dynamics
 exec quad_wind_dynamics.sci;
 
+quad_wind_dynamics.ss = syslin('c',F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad);
+quad_wind_dynamics.tf = clean(ss2tf(quad_wind_dynamics.ss),1e-8);
+quad_wind_dynamics.names.x = ['Vt','alpha','theta''wy','h','beta','phi','wx','psi','wz','dcL','dcR','dcF','dcB'];
+quad_wind_dynamics.names.y = ['Vt','theta','wy','h','phi','wx','psi','wz'];
+quad_wind_dynamics.names.u = ['sum_sq','F_B_sq','L_R_sq','RL_FB_sq'];
+
 // include unityFeedback function
 exec unityFeedback.sce;
 
@@ -67,14 +73,13 @@ open = quad_wind_dynamics;
 
 // close wy, wx, wz loops with FB/ LR/ LR_FB inputs
 H1.tf = diag([
-		0; // leave input unclosed
 		0.2 + 0/%s + .1*%s/(%s+20); 	// wy, pid with low pass on deriv
 		0.2 + 0/%s + .1*%s/(%s+20); 	// wx, pid with low pass on deriv
 		0.2 + 0/%s + .1*%s/(%s+20)  	// wz, pid with low pass on deriv
 ]); 
 
 H1.ss = tf2ss(H1.tf);
-closed.ss = unityFeedback(open.ss,H1.ss);
+closed.ss = unityFeedback(open.ss([3,6,8],[2,3,4]),H1.ss);
 closed.tf = clean(ss2tf(closed.ss),1e-8);
 
 // plots

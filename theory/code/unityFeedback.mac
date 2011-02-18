@@ -1,0 +1,10 @@
+den = 1/(I-D[c] . D[p])$
+
+A = matrix([A[p]-B[p] . den . D[c] . C[p],B[p] . den . C[c]],
+           [-B[c] . C[p],A[c]])$
+
+B = matrix([B[p] . den . D[c]],[B[c]-B[c] . D[p]])$
+
+C = matrix([C[p],0])$
+
+D = matrix([D[p]])$

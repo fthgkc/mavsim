@@ -9,6 +9,14 @@ State Space Unity Feedback
 kill(all);
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: input   start ] */
+load(f90);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(stringproc);
+/* [wxMaxima: input   end   ] */
+
 /* [wxMaxima: comment start ]
 Maxima can't solve the implicit non-commutative equation for y[c], so we do this by hand.
 y[c] = C[c].x[c] + D[c].(u-y)
@@ -66,7 +74,113 @@ D_eq : jacobian([y],[u]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/feedback.f90", f90(A=A_eq,B=B_eq,C=C_eq,D=D_eq))$
+GRIND : false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/unityFeedback.mac", grind(den=den_eq,A=A_eq,B=B_eq,C=C_eq,D=D_eq));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+string(D=D_eq);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+grind(A=A_eq);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A_eq;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+string(A=A_eq);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+s : string(A=A_eq);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cWriteMatrix(exp) :=
+for i:1 thru length(exp) do
+block([str,grind],
+grind : false,
+str : string(exp[i]),
+str : ssubst("c","[c]",str),
+str : ssubst("p","[p]",str),
+str : ssubst("","matrix(",str),
+str : ssubst("*",".",str),
+str : ssubst("*",".",str),
+str : ssubst("]","])",str),
+str : ssubst(";","],[",str),
+str : concat(str,";"),
+sprint(str),
+return(0))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cWriteMatrix("code/unityFeedback.mac",[den=den_eq,A=A_eq,B=B_eq]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expr2c("test", "double x, double y", diff((x^4 + 2 * y) * (x ^ 2 + y) * x, x));
+
+I'm new to maxima, so the code is pretty crude:
+
+printdecl(vars) := (
+        sprint("double", first(vars)),
+        for v in rest(vars) do sprint(",", v),
+        sprint(";"))$
+
+printdef(expr) := sprint(first(expr), "=", second(expr), ";")$
+
+block2c(expr) :=
+        if ?equal(op(expr), block) then (
+                printdecl(first(expr)),
+                for d in reverse(rest(reverse(rest(expr)))) do printdef(d),
+                sprint("return", string(last(expr)), ";"))
+        else
+                sprint("return", string(expr), ";")$
+
+expr2c(funcname, argstr, expr) := (
+        sprint("double", funcname, "(", argstr, ") {"),
+        block2c(subst(pow, "^", optimize(expr))),
+        sprint("}", "
+"))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+printdecl(vars) := (
+        sprint("double", first(vars)),
+        for v in rest(vars) do sprint(",", v),
+        sprint(";"))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+printdef(expr) := sprint(first(expr), "=", second(expr), ";")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+block2c(expr) :=
+        if ?equal(op(expr), block) then (
+                printdecl(first(expr)),
+                for d in reverse(rest(reverse(rest(expr)))) do printdef(d),
+                sprint("return", string(last(expr)), ";"))
+        else
+                sprint("return", string(expr), ";")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expr2c(funcname, argstr, expr) := (
+        sprint("double", funcname, "(", argstr, ") {"),
+        block2c(subst(pow, "^", optimize(expr))),
+        sprint("}", "
+"))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expr2c("test", "double x, double y", [a*c,d*y]);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

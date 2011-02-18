@@ -394,9 +394,3 @@ D_wind_quad(8,1) = 0;
 D_wind_quad(8,2) = 0;
 D_wind_quad(8,3) = 0;
 D_wind_quad(8,4) = 0;
-quad_wind_dynamics.ss = syslin('c',F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad);
-quad_wind_dynamics.tf = clean(ss2tf(quad_wind_dynamics.ss),1e-8);
-quad_wind_dynamics.names.x = ['Vt','alpha','theta''wy','h','beta','phi','wx','psi','wz','dcL','dcR','dcF','dcB'];
-quad_wind_dynamics.names.y = ['Vt','theta','wy','h','phi','wx','psi','wz'];
-quad_wind_dynamics.names.u = ['sum_sq','F_B_sq','L_R_sq','RL_FB_sq'];
-
