@@ -27,36 +27,37 @@ KV=850 // rpm/Volts
 batVolt=11.1 //Volts
 dm=.3 // guess in metres, motor moment arm
 tau_motor=20 // guess, motor pole (rad/s)
-C_T=0.1 // guess, motor thrust coefficient
-C_Q=0.1 // guess, motor torque coefficient
+C_T=0.5 // guess, motor thrust coefficient
+C_Q=0.5 // guess, motor torque coefficient
 
 // aerodynamics
 rho=1.225 // kg/m^3
 rBlade=0.125 // metres
 Cd0=0.42; // guess
 K_cd_cl=0.02 //guess
-s_frame=.1 //guess in m^2
-s_frame_side=.1 // guess in m^2
+s_frame=.01 //guess in m^2
+s_frame_side=.01 // guess in m^2
 
-// value left to compute
-dutycycle_Lc=0.5
-dutycycle_L=0.5
-dutycycle_Rc=0.5
-dutycycle_R=0.5
-dutycycle_Bc=0.5
-dutycycle_B=0.5
-dutycycle_Fc=0.5
-dutycycle_F=0.5
-T_sumSq=1.0 // guess in N
-
-// solve for pitch angle at trim
+// solve for pitch angle at trim;
 deff('[y]=theta_sol(x)','y=(-4*%pi^2*rho*x^2*sin(x)*K_cd_cl-rho*sin(x)*Cd0-2*%pi*rho*x*cos(x))*s_frame*Vt^2+(2*cos(x)*sin(x)^2+2*cos(x)^3)*g*m');
 theta=fsolve(-10*%pi/180,theta_sol)
 alpha=theta;
+qwd.trim.theta=theta;
 
 // solve for T_sumSq at trim
-T_sumSq_trim=-((1800*%pi^2*rho*theta^2*K_cd_cl+450*rho*Cd0)*..
+//check the equation below; there was a minus sign in front
+T_sumSq_trim= ((1800*%pi^2*rho*theta^2*K_cd_cl+450*rho*Cd0)*..
 s_frame*Vt^2)/(%pi^3*cos(theta)*rho*batVolt^2*KV^2*rBlade^4*C_T)
+qwd.trim.T_sumSq = T_sumSq_trim;
+T_sumSq=T_sumSq_trim;
+dutycycle_Lc=T_sumSq/4;
+dutycycle_L=T_sumSq/4;
+dutycycle_Rc=T_sumSq/4;
+dutycycle_R=T_sumSq/4;
+dutycycle_Bc=T_sumSq/4;
+dutycycle_B=T_sumSq/4;
+dutycycle_Fc=T_sumSq/4;
+dutycycle_F=T_sumSq/4;
 
 // include dynamics
 exec quad_wind_dynamics.sci;
@@ -101,21 +102,23 @@ exec unityFeedback.sci;
 
 disp("Closing Loop 1");
 qwd.Loop(1).H = diag([
-		0.01 + 0.5/%s + 0*%s/(%s+20); 	// altitude error to power
+		-(0.01 + 0.5/%s + 0.5*%s/(%s+20)); 	// altitude error to power
 		0.5 + 0/%s + 0*%s/(%s+20); 	// roll rate error to lf
 		0.5 + 0/%s + 0*%s/(%s+20); 	// pitch rate error to fb
 		0.5 + 0/%s + 0*%s/(%s+20)  	// yaw rate error to fb_lf
 ]); 
 qwd.Loop(1).u = [1,3,2,4];
-qwd.Loop(1).y = [5,6,3,8];
-qwd.Loop(1).clss = unityFeedback(qwd.open.ss,qwd.Loop(1).H,qwd.Loop(1).y,qwd.Loop(1).u);
+qwd.Loop(1).y = [4,6,3,8];
+qwd.Loop(1).olss=qwd.open.ss;
+qwd.Loop(1).oltf=clean(ss2tf(qwd.Loop(1).olss));
+qwd.Loop(1).clss = unityFeedback(qwd.Loop(1).olss,qwd.Loop(1).H,qwd.Loop(1).y,qwd.Loop(1).u);
 qwd.Loop(1).cltf = clean(ss2tf(qwd.Loop(1).clss)); 
 qwd.names.u(5) = "altitude command";
 qwd.names.u(6) = "roll rate command";
 qwd.names.u(7) = "pitch rate command";
 qwd.names.u(8) = "yaw rate command";
 scf(1); clf(1);
-subplot(1,4,1); bode(qwd.Loop(1).cltf(1,5),.01,100,.1,qwd.names.u(5));
+subplot(1,4,1); bode(qwd.Loop(1).cltf(4,5),.01,100,.1,qwd.names.u(5));
 subplot(1,4,2); bode(qwd.Loop(1).cltf(6,6),.01,100,.1,qwd.names.u(6));
 subplot(1,4,3); bode(qwd.Loop(1).cltf(3,7),.01,100,.1,qwd.names.u(7));
 subplot(1,4,4); bode(qwd.Loop(1).cltf(8,8),.01,100,.1,qwd.names.u(8));
