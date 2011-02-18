@@ -1,6 +1,8 @@
 clc; clear;
 mode(-1);
 
+function qwd = quad_wind_design
+
 // constants
 g=9.81 // m/s^2
 
@@ -59,64 +61,101 @@ s_frame*Vt^2)/(%pi^3*cos(theta)*rho*batVolt^2*KV^2*rBlade^4*C_T)
 // include dynamics
 exec quad_wind_dynamics.sci;
 
-quad_wind_dynamics.ss = syslin('c',F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad);
-quad_wind_dynamics.tf = clean(ss2tf(quad_wind_dynamics.ss),1e-8);
-quad_wind_dynamics.names.x = ['Vt','alpha','theta''wy','h','beta','phi','wx','psi','wz','dcL','dcR','dcF','dcB'];
-quad_wind_dynamics.names.y = ['Vt','theta','wy','h','phi','wx','psi','wz'];
-quad_wind_dynamics.names.u = ['sum_sq','F_B_sq','L_R_sq','RL_FB_sq'];
+qwd.open.ss = syslin('c',F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad);
+qwd.open.tf = clean(ss2tf(qwd.open.ss),1e-8);
+
+// state
+qwd.names.x(1) = "Vt";
+qwd.names.x(2) = "alpha";
+qwd.names.x(3) = "theta";
+qwd.names.x(4) = "wy";
+qwd.names.x(5) = "h";
+qwd.names.x(6) = "beta";
+qwd.names.x(7) = "phi";
+qwd.names.x(8) = "wx";
+qwd.names.x(9) = "psi";
+qwd.names.x(10) = "wz";
+qwd.names.x(11) = "dcL";
+qwd.names.x(12) = "dcR";
+qwd.names.x(13) = "dcF";
+qwd.names.x(14) = "dcB";
+
+// output
+qwd.names.y(1) = "Vt";
+qwd.names.y(2) = "theta";
+qwd.names.y(3) = "wy";
+qwd.names.y(4) = "h";
+qwd.names.y(5) = "phi";
+qwd.names.y(6) = "wx";
+qwd.names.y(7) = "psi";
+qwd.names.y(8) = "wz";
+
+// input
+qwd.names.u(1) = "sum_sq";
+qwd.names.u(2) = "F_B_sq";
+qwd.names.u(3) = "L_R_sq";
+qwd.names.u(4) = "RL_FB_sq";
 
 // include unityFeedback function
-exec unityFeedback.sce;
+exec unityFeedback.sci;
 
-// renaming for convenience
-open = quad_wind_dynamics;
-
-// close wy, wx, wz loops with FB/ LR/ LR_FB inputs
-H1.tf = diag([
-		0.2 + 0/%s + .1*%s/(%s+20); 	// wy, pid with low pass on deriv
-		0.2 + 0/%s + .1*%s/(%s+20); 	// wx, pid with low pass on deriv
-		0.2 + 0/%s + .1*%s/(%s+20)  	// wz, pid with low pass on deriv
+disp("Closing Loop 1");
+qwd.Loop(1).H = diag([
+		0.5 + 0.1/%s + 0*%s/(%s+20); 	// altitude error to power
+		0.5 + 0/%s + 0*%s/(%s+20); 	// roll rate error to lf
+		0.5 + 0/%s + 0*%s/(%s+20); 	// pitch rate error to fb
+		0.5 + 0/%s + 0*%s/(%s+20)  	// yaw rate error to fb_lf
 ]); 
+qwd.Loop(1).u = [1,3,2,4];
+qwd.Loop(1).y = [1,6,3,8];
+qwd.Loop(1).clss = unityFeedback(qwd.open.ss,qwd.Loop(1).H,qwd.Loop(1).y,qwd.Loop(1).u);
+qwd.Loop(1).cltf = clean(ss2tf(qwd.Loop(1).clss)); 
+qwd.names.u(5) = "altitude command";
+qwd.names.u(6) = "roll rate command";
+qwd.names.u(7) = "pitch rate command";
+qwd.names.u(8) = "yaw rate command";
+scf(1); clf(1);
+subplot(1,4,1); bode(qwd.Loop(1).cltf(1,5),.01,100,.1,qwd.names.u(5));
+subplot(1,4,2); bode(qwd.Loop(1).cltf(6,6),.01,100,.1,qwd.names.u(6));
+subplot(1,4,3); bode(qwd.Loop(1).cltf(3,7),.01,100,.1,qwd.names.u(7));
+subplot(1,4,4); bode(qwd.Loop(1).cltf(8,8),.01,100,.1,qwd.names.u(8));
+disp("Loop 1 Closed");
 
-H1.ss = tf2ss(H1.tf);
-closed.ss = unityFeedback(open.ss([3,6,8],[2,3,4]),H1.ss);
-closed.tf = clean(ss2tf(closed.ss),1e-8);
+disp("Closing Loop 2");
+qwd.Loop(2).H = diag([
+		0.5 + 0/%s + 0*%s/(%s+20); 	// roll error to roll rate command
+		0.5 + 0/%s + 0*%s/(%s+20); 	// pitch error to pitch rate command
+		0.5 + 0/%s + 0*%s/(%s+20)  	// yaw error to yaw rate command
+]); 
+qwd.Loop(2).u = [6,7,8]; 
+qwd.Loop(2).y = [5,2,7];
+qwd.Loop(2).clss = unityFeedback(qwd.Loop(1).clss,qwd.Loop(2).H,qwd.Loop(2).y,qwd.Loop(2).u);
+qwd.Loop(2).cltf = clean(ss2tf(qwd.Loop(2).clss)); 
+qwd.names.u(9) = "roll command";
+qwd.names.u(10) = "pitch command";
+qwd.names.u(11) = "yaw command";
+scf(2); clf(2);
+subplot(1,4,1); bode(qwd.Loop(2).cltf(5,9),.01,100,.1,qwd.names.u(9));
+subplot(1,4,2); bode(qwd.Loop(2).cltf(2,10),.01,100,.1,qwd.names.u(10));
+subplot(1,4,3); bode(qwd.Loop(2).cltf(7,11),.01,100,.1,qwd.names.u(11));
+disp("Loop 2 Closed");
 
 // plots
-scf(1);
-
-// wy
-sys.i = 1; sys.j = 1; sys.name = "wy rate";
-sys.open.ss=open.ss(6,3);
-sys.open.tf=clean(ss2tf(sys.open.ss),1e-8);
-sys.closed.ss = closed.ss(sys.i,sys.j);
-sys.closed.tf = clean(ss2tf(sys.closed.ss));
-sys.phase_margin = min(180 + p_margin(sys.closed.ss));
-sys.gain_margin = g_margin(sys.closed.ss);
-wy=sys;
+//scf(1);
 
 // wx
-sys.i = 2; sys.j = 2; sys.name = "wx rate";
-sys.open.ss=open.ss(6,3);
-sys.open.tf=clean(ss2tf(sys.open.ss),1e-8);
-sys.closed.ss = closed.ss(sys.i,sys.j);
-sys.closed.tf = clean(ss2tf(sys.closed.ss));
-sys.phase_margin = min(180 + p_margin(sys.closed.ss));
-sys.gain_margin = g_margin(sys.closed.ss);
-wx=sys;
-
-// wz
-sys.i = 3; sys.j = 3; sys.name = "wz rate";
-sys.open.ss=open.ss(6,3);
-sys.open.tf=clean(ss2tf(sys.open.ss),1e-8);
-sys.closed.ss = closed.ss(sys.i,sys.j);
-sys.closed.tf = clean(ss2tf(sys.closed.ss));
-sys.phase_margin = min(180 + p_margin(sys.closed.ss));
-sys.gain_margin = g_margin(sys.closed.ss);
-wz=sys;
+//sys.i = 2; sys.j = 2; sys.name = "wx rate";
+//sys.open.ss=open.ss(6,3);
+//sys.open.tf=clean(ss2tf(sys.open.ss),1e-8);
+//sys.closed.ss = closed.ss(sys.i,sys.j);
+//sys.closed.tf = clean(ss2tf(sys.closed.ss));
+//sys.phase_margin = min(180 + p_margin(sys.closed.ss));
+//sys.gain_margin = g_margin(sys.closed.ss);
+//wx=sys;
 
 // plots
-sys = wy; disp(sys.name); disp(sys); if (sys.closed.tf ~= 0) subplot(1,3,sys.i); bode(sys.closed.ss,.01,1000,.1,sys.name); end
-sys = wx; disp(sys.name); disp(sys); if (sys.closed.tf ~= 0) subplot(1,3,sys.i); bode(sys.closed.ss,.01,1000,.1,sys.name); end
-sys = wz; disp(sys.name); disp(sys); if (sys.closed.tf ~= 0) subplot(1,3,sys.i); bode(sys.closed.ss,.01,1000,.1,sys.name); end
+//sys = wx; disp(sys.name); disp(sys); if (sys.closed.tf ~= 0) subplot(1,3,sys.i); bode(sys.closed.ss,.01,1000,.1,sys.name); end
+//sys = wz; disp(sys.name); disp(sys); if (sys.closed.tf ~= 0) subplot(1,3,sys.i); bode(sys.closed.ss,.01,1000,.1,sys.name); end
+endfunction
 
+qwd= quad_wind_design();
