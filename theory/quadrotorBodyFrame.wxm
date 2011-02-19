@@ -98,6 +98,16 @@ F_body_quad_hover : fullratsimp(jacobian(vector2list(d_x_body_quad_trim_eq),vect
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
+The control mix plant has no states and the equation is simply y=D_contmix *u. 
+The D_contmix matrix is shown below. The input to the control mix matrix are shown in u above.
+The output is u_motors. The equations are nonlinear so we used the jacobian of J(dutycycles,uPseudo).
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+D_contmix : fullratsimp(jacobian(vector2list(Dutycycle_vector),vector2list(uPseudo)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
 Now since we have the control mix plant given by D above we can multiply G_quad  by D_contmix since
 dx = F*x + G*u_motors, u_motors = D_contmix*u, hence dx = F*x + G*D_contmix*u
    [wxMaxima: comment end   ] */
@@ -116,16 +126,6 @@ z_body_quad : transpose([U,W,%theta,wy,h,V,%phi,wx,%psi,wz]);
 
 /* [wxMaxima: input   start ] */
 C_wind_quad : jacobian(vector2list(z_body_quad),vector2list(x_body_quad));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-The control mix plant has no states and the equation is simply y=D_contmix *u. 
-The D_contmix matrix is shown below. The input to the control mix matrix are shown in u above.
-The output is u_motors. The equations are nonlinear so we used the jacobian of J(dutycycles,uPseudo).
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-D_contmix : fullratsimp(jacobian(vector2list(Dutycycle_vector),vector2list(uPseudo)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

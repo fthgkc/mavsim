@@ -27,16 +27,16 @@ KV=850 // rpm/Volts
 batVolt=11.1 //Volts
 dm=.3 // guess in metres, motor moment arm
 tau_motor=20 // guess, motor pole (rad/s)
-C_T=0.5 // guess, motor thrust coefficient
-C_Q=0.5 // guess, motor torque coefficient
+C_T=0.1 // guess, motor thrust coefficient
+C_Q=0.1 // guess, motor torque coefficient
 
 // aerodynamics
 rho=1.225 // kg/m^3
 rBlade=0.125 // metres
 Cd0=0.42; // guess
 K_cd_cl=0.02 //guess
-s_frame=.01 //guess in m^2
-s_frame_side=.01 // guess in m^2
+s_frame=.1 //guess in m^2
+s_frame_side=.1 // guess in m^2
 
 // solve for pitch angle at trim;
 deff('[y]=theta_sol(x)','y=(-4*%pi^2*rho*x^2*sin(x)*K_cd_cl-rho*sin(x)*Cd0-2*%pi*rho*x*cos(x))*s_frame*Vt^2+(2*cos(x)*sin(x)^2+2*cos(x)^3)*g*m');
@@ -103,7 +103,7 @@ exec unityFeedback.sci;
 disp("Closing Loop 1");
 qwd.Loop(1).H = diag([
 		-(0.01 + 0.5/%s + 0.5*%s/(%s+20)); 	// altitude error to power
-		0.5 + 0/%s + 0*%s/(%s+20); 	// roll rate error to lf
+		-(0.5 + 0/%s + 0*%s/(%s+20)); 	// roll rate error to lf
 		0.5 + 0/%s + 0*%s/(%s+20); 	// pitch rate error to fb
 		0.5 + 0/%s + 0*%s/(%s+20)  	// yaw rate error to fb_lf
 ]); 
@@ -132,6 +132,8 @@ qwd.Loop(2).H = diag([
 ]); 
 qwd.Loop(2).u = [6,7,8]; 
 qwd.Loop(2).y = [5,1,7];
+qwd.Loop(2).olss=qwd.Loop(1).clss;
+qwd.Loop(2).oltf=qwd.Loop(1).cltf;
 qwd.Loop(2).clss = unityFeedback(qwd.Loop(1).clss,qwd.Loop(2).H,qwd.Loop(2).y,qwd.Loop(2).u);
 qwd.Loop(2).cltf = clean(ss2tf(qwd.Loop(2).clss)); 
 qwd.names.u(9) = "roll command";
