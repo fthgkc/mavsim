@@ -86,10 +86,6 @@ Linearization
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-u_motors : transpose([dutycycle_Lc,dutycycle_Rc,dutycycle_Fc,dutycycle_Bc]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 F_wind_quad : trigsimp(fullratsimp(jacobian(vector2list(d_x_wind_quad),vector2list(x_wind_quad))));
 /* [wxMaxima: input   end   ] */
 
@@ -98,27 +94,19 @@ G_wind_quad_motors : jacobian(vector2list(d_x_wind_quad),vector2list(u_motors));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F_wind_quad_forward_trim : fullratsubst([T_sum_eq=T_sum],subst([%phi=0,%beta=0,wx=0,wy=0,wz=0,%theta-%alpha=%gamma,%alpha=theta],
+F_wind_quad_forward_trim : fullratsubst([T_sum_eq=T_sum],
+subst([%phi=0,%beta=0,wx=0,wy=0,wz=0,%theta-%alpha=%gamma,%alpha=theta],
 factor(trigreduce(F_wind_quad))));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-Now we create the control premixing matrix. This decouples the equations of motion.
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-u : subst([dutycycle_R=dutycycle_Rc,dutycycle_L=dutycycle_Lc,dutycycle_F=dutycycle_Fc,dutycycle_B=dutycycle_Bc],
-transpose([T_sum_eq,delta_F_B_eq,delta_L_R_eq,delta_LR_FB_eq]));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
 The control mix plant has no states and the equation is simply y=D_contmix *u. 
 The D_contmix matrix is shown below. The input to the control mix matrix are shown in u above.
-The output is u_motors. The equations are nonlinear so we used the jacobian of J(u,u_motors).
+The output is u_motors. The equations are nonlinear so we used the jacobian of J(dutycycles,uPseudo).
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-D_contmix : fullratsimp(invert(jacobian(vector2list(u),vector2list(u_motors))));
+D_contmix : fullratsimp(jacobian(vector2list(Dutycycle_vector),vector2list(uPseudo)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -150,12 +138,9 @@ D_wind_quad : zeromatrix(8,4);
 Fortran Output
    [wxMaxima: section end   ] */
 
-/* [wxMaxima: comment start ]
-with_stdout ("code/quad_C.f90", f90(quad_C))$
-   [wxMaxima: comment end   ] */
-
 /* [wxMaxima: input   start ] */
-with_stdout ("code/quad_wind_dynamics.f90", f90(F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad))$
+with_stdout ("code/quad_wind_dynamics.f90",
+f90(F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad))$
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

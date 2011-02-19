@@ -13,8 +13,8 @@ then
 	then
 		echo running maxima
 		maxima -b navigation.wxm
-		maxima -b quadrotor.wxm
-		maxima -b feedback.wxm
+		maxima -b quadrotorWindFrame.wxm
+		maxima -b quadrotorBodyFrame.wxm
 	elif [ $1 == 'n' ] 
 	then
 		echo running without maxima
@@ -190,3 +190,12 @@ cat code/quad_wind_dynamics.f90 | sed \
 	-e "s/%//g" \
 	-e "s/pi/%pi/g" \
 	> ${sciPath}/quad_wind_dynamics.sci
+
+cat code/quad_body_dynamics.f90 | sed \
+	-e "s/$/;/g" \
+	-e "s/(motor)/_motor/g" \
+	-e "s/(T)/_T/g" \
+	-e "s/(Q)/_Q/g" \
+	-e "s/%//g" \
+	-e "s/pi/%pi/g" \
+	> ${sciPath}/quad_body_dynamics.sci

@@ -121,7 +121,7 @@ C_wind_quad : jacobian(vector2list(z_body_quad),vector2list(x_body_quad));
 /* [wxMaxima: comment start ]
 The control mix plant has no states and the equation is simply y=D_contmix *u. 
 The D_contmix matrix is shown below. The input to the control mix matrix are shown in u above.
-The output is u_motors. The equations are nonlinear so we used the jacobian of J(u,u_motors).
+The output is u_motors. The equations are nonlinear so we used the jacobian of J(dutycycles,uPseudo).
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -136,12 +136,9 @@ D_body_quad : zeromatrix(8,4);
 Fortran Output
    [wxMaxima: section end   ] */
 
-/* [wxMaxima: comment start ]
-with_stdout ("code/quad_C.f90", f90(quad_C))$
-   [wxMaxima: comment end   ] */
-
 /* [wxMaxima: input   start ] */
-with_stdout ("code/quad_wind_dynamics.f90", f90(F_body_quad,G_body_quad,C_body_quad,D_body_quad))$
+with_stdout ("code/quad_body_dynamics.f90",
+f90(F_body_quad,G_body_quad,C_body_quad,D_body_quad))$
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
