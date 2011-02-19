@@ -10,112 +10,11 @@ kill(all);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-batchload("dynamics.wxm")$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: section start ]
-Propulsion
-   [wxMaxima: section end   ] */
-
-/* [wxMaxima: comment start ]
-When finding G we need to express dstate in terms of the input ratios and thrust sums. This means we need to substitute
-all occurences of T_i with the ratios.
-As a rough example The equation in the x direction should be:
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: comment start ]
-'Bond Graph Dynamic Modeling and Stabilization of a Quad-Rotor Helicopter'
- page 3 equations for Thrust vs Rpm
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-RPM(dutycyle) := dutycycle*KV*2*%pi/60*batVolt$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-Most of these are constants so we will substitute the constant terms as gamma.
-Gamma = (chord*pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlades*rBlade^3)/3600
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-Thrust(dutycycle) := ''(C[T]*rho*%pi*rBlade^4*RPM(dutycycle)^2);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-http://www.aveox.com/DC.aspx  Equations for torque calculation in terms of RPM
-I = Current 
-Inl = No load current 
-J = Torque (oz-in/A) 
-Kb = Voltage constant (Volt/1000 RPM) 
-Kt = Torque constant (oz-In/A) 
-Pi = Power input (Watts)  
-Rm = Terminal resistance 
-RPM = Revolutions/minute 
-V = Voltage
-
-Torque constant: Kt=Kb x 1.345 
-Current draw of motor: I = [V-(Kb x kRPM)]/Rm 
-Torque output of motor: J = (Kt x I) - (Kt x Inl) 
-RPM of motor: kRPM = (V - RmI) / Kb 
-KV = 1000/Kb
-Kb = 1000/KV
-0.000968504759=1.345
-
-CHeck current draw of motor equation.
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: comment start ]
-This equation looks wrong so redefining.
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-Torque(dutycycle):= ''(C[Q]*rho*%pi*rBlade^5*RPM(dutycycle)^2);
+batchload("dynamicsWindFrame.wxm")$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-T_L : Thrust(dutycycle_L)$ T_R : Thrust(dutycycle_R)$ T_F : Thrust(dutycycle_F)$ T_B : Thrust(dutycycle_B)$
-t_L : Torque(dutycycle_L)$ t_R : Torque(dutycycle_R)$ t_F : Torque(dutycycle_F)$ t_B : Torque(dutycycle_B)$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-F_b_T_quad : factor(transpose([-1*(T_F+T_B+T_L+T_R),0,0]));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-M_b_T_quad : factor(fullratsimp(transpose([(T_L - T_R)*dm , (T_F-T_B)*dm, t_L+t_R-t_F-t_B])));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: section start ]
-Aerodynamics
-   [wxMaxima: section end   ] */
-
-/* [wxMaxima: comment start ]
-Check these equaitons.
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-Cl : 2*%pi*%alpha$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-Assuming an uncambered lifting surface ( the frame) we can estimate the drag polar as:
-home.anadolu.edu.tr/~mcavcar/common/Aerodynamicforces.pdf
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-Cd : Cd0 + K_cd_cl*Cl^2$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-NOTE: This is probably wrong
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-Cs : 2*%pi*%beta$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-F_w_A_quad : transpose([-Cd*.5*%rho*Vt^2*s_frame,-Cs*.5*%rho*Vt^2*s_frame_side,-Cl*.5*%rho*Vt^2*s_frame]);
+batchload("quadrotorForceMoment.wxm")$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -125,22 +24,6 @@ Quadrotor Wind Frame Equations of Motion
 /* [wxMaxima: subsect start ]
 Airframe Dynamics
    [wxMaxima: subsect end   ] */
-
-/* [wxMaxima: input   start ] */
-T_sumSq_eq : dutycycle_F^2+dutycycle_B^2+dutycycle_L^2+dutycycle_R^2$
-delta_Fsq_Bsq_eq : dutycycle_F^2-dutycycle_B^2$
-delta_Lsq_Rsq_eq : dutycycle_L^2-dutycycle_R^2$
-delta_LR_FB_eq : dutycycle_L^2+dutycycle_R^2-dutycycle_F^2-dutycycle_B^2$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-quadAssumptions : [
-F_b_T[1,1]=F_b_T_quad[1,1], F_b_T[2,1]=F_b_T_quad[2,1], F_b_T[3,1]=F_b_T_quad[3,1],
-F_w_A[1,1]=F_w_A_quad[1,1], F_w_A[2,1]=F_w_A_quad[2,1], F_w_A[3,1]=F_w_A_quad[3,1],
-M_b_T[1,1]=M_b_T_quad[1,1], M_b_T[2,1]=M_b_T_quad[2,1], M_b_T[3,1]=M_b_T_quad[3,1],
-M_b_A[1,1]=0, M_b_A[2,1]=0, M_b_A[3,1]=0,
-Jxy=0,Jyz=0,Jxz=0]$
-/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 d_x_wind_quad : factor(fullratsubst(quadAssumptions,d_x_wind));
@@ -155,7 +38,7 @@ d_x_wind_quad_trim_eq : factor(fullratsubst([%phi=0,%beta=0,wx=0,wy=0,wz=0,%alph
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-mix_eq : [T_sumSq_eq=T_sumSq,delta_Fsq_Bsq_eq=delta_Fsq_Bsq,delta_Lsq_Rsq_eq=delta_Lsq_Rsq,delta_LR_FB_eq=delta_LR_FB];
+mix_eq : [T_sum_eq=T_sum,delta_F_B_eq=delta_F_B,delta_L_R_eq=delta_L_R,delta_LR_FB_eq=delta_LR_FB];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -167,11 +50,11 @@ d_x_wind_quad_trim_eq[2,1] : fullratsubst([mix_eq[1]],d_x_wind_quad_trim_eq[2,1]
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-T_sumSq_trim : rhs(solve(d_x_wind_quad_trim_eq[1,1],T_sumSq)[1]);
+T_sum_trim : rhs(solve(d_x_wind_quad_trim_eq[1,1],T_sum)[1]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-theta_eq : ratnumer(fullratsimp(subst([T_sumSq=T_sumSq_trim],d_x_wind_quad_trim_eq[2,1])));
+theta_eq : ratnumer(fullratsimp(subst([T_sum=T_sum_trim],d_x_wind_quad_trim_eq[2,1])));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: subsect start ]
@@ -215,7 +98,7 @@ G_wind_quad_motors : jacobian(vector2list(d_x_wind_quad),vector2list(u_motors));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F_wind_quad_forward_trim : fullratsubst([T_sumSq_eq=T_sumSq],subst([%phi=0,%beta=0,wx=0,wy=0,wz=0,%theta-%alpha=%gamma,%alpha=theta],
+F_wind_quad_forward_trim : fullratsubst([T_sum_eq=T_sum],subst([%phi=0,%beta=0,wx=0,wy=0,wz=0,%theta-%alpha=%gamma,%alpha=theta],
 factor(trigreduce(F_wind_quad))));
 /* [wxMaxima: input   end   ] */
 
@@ -225,7 +108,7 @@ Now we create the control premixing matrix. This decouples the equations of moti
 
 /* [wxMaxima: input   start ] */
 u : subst([dutycycle_R=dutycycle_Rc,dutycycle_L=dutycycle_Lc,dutycycle_F=dutycycle_Fc,dutycycle_B=dutycycle_Bc],
-transpose([T_sumSq_eq,delta_Fsq_Bsq_eq,delta_Lsq_Rsq_eq,delta_LR_FB_eq]));
+transpose([T_sum_eq,delta_F_B_eq,delta_L_R_eq,delta_LR_FB_eq]));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]

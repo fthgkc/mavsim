@@ -10,7 +10,7 @@ Definitions
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-kill(all)$
+kill (all);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -26,7 +26,7 @@ load(f90)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-load(vect)$
+load(vect);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
