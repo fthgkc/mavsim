@@ -12,13 +12,13 @@ set(oooarkScicosSources
 	utilities.cpp
 	sci_jsbsimTrim.cpp
 	sci_jsbsimComm.cpp
-	sci_insErrorDynamics.cpp
+	#sci_insErrorDynamics.cpp
 	sci_insDynamics.cpp
 	sci_zeroOrderHold.cpp
 	sci_randn.cpp
 	sci_geoMag.cpp
 	#sci_magMeasModel.cpp
-	sci_gpsMeasModel.cpp
+	#sci_gpsMeasModel.cpp
 	sci_quat2EulerDcm.cpp
 	sci_waypointGuidance.cpp
 	sci_euler2Dcm.cpp

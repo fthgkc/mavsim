@@ -30,6 +30,8 @@
 #include "math/GpsIns.hpp"
 #include "utilities.hpp"
 #include <stdexcept>
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/io.hpp>
 
 extern "C"
 {
@@ -48,7 +50,12 @@ void sci_insDynamics(scicos_block *block, scicos::enumScicosFlags flag)
     double * u1=(double*)GetInPortPtrs(block,1);
     double * u2=(double*)GetInPortPtrs(block,2);
     double * u3=(double*)GetInPortPtrs(block,3);
-    double * f=(double*)GetOutPortPtrs(block,1);
+
+    namespace ublas = boost::numeric::ublas;
+    ublas::unbounded_array<double> fArray;
+    fArray.data() = (double*)GetOutPortPtrs(block,1);
+    ublas::matrix<double,ublas::column_major> f(14,1,fArray);
+
     double * rpar=block->rpar;
     int * ipar=block->ipar;
 
