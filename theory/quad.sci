@@ -26,7 +26,7 @@ Jx=1// guess
 KV=850 // rpm/Volts 
 batVolt=11.1 //Volts
 dm=.3 // guess in metres, motor moment arm
-tau_motor=20 // guess, motor pole (rad/s)
+tau_motor=18 // guess, motor pole (rad/s)
 C_T=0.1 // guess, motor thrust coefficient
 C_Q=0.1 // guess, motor torque coefficient
 
@@ -40,7 +40,7 @@ s_frame_side=.1 // guess in m^2
 
 // solve for pitch angle at trim;
 deff('[y]=theta_sol(x)','y=(-4*%pi^2*rho*x^2*sin(x)*K_cd_cl-rho*sin(x)*Cd0-2*%pi*rho*x*cos(x))*s_frame*Vt^2+(2*cos(x)*sin(x)^2+2*cos(x)^3)*g*m');
-theta=fsolve(-10*%pi/180,theta_sol)
+theta=fsolve(-17*%pi/180,theta_sol)
 alpha=theta;
 qwd.trim.theta=theta;
 
@@ -95,30 +95,30 @@ qwd.names.y(8) = "wz";
 qwd.names.u(1) = "sum_sq";
 qwd.names.u(2) = "F_B_sq";
 qwd.names.u(3) = "L_R_sq";
-qwd.names.u(4) = "RL_FB_sq";
+qwd.names.u(4) = "LR_FB_sq";
 
 // include unityFeedback function
 exec unityFeedback.sci;
 
 disp("Closing Loop 1");
 qwd.Loop(1).H = diag([
-		-(0.01 + 0.5/%s + 0.5*%s/(%s+20)); 	// altitude error to power
+		-(0.01 + 0*%s + 0.01*(%s-0.2)/(%s+0.01)); 	//velocity error to power
 		-(0.5 + 0/%s + 0*%s/(%s+20)); 	// roll rate error to lf
 		0.5 + 0/%s + 0*%s/(%s+20); 	// pitch rate error to fb
 		0.5 + 0/%s + 0*%s/(%s+20)  	// yaw rate error to fb_lf
 ]); 
 qwd.Loop(1).u = [1,3,2,4];
-qwd.Loop(1).y = [4,6,3,8];
+qwd.Loop(1).y = [1,6,3,8];
 qwd.Loop(1).olss=qwd.open.ss;
 qwd.Loop(1).oltf=clean(ss2tf(qwd.Loop(1).olss));
 qwd.Loop(1).clss = unityFeedback(qwd.Loop(1).olss,qwd.Loop(1).H,qwd.Loop(1).y,qwd.Loop(1).u);
 qwd.Loop(1).cltf = clean(ss2tf(qwd.Loop(1).clss)); 
-qwd.names.u(5) = "altitude command";
+qwd.names.u(5) = "velocity command";
 qwd.names.u(6) = "roll rate command";
 qwd.names.u(7) = "pitch rate command";
 qwd.names.u(8) = "yaw rate command";
 scf(1); clf(1);
-subplot(1,4,1); bode(qwd.Loop(1).cltf(4,5),.01,100,.1,qwd.names.u(5));
+subplot(1,4,1); bode(qwd.Loop(1).cltf(1,5),.01,100,.1,qwd.names.u(5));
 subplot(1,4,2); bode(qwd.Loop(1).cltf(6,6),.01,100,.1,qwd.names.u(6));
 subplot(1,4,3); bode(qwd.Loop(1).cltf(3,7),.01,100,.1,qwd.names.u(7));
 subplot(1,4,4); bode(qwd.Loop(1).cltf(8,8),.01,100,.1,qwd.names.u(8));
@@ -126,23 +126,26 @@ disp("Loop 1 Closed");
 
 disp("Closing Loop 2");
 qwd.Loop(2).H = diag([
+        0.5 + 0/%s + 0*%s/(%s+20); // altitude error to pitch rate command
 		0.5 + 0/%s + 0*%s/(%s+20); 	// roll error to roll rate command
 		0.5 + 0.1/%s + 0*%s/(%s+20); 	// velocity error to pitch rate command
 		0.5 + 0/%s + 0*%s/(%s+20)  	// yaw error to yaw rate command
 ]); 
-qwd.Loop(2).u = [6,7,8]; 
-qwd.Loop(2).y = [5,1,7];
+qwd.Loop(2).u = [7,6,7,8]; 
+qwd.Loop(2).y = [4,5,1,7];
 qwd.Loop(2).olss=qwd.Loop(1).clss;
 qwd.Loop(2).oltf=qwd.Loop(1).cltf;
 qwd.Loop(2).clss = unityFeedback(qwd.Loop(1).clss,qwd.Loop(2).H,qwd.Loop(2).y,qwd.Loop(2).u);
 qwd.Loop(2).cltf = clean(ss2tf(qwd.Loop(2).clss)); 
-qwd.names.u(9) = "roll command";
-qwd.names.u(10) = "velocity command";
-qwd.names.u(11) = "yaw command";
+qwd.names.u(9) = "altitude command";
+qwd.names.u(10) = "roll command";
+qwd.names.u(11) = "velocity command";
+qwd.names.u(12) = "yaw command";
 scf(2); clf(2);
-subplot(1,4,1); bode(qwd.Loop(2).cltf(5,9),.01,100,.1,qwd.names.u(9));
-subplot(1,4,2); bode(qwd.Loop(2).cltf(2,10),.01,100,.1,qwd.names.u(10));
-subplot(1,4,3); bode(qwd.Loop(2).cltf(7,11),.01,100,.1,qwd.names.u(11));
+subplot(1,4,1); bode(qwd.Loop(2).cltf(4,10),.01,100,.1,qwd.names.u(9));
+subplot(1,4,2); bode(qwd.Loop(2).cltf(5,9),.01,100,.1,qwd.names.u(10));
+subplot(1,4,3); bode(qwd.Loop(2).cltf(2,10),.01,100,.1,qwd.names.u(11));
+subplot(1,4,4); bode(qwd.Loop(2).cltf(7,11),.01,100,.1,qwd.names.u(12));
 disp("Loop 2 Closed");
 
 // plots
