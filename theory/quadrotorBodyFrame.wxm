@@ -113,7 +113,7 @@ dx = F*x + G*u_motors, u_motors = D_contmix*u, hence dx = F*x + G*D_contmix*u
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-G_wind_quad : G_body_quad_motors.D_contmix;
+G_body_quad : G_body_quad_motors.D_contmix;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
