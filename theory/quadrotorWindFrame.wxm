@@ -57,6 +57,14 @@ T_sum_trim : rhs(solve(d_x_wind_quad_trim_eq[1,1],T_sum)[1]);
 theta_eq : ratnumer(fullratsimp(subst([T_sum=T_sum_trim],d_x_wind_quad_trim_eq[2,1])));
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: input   start ] */
+theta_eq2: subst([K_cd_cl=0.02,Cd0=0.42,s_frame=0.1,Vt=3,g=9.81,m=1,%rho=1.225,%pi=3.14],theta_eq);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+plot2d([theta_eq2],[%theta,-%pi/3,0]);
+/* [wxMaxima: input   end   ] */
+
 /* [wxMaxima: subsect start ]
 Add Motor Dynamcis
    [wxMaxima: subsect end   ] */

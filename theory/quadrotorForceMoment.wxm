@@ -143,7 +143,7 @@ uToDutycycle : algsys([T_sum=T_sum_eq,
 delta_F_B=delta_F_B_eq ,
 delta_L_R=delta_L_R_eq,
 delta_LR_FB=delta_LR_FB_eq],
-[dutycycle_R,dutycycle_F,dutycycle_L,dutycycle_B])[1];
+[dutycycle_L,dutycycle_R,dutycycle_F,dutycycle_B])[1];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
