@@ -38,8 +38,8 @@ function dataNew = closeLoop(data,y,u,H);
     dataNew = data;
 endfunction
 
-function loopAnalysis(data,y,u)
-    sys = data.cltf(y,u);
+function loopAnalysis(cltf,y,u,name)
+    sys = cltf(y,u);
     pm = p_margin(sys);
     gm = g_margin(sys);
     if ( size(pm) == 0) pm = %inf; end
@@ -49,8 +49,8 @@ function loopAnalysis(data,y,u)
     else 
         stability = "stable";
     end
-    printf("%8s -> %8s\tgain margin: %6.1f\tphase margin: %6.1f\t%s\n",..
-        data.u.str(u),data.y.str(y),min(gm),min(pm),stability);
+    printf("\t%s\tgain margin: %6.1f\tphase margin: %6.1f\t%s\n",..
+        name,min(gm),min(pm),stability);
 endfunction
 
 // vim:ts=4:sw=4:expandtab

@@ -50,14 +50,14 @@ function data = quadForwardFlightDesign(H)
 
     // the error catching is used in case the user had commented a loop above
     // isdef doesn't work for structure variables yet
-    execstr("loopAnalysis(data,data.y.wx,data.u.wx)","errcatch");
-    execstr("loopAnalysis(data,data.y.phi,data.u.phi)","errcatch");
-    execstr("loopAnalysis(data,data.y.wy,data.u.wy)","errcatch");
-    execstr("loopAnalysis(data,data.y.wz,data.u.wz)","errcatch");
-    execstr("loopAnalysis(data,data.y.theta,data.u.theta)","errcatch");
-    execstr("loopAnalysis(data,data.y.psi,data.u.psi)","errcatch");
-    execstr("loopAnalysis(data,data.y.Vt,data.u.Vt)","errcatch");
-    execstr("loopAnalysis(data,data.y.h,data.u.h)","errcatch");
+    execstr("loopAnalysis(data.cltf,data.y.wx,data.u.wx,data.u.str(data.u.wx))","errcatch");
+    execstr("loopAnalysis(data.cltf,data.y.phi,data.u.phi,data.u.str(data.u.phi))","errcatch");
+    execstr("loopAnalysis(data.cltf,data.y.wy,data.u.wy,data.u.str(data.u.wy))","errcatch");
+    execstr("loopAnalysis(data.cltf,data.y.wz,data.u.wz,data.u.str(data.u.wz))","errcatch");
+    execstr("loopAnalysis(data.cltf,data.y.theta,data.u.theta,data.u.str(data.u.theta))","errcatch");
+    execstr("loopAnalysis(data.cltf,data.y.psi,data.u.psi,data.u.str(data.u.psi))","errcatch");
+    execstr("loopAnalysis(data.cltf,data.y.Vt,data.u.Vt,data.u.str(data.u.Vt))","errcatch");
+    execstr("loopAnalysis(data.cltf,data.y.h,data.u.h,data.u.str(data.u.h))","errcatch");
 
     [eVec, eVal] = spec(data.clss.A);
     data.eVec = eVec;
@@ -84,7 +84,7 @@ function data = quadForwardFlightDesign(H)
     R = eye(nX+nY,nX+nY); // measurement error  penality
     [P,r] = lqg2stan(minss(olss),Q,R);
     K.ss = minss(lqg(P,r));
-    K.tf = clean(ss2tf(K.ss))
+    K.tf = clean(ss2tf(K.ss));
     [eVec, eVal] = spec(h_cl(P,r,K.ss));
      if (max(real(diag(eVal))) > 0)
         printf("\n\tWARNING: UNSTABLE!!!!!");
@@ -98,7 +98,6 @@ function data = quadForwardFlightDesign(H)
     printf("\n\tLQG state space sizes\ty:%d\tu:%d\tx:%d",size(K.ss,1),size(K.ss,2),size(K.ss.A,1));
     data.K_modern.ss = K.ss;
     data.K_modern.tf = K.tf;
-
 endfunction
 
 // vim:ts=4:sw=4:expandtab
