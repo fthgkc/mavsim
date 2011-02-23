@@ -1,7 +1,7 @@
-function sys = unityFeedback(G,H,u,y)
-C = zeros(length(u),size(G,1));
-for (i=1:length(u)) C(i,u(i)) = 1; end;
-D = zeros(size(G,2),size(y,2));
-for (i=1:length(y)) D(y(i),i) = 1; end;
-sys=(eye(size(G,1),size(G,1))+G*D*H*C)\[G,G*D*H];
+function sys = unityFeedback(y,u,G,H)
+	C = zeros(length(y),size(G,1));
+	for (i=1:length(y)) C(i,y(i)) = 1; end;
+	D = zeros(size(G,2),size(u,2));
+	for (i=1:length(u)) D(u(i),i) = 1; end;
+	sys=minss((eye(size(G,1),size(G,1))+G*D*H*C)\[G,G*D*H]);
 endfunction
