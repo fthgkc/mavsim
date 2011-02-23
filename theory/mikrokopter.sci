@@ -44,13 +44,13 @@ s_frame_side=.1; // guess in m^2
 
 // forward flight
 Vt=3; // airspeed, in m/s
-Hf(1,1) = 1 + 0/%s + .05*%s/(%s+20); 		// LR -> wx
-Hf(2,1) = 1 + 0/%s + .05*%s/(%s+20); 		// FB -> wy
-Hf(3,1) = 0.5 + 1.0/%s + 0*%s/(%s+20); 		// wx -> phi
-Hf(4,1) = 0.1 + 1.0/%s + 0*%s/(%s+20); 		// wy -> theta
-Hf(5,1) = .1 + 0/%s + .1*%s/(%s+20); 		// Sum -> Vt
-Hf(6,1) = 0.0 + 1.0/%s + 0*%s/(%s+20); 		// phi -> psi
-Hf(7,1) = 0.01 + 0.2/%s + 0*%s/(%s+20); 	// theta -> h
+Hf(1,1) = 0.5 + 0/%s + 0*%s/(%s+20); 		// LR -> wx
+Hf(2,1) = 0.5 + 0/%s + 0*%s/(%s+20); 		// FB -> wy
+Hf(3,1) = 0.5 + 0/%s + 0*%s/(%s+20); 		// wx -> phi
+Hf(4,1) = 0.5 + 0/%s + 0*%s/(%s+20); 		// wy -> theta
+Hf(5,1) = 0.5 + 0/%s + 0*%s/(%s+20); 		// Sum -> Vt
+Hf(6,1) = 0.5 + 0/%s + 0*%s/(%s+20); 		// phi -> psi
+Hf(7,1) = 0.4 + 0/%s + 0*%s/(%s+20); 	// theta -> h
 qwd = quadForwardFlightDesign(Hf);
 
 //hover
