@@ -125,11 +125,11 @@ z_body_quad : transpose([U,W,%theta,wy,h,V,%phi,wx,%psi,wz]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-C_wind_quad : jacobian(vector2list(z_body_quad),vector2list(x_body_quad));
+C_body_quad : jacobian(vector2list(z_body_quad),vector2list(x_body_quad));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-D_body_quad : zeromatrix(8,4);
+D_body_quad : zeromatrix(10,4);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
