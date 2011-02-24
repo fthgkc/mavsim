@@ -21,7 +21,7 @@ function data = quadHoverDesign(H)
     u = createIndex(["Sum" "FB" "LR" "LR_FB"]);
 
     // save to data structure
-    data.x = x; data.y = y; data.u = u;
+    data.x = x; data.y = y; data.u = u; data.H = H;
     data.olss = olss; data.oltf = oltf;
 
     // initialize closed loop as open before closures
@@ -32,28 +32,31 @@ function data = quadHoverDesign(H)
     printf("=================================================================================\n");
 
     // controllers
-    data = closeLoop(data,      data.y.wx,      data.u.LR,      H(1,1));
-    data = closeLoop(data,      data.y.wy,      data.u.FB,      H(2,1));
-    data = closeLoop(data,      data.y.phi,     data.u.wx,      H(3,1));
-    data = closeLoop(data,      data.y.theta,   data.u.wy,      H(4,1));
-    data = closeLoop(data,      data.y.U,       data.u.theta,   H(5,1));
-    data = closeLoop(data,      data.y.V,       data.u.phi,     H(6,1));
-    data = closeLoop(data,      data.y.W,       data.u.Sum,     H(7,1)); 
-    data = closeLoop(data,      data.y.psi,     data.u.LR_FB,   H(8,1)); 
-    data = closeLoop(data,      data.y.h,       data.u.W,       H(9,1));
+    data = closeLoop(data,      data.y.wx,      data.u.LR,      H.wx_LR);
+    data = closeLoop(data,      data.y.wy,      data.u.FB,      H.wy_FB);
+    data = closeLoop(data,      data.y.wz,      data.u.LR_FB,   H.wz_LR_FB);
+    data = closeLoop(data,      data.y.phi,     data.u.wx,      H.phi_wx);
+    data = closeLoop(data,      data.y.theta,   data.u.wy,      H.theta_wy);
+    data = closeLoop(data,      data.y.U,       data.u.theta,   H.U_theta);
+    data = closeLoop(data,      data.y.V,       data.u.phi,     H.V_phi);
+    data = closeLoop(data,      data.y.W,       data.u.Sum,     H.W_Sum); 
+    data = closeLoop(data,      data.y.psi,     data.u.wz,      H.psi_wz); 
+    data = closeLoop(data,      data.y.h,       data.u.W,       H.h_W);
     // The order that you close the loops here matters. The inner loop will have a higher bandwidth.
 
     // the error catching is used in case the user had commented a loop above
     // isdef doesn't work for structure variables yet
-    execstr("loopAnalysis(data.cltf,data.y.wx,data.u.wx,data.u.str(data.u.wx))","errcatch");
-    execstr("loopAnalysis(data.cltf,data.y.phi,data.u.phi,data.u.str(data.u.phi))","errcatch");
-    execstr("loopAnalysis(data.cltf,data.y.wy,data.u.wy,data.u.str(data.u.wy))","errcatch");
-    execstr("loopAnalysis(data.cltf,data.y.wz,data.u.wz,data.u.str(data.u.wz))","errcatch");
-    execstr("loopAnalysis(data.cltf,data.y.theta,data.u.theta,data.u.str(data.u.theta))","errcatch");
-    execstr("loopAnalysis(data.cltf,data.y.psi,data.u.psi,data.u.str(data.u.psi))","errcatch");
-    execstr("loopAnalysis(data.cltf,data.y.Vt,data.u.Vt,data.u.str(data.u.Vt))","errcatch");
-    execstr("loopAnalysis(data.cltf,data.y.h,data.u.h,data.u.str(data.u.h))","errcatch");
-
+    execstr("loopAnalysis(data.oltf,H.wx_LR,data.y.wx,data.u.LR,data.u.str(data.u.wx))","errcatch");
+    execstr("loopAnalysis(data.oltf,H.wy_FB,data.y.wy,data.u.FB,data.u.str(data.u.wy))","errcatch");
+    execstr("loopAnalysis(data.oltf,H.wz_LR_FB,data.y.wz,data.u.LR_FB,data.u.str(data.u.wz))","errcatch");
+    execstr("loopAnalysis(data.oltf,H.phi_wx,data.y.phi,data.u.wx,data.u.str(data.u.phi))","errcatch");
+    execstr("loopAnalysis(data.oltf,H.theta_wy,data.y.theta,data.u.wy,data.u.str(data.u.theta))","errcatch");
+    execstr("loopAnalysis(data.oltf,H.U_theta,data.y.U,data.u.theta,data.u.str(data.u.U))","errcatch");
+    execstr("loopAnalysis(data.oltf,H.V_phi,data.y.V,data.u.phi,data.u.str(data.u.V))","errcatch"); 
+    execstr("loopAnalysis(data.oltf,H.W_Sum,data.y.W,data.u.Sum,data.u.str(data.u.W))","errcatch");
+    execstr("loopAnalysis(data.oltf,H.psi_wz,data.y.psi,data.u.wz,data.u.str(data.u.psi))","errcatch");
+    execstr("loopAnalysis(data.oltf,H.h_W,data.y.h,data.u.W,data.u.str(data.u.h))","errcatch");
+    
     [eVec, eVal] = spec(data.clss.A);
     data.eVec = eVec;
     data.eVal = eVal;

@@ -38,13 +38,13 @@ function dataNew = closeLoop(data,y,u,H);
     dataNew = data;
 endfunction
 
-function loopAnalysis(cltf,y,u,name)
-    sys = cltf(y,u);
-    pm = p_margin(sys);
+function loopAnalysis(oltf,H,y,u,name)
+    sys = oltf(y,u)*H;
+    pm = p_margin(sys)+180;
     gm = g_margin(sys);
     if ( size(pm) == 0) pm = %inf; end
     if ( size(gm) == 0) gm = %inf; end
-    if ( min(gm) < 0 | min(pm) > 0)
+    if ( min(gm) < 0 | min(pm) < 0)
         stability = "unstable";
     else 
         stability = "stable";
