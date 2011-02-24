@@ -44,29 +44,29 @@ s_frame_side=.1; // guess in m^2
 // forward flight
 Vt=3; // airspeed, in m/s
 // output _ input
-Hf.wx_LR 		= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hf.wy_FB 		= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hf.wz_LR_FB 	= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hf.phi_wx 		= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hf.theta_wy 	= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hf.psi_phi 		= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hf.Vt_Sum 		= 0.4 + 0/%s + 0*%s/(%s+20); 	
-Hf.h_theta 		= 0.4 + 0/%s + 0*%s/(%s+20); 	
+Hf.wx_LR 		= 0.05 + 0/%s + 0*%s/(%s+20); 		
+Hf.wy_FB 		= 0.0 + 0/%s + 0*%s/(%s+20); 		
+Hf.wz_LR_FB 	= 0.0 + 0/%s + 0*%s/(%s+20); 		
+Hf.phi_wx 		= 0 + 0/%s + 0*%s/(%s+20); 		
+Hf.theta_wy 	= 0 + 0/%s + 0*%s/(%s+20); 		
+Hf.psi_phi 		= 0 + 0/%s + 0*%s/(%s+20); 		
+Hf.Vt_Sum 		= -(0.0 + 0/%s + 0*%s/(%s+20)); 	
+Hf.h_theta 		= 0 + 0/%s + 0*%s/(%s+20); 	
 
 qwd = quadForwardFlightDesign(Hf);
 
 //hover
 U = 0; V = 0; W = 0; // hover
 // output _ input
-Hh.wx_LR 		= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hh.wy_FB 		= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hh.wz_LR_FB 	= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hh.phi_wx 		= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hh.theta_wy 	= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hh.U_theta 		= 0.5 + 0/%s + 0*%s/(%s+20); 	
-Hh.V_phi 		= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hh.W_Sum 		= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hh.psi_wz 		= 0.5 + 0/%s + 0*%s/(%s+20); 		
-Hh.h_W 			= 0.5 + 0/%s + 0*%s/(%s+20); 	
+Hh.wx_LR 		= 0.3*(18+%s); 		
+Hh.wy_FB 		= 0*(18+%s); 		
+Hh.wz_LR_FB 	= 0*(18+%s); 		
+Hh.phi_wx 		= 0 + 0/%s + 0*%s/(%s+20); 		
+Hh.theta_wy 	= 0 + 0/%s + 0*%s/(%s+20); 		
+Hh.U_theta 		= 0 + 0/%s + 0*%s/(%s+20); 	
+Hh.V_phi 		= 0 + 0/%s + 0*%s/(%s+20); 		
+Hh.W_Sum 		= 0 + 0/%s + 0*%s/(%s+20); 		
+Hh.psi_wz 		= 0 + 0/%s + 0*%s/(%s+20); 		
+Hh.h_W 			= 0 + 0/%s + 0*%s/(%s+20); 	
 
 qhd = quadHoverDesign(Hh);

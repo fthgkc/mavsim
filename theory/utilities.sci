@@ -39,8 +39,15 @@ function dataNew = closeLoop(data,y,u,H);
 endfunction
 
 function loopAnalysis(oltf,H,y,u,name)
-    sys = oltf(y,u)*H;
-    pm = p_margin(sys)+180;
+    if(execstr("sys = oltf(y,u)*H","errcatch"))
+		printf("\tERROR: oltf indices out of bounds\n");
+		return;
+	end
+    if (execstr("pm = p_margin(sys)+180","errcatch"))
+		disp("error findind phase margin");
+		pm = -%inf;
+		return;
+	end
     gm = g_margin(sys);
     if ( size(pm) == 0) pm = %inf; end
     if ( size(gm) == 0) gm = %inf; end
