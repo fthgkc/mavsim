@@ -1,10 +1,10 @@
 mode(-1);
 
 function data = quadHoverDesign(H)
-
     theta = 0;
 	data.trim.theta = theta;
-    T_sumSq_trim= 0.5;
+	T_sumSq_trim = 900*g*m/(%pi^3*rho*batVolt^2*KV^2*rBlade^4*C_T);
+	printf("\n\tT_sumSq_trim: %f\n", T_sumSq_trim);
     data.trim.T_sumSq = T_sumSq_trim;
     T_sumSq=T_sumSq_trim;
     dutycycle_L=T_sumSq/4; dutycycle_R=T_sumSq/4;
