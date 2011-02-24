@@ -45,6 +45,7 @@
 #include <string>
 #include <cstdlib>
 #include "math/GpsIns.hpp"
+#include "math/storage_adaptors.hpp"
 #include "utilities.hpp"
 #include <stdexcept>
 
@@ -80,18 +81,12 @@ void sci_gpsMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
     double & Re = rpar[0];
 
     // static data
-    static double ** H_gps, ** R_gps;
-    static int nX;
-    static const int nZ = 3;
-
+    using namespace boost::numeric::ublas;
+    static matrix<double,column_major> R_gps = make_matrix_from_pointer(6,6,y2);
+    static matrix<double,column_major> H_gps;
     //handle flags
     if (flag==scicos::computeOutput)
     {
-        if ( ! (H_gps && R_gps) )
-        {
-            Coserror((char *)"gpsMeasModel block initialization failed.");
-            return;
-        }
         const double cosL = cos(L);
         const double sigVel2 = sigVel*sigVel;
         const double sigPos2 = sigPos*sigPos;
@@ -104,6 +99,7 @@ void sci_gpsMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
         }
         else if (mode == INS_VP_STATE)
         {
+            #define H_gps_vp H_gps
             #include "navigation/ins_H_gps_vp.hpp" 
         }
         else
@@ -111,39 +107,26 @@ void sci_gpsMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
             Coserror((char *)"unknown mode for gpsMeasModel block");
             return;
         }
-
-        // set output vectors
-        cMatrix2FortranVector(H_gps,nZ,nX,y1);
-        cMatrix2FortranVector(R_gps,nZ,nZ,y2);
     }
     else if (flag==scicos::terminate)
     {
-        freeCMatrix(H_gps,nZ,nX);
-        freeCMatrix(R_gps,nZ,nZ);
     }
     else if (flag==scicos::initialize || flag==scicos::reinitialize)
     {
-        // prevent reinitialization
-        if (H_gps || R_gps) return; 
-
         // determine sizes
         if (mode == INS_FULL_STATE)
         {
-            nX = 10;
+            H_gps = make_matrix_from_pointer(3,10,y1);
         }
         else if (mode == INS_VP_STATE)
         {
-            nX = 6;
+            H_gps = make_matrix_from_pointer(3,6,y1);
         }
         else
         {
             Coserror((char *)"unknown mode for insErrorDynamics block");
             return;
         }
-
-        // allocate matrices
-        allocateCMatrix(H_gps,nZ,nX);
-        allocateCMatrix(R_gps,nZ,nZ);
     }
     else
     {

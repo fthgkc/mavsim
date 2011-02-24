@@ -28,6 +28,7 @@
 #include <string>
 #include <cstdlib>
 #include "math/GpsIns.hpp"
+#include "math/storage_adaptors.hpp"
 #include "utilities.hpp"
 #include <stdexcept>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -50,11 +51,10 @@ void sci_insDynamics(scicos_block *block, scicos::enumScicosFlags flag)
     double * u1=(double*)GetInPortPtrs(block,1);
     double * u2=(double*)GetInPortPtrs(block,2);
     double * u3=(double*)GetInPortPtrs(block,3);
+    double * y1=(double*)GetOutPortPtrs(block,1);
 
-    namespace ublas = boost::numeric::ublas;
-    ublas::unbounded_array<double> fArray;
-    fArray.data() = (double*)GetOutPortPtrs(block,1);
-    ublas::matrix<double,ublas::column_major> f(14,1,fArray);
+    using namespace boost::numeric::ublas;
+    static matrix<double,column_major> f = make_matrix_from_pointer(14,1,y1);
 
     double * rpar=block->rpar;
     int * ipar=block->ipar;
@@ -102,10 +102,12 @@ void sci_insDynamics(scicos_block *block, scicos::enumScicosFlags flag)
         }
         else if (mode == INS_ATT_STATE)
         {
+            #define f_att f
             #include "navigation/ins_dynamics_f_att.hpp"
         }
         else if (mode == INS_VP_STATE)
         {
+            #define f_vp f
             #include "navigation/ins_dynamics_f_vp.hpp"
         }
         else

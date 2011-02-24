@@ -29,9 +29,11 @@
 #include <string>
 #include <cstdlib>
 #include "math/GpsIns.hpp"
+#include "math/storage_adaptors.hpp"
 #include "utilities.hpp"
 #include <stdexcept>
 #include <cstdio>
+#include <boost/numeric/ublas/matrix.hpp>
 
 extern "C"
 {
@@ -70,10 +72,9 @@ void sci_magMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
     int & mode = ipar[0];
 
     // static data
-    static double ** H_mag;
-    static double R_mag_n[3][3];
-    static double H_mag_full[10][3];
-    static double H_mag_att[4][3];
+    using namespace boost::numeric::ublas;
+    static matrix<double> H_mag;
+    static matrix<double> R_mag_n(3,3);
 
     //handle flags
     if (flag==scicos::computeOutput)
@@ -102,11 +103,11 @@ void sci_magMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
         // determine sizes
         if (mode == INS_FULL_STATE)
         {
-            H_mag = &(H_mag_full[0]);
+            H_mag = make_matrix_from_pointer(3,10,y1);
         }
         else if (mode == INS_ATT_STATE)
         {
-            H_mag = &(H_mag_att[0]);
+            H_mag = make_matrix_from_pointer(3,4,y1);
         }
         else
         {

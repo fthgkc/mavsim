@@ -153,6 +153,11 @@ cat code/ins_H_mag_att.f90 | sed \
 cat code/ins_R_mag_n.f90 | sed \
 	-e "s/$/;/g" \
 	-e "/^.*) = 0;$/d" \
+	-e "s/cos(dec)\*\*2/cosDec2/g" -e "s/sin(dec)\*\*2/sinDec2/g" \
+	-e "s/cos(dip)\*\*2/cosDip2/g" -e "s/sin(dip)\*\*2/sinDip2/g" \
+	-e "s/cos(dec)/cosDec/g" -e "s/sin(dec)/sinDec/g" \
+	-e "s/cos(dip)/cosDip/g" -e "s/sin(dip)/sinDip/g" \
+	-e "s/sigDec\*\*2/sigDec2/g" -e "s/sigDip\*\*2/sigDip2/g" \
 	> ${srcPath}/ins_R_mag_n.hpp
 
 cat code/ins_H_gps.f90 | sed \

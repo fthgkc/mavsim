@@ -1,5 +1,6 @@
 include_directories( "${PROJECT_SOURCE_DIR}/src" ${SCICOSLAB_INCLUDE_DIRS}
-	${JSBSIM_INCLUDE_DIRS} ${OPENSCENEGRAPH_INCLUDE_DIRS} ${MAVLINK_INCLUDE_DIRS})
+	${JSBSIM_INCLUDE_DIRS} ${OPENSCENEGRAPH_INCLUDE_DIRS} 
+	${Boost_INCLUDE_DIRS} ${MAVLINK_INCLUDE_DIRS})
 
 link_directories( ${OSG_LIBRARY_DIRS} ) 
 
@@ -12,13 +13,13 @@ set(oooarkScicosSources
 	utilities.cpp
 	sci_jsbsimTrim.cpp
 	sci_jsbsimComm.cpp
-	#sci_insErrorDynamics.cpp
+	sci_insErrorDynamics.cpp
 	sci_insDynamics.cpp
 	sci_zeroOrderHold.cpp
 	sci_randn.cpp
 	sci_geoMag.cpp
-	#sci_magMeasModel.cpp
-	#sci_gpsMeasModel.cpp
+	sci_magMeasModel.cpp
+	sci_gpsMeasModel.cpp
 	sci_quat2EulerDcm.cpp
 	sci_waypointGuidance.cpp
 	sci_euler2Dcm.cpp

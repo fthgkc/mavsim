@@ -118,7 +118,8 @@ extern "C"
             std::cout << "computing Output" << std::endl;
 			if(gpsIns)
 			{
-				gpsIns->updateAll(*fbx, *fby, *fbz, *wbx, *wby, *wbz, *lat, *lon, *height, *Vn, *Ve, *Vd);
+				gpsIns->updateAll(*fbx, *fby, *fbz, *wbx, *wby,
+						*wbz, *lat, *lon, *height, *Vn, *Ve, *Vd);
 				gpsIns->getState(xOut);
 			}
         }
