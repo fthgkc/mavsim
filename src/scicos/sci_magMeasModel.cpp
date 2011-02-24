@@ -25,6 +25,8 @@
  *
  */
 
+#define BOOST_UBLAS_SHALLOW_ARRAY_ADAPTOR 1
+
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -71,10 +73,16 @@ void sci_magMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
             
     int & mode = ipar[0];
 
-    // static data
+    // sizes
+    int nX = 0, nZ = 0;
+    if (mode == INS_FULL_STATE) nX = 10, nZ = 3;
+    else if (mode == INS_ATT_STATE) nX = 4, nZ = 3;
+    else Coserror((char *)"unknown mode for insErrorDynamics block");
+
+    // matrices
     using namespace boost::numeric::ublas;
-    static matrix<double> H_mag;
-    static matrix<double> R_mag_n(3,3);
+    matrix<double,column_major, shallow_array_adaptor<double> > H_mag(nZ,nX,shallow_array_adaptor<double>(nZ*nX,y1));
+    matrix<double,column_major, shallow_array_adaptor<double> > R_mag_n(nZ,nZ,shallow_array_adaptor<double>(nZ*nZ,y2));
 
     //handle flags
     if (flag==scicos::computeOutput)
@@ -100,20 +108,6 @@ void sci_magMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
     }
     else if (flag==scicos::initialize || flag==scicos::reinitialize)
     {
-        // determine sizes
-        if (mode == INS_FULL_STATE)
-        {
-            H_mag = make_matrix_from_pointer(3,10,y1);
-        }
-        else if (mode == INS_ATT_STATE)
-        {
-            H_mag = make_matrix_from_pointer(3,4,y1);
-        }
-        else
-        {
-            Coserror((char *)"unknown mode for magMeasModel block");
-            return;
-        }
     }
     else
     {

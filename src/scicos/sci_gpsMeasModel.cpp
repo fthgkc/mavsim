@@ -41,6 +41,8 @@
  *
  */
 
+#define BOOST_UBLAS_SHALLOW_ARRAY_ADAPTOR 1
+
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -80,10 +82,17 @@ void sci_gpsMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
     int & mode = ipar[0];
     double & Re = rpar[0];
 
-    // static data
+    // sizes
+    int nX = 0, nZ = 6;
+    if (mode == INS_FULL_STATE) nX = 10;
+    else if (mode == INS_VP_STATE) nX = 6;
+    else Coserror((char *)"unknown mode for insErrorDynamics block");
+
+    // matrices
     using namespace boost::numeric::ublas;
-    static matrix<double,column_major> R_gps = make_matrix_from_pointer(6,6,y2);
-    static matrix<double,column_major> H_gps;
+    matrix<double,column_major, shallow_array_adaptor<double> > H_gps(nZ,nX,shallow_array_adaptor<double>(nZ*nX,y1));
+    matrix<double,column_major, shallow_array_adaptor<double> > R_gps(nZ,nZ,shallow_array_adaptor<double>(nZ*nZ,y2));
+
     //handle flags
     if (flag==scicos::computeOutput)
     {
@@ -113,20 +122,6 @@ void sci_gpsMeasModel(scicos_block *block, scicos::enumScicosFlags flag)
     }
     else if (flag==scicos::initialize || flag==scicos::reinitialize)
     {
-        // determine sizes
-        if (mode == INS_FULL_STATE)
-        {
-            H_gps = make_matrix_from_pointer(3,10,y1);
-        }
-        else if (mode == INS_VP_STATE)
-        {
-            H_gps = make_matrix_from_pointer(3,6,y1);
-        }
-        else
-        {
-            Coserror((char *)"unknown mode for insErrorDynamics block");
-            return;
-        }
     }
     else
     {

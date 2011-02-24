@@ -27,6 +27,8 @@
  *
  */
 
+#define BOOST_UBLAS_SHALLOW_ARRAY_ADAPTOR 1
+
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -82,11 +84,18 @@ void sci_insErrorDynamics(scicos_block *block, scicos::enumScicosFlags flag)
     double & Re = rpar[1];
     int & mode = ipar[0];
 
-    // static data
-    static int nX, nU;
+    // sizes
+    int nX = 0, nU = 0;
+    if (mode == INS_FULL_STATE) nX = 10, nU = 6;
+    else if (mode == INS_ATT_STATE) nX = 4, nU = 3;
+    else if (mode == INS_VP_STATE) nX = 6, nU = 3;
+    else Coserror((char *)"unknown mode for insErrorDynamics block");
+
+    // matrices
     using namespace boost::numeric::ublas;
-    static matrix<double,column_major> F, G;
-            
+    matrix<double,column_major, shallow_array_adaptor<double> > F(nX,nX,shallow_array_adaptor<double>(nX*nX,y1));
+    matrix<double,column_major, shallow_array_adaptor<double> > G(nX,nU,shallow_array_adaptor<double>(nX*nU,y2));
+
     //handle flags
     if (flag==scicos::computeOutput)
     {
@@ -143,7 +152,7 @@ void sci_insErrorDynamics(scicos_block *block, scicos::enumScicosFlags flag)
         if (mode==INS_FULL_STATE)
         { 
             F = make_matrix_from_pointer(10,10,y1);
-            G = make_matrix_from_pointer(6,10,y2);
+            G = make_matrix_from_pointer(10,6,y2);
         }
         else if (mode==INS_ATT_STATE)
         { 

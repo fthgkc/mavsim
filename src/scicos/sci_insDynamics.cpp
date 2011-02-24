@@ -24,13 +24,14 @@
  *
  */
 
+#define BOOST_UBLAS_SHALLOW_ARRAY_ADAPTOR 1
+
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include "math/GpsIns.hpp"
-#include "math/storage_adaptors.hpp"
 #include "utilities.hpp"
 #include <stdexcept>
+
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 
@@ -53,10 +54,7 @@ void sci_insDynamics(scicos_block *block, scicos::enumScicosFlags flag)
     double * u3=(double*)GetInPortPtrs(block,3);
     double * y1=(double*)GetOutPortPtrs(block,1);
 
-    using namespace boost::numeric::ublas;
-    static matrix<double,column_major> f = make_matrix_from_pointer(14,1,y1);
-
-    double * rpar=block->rpar;
+       double * rpar=block->rpar;
     int * ipar=block->ipar;
 
     // aliases
@@ -86,7 +84,18 @@ void sci_insDynamics(scicos_block *block, scicos::enumScicosFlags flag)
     double & L      = u3[7];
     double & l      = u3[8];
     double & alt    = u3[9];
-         
+
+    // sizes
+    int nY = 0;
+    if (mode == INS_FULL_STATE) nY = 10;
+    else if (mode == INS_ATT_STATE) nY = 4;
+    else if (mode == INS_VP_STATE) nY = 6;
+    else Coserror((char *)"unknown mode for insErrorDynamics block");
+
+    // matrices
+    using namespace boost::numeric::ublas;
+    matrix<double,column_major, shallow_array_adaptor<double> > f(nY,1,shallow_array_adaptor<double>(nY,y1));
+
     //handle flags
     if (flag==scicos::computeOutput)
     {
