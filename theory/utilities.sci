@@ -3,7 +3,16 @@ function sys = unityFeedback(y,u,G,H)
 	for (i=1:length(y)) C(i,y(i)) = 1; end;
 	D = zeros(size(G,2),size(u,2));
 	for (i=1:length(u)) D(u(i),i) = 1; end;
-	sys=minss((eye(size(G,1),size(G,1))+G*D*H*C)\[G,G*D*H]);
+	olss = G*H;
+	realSysPoles = size(olss.A,1);
+	tol = 1e-15;
+	sysPoles = -1;
+	while(tol < 1e-2 & sysPoles ~= realSysPoles)
+		tol = tol*10;
+		sys=minss((eye(size(G,1),size(G,1))+G*D*H*C)\[G,G*D*H]);
+		sysPoles = size(sys.A,1);
+	end
+	printf("\n\ttolerance converged with right number of poles at %e\n",tol);
 endfunction
 
 function  infoNew = createIndex(names,info)
