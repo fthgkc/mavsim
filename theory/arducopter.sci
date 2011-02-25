@@ -23,14 +23,6 @@ Jy=0.1; // guess , moments of inertia
 Jz=0.1; // guess
 Jx=0.1; // guess
 
-// motor
-KV=850 // rpm/Volts 
-batVolt=11.1; //Volts
-dm=.3; // guess in metres, motor moment arm
-tau_motor=18; // guess, motor pole (rad/s)
-C_T=0.1; // guess, motor thrust coefficient
-C_Q=0.1; // guess, motor torque coefficient
-
 // aerodynamics
 rho=1.225; // kg/m^3
 rBlade=0.125; // metres
@@ -38,6 +30,16 @@ Cd0=0.42; // guess
 K_cd_cl=0.02; //guess
 s_frame=.1; //guess in m^2
 s_frame_side=.1; // guess in m^2
+
+// motor
+KV=850 // rpm/Volts 
+batVolt=11.1; //Volts
+dm=.3; // guess in metres, motor moment arm
+tau_motor=18; // guess, motor pole (rad/s)
+T_max = 5; // max motor thrust in newtons
+torque_max = 10; // max motor thrust in newton-m
+C_T = T_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
+C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 
 // design controllers
 
@@ -58,15 +60,15 @@ qwd = quadForwardFlightDesign(Hf);
 //hover
 U = 0; V = 0; W = 0; // hover
 // output _ input
-Hh.wx_LR 		= 0.3*(18+%s); 		
-Hh.wy_FB 		= 0*(18+%s); 		
-Hh.wz_LR_FB 	= 0*(18+%s); 		
-Hh.phi_wx 		= 0 + 0/%s + 0*%s/(%s+20); 		
-Hh.theta_wy 	= 0 + 0/%s + 0*%s/(%s+20); 		
-Hh.U_theta 		= 0 + 0/%s + 0*%s/(%s+20); 	
-Hh.V_phi 		= 0 + 0/%s + 0*%s/(%s+20); 		
-Hh.W_Sum 		= 0 + 0/%s + 0*%s/(%s+20); 		
-Hh.psi_wz 		= 0 + 0/%s + 0*%s/(%s+20); 		
-Hh.h_W 			= 0 + 0/%s + 0*%s/(%s+20); 	
+Hh.wx_LR 		= 1.0*(%s+18); 		
+Hh.wy_FB 		= 1.0*(%s+18); 		
+Hh.wz_LR_FB 	= 1.0*(%s+18); 		
+Hh.W_Sum 		= -1.0*(%s+15); 		
+Hh.phi_wx 		= 1.0; 		
+Hh.theta_wy 	= 1.0; 		
+Hh.psi_wz 		= 1.0; 		
+Hh.U_theta 		= -1.0; 	
+Hh.V_phi 		= 1.0; 		
+Hh.h_W 			= 1.0; 	
 
 qhd = quadHoverDesign(Hh);

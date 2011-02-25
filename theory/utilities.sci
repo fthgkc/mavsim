@@ -30,34 +30,33 @@ function  infoNew = createIndex(names,info)
     infoNew = info;
 endfunction
 
-function dataNew = closeLoop(data,y,u,H);
-    printf("\tclosing %8s -> %8s loop\n", data.u.str(u), data.y.str(y));
-    data.clss = unityFeedback(y,u,data.clss,H);
-    data.cltf = clean(ss2tf(data.clss),1e-8);
-    data.u = createIndex(data.y.str(y),data.u);
-    dataNew = data;
-endfunction
+function dataNew = closeLoop(data,y,u,H)
 
-function loopAnalysis(oltf,H,y,u,name)
-    if(execstr("sys = oltf(y,u)*H","errcatch"))
-		printf("\tERROR: oltf indices out of bounds\n");
-		return;
-	end
-    if (execstr("pm = p_margin(sys)+180","errcatch"))
-		disp("error findind phase margin");
-		pm = -%inf;
-		return;
-	end
-    gm = g_margin(sys);
-    if ( size(pm) == 0) pm = %inf; end
-    if ( size(gm) == 0) gm = %inf; end
+    oltf = data.cltf(y,u)*H;
+
+    pm = p_margin(oltf)+180;
+    for i=1:length(pm)
+        if (pm(i) >= 180) pm(i) = pm(i) - 360; end
+        if (pm(i) < 180) pm(i) = pm(i) - 360; end
+    end
+
+    gm = g_margin(oltf);
+    if ( size(pm) == 0) pm = -%inf; end
+    if ( size(gm) == 0) gm = -%inf; end
     if ( min(gm) < 0 | min(pm) < 0)
         stability = "unstable";
     else 
         stability = "stable";
     end
     printf("\t%s\tgain margin: %6.1f\tphase margin: %6.1f\t%s\n",..
-        name,min(gm),min(pm),stability);
+        data.y.str(y),min(gm),min(pm),stability);
+
+    printf("\t\tclosing %8s -> %8s loop\n", data.u.str(u), data.y.str(y));
+    data.clss = unityFeedback(y,u,data.clss,H);
+    data.cltf = clean(ss2tf(data.clss),1e-8);
+    data.u = createIndex(data.y.str(y),data.u);
+    dataNew = data;
+
 endfunction
 
 // vim:ts=4:sw=4:expandtab
