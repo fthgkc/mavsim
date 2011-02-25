@@ -36,8 +36,8 @@ function dataNew = closeLoop(data,y,u,H)
 
     pm = p_margin(oltf)+180;
     for i=1:length(pm)
-        if (pm(i) >= 180) pm(i) = pm(i) - 360; end
-        if (pm(i) < 180) pm(i) = pm(i) - 360; end
+        if (pm(i) > 180) pm(i) = pm(i) - 360; end
+        if (pm(i) < -180) pm(i) = pm(i) + 360; end
     end
 
     gm = g_margin(oltf);

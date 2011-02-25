@@ -60,15 +60,15 @@ qwd = quadForwardFlightDesign(Hf);
 //hover
 U = 0; V = 0; W = 0; // hover
 // output _ input
-Hh.wx_LR 		= 1.0*(%s+18); 		
-Hh.wy_FB 		= 1.0*(%s+18); 		
-Hh.wz_LR_FB 	= 1.0*(%s+18); 		
-Hh.W_Sum 		= -1.0*(%s+15); 		
-Hh.phi_wx 		= 1.0; 		
-Hh.theta_wy 	= 1.0; 		
-Hh.psi_wz 		= 1.0; 		
-Hh.U_theta 		= -1.0; 	
-Hh.V_phi 		= 1.0; 		
-Hh.h_W 			= 1.0; 	
+Hh.wx_LR 		= 0.5*(%s+18); // 30 Hz	
+Hh.wy_FB 		= 0.5*(%s+18); // 30 Hz
+Hh.wz_LR_FB 	= 1.0*(%s+18); // 30 Hz		
+Hh.W_Sum 		= -2.1*(%s+18); // 30 Hz	
+Hh.phi_wx 		= 18.0; 		
+Hh.theta_wy 	= 0.0; 		
+Hh.psi_wz 		= 0.0; 		
+Hh.U_theta 		= 0.0; 	
+Hh.V_phi 		= 0.0; 		
+Hh.h_W 			= 0.0; 	
 
 qhd = quadHoverDesign(Hh);
