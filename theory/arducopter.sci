@@ -19,9 +19,9 @@ psi=0; // trim
 gamma=0; // flight path angle,for level flight is zero
 // airframe
 m=1;  //kg
-Jy=0.1; // guess , moments of inertia
-Jz=0.1; // guess
-Jx=0.1; // guess
+Jy=0.05; // guess , moments of inertia
+Jz=0.05; // guess
+Jx=0.05; // guess
 
 // aerodynamics
 rho=1.225; // kg/m^3
@@ -60,15 +60,16 @@ C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 //hover
 U = 0; V = 0; W = 0; // hover
 // output _ input
-Hh.wx_LR 		= 10*(%s+18)/(%s+80);
-Hh.wy_FB 		= 10*(%s+18)/(%s+80);
-Hh.wz_LR_FB 	= 15*(%s+18)/(%s+80);
-Hh.W_Sum 		= -10*(%s+18)/(%s+80); // 30 Hz	
-Hh.phi_wx 		= 8; 		
-Hh.theta_wy 	= 2.5; 		
-Hh.psi_wz 		= 2.5; 		
-Hh.U_theta 		= -0.1; 	
-Hh.V_phi 		= 0;//0.0001; 		
-Hh.h_W 			= 0;//0.0000000000001;//-0.1; 	
+lead1 = (%s+1)*125/(%s+125);
+Hh.wx_LR 		= 0.2*lead1;
+Hh.wy_FB 		= 0.2*lead1;
+Hh.wz_LR_FB 	= 0.2*lead1; 
+Hh.W_Sum 		= -1*lead1;
+Hh.phi_wx 		= 25;
+Hh.theta_wy 	= 25;
+Hh.psi_wz 		= 25;
+Hh.U_theta 		= -0.5;
+Hh.V_phi 		= 0.5;
+Hh.h_W 			= -8;
 
 qhd = quadHoverDesign(Hh);

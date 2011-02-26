@@ -20,8 +20,8 @@ function data = quadForwardFlightDesign(H)
 
     // include dynamics
     exec quad_wind_dynamics.sci;
-    olss = syslin('c',F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad);
-    oltf = clean(ss2tf(olss),1e-8);
+    olss = minss(syslin('c',F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad));
+    oltf = ss2tf(olss);
 
     // define variables
     x = createIndex(["Vt" "alpha" "theta" "wy" "h" "beta" "phi" "wx" "psi" "wz" "dcL" "dcR" "dcF" "dcB"]);
@@ -74,7 +74,7 @@ function data = quadForwardFlightDesign(H)
     R = eye(nX+nY,nX+nY); // measurement error  penality
     [P,r] = lqg2stan(minss(olss),Q,R);
     K.ss = minss(lqg(P,r));
-    K.tf = clean(ss2tf(K.ss));
+    K.tf = ss2tf(K.ss);
     [eVec, eVal] = spec(h_cl(P,r,K.ss));
      if (max(real(diag(eVal))) > 0)
         printf("\n\tWARNING: UNSTABLE!!!!!");

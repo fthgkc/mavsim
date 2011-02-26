@@ -30,8 +30,8 @@ function data = quadHoverDesign(H)
 
     printf("\n\nQuadrotor Hover : Classical Design\n");
     printf("=================================================================================\n");
-    printf("\ty\t\tu\tstability\tgain\tphase\tgain\n");
-    printf("\t\t\t\t\t\tmargin\tmargin\tco freq\n");
+    printf("\ty\t\tu\tstability\tgain\tphase\tband\n");
+    printf("\t\t\t\t\t\tmargin\tmargin\twidth\n");
     printf("---------------------------------------------------------------------------------\n");
     // controllers
     data = closeLoop(data,      data.y.wx,      data.u.LR,      H.wx_LR);

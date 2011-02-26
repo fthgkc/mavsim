@@ -74,8 +74,7 @@ db_v_b : F_b/m - cross(w_ib,v_b);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_x_body : transpose([db_v_b[1,1],db_v_b[3,1],d_theta,b_w_ib[2,1],
-w_ib[3,1]*cos(%theta)+w_ib[1,1]*sin(%theta),db_v_b[2,1],d_phi,b_w_ib[1,1],d_psi,b_w_ib[3,1]]);
+d_x_body : transpose([db_v_b[1,1],db_v_b[3,1],d_theta,b_w_ib[2,1],-W,db_v_b[2,1],d_phi,b_w_ib[1,1],d_psi,b_w_ib[3,1]]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]

@@ -4,23 +4,27 @@ function sys = unityFeedback(y,u,G,H)
 	D = zeros(size(G,2),size(u,2));
 	for (i=1:length(u)) D(u(i),i) = 1; end;
 	olss = G*D*H;
-	nRealPoles = size(olss.A,1);
-	tol = 1e-30;
-	nPoles = -1;
+	nPoles = size(olss.A,1);
+    sys=minssAutoTol((eye(size(G,1),size(G,1))+G*D*H*C)\[G,G*D*H],nPoles);
+endfunction
+
+function sysMin = minssAutoTol(sys,nPoles)
+    tol = 1e-30;
     while(1)
-		sys=minss((eye(size(G,1),size(G,1))+G*D*H*C)\[G,G*D*H]);
-		nPoles = size(sys.A,1);
-        if (nPoles <= nRealPoles | tol > 1e-1) break; end;
-		tol = tol*10;
+        sys = minss(sys)
+		nSysPoles = size(sys.A,1);
+        if (nSysPoles <= nPoles | tol > 1e-1) break; end;
+		tol = tol*2;
 	end
-    if (nPoles == nRealPoles)
+    if (nSysPoles == nPoles)
 		//printf("\t\tconverged with right number of poles at %e\n",tol);
-    elseif (nPoles < nRealPoles)
+    elseif (nSysPoles < nPoles)
 		//printf("\t\tpole zero cancellation occurred.\n");
     else
 	    printf("\t\tWARNING: Failed to converge with correct number of poles.\n");
 	    printf("\t\t\treal: %d calculated: %d\n",nRealPoles,nPoles);
     end
+    sysMin = sys;
 endfunction
 
 function  infoNew = createIndex(names,info)
@@ -48,32 +52,37 @@ function  infoNew = createIndex(names,info)
 endfunction
 
 function dataNew = closeLoop(data,y,u,H)
-    oltf = data.cltf(y,u)*H;
+    olss = minss(data.clss(y,u)*H);
 
-    pm = p_margin(oltf)+180;
-    for i=1:length(pm)
-        if (pm(i) >= 180) pm(i) = pm(i) - 360; end
-        if (pm(i) < -180) pm(i) = pm(i) + 360; end
+    if (olss == 0)
+        pm = -%inf;
+        gm = -%inf;
+    else
+        pm = p_margin(olss)+180;
+        for i=1:length(pm)
+            if (pm(i) >= 180) pm(i) = pm(i) - 360; end
+            if (pm(i) < -180) pm(i) = pm(i) + 360; end
+        end
+        gm = g_margin(olss);
     end
-    gm = g_margin(oltf);
-    
+
     data.clss = unityFeedback(y,u,data.clss,H);
-    data.cltf = clean(ss2tf(data.clss),1e-8);
+    data.cltf = ss2tf(data.clss);
     uNew = max(size(data.u.str))+1;
     data.u = createIndex(data.y.str(y),data.u);
     
-    deff("y=clbw3dB(s)","y=norm(horner(data.cltf(y,uNew),%i*s*2*%pi))-0.7079");
-    if (oltf~=0)
+    if (olss==0)
+        gfc=%inf;
+    else
+        deff("y=clbw3dB(s)","y=norm(horner(ss2tf(minss(data.clss(y,uNew))),%i*s*2*%pi))-0.7079");
         freqGuess = 0;
         while(1)
-            [gfc,v,info]=fsolve(freqGuess,clbw3dB);
+            [gfc,v,info]=fsolve(freqGuess,clbw3dB,[],1e-30);
             if (info == 1 | freqGuess > 500) break; end;
-            freqGuess = freqGuess+5;
+            freqGuess = freqGuess+1;
         end
-    else
-        gfc=-%inf;
+        if (gfc<0) gfc = -gfc; end
     end
-    if (gfc<0) gfc = -gfc; end
 
     if ( size(pm) == 0) pm = -%inf; end
     if ( size(gm) == 0) gm = -%inf; end
@@ -84,7 +93,7 @@ function dataNew = closeLoop(data,y,u,H)
         stability = "stable";
     end
 
-    printf("%10s\t%10s\t%10s\t%6.1f\t%6.1f\t%6.1f\n",..
+    printf("%10s\t%10s\t%10s\t%7.2f\t%7.2f\t%7.2f\n",..
         data.y.str(y), data.u.str(u),..
         stability, min(gm),min(pm),min(gfc));
 
