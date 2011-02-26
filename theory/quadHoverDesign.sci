@@ -30,12 +30,14 @@ function data = quadHoverDesign(H)
 
     printf("\n\nQuadrotor Hover : Classical Design\n");
     printf("=================================================================================\n");
-
+    printf("\ty\t\tu\tstability\tgain\tphase\tgain\n");
+    printf("\t\t\t\t\t\tmargin\tmargin\tco freq\n");
+    printf("---------------------------------------------------------------------------------\n");
     // controllers
     data = closeLoop(data,      data.y.wx,      data.u.LR,      H.wx_LR);
     data = closeLoop(data,      data.y.wy,      data.u.FB,      H.wy_FB);
     data = closeLoop(data,      data.y.wz,      data.u.LR_FB,   H.wz_LR_FB);
-    data = closeLoop(data,      data.y.W,       data.u.Sum,     H.W_Sum); 
+    data = closeLoop(data,      data.y.W,       data.u.Sum,     H.W_Sum);
     data = closeLoop(data,      data.y.phi,     data.u.wx,      H.phi_wx);
     data = closeLoop(data,      data.y.theta,   data.u.wy,      H.theta_wy);
     data = closeLoop(data,      data.y.psi,     data.u.wz,      H.psi_wz); 
@@ -57,7 +59,7 @@ function data = quadHoverDesign(H)
         printf("\n\tslowest stable time constant: %f Hz",abs(minVal/(2*%pi)));
     end
 
-    printf("\n\nQuadrotor Hover : Modern LQG Design Analysis\n");
+    printf("\n\nQuadrotor Hover : Modern LQG Regulator Design Analysis\n");
     printf("=================================================================================\n");
     // modern control design
     nX = size(olss.A,1);

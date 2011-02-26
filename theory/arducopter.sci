@@ -44,31 +44,31 @@ C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 // design controllers
 
 // forward flight
-Vt=3; // airspeed, in m/s
-// output _ input
-Hf.wx_LR 		= 0.05 + 0/%s + 0*%s/(%s+20); 		
-Hf.wy_FB 		= 0.0 + 0/%s + 0*%s/(%s+20); 		
-Hf.wz_LR_FB 	= 0.0 + 0/%s + 0*%s/(%s+20); 		
-Hf.phi_wx 		= 0 + 0/%s + 0*%s/(%s+20); 		
-Hf.theta_wy 	= 0 + 0/%s + 0*%s/(%s+20); 		
-Hf.psi_phi 		= 0 + 0/%s + 0*%s/(%s+20); 		
-Hf.Vt_Sum 		= -(0.0 + 0/%s + 0*%s/(%s+20)); 	
-Hf.h_theta 		= 0 + 0/%s + 0*%s/(%s+20); 	
+//Vt=3; // airspeed, in m/s
+//// output _ input
+//Hf.wx_LR 		= 1*(%s+18)/(%s+40);
+//Hf.wy_FB 		= 1*(%s+18)/(%s+40); 
+//Hf.wz_LR_FB 	= 1*(%s+18)/(%s+40);
+//Hf.phi_wx 		= 2.5; 		
+//Hf.theta_wy 	= 2.5; 		
+//Hf.psi_phi 		= 1.0; 		
+//Hf.Vt_Sum 		= 0.001; 
+//Hf.h_theta 		= 1.0;
 
-qwd = quadForwardFlightDesign(Hf);
+//qwd = quadForwardFlightDesign(Hf);
 
 //hover
 U = 0; V = 0; W = 0; // hover
 // output _ input
-Hh.wx_LR 		= 0.5*(%s+18); // 30 Hz	
-Hh.wy_FB 		= 0.5*(%s+18); // 30 Hz
-Hh.wz_LR_FB 	= 1.0*(%s+18); // 30 Hz		
-Hh.W_Sum 		= -2.1*(%s+18); // 30 Hz	
-Hh.phi_wx 		= 18.0; 		
-Hh.theta_wy 	= 0.0; 		
-Hh.psi_wz 		= 0.0; 		
-Hh.U_theta 		= 0.0; 	
-Hh.V_phi 		= 0.0; 		
-Hh.h_W 			= 0.0; 	
+Hh.wx_LR 		= 10*(%s+18)/(%s+80);
+Hh.wy_FB 		= 10*(%s+18)/(%s+80);
+Hh.wz_LR_FB 	= 15*(%s+18)/(%s+80);
+Hh.W_Sum 		= -10*(%s+18)/(%s+80); // 30 Hz	
+Hh.phi_wx 		= 8; 		
+Hh.theta_wy 	= 2.5; 		
+Hh.psi_wz 		= 2.5; 		
+Hh.U_theta 		= -0.1; 	
+Hh.V_phi 		= 0;//0.0001; 		
+Hh.h_W 			= 0;//0.0000000000001;//-0.1; 	
 
 qhd = quadHoverDesign(Hh);
