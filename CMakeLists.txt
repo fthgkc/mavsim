@@ -224,7 +224,7 @@ else()
 	message(STATUS "\tScicos\t\t\tNO")
 endif (SCICOSLAB_FOUND)
 
-if (OPENSCENEGRAPH_FOUND)
+if (${OSG_LIBRARY} STREQUAL "OSG_LIBRARY-NOTFOUND")
 	list(APPEND OOOARK_LIBRARIES oooarkVisualization)
 	list(APPEND SCICOSLAB_BLOCKS osgBlocks)
 	message(STATUS "\tVisualization\t\tYES")
