@@ -37,7 +37,7 @@ batVolt=11.1; //Volts
 dm=.3; // guess in metres, motor moment arm
 tau_motor=18; // guess, motor pole (rad/s)
 T_max = 5; // max motor thrust in newtons
-torque_max = 10; // max motor thrust in newton-m
+torque_max = 1; // max motor thrust in newton-m
 C_T = T_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 
@@ -60,16 +60,18 @@ C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 //hover
 U = 0; V = 0; W = 0; // hover
 // output _ input
-lead1 = (%s+1)*125/(%s+125);
-Hh.wx_LR 		= 0.2*lead1;
-Hh.wy_FB 		= 0.2*lead1;
-Hh.wz_LR_FB 	= 0.2*lead1; 
-Hh.W_Sum 		= -1*lead1;
-Hh.phi_wx 		= 25;
-Hh.theta_wy 	= 25;
-Hh.psi_wz 		= 25;
-Hh.U_theta 		= -0.5;
-Hh.V_phi 		= 0.5;
-Hh.h_W 			= -8;
+lowPassCut = 10*2*%pi; // 10 Hz cut freq
+lowPass = lowPassCut/(%s+lowPassCut);
+pd = (%s+tau_motor)/tau_motor;
+Hh.wx_LR 		= 0.76*pd*lowPass;
+Hh.wy_FB 		= 0.76*pd*lowPass;
+Hh.W_Sum 		= -1.15*pd*lowPass;
+Hh.wz_LR_FB 	= 2.3*pd*lowPass; 
+Hh.phi_wx 		= 4.5*lowPass;
+Hh.theta_wy 	= 4.5*lowPass;
+Hh.psi_wz 		= 1*lowPass;
+Hh.U_theta 		= -0.1*lowPass;
+Hh.V_phi 		= 0.1*lowPass;
+Hh.h_W 			= -1.1*lowPass;
 
 qhd = quadHoverDesign(Hh);

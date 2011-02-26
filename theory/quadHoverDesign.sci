@@ -30,14 +30,14 @@ function data = quadHoverDesign(H)
 
     printf("\n\nQuadrotor Hover : Classical Design\n");
     printf("=================================================================================\n");
-    printf("\ty\t\tu\tstability\tgain\tphase\tband\n");
-    printf("\t\t\t\t\t\tmargin\tmargin\twidth\n");
+    printf("\ty\t\tu\tstability\tgain\tphase\tband\tH dc\n");
+    printf("\t\t\t\t\t\tmargin\tmargin\twidth\tgain\n");
     printf("---------------------------------------------------------------------------------\n");
     // controllers
     data = closeLoop(data,      data.y.wx,      data.u.LR,      H.wx_LR);
     data = closeLoop(data,      data.y.wy,      data.u.FB,      H.wy_FB);
-    data = closeLoop(data,      data.y.wz,      data.u.LR_FB,   H.wz_LR_FB);
     data = closeLoop(data,      data.y.W,       data.u.Sum,     H.W_Sum);
+    data = closeLoop(data,      data.y.wz,      data.u.LR_FB,   H.wz_LR_FB);
     data = closeLoop(data,      data.y.phi,     data.u.wx,      H.phi_wx);
     data = closeLoop(data,      data.y.theta,   data.u.wy,      H.theta_wy);
     data = closeLoop(data,      data.y.psi,     data.u.wz,      H.psi_wz); 

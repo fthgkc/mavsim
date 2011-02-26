@@ -71,10 +71,12 @@ function dataNew = closeLoop(data,y,u,H)
     uNew = max(size(data.u.str))+1;
     data.u = createIndex(data.y.str(y),data.u);
     
+    dcGain = norm(horner(H,0));
+    deff("y=clMag(s)","y=norm(horner(ss2tf(minss(data.clss(y,uNew))),%i*s*2*%pi))");
     if (olss==0)
         gfc=%inf;
     else
-        deff("y=clbw3dB(s)","y=norm(horner(ss2tf(minss(data.clss(y,uNew))),%i*s*2*%pi))-0.7079");
+        deff("y=clbw3dB(s)","y=clMag(s)-0.7079");
         freqGuess = 0;
         while(1)
             [gfc,v,info]=fsolve(freqGuess,clbw3dB,[],1e-30);
@@ -93,9 +95,9 @@ function dataNew = closeLoop(data,y,u,H)
         stability = "stable";
     end
 
-    printf("%10s\t%10s\t%10s\t%7.2f\t%7.2f\t%7.2f\n",..
+    printf("%10s\t%10s\t%10s\t%7.2f\t%7.2f\t%7.2f\t%7.2f\n",..
         data.y.str(y), data.u.str(u),..
-        stability, min(gm),min(pm),min(gfc));
+        stability, min(gm),min(pm),min(gfc),dcGain);
 
     dataNew = data;
 endfunction
