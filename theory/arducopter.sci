@@ -17,11 +17,6 @@ wx=0; //trim
 phi=0; //trim
 psi=0; // trim
 gamma=0; // flight path angle,for level flight is zero
-// airframe
-m=1;  //kg
-Jy=0.05; // guess , moments of inertia
-Jz=0.05; // guess
-Jx=0.05; // guess
 
 // aerodynamics
 rho=1.225; // kg/m^3
@@ -40,6 +35,15 @@ T_max = 5; // max motor thrust in newtons
 torque_max = 1; // max motor thrust in newton-m
 C_T = T_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
+controlPeriod = 1/10; // controlling motors at 10 Hz
+
+// airframe
+m=1;  //kg
+JSolidSphere = 2/5*m*dm^2;
+Jy=JSolidSphere; // moments of inertia, kg-m^2
+Jz=JSolidSphere; // guess, for now using solid sphere
+Jx=JSolidSphere;
+printf("\tinertia guess assuming solid sphere: %f kg-m^2",JSolidSphere);
 
 // design controllers
 
@@ -59,19 +63,40 @@ C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 
 //hover
 U = 0; V = 0; W = 0; // hover
-// output _ input
-lowPassCut = 10*2*%pi; // 10 Hz cut freq
-lowPass = lowPassCut/(%s+lowPassCut);
-pd = (%s+tau_motor)/tau_motor;
-Hh.wx_LR 		= 0.76*pd*lowPass;
-Hh.wy_FB 		= 0.76*pd*lowPass;
-Hh.W_Sum 		= -1.15*pd*lowPass;
-Hh.wz_LR_FB 	= 2.3*pd*lowPass; 
-Hh.phi_wx 		= 4.5*lowPass;
-Hh.theta_wy 	= 4.5*lowPass;
-Hh.psi_wz 		= 1*lowPass;
-Hh.U_theta 		= -0.1*lowPass;
-Hh.V_phi 		= 0.1*lowPass;
-Hh.h_W 			= -1.1*lowPass;
+wCut = 5*2*%pi; // @ 5 Hz, cut at half the control freq for good noise atten.
+lowPass = syslin('c',wCut/(%s+wCut));
+lead = syslin('c',lowPass*(%s+tau_motor)/tau_motor);
+
+Hh.wx_LR 		= 0.098*lead;
+Hh.wy_FB 		= 0.098*lead;
+Hh.wz_LR_FB 	= 1.175*lead; 
+Hh.W_Sum 		= -0.23*lead;
+Hh.phi_wx 		= 0.94;
+Hh.theta_wy 	= 0.94;
+Hh.psi_wz 		= 0.94;
+Hh.U_theta 		= -0.025;
+Hh.V_phi 		= 0.025;
+Hh.h_W 			= -0.25;
 
 qhd = quadHoverDesign(Hh);
+
+// step responses
+t = linspace(0,20); scf(1); clf(1);
+subplot(2,2,1); title(qhd.y.str(qhd.y.h)+" step response");
+plot(t,csim('step',t,qhd.clss(qhd.y.h,qhd.u.h))); xgrid;
+
+subplot(2,2,2); title(qhd.y.str(qhd.y.U)+" step response");
+plot(t,csim('step',t,qhd.clss(qhd.y.U,qhd.u.U))); xgrid;
+
+subplot(2,2,3); title(qhd.y.str(qhd.y.V)+" step response");
+plot(t,csim('step',t,qhd.clss(qhd.y.V,qhd.u.V))); xgrid;
+
+subplot(2,2,4); title(qhd.y.str(qhd.y.psi)+" step response");
+plot(t,csim('step',t,qhd.clss(qhd.y.psi,qhd.u.psi))); xgrid;
+
+// bode
+scf(2); clf(2);
+subplot(2,2,1); bode(qhd.clss(qhd.y.h,qhd.u.h),1e-3,1,qhd.y.str(qhd.y.h));
+subplot(2,2,2); bode(qhd.clss(qhd.y.U,qhd.u.U),1e-3,1,qhd.y.str(qhd.y.U));
+subplot(2,2,3); bode(qhd.clss(qhd.y.V,qhd.u.V),1e-3,1,qhd.y.str(qhd.y.V));
+subplot(2,2,4); bode(qhd.clss(qhd.y.psi,qhd.u.psi),1e-2,1,qhd.y.str(qhd.y.psi));

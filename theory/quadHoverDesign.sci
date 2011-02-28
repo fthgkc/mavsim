@@ -12,7 +12,13 @@ function data = quadHoverDesign(H)
 
     // include dynamics
     exec quad_body_dynamics.sci;
-    olss = syslin('c',F_body_quad,G_body_quad,C_body_quad,D_body_quad);
+
+    // pade approximation for controller input sample hold
+    nU = size(G_body_quad,2);
+    pade = (1-%s*controlPeriod/6)/(1 + %s*controlPeriod/3)*eye(nU,nU);
+
+    // compute plant
+    olss = syslin('c',F_body_quad,G_body_quad,C_body_quad,D_body_quad)*pade;
     oltf = clean(ss2tf(olss),1e-8);
 
     // define variables
@@ -36,8 +42,8 @@ function data = quadHoverDesign(H)
     // controllers
     data = closeLoop(data,      data.y.wx,      data.u.LR,      H.wx_LR);
     data = closeLoop(data,      data.y.wy,      data.u.FB,      H.wy_FB);
-    data = closeLoop(data,      data.y.W,       data.u.Sum,     H.W_Sum);
     data = closeLoop(data,      data.y.wz,      data.u.LR_FB,   H.wz_LR_FB);
+    data = closeLoop(data,      data.y.W,       data.u.Sum,     H.W_Sum);
     data = closeLoop(data,      data.y.phi,     data.u.wx,      H.phi_wx);
     data = closeLoop(data,      data.y.theta,   data.u.wy,      H.theta_wy);
     data = closeLoop(data,      data.y.psi,     data.u.wz,      H.psi_wz); 

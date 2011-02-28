@@ -216,15 +216,20 @@ if (SIMGEAR_FOUND)
 	message(STATUS "\t\tSimgear\t\tYES")
 else()
 	message(STATUS "\t\tSimgear\t\tNO")
-endif (SIMGEAR_FOUND)
+endif()
 
 if (SCICOSLAB_FOUND)
 	message(STATUS "\tScicos\t\t\tYES")
 else()
 	message(STATUS "\tScicos\t\t\tNO")
-endif (SCICOSLAB_FOUND)
+endif()
 
-if (${OSG_LIBRARY} STREQUAL "OSG_LIBRARY-NOTFOUND")
+# fix for osg found bug
+if (NOT ${OSG_LIBRARY} STREQUAL "OSG_LIBRARY-NOTFOUND")
+	set(OPENSCENEGRAPH_FOUND FALSE)
+endif()
+
+if (OPENSCENEGRAPH_FOUND)
 	list(APPEND OOOARK_LIBRARIES oooarkVisualization)
 	list(APPEND SCICOSLAB_BLOCKS osgBlocks)
 	message(STATUS "\tVisualization\t\tYES")
@@ -232,12 +237,13 @@ if (${OSG_LIBRARY} STREQUAL "OSG_LIBRARY-NOTFOUND")
 else()
 	message(STATUS "\tVisualization\t\tNO")
 	message(STATUS "\t\tOpenSceneGraph\t\tNO")
-endif (OPENSCENEGRAPH_FOUND)
+endif()
+
 if (QT4_FOUND)
 	message(STATUS "\t\tQT4\t\tYES")
 else()
 	message(STATUS "\t\tQT4\t\tNO")
-endif (QT4_FOUND)
+endif ()
 
 if (LAPACK_FOUND)
 	list(APPEND OOOARK_LIBRARIES oooarkMath)
@@ -247,15 +253,14 @@ if (LAPACK_FOUND)
 else()
 	message(STATUS "\tMath\t\t\tNO")
 	message(STATUS "\t\tLapack\t\tNO")
-endif (LAPACK_FOUND)
+endif ()
+
 if (CMAKE_Fortran_COMPILER_WORKS)
 	message(STATUS "\t\tFortran\t\tYES")
 else()
 	message(STATUS "\t\tFortran\t\tNO")
 	set(CMAKE_Fortran_COMPILER none)
-endif (CMAKE_Fortran_COMPILER_WORKS)
-
-
+endif ()
 
 message(STATUS "=======================================")
 
