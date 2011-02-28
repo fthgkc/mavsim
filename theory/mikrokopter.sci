@@ -22,7 +22,8 @@ gamma=0; // flight path angle,for level flight is zero
 // aerodynamics
 rho=1.225; // kg/m^3
 rBlade=0.127; // meters
-Cd0=0.42; // guess K_cd_cl=0.02; //guess
+Cd0=0.42; // guess
+K_cd_cl=0.02; //guess
 s_frame=.1; //guess in m^2
 s_frame_side=.1; // guess in m^2
 
@@ -44,14 +45,6 @@ Jy=JSolidSphere; // moments of inertia, kg-m^2
 Jz=JSolidSphere; // guess, for now using solid sphere
 Jx=JSolidSphere;
 printf("\tinertia guess assuming solid sphere: %f kg-m^2",JSolidSphere);
-
-// motor
-KV=760; // rpm/Volts 
-batVolt=14.8; //Volts
-dm=.25; // guess in metres, motor moment arm
-tau_motor=36.95991; // guess, motor pole (rad/s)
-C_T=5.17e-3; // guess, motor thrust coefficient
-C_Q=0.025; // guess, motor torque coefficient
 
 // design controllers
 
@@ -75,10 +68,10 @@ wCut = 5*2*%pi; // @ 5 Hz, cut at half the control freq for good noise atten.
 lowPass = syslin('c',wCut/(%s+wCut));
 lead = syslin('c',lowPass*(%s+tau_motor)/tau_motor);
 
-Hh.wx_LR 		= 0.058*lead;
-Hh.wy_FB 		= 0.058*lead;
-Hh.wz_LR_FB 	= 0.0235*lead; 
-Hh.W_Sum 		= -0.16*lead;
+Hh.wx_LR 		= 0.0595*lead;
+Hh.wy_FB 		= 0.0595*lead;
+Hh.wz_LR_FB 	= 0.82*lead; 
+Hh.W_Sum 		= -0.165*lead;
 Hh.phi_wx 		= 0.94;
 Hh.theta_wy 	= 0.94;
 Hh.psi_wz 		= 0.94;
