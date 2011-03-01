@@ -71,7 +71,9 @@ function dataNew = closeLoop(data,y,u,H)
     uNew = max(size(data.u.str))+1;
     data.u = createIndex(data.y.str(y),data.u);
     
-    dcGain = norm(horner(H,0));
+    dcGain = norm(horner(H,%eps));
+    if (dcGain > 1e6) dcGain = %inf; end;
+
     deff("y=clMag(s)","y=norm(horner(ss2tf(minss(data.clss(y,uNew))),%i*s*2*%pi))");
     if (olss==0)
         gfc=%inf;

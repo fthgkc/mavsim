@@ -32,11 +32,11 @@ KV=760; // rpm/Volts
 batVolt=14.8; //Volts
 dm=.25; // guess in metres, motor moment arm
 tau_motor=36.95991; // guess, motor pole (rad/s)
-T_max = 7; //  TODO: CHECK THIS // max motor thrust in newtons
-torque_max = 1; // max motor thrust in newton-m
+T_max = 6.5; //  TODO: CHECK THIS // max motor thrust in newtons
+torque_max = 1*dm; // max motor thrust in newton-m
 C_T = T_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
-controlPeriod = 1/10; // controlling motors at 10 Hz
+controlPeriod = 1/20; // controlling motors at 10 Hz
 
 // airframe
 m=1.02;  //kg
@@ -70,11 +70,11 @@ lead = syslin('c',lowPass*(%s+tau_motor)/tau_motor);
 
 Hh.wx_LR 		= 0.0595*lead;
 Hh.wy_FB 		= 0.0595*lead;
-Hh.wz_LR_FB 	= 0.82*lead; 
+Hh.wz_LR_FB 	= 0.95*lead; 
 Hh.W_Sum 		= -0.165*lead;
 Hh.phi_wx 		= 0.94;
 Hh.theta_wy 	= 0.94;
-Hh.psi_wz 		= 0.94;
+Hh.psi_wz 		= 0.25;
 Hh.U_theta 		= -0.025;
 Hh.V_phi 		= 0.025;
 Hh.h_W 			= -0.25;

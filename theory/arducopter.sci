@@ -32,7 +32,7 @@ batVolt=11.1; //Volts
 dm=.3; // guess in metres, motor moment arm
 tau_motor=18; // guess, motor pole (rad/s)
 T_max = 5; // max motor thrust in newtons
-torque_max = 1; // max motor thrust in newton-m
+torque_max = 0.8*dm; // max motor thrust in newton-m
 C_T = T_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 controlPeriod = 1/10; // controlling motors at 10 Hz
@@ -69,12 +69,12 @@ lead = syslin('c',lowPass*(%s+tau_motor)/tau_motor);
 
 Hh.wx_LR 		= 0.098*lead;
 Hh.wy_FB 		= 0.098*lead;
-Hh.wz_LR_FB 	= 1.175*lead; 
+Hh.wz_LR_FB 	= 1.35*lead; 
 Hh.W_Sum 		= -0.23*lead;
 Hh.phi_wx 		= 0.94;
 Hh.theta_wy 	= 0.94;
-Hh.psi_wz 		= 0.94;
-Hh.U_theta 		= -0.025;
+Hh.psi_wz 		= 0.25;
+Hh.U_theta 		= -0.01*(1 + 0.1/%s + 1*%s*lowPass);
 Hh.V_phi 		= 0.025;
 Hh.h_W 			= -0.25;
 
