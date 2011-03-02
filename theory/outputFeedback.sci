@@ -49,8 +49,13 @@ function [J,dJ_dK,ind] = costLqt(x,ind,varargin)
 	// optimize for step input on all channels
 	r0=ones(size(G,2),1);
 
-	// gain
+	// gains
     K = matrix(x,nU,nY);
+
+	// gain fixing
+	for c=1:length(KFixed.i)
+		K(KFixed.i(c),KFixed.j(c)) = 0;
+	end
 
 	// controlled matrices
     Ac = A-B*K*C;
@@ -100,17 +105,21 @@ function [J,dJ_dK,ind] = costLqt(x,ind,varargin)
 	Sk1 = matrix(Sk(timeK+1,:,:),nX,nX);
 	dJ_dK = R*K*C*Sk1*C'-B'*PkSkSum*C'+B'*(Ac')^-1*Pk1*xBar*yBar';
 
+	// gain gradient fixing
+	for c=1:length(KFixed.i)
+		dJ_dK(KFixed.i(c),KFixed.j(c)) = 0;
+	end
+
 	// check solution
 	if (normP>1e-3)
 		printf("\nWARNING: riccati solution failed\n");
 		printf("\tnorm of ricatti for P: %f\n",normP);
 		ind=-1; // riccati solution failed
-		J = 1e9;
+		J = 1e100;
 		info=-1;
 	end
 	//disp("K:");disp(K)
-	printf("J: %f\tgradient norm: %f\n",J,norm(dJ_dK));
-	//disp("K convergence"); disp(K - R^-1*B'*P*S*C'*(C*S*C')^-1);
+	printf("cost: %e\tnorm of gradient: %e\n",J,norm(dJ_dK));
 	//printf("\tnorm of ricatti for P: %f\n",normP);
 	//halt()
 endfunction
@@ -139,8 +148,25 @@ function [K,gradopt,info] = lqtDesign(sys,P,Q,R,timeK,G,F,KFixed,K0)
     nY = size(C,1);
 	x0 = matrix(K0,nY*nU,1);
 	ind=0;
-    [fopt,xopt,gradopt] = optim(list(NDcost,costLqt,ind,sys,P,Q,R,timeK,G,F,KFixed),x0,..
-		"qn","ar",1e3,1e3,1e-4,1e-4,imp=1);
+
+	// quasi newton method
+    [fopt,xopt,gradopt] = optim(list(costLqt,sys,P,Q,R,timeK,G,F,KFixed),x0,"qn");
+
+	// if this fails try conjugate gradient method
+	if (norm(gradopt) > 1e-3)
+    	[fopt,xopt,gradopt] = optim(list(costLqt,sys,P,Q,R,timeK,G,F,KFixed),x0,"gc");
+	end
+
+	// if all else fails try simplex style without gradient
+	if (norm(gradopt) > 1e-3)
+    	[fopt,xopt,gradopt] = optim(list(NDcost,costLqt,ind,sys,P,Q,R,timeK,G,F,KFixed),x0,"qn");
+	end
+
+	// if still failed, throw an error
+	if (norm(gradopt) > 1e-3)
+		error("failed to converge")
+	end
+
     K = matrix(xopt,nU,nY)
     if (fopt >= 0)
         //printf("\noutput feedback cost: %f, gradient: %f\n",fopt,gradopt);
@@ -173,17 +199,19 @@ C = [0,0,0,57.2958,0,0,-1;
 nX = size(A,1); nU = size(B,2); nY = size(C,1);
 nR = 2;
 sys = syslin('c',A,B,C);
-P = 0.001*eye(nX,nX);
-Q = diag([50,100,100,50,0,0,1]);
-R = 0.0001*eye(nU,nU);
+P = 1*eye(nX,nX);
+Q = diag([50,100,100,50,1,1,1]);
+R = 100*eye(nU,nU);
 G = zeros(nX,nR);
 F = eye(nY,nR);
-KFixed = [];
 timeK = 2;
 // answer you should get from the book, pg. 416
 KBook = [-.56,-.44,0.11,-0.35;-1.19,-.21,-0.44,0.26];
 K0 = KBook;
-sigX0 = 1*ones(7,1);
+K0(1,1) = 0;
+K0(1,2) = 0;
+K0(2,3) = 0;
+[KFixed.i,KFixed.j]= find(K0==0);
 
 [K,gradopt,info] = lqtDesign(sys,P,Q,R,timeK,G,F,KFixed,K0);
 sysC = syslin('c',A-B*K*C,B,C);
