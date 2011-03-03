@@ -5,6 +5,10 @@
 Quadrotor Force and Moment Models
    [wxMaxima: title   end   ] */
 
+/* [wxMaxima: input   start ] */
+load (f90);
+/* [wxMaxima: input   end   ] */
+
 /* [wxMaxima: section start ]
 Propulsion
    [wxMaxima: section end   ] */
@@ -114,6 +118,14 @@ Cs : 2*%pi*%beta$
 F_w_A_quad : transpose([-Cd*.5*%rho*Vt^2*s_frame,-Cs*.5*%rho*Vt^2*s_frame_side,-Cl*.5*%rho*Vt^2*s_frame]);
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: comment start ]
+Neglecting aerodynamic moments
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+M_b_A_quad : transpose([0,0,0]);
+/* [wxMaxima: input   end   ] */
+
 /* [wxMaxima: section start ]
 Assumptions
    [wxMaxima: section end   ] */
@@ -123,7 +135,7 @@ quadAssumptions : [
 F_b_T[1,1]=F_b_T_quad[1,1], F_b_T[2,1]=F_b_T_quad[2,1], F_b_T[3,1]=F_b_T_quad[3,1],
 F_w_A[1,1]=F_w_A_quad[1,1], F_w_A[2,1]=F_w_A_quad[2,1], F_w_A[3,1]=F_w_A_quad[3,1],
 M_b_T[1,1]=M_b_T_quad[1,1], M_b_T[2,1]=M_b_T_quad[2,1], M_b_T[3,1]=M_b_T_quad[3,1],
-M_b_A[1,1]=0, M_b_A[2,1]=0, M_b_A[3,1]=0,
+M_b_A[1,1]=M_b_A_quad[1,1], M_b_A[2,1]=M_b_A_quad[2,1], M_b_A[3,1]=M_b_A_quad[3,1],
 Jxy=0,Jyz=0,Jxz=0]$
 /* [wxMaxima: input   end   ] */
 
@@ -161,6 +173,15 @@ transpose([T_sum_eq,delta_F_B_eq,delta_L_R_eq,delta_LR_FB_eq]));
 
 /* [wxMaxima: input   start ] */
 uPseudo : transpose([T_sum, delta_F_B,delta_L_R,delta_LR_FB]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Fortran Output
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/quadForceMoments.f90",
+f90(F_b_T_quad,F_w_A_quad,M_b_T_quad,M_b_A_quad));
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
