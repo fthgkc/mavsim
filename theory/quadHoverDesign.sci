@@ -15,10 +15,12 @@ function data = quadHoverDesign(H)
 
     // pade approximation for controller input sample hold
     nU = size(G_body_quad,2);
-    pade = (1-%s*controlPeriod/6)/(1 + %s*controlPeriod/3)*eye(nU,nU);
+    pade = (1-%s*controlPeriod/6)/(1 + %s*controlPeriod/3);
 
     // compute plant
-    olss = syslin('c',F_body_quad,G_body_quad,C_body_quad,D_body_quad)*pade;
+	olssCont = minss(syslin('c',F_body_quad,G_body_quad,C_body_quad,D_body_quad));
+    oltfCont = clean(ss2tf(olssCont),1e-8);
+    olss = olssCont*(pade*eye(nU,nU));
     oltf = clean(ss2tf(olss),1e-8);
 
     // define variables
@@ -29,16 +31,18 @@ function data = quadHoverDesign(H)
     // save to data structure
     data.x = x; data.y = y; data.u = u; data.H = H;
     data.olss = olss; data.oltf = oltf;
+	data.olssCont = olssCont; data.oltfCont = oltfCont;
+	data.pade = pade;
 
     // initialize closed loop as open before closures
     data.clss = olss; data.cltf = oltf;
 
 
     printf("\n\nQuadrotor Hover : Classical Design\n");
-    printf("=================================================================================\n");
-    printf("\ty\t\tu\tstability\tgain\tphase\tband\tH dc\n");
-    printf("\t\t\t\t\t\tmargin\tmargin\twidth\tgain\n");
-    printf("---------------------------------------------------------------------------------\n");
+    printf("==============================================================================================\n");
+    printf("\ty\t\tu\tstability\tgain\tphase\tband\tH dc\tsteady\n");
+    printf("\t\t\t\t\t\tmargin\tmargin\twidth\tgain\tstate error \%\n");
+    printf("----------------------------------------------------------------------------------------------\n");
     // controllers
     data = closeLoop(data,      data.y.wx,      data.u.LR,      H.wx_LR);
     data = closeLoop(data,      data.y.wy,      data.u.FB,      H.wy_FB);
@@ -66,7 +70,7 @@ function data = quadHoverDesign(H)
     end
 
     printf("\n\nQuadrotor Hover : Modern LQG Regulator Design Analysis\n");
-    printf("=================================================================================\n");
+    printf("==============================================================================================\n");
     // modern control design
     nX = size(olss.A,1);
     nY = size(olss.C,1);

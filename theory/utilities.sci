@@ -71,8 +71,11 @@ function dataNew = closeLoop(data,y,u,H)
     uNew = max(size(data.u.str))+1;
     data.u = createIndex(data.y.str(y),data.u);
     
-    dcGain = norm(horner(H,%eps));
+	dcGain = norm(horner(ss2tf(olss),%eps));
     if (dcGain > 1e6) dcGain = %inf; end;
+
+    dcGainH = norm(horner(H,%eps));
+    if (dcGainH > 1e6) dcGainH = %inf; end;
 
     deff("y=clMag(s)","y=norm(horner(ss2tf(minss(data.clss(y,uNew))),%i*s*2*%pi))");
     if (olss==0)
@@ -97,9 +100,9 @@ function dataNew = closeLoop(data,y,u,H)
         stability = "stable";
     end
 
-    printf("%10s\t%10s\t%10s\t%7.2f\t%7.2f\t%7.2f\t%7.2f\n",..
+    printf("%10s\t%10s\t%10s\t%7.2f\t%7.2f\t%7.2f\t%7.2f\t%7.2f\n",..
         data.y.str(y), data.u.str(u),..
-        stability, min(gm),min(pm),min(gfc),dcGain);
+        stability, min(gm),min(pm),min(gfc),dcGainH,100.0/dcGain);
 
     dataNew = data;
 endfunction
