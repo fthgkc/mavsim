@@ -83,3 +83,74 @@ title("open loop");
 [sim.y,sim.x] = csim(u,t,sys(:,1),x0);
 plot2d(t,sim.y',leg="r@p@beta@phi");
 
+//Pitch-Rate Control System Using LQ Design
+//Page 444
+A=[-1.01887,0.90506,-0.00215,0,0;0.82225,-1.07741,-0.17555,0,0;0,0,-20.2,0,0;10,0,0,-10,0;0,-57.2958,0,0,0];
+B=[0;0;20.2;0;0];
+G=[0;0;0;0;1];
+C=[0,0,0,57.2958,0;0,57.2958,0,0,0;0,0,0,0,1];
+F=[0;0;0];
+H=[0,57.2958,0,0,0];
+nX = size(A,1); nU = size(B,2); nY = size(C,1);
+nR = size(H,1)
+sys = syslin('c',A,B,C);
+P = H'*H;
+Q = zeros(nX,nX); //?
+R = 1*eye(nU,nU);
+V = 0*eye(nX,nX); // steady state error weighting
+timeK = 2;
+// answer you should get from the book, pg. 416
+KBook = [-0.046,-1.072,3.381];
+K=[];
+gradopt=[];
+info=[];
+loopCount=0;
+while(1)
+	K0 = 1*(rand(nU,nY)-.5);
+	//K0(1,1) = 0; K0(1,3) = 0;
+	//K0(2,2) = 0; K0(2,4) = 0;
+	[K,gradopt,info] = lqof("T",K0,P,Q,R,V,timeK,A,B,C,G,F,H);
+	if (info==0)
+		printf("\ndesign completed successfully\n");
+		break;
+	elseif (loopCount < 100)
+		printf("trying new random gain as initial guess\n");
+		loopCount = loopCount + 1;
+	else
+		printf("design failed\n");
+		break;
+	end
+end
+
+sysC = syslin('c',A-B*K*C,B,C);
+sysCBook = syslin('c',A-B*KBook*C,B,C);
+t = linspace(0,10,1000);
+
+disp("eigen values of open loop"); disp(spec(A))
+disp("eigen values of closed loop design from book"); disp(spec(sysCBook.A))
+disp("eigen values of closed loop design new"); disp(spec(sysC.A))
+disp(K,"K")
+
+scf(1); clf();
+subplot(3,2,1);
+title("design");
+[sim.y,sim.x] = csim('step',t,sysC(:,1));
+plot2d(t,sim.y(2,:)',leg="r@p@beta@phi");
+subplot(3,2,2);
+title("design input");
+plot2d(t,(K*sim.y)',leg="aileron@elevator");
+
+subplot(3,2,3);
+title("design from book");
+[sim.y,sim.x] = csim('step',t,sysCBook(:,1));
+plot2d(t,sim.y(2,:)',leg="r@p@beta@phi");
+subplot(3,2,4);
+title("design book input");
+plot2d(t,(KBook*sim.y)',leg="aileron@elevator");
+
+subplot(3,2,5);
+title("open loop");
+[sim.y,sim.x] = csim(u,t,sys(:,1));
+plot2d(t,sim.y(2,:)',leg="r@p@beta@phi");
+
+
