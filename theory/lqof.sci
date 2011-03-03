@@ -36,7 +36,7 @@ function [K,gradopt,info] = lqof(problemType,K0,varargin)
 // calling for LQT problem:
 // 	lqof("T",K0,P,Q,R,V,timeK,A,B,C,G,F,H)
 //
-// pg. 408,420,440 Lewis and Stevens, Aicraft Control and Simulation
+// pg. 408,428,440 Lewis and Stevens, Aicraft Control and Simulation
 //
 // See also riccati
 //
@@ -188,7 +188,18 @@ function [K,gradopt,info] = lqof(problemType,K0,varargin)
 		// gradient computation requested
 		if (ind==requestGrad | ind==requestCostAndGrad) 
 			// solve for dH/dP = 0 for Sk
-			Sk(timeK+1,:,:) = X;
+			Sk(timeK+1,:,:) = riccati(Ac',zeros(nX,nX),X,'c');
+			normSk = norm(Ac*matrix(Sk(timeK+1,:,:),nX,nX)+..
+				matrix(Sk(timeK+1,:,:),nX,nX)*Ac'+X);
+			if (normSk>1e-3)
+				printf("\nWARNING: riccati solution failed\n");
+				printf("\tnorm of ricatti for Sk: %f\n",normSk);
+				ind=evalFailed; // riccati solution failed
+				J=JFail;
+				dJdK=dJdKFail;
+				return;
+			end
+
 			if (timeK>0)
 				Sk(timeK,:,:) = riccati(Ac',zeros(nX,nX),..
 					factorial(timeK)*matrix(Sk(timeK+1,:,:),nX,nX),'c'); // dH/dS
