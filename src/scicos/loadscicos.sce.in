@@ -15,6 +15,9 @@ stdBlocks=[
 'sci_geoMag';..
 'sci_randn';..
 'sci_insDynamics';..
+'sci_bodyDynamics';..
+'sci_windDynamics';..
+'sci_quadForceMoments';..
 'sci_insErrorDynamics';..
 'sci_zeroOrderHold'];
 simgearBlocks=['sci_flightGearComm'];

@@ -23,6 +23,9 @@ set(oooarkScicosSources
 	sci_quat2EulerDcm.cpp
 	sci_waypointGuidance.cpp
 	sci_euler2Dcm.cpp
+	sci_quadForceMoments.cpp
+	sci_windDynamics.cpp
+	sci_bodyDynamics.cpp
 	)
 
 if (SIMGEAR_FOUND)

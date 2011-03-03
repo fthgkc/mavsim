@@ -1,6 +1,6 @@
-function [x,y,typ]=insDynamics(job,arg1,arg2)
+function [x,y,typ]=quadForceMoments(job,arg1,arg2)
 //
-// insDynamics.sci
+// quadForceMoments.sci
 //
 // USAGE:
 //
@@ -103,7 +103,7 @@ select job
 				nIn=[3;1;6]
 			else
 				disp('invalid mode in insDynamcis block');
-				error('invalid mode in insDynamics block');
+				error('invalid mode in quadForceMoments block');
 			end
 
 			model.out=[nOut];
@@ -121,7 +121,7 @@ select job
 	case 'define' then
 		// set model properties
 		model=scicos_model();
-		model.sim=list('sci_insDynamics',4);
+		model.sim=list('sci_quadForceMoments',4);
 
 		nOut=10;
 		nIn=[6;1;10]
@@ -146,7 +146,7 @@ select job
 			strcat(sci2exp(stateMode))];
 
 		// setup icon
-	  	gr_i=['xstringb(orig(1),orig(2),[''ins dynamics'';''quaternions''],sz(1),sz(2),''fill'');']
+	  	gr_i=['xstringb(orig(1),orig(2),[''quad Force'';''Moments''],sz(1),sz(2),''fill'');']
 	  	x=standard_define([5 2],model,exprs,gr_i)
 	end
 endfunction
