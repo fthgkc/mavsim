@@ -245,8 +245,8 @@ function [K,gradopt,info] = lqof(problemType,K0,varargin)
 			for c=1:length(KFixed.i)
 				dJdK(KFixed.i(c),KFixed.j(c)) = 0;
 			end
-			//disp("dJdK:");disp(dJdK)
-			//printf("\tnorm of gradient: %e\n",norm(dJdK));
+			disp("dJdK:");disp(dJdK)
+			printf("\tnorm of gradient: %e\n",norm(dJdK));
 		else
 			dJdK=zeros(nU,nY);
 		end
@@ -260,7 +260,7 @@ function [K,gradopt,info] = lqof(problemType,K0,varargin)
 
 	// check input matrices
 	[P,Q,R,V,A,B,C,G,F,H,nX,nY,nU,nR,r0,KFixed] = processInputs(varargin);
-	if(rank(obsv_mat(A,sqrt(Q))) < rank(A))
+	if(rank(obsv_mat(A,sqrt(Q))) < rank(A) & timeK==0)
 		error("problem not observable, weight more elements of Q");	
 		info = 1;
 		return;
@@ -288,28 +288,28 @@ function [K,gradopt,info] = lqof(problemType,K0,varargin)
  	// solve the optimization problem
 	for i=1  // just using to scope and have break
 		// quasi newton method
-		printf("attempting solution with quasi-newton method\n");
-		[fopt,xopt,gradopt] = optim(list(cost,varargin),x0,"qn");
-		if (norm(gradopt) > 1e-3)
-			printf("\tfailed\n");
-			info = 4;
-		else
-			printf("\tconverged\n");
-			info = 0;
-			break;
-		end
+		//printf("attempting solution with quasi-newton method\n");
+		//[fopt,xopt,gradopt] = optim(list(cost,varargin),x0,"qn");
+		//if (norm(gradopt) > 1e-3)
+			//printf("\tfailed\n");
+			//info = 4;
+		//else
+			//printf("\tconverged\n");
+			//info = 0;
+			//break;
+		//end
 
 		// conjugate gradient method	
-		printf("conjugate gradient method\n");
-		[fopt,xopt,gradopt] = optim(list(cost,varargin),x0,"gc");
-		if (norm(gradopt) > 1e-3)
-			printf("\tfailed\n");
-			info = 5;
-		else
-			printf("\tconverged\n");
-			info = 0;
-			break;
-		end
+		//printf("conjugate gradient method\n");
+		//[fopt,xopt,gradopt] = optim(list(cost,varargin),x0,"gc");
+		//if (norm(gradopt) > 1e-3)
+			//printf("\tfailed\n");
+			//info = 5;
+		//else
+			//printf("\tconverged\n");
+			//info = 0;
+			//break;
+		//end
 
 		// non gradient based simplex method
 		printf("non-gradient based, simplex method\n");
