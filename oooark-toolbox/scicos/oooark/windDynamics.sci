@@ -4,53 +4,19 @@ function [x,y,typ]=windDynamics(job,arg1,arg2)
 //
 // USAGE:
 //
-// input 1: (imu data)
-//  [1] wx (rad/s) 		(body)
-//  [2] wy (rad/s)		(body)
-//  [3] wz (rad/s)	    (body)
-//  [4] fx (unit distance/s^2) (body)
-//  [5] fy (unit distance/s^2) (body)
-//  [6] fz (unit distance/s^2) (body)
-//	default unit distance is meters
-//
-// input 2: (gravity model)
-//  [1]  g       (unit distance/s^2) (body)
-//
-// input 3: (state) 
-//
-//    mode 0  mode 1  mode 2
-//  	full   att.  vel/pos
-// 		[1]  	[1] 	[ ] 	 a      (quaternion)
-// 		[2]   	[2] 	[ ] 	 b 		(quaternion)
-// 		[3]   	[3] 	[ ] 	 c		(quaternion)
-// 		[4]   	[4] 	[ ] 	 d      (quaternion)
-// 		[5]   	[ ] 	[1] 	 Vn 	(unit distance/s)
-// 		[6]   	[ ] 	[2] 	 Ve 	(unit distance/s)
-// 		[7]   	[ ] 	[3] 	 Vd 	(unit distance/s)
-// 		[8]   	[ ] 	[4] 	 Lat 	(rad)
-// 		[9]   	[ ] 	[5] 	 Lon 	(rad)
-// 		[10]   	[ ] 	[6] 	 alt 	(unit distance)
-//
-// output 1: (state derivative)
-//
-// 	  mode 0  mode 1  mode 2
-//  	full   att.  vel/pos
-// 		[1]  	[1] 	[ ] 	 d/dt a    	(quaternion)
-// 		[2]   	[2] 	[ ] 	 d/dt b 	(quaternion)
-// 		[3]   	[3] 	[ ] 	 d/dt c		(quaternion)
-// 		[4]   	[4] 	[ ] 	 d/dt d     (quaternion)
-// 		[5]   	[ ] 	[1] 	 d/dt Vn 	(unit distance/s)
-// 		[6]   	[ ] 	[2] 	 d/dt Ve 	(unit distance/s)
-// 		[7]   	[ ] 	[3] 	 d/dt Vd 	(unit distance/s)
-// 		[8]   	[ ] 	[4] 	 d/dt Lat 	(rad)
-// 		[9]   	[ ] 	[5] 	 d/dt Lon 	(rad)
-// 		[10]   	[ ] 	[6] 	 d/dt alt 	(unit distance)
-//
-//	default unit distance is meters
+// Input: 
+//  u1: F_b_T(0,0) , F_b_T(1,0) , F_b_T(2,0) 
+//  u2: M_b_T(0,0) , M_b_T(1,0) , M_b_T(2,0)
+//  u3: F_w_A(0,0) , F_w_A(1,0) , F_w_A(2,0)
+//  u4: M_b_A(0,0) , M_b_A(1,0) , M_b_A(2,0)
+//  u5: Jx, Jy, Jz, Jxy, Jxz, Jyz, g, m 
+//  u6: (state) Vt, alpha, theta, wy, h, beta, phi, wx, psi, wz 
+// Output:
+//  y1: (state derivative)
 //
 // AUTHOR:
 //
-// Copyright (C) James Goppert 2011
+// Copyright (C) James Goppert Nicholas Metaxas 2011
 //
 // This file is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
@@ -90,22 +56,7 @@ select job
 				list('vec',1,'vec',1,'vec',1),exprs);
 			if ~ok then break,end
 				graphics.exprs=exprs;
-
-			// set sizes based on mode
-			if stateMode==0 then
-				nOut=10;
-				nIn=[6;1;10]
-			elseif stateMode==1 then
-				nOut=4;
-				nIn=[3;1;4]
-			elseif stateMode==2 then
-				nOut=6;
-				nIn=[3;1;6]
-			else
-				disp('invalid mode in insDynamcis block');
-				error('invalid mode in windDynamics block');
-			end
-
+			
 			model.out=[nOut];
 			model.in=[nIn];
 			[model,graphics,ok]=check_io(model,graphics,nIn,nOut,[],[])
@@ -124,7 +75,7 @@ select job
 		model.sim=list('sci_windDynamics',4);
 
 		nOut=10;
-		nIn=[6;1;10]
+		nIn=[3;3;3;3;8;10]
 
 		model.in=nIn;
 		model.out=nOut;

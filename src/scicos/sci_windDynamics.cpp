@@ -1,5 +1,5 @@
 /*sci_windDynamics.cpp
- * Copyright (C) James Goppert 2011 
+ * Copyright (C) James Goppert Nicholas Metaxas 2011 
  * 
  * This file is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -16,9 +16,12 @@
  *
  *
  * Input: 
- *  u1: (imu) fx, fy, fz, wx, wy, wz 
- *  u2: (gravity model) g
- *  u3: (state) a, b, c, d, Vn, Ve, Ve, L, l, h
+ *  u1: F_b_T(0,0) , F_b_T(1,0) , F_b_T(2,0) 
+ *  u2: M_b_T(0,0) , M_b_T(1,0) , M_b_T(2,0)
+ *  u3: F_w_A(0,0) , F_w_A(1,0) , F_w_A(2,0)
+ *  u4: M_b_A(0,0) , M_b_A(1,0) , M_w_A(2,0)
+ *  u5: Jx, Jy, Jz, Jxy, Jxz, Jyz, g, m 
+ *  u6: (state) Vt, alpha, theta, wy, h, beta, phi, wx, psi, wz 
  * Output:
  *  y1: (state derivative)
  *
@@ -44,7 +47,6 @@ extern "C"
 
 void sci_windDynamics(scicos_block *block, scicos::enumScicosFlags flag)
 {
-    enum ins_mode {INS_FULL_STATE=0,INS_ATT_STATE=1,INS_VP_STATE=2};
 
     // constants
 
@@ -52,77 +54,72 @@ void sci_windDynamics(scicos_block *block, scicos::enumScicosFlags flag)
     double * u1=(double*)GetInPortPtrs(block,1);
     double * u2=(double*)GetInPortPtrs(block,2);
     double * u3=(double*)GetInPortPtrs(block,3);
+    double * u4=(double*)GetInPortPtrs(block,4);
+    double * u5=(double*)GetInPortPtrs(block,5);
+    double * u6=(double*)GetInPortPtrs(block,6);
     double * y1=(double*)GetOutPortPtrs(block,1);
 
-       double * rpar=block->rpar;
+    double * rpar=block->rpar;
     int * ipar=block->ipar;
 
     // aliases
-    double & wx     = u1[0];
-    double & wy     = u1[1];
-    double & wz     = u1[2];
 
-    double & fx     = u1[3];
-    double & fy     = u1[4];
-    double & fz     = u1[5];
-
-    double & g      = u2[0];
-
-    double & Omega = rpar[0];
-    double & Re = rpar[1];
-    int & mode = ipar[0];
+    // double & Omega = rpar[0];
+    //double & Re = rpar[1];
+    //int & mode = ipar[0];
 
     // Note that l = lon, and not in the equations but left here
     // for ease of use with full state vector x
-    double & a      = u3[0];
-    double & b      = u3[1];
-    double & c      = u3[2];
-    double & d      = u3[3];
-    double & Vn     = u3[4];
-    double & Ve     = u3[5];
-    double & Vd     = u3[6];
-    double & L      = u3[7];
-    double & l      = u3[8];
-    double & alt    = u3[9];
+    double & Jx      = u5[0];
+    double & Jy      = u5[1];
+    double & Jz      = u5[2];
+    double & Jxy     = u5[3];
+    double & Jxz     = u5[4];
+    double & Jyz     = u5[5];
+    double & g       = u5[6];
+    double & m       = u5[7];
+
+    double & Vt      = u6[0];
+    double & alpha   = u6[1];
+    double & theta   = u6[2];
+    double & wy      = u6[3];
+    double & h       = u6[4];
+    double & beta    = u6[5];
+    double & phi     = u6[6];
+    double & wx      = u6[7];
+    double & psi     = u6[8];
+    double & wz      = u6[9];
 
     // sizes
-    int nY = 0;
-    if (mode == INS_FULL_STATE) nY = 10;
-    else if (mode == INS_ATT_STATE) nY = 4;
-    else if (mode == INS_VP_STATE) nY = 6;
-    else Coserror((char *)"unknown mode for insErrorDynamics block");
+    int nY = 10;
+ 
 
     // matrices
     using namespace boost::numeric::ublas;
-    matrix<double,column_major, shallow_array_adaptor<double> > f(nY,1,shallow_array_adaptor<double>(nY,y1));
+    matrix<double,column_major, shallow_array_adaptor<double> > F_b_T_(3,1,shallow_array_adaptor<double>(3,u1));
+    matrix<double,column_major, shallow_array_adaptor<double> > M_b_T_(3,1,shallow_array_adaptor<double>(3,u2));
+    matrix<double,column_major, shallow_array_adaptor<double> > F_w_A_(3,1,shallow_array_adaptor<double>(3,u3));
+    matrix<double,column_major, shallow_array_adaptor<double> > M_b_A_(3,1,shallow_array_adaptor<double>(3,u4));
+    matrix<double,column_major, shallow_array_adaptor<double> > d_x_wind(nY,1,shallow_array_adaptor<double>(nY,y1));
 
     //handle flags
     if (flag==scicos::computeOutput)
     {
-        const double cosL = cos(L);
-        const double sinL = sin(L);
-        const double tanL = sinL/cosL;
-        const double R = Re+alt;
-        const double aa=a*a, bb=b*b, cc=c*c, dd=d*d;
-
-        if (mode == INS_FULL_STATE)
-        {
-            #include "navigation/ins_dynamics_f.hpp"
-        }
-        else if (mode == INS_ATT_STATE)
-        {
-            #define f_att f
-            #include "navigation/ins_dynamics_f_att.hpp"
-        }
-        else if (mode == INS_VP_STATE)
-        {
-            #define f_vp f
-            #include "navigation/ins_dynamics_f_vp.hpp"
-        }
-        else
-        {
-            Coserror((char *)"unknown mode for insErrorDynamics block");
-        }
+        const double cosAlpha = cos(alpha);
+        const double sinAlpha = sin(alpha);
+        const double cosBeta = sin(beta);
+        const double sinBeta = cos(beta);
+        const double sinPhi = sin(phi);
+        const double cosPhi = cos(phi);
+        const double sinTheta = sin(theta);
+        const double cosTheta = cos(theta);
+        const double tanTheta = tan(theta);
+        const double JxyJxy = Jxy*Jxy;
+        const double JxzJxz = Jxz*Jxz;
+        const double JyzJyz = Jyz*Jyz;
+    
+        #include "dynamics/windDynamics.hpp"
+ 
     }
     else if (flag==scicos::terminate)
     {
