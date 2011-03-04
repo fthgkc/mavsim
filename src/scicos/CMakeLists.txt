@@ -1,8 +1,5 @@
-include_directories( "${PROJECT_SOURCE_DIR}/src" ${SCICOSLAB_INCLUDE_DIRS}
-	${JSBSIM_INCLUDE_DIRS} ${OPENSCENEGRAPH_INCLUDE_DIRS} 
-	${Boost_INCLUDE_DIRS} ${MAVLINK_INCLUDE_DIRS})
-
-link_directories( ${OSG_LIBRARY_DIRS} ) 
+include_directories(${SCICOSLAB_INCLUDE_DIRS}
+	${JSBSIM_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${MAVLINK_INCLUDE_DIRS})
 
 set(oooarkScicosSources
 	definitions.cpp
@@ -47,6 +44,8 @@ if (OPENSCENEGRAPH_FOUND)
 		sci_car.cpp
 		sci_quad.cpp
 	)
+	include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
+	link_directories( ${OSG_LIBRARY_DIRS} ) 
 endif(OPENSCENEGRAPH_FOUND)
 set(CMAKE_C_FLAGS -lpthread)
 add_library(oooarkScicos SHARED ${oooarkScicosSources})
