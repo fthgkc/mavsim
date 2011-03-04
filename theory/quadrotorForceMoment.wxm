@@ -6,7 +6,7 @@ Quadrotor Force and Moment Models
    [wxMaxima: title   end   ] */
 
 /* [wxMaxima: input   start ] */
-load (f90);
+if is(commonLoaded#true) then batchload("common.wxm")$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -127,19 +127,6 @@ M_b_A_quad : transpose([0,0,0]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
-Assumptions
-   [wxMaxima: section end   ] */
-
-/* [wxMaxima: input   start ] */
-quadAssumptions : [
-F_b_T[1,1]=F_b_T_quad[1,1], F_b_T[2,1]=F_b_T_quad[2,1], F_b_T[3,1]=F_b_T_quad[3,1],
-F_w_A[1,1]=F_w_A_quad[1,1], F_w_A[2,1]=F_w_A_quad[2,1], F_w_A[3,1]=F_w_A_quad[3,1],
-M_b_T[1,1]=M_b_T_quad[1,1], M_b_T[2,1]=M_b_T_quad[2,1], M_b_T[3,1]=M_b_T_quad[3,1],
-M_b_A[1,1]=M_b_A_quad[1,1], M_b_A[2,1]=M_b_A_quad[2,1], M_b_A[3,1]=M_b_A_quad[3,1],
-Jxy=0,Jyz=0,Jxz=0]$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: section start ]
 Mixing
    [wxMaxima: section end   ] */
 
@@ -176,12 +163,28 @@ uPseudo : transpose([T_sum, delta_F_B,delta_L_R,delta_LR_FB]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
+Sum of Forces and Moments
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+F_b_quad : C_bw . F_w_A_quad + F_b_T_quad + m*C_bn_euler.g_n$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M_b_quad : M_b_A_quad + M_b_T_quad;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
 Fortran Output
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
 with_stdout ("code/quadForceMoments.f90",
 f90(F_b_T_quad,F_w_A_quad,M_b_T_quad,M_b_A_quad));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+quadrotorFoceMomentsLoaded : true;
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

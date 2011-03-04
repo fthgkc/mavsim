@@ -16,11 +16,14 @@
  *
  *
  * Input: 
- *  u1: (imu) fx, fy, fz, wx, wy, wz 
- *  u2: (gravity model) g
- *  u3: (state) a, b, c, d, Vn, Ve, Ve, L, l, h
+ *  u1: dutycycle_L,dutycycle_R,dutycycle_F,dutycycle_B
+ *  u2: KV,rBlade,CT,K_cd_cl,Cd0,s_frame,dm
+ *  u2: batVolt,rho
+ *  u3: Vt,alpha,beta
+ *
  * Output:
- *  y1: (state derivative)
+ *  y1: F_b
+ *  y1: M_b
  *
  */
 
@@ -53,21 +56,27 @@ void sci_quadForceMoments(scicos_block *block, scicos::enumScicosFlags flag)
     double * u2=(double*)GetInPortPtrs(block,2);
     double * u3=(double*)GetInPortPtrs(block,3);
     double * y1=(double*)GetOutPortPtrs(block,1);
+    double * y2=(double*)GetOutPortPtrs(block,1);
 
        double * rpar=block->rpar;
     int * ipar=block->ipar;
 
     // aliases
-    double & wx     = u1[0];
-    double & wy     = u1[1];
-    double & wz     = u1[2];
+    double & dutycycle_L     = u1[0];
+    double & dutycycle_R     = u1[1];
+    double & dutycycle_F     = u1[2];
+    double & dutycycle_B     = u1[3];
 
-    double & fx     = u1[3];
-    double & fy     = u1[4];
-    double & fz     = u1[5];
+    double & batVolt    = u2[5];
+    double & rho        = u2[5];
 
-    double & g      = u2[0];
+    double & KV         = u3[0];
 
+    double & Vt         = u2[3];
+    double & alpha      = u2[4];
+    double & beta       = u2[5];
+
+  
     double & Omega = rpar[0];
     double & Re = rpar[1];
     int & mode = ipar[0];
@@ -105,24 +114,7 @@ void sci_quadForceMoments(scicos_block *block, scicos::enumScicosFlags flag)
         const double R = Re+alt;
         const double aa=a*a, bb=b*b, cc=c*c, dd=d*d;
 
-        if (mode == INS_FULL_STATE)
-        {
-            #include "navigation/ins_dynamics_f.hpp"
-        }
-        else if (mode == INS_ATT_STATE)
-        {
-            #define f_att f
-            #include "navigation/ins_dynamics_f_att.hpp"
-        }
-        else if (mode == INS_VP_STATE)
-        {
-            #define f_vp f
-            #include "navigation/ins_dynamics_f_vp.hpp"
-        }
-        else
-        {
-            Coserror((char *)"unknown mode for insErrorDynamics block");
-        }
+        #include "navigation/ins_dynamics_f_vp.hpp"
     }
     else if (flag==scicos::terminate)
     {

@@ -5,12 +5,8 @@
 Common Equations
    [wxMaxima: title   end   ] */
 
-/* [wxMaxima: section start ]
-Definitions
-   [wxMaxima: section end   ] */
-
 /* [wxMaxima: input   start ] */
-kill (all);
+load(f90)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -18,23 +14,15 @@ load(lrats)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
+if is(vectLoaded#true) then load(vect), vectLoaded : true$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Definitions
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
 ratprint : false$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-load(f90)$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-load(vect);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-C_nb : genmatrix(C_nb,3,3)$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-f_b : transpose([fx,fy,fz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -46,7 +34,7 @@ w_ie : transpose([Omega*cos(L),0,-Omega*sin(L)])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_ie : transpose([Omega*cos(L+e_L),0,-Omega*sin(L+e_L)])$
+f_b : transpose([fx,fy,fz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -220,6 +208,26 @@ C_nb_2_euler(C_nb_euler)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
+Wind Frame Direction Cosine Matrix
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+We may use alpha (the angle of attack) and beta (the side slip to define C_wb, and C_bw
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+C_wb : C3(%beta).C2(-%alpha)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Using the transpose we obtain the inverse relationship.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+C_bw : transpose(C_wb)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
 Quaternions to Euler Angles
    [wxMaxima: section end   ] */
 
@@ -266,6 +274,10 @@ w_nb : C_nb_quat.w_ib - (w_ie + w_en)$
 
 /* [wxMaxima: input   start ] */
 est_w_nb : est_C_nb_quat.est_w_ib - (est_w_ie + est_w_en)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+commonLoaded : true$
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
