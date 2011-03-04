@@ -1,6 +1,6 @@
-function [x,y,typ]=windDynamics(job,arg1,arg2)
+function [x,y,typ]=eom6Dof(job,arg1,arg2)
 //
-// windDynamics.sci
+// eom6Dof.sci
 //
 // USAGE:
 //
@@ -47,22 +47,19 @@ select job
 		graphics=arg1.graphics;exprs=graphics.exprs
 		model=arg1.model;
 		while %t do
-			labels=[..
-				'Omega (rad/s)';..
-				'Re (unit distance)';..
-				'state mode: full(0), attitude(1), velocity position(2)'];
-			[ok,Omega,Re,stateMode,exprs]=..
-				getvalue('Set Planet Parameters',labels,..
-				list('vec',1,'vec',1,'vec',1),exprs);
+			labels=['frame: Wind(0), Body(1)'];
+			[ok,frame,exprs]=..
+				getvalue('Set Frame',labels,..
+				list('vec',1),exprs);
 			if ~ok then break,end
 				graphics.exprs=exprs;
 			
+           
 			model.out=[nOut];
 			model.in=[nIn];
 			[model,graphics,ok]=check_io(model,graphics,nIn,nOut,[],[])
 			if ok then
-				model.rpar=[Omega,Re];
-				model.ipar=stateMode;
+				model.ipar=frame;
 				graphics.exprs=exprs;
 				x.graphics=graphics;
 				x.model=model;
@@ -72,11 +69,12 @@ select job
 	case 'define' then
 		// set model properties
 		model=scicos_model();
-		model.sim=list('sci_windDynamics',4);
-
-		nOut=10;
-		nIn=[3;3;3;3;8;10]
-
+    
+	    model.sim=list('sci_eom6Dof',4);
+        
+       	nOut=10;
+	   	nIn=[3;3;3;3;8;10]
+                
 		model.in=nIn;
 		model.out=nOut;
 		model.blocktype='c';
@@ -85,19 +83,16 @@ select job
 		// gpsIns parameters
 		Omega = 7.292115e-5;
 		Re=6378137;
-		stateMode=0; // full state
+		frame=0; // full state
 		
-		model.rpar=[Omega,Re];
-		model.ipar=stateMode;
+		model.ipar=frame;
 		
 		// initialize strings for gui
 		exprs=[..
-			strcat(sci2exp(Omega)),..
-			strcat(sci2exp(Re)),..
-			strcat(sci2exp(stateMode))];
+			strcat(sci2exp(frame))];
 
 		// setup icon
-	  	gr_i=['xstringb(orig(1),orig(2),[''wind dynamics''],sz(1),sz(2),''fill'');']
+	  	gr_i=['xstringb(orig(1),orig(2),[''EOM 6DOF''],sz(1),sz(2),''fill'');']
 	  	x=standard_define([5 2],model,exprs,gr_i)
 	end
 endfunction
