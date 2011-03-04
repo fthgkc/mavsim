@@ -1,4 +1,4 @@
-/*sci_windDynamics.cpp
+/*sci_eom6Dof.cpp
  * Copyright (C) James Goppert Nicholas Metaxas 2011 
  * 
  * This file is free software: you can redistribute it and/or modify it
@@ -45,9 +45,11 @@ extern "C"
 #include <math.h>
 #include "definitions.hpp"
 
-void sci_windDynamics(scicos_block *block, scicos::enumScicosFlags flag)
+//void sci_windDynamics(scicos_block *block, scicos::enumScicosFlags flag)
+void sci_eom6Dof(scicos_block *block, scicos::enumScicosFlags flag)
 {
-
+    enum frame {WIND_DYNAMICS=0,BODY_DYNAMICS=1};
+    
     // constants
 
     // data
@@ -64,12 +66,11 @@ void sci_windDynamics(scicos_block *block, scicos::enumScicosFlags flag)
 
     // aliases
 
-    // double & Omega = rpar[0];
-    //double & Re = rpar[1];
-    //int & mode = ipar[0];
-
+    int & frame = ipar[0];
+   
     // Note that l = lon, and not in the equations but left here
     // for ease of use with full state vector x
+
     double & Jx      = u5[0];
     double & Jy      = u5[1];
     double & Jz      = u5[2];
@@ -78,17 +79,6 @@ void sci_windDynamics(scicos_block *block, scicos::enumScicosFlags flag)
     double & Jyz     = u5[5];
     double & g       = u5[6];
     double & m       = u5[7];
-
-    double & Vt      = u6[0];
-    double & alpha   = u6[1];
-    double & theta   = u6[2];
-    double & wy      = u6[3];
-    double & h       = u6[4];
-    double & beta    = u6[5];
-    double & phi     = u6[6];
-    double & wx      = u6[7];
-    double & psi     = u6[8];
-    double & wz      = u6[9];
 
     // sizes
     int nY = 10;
@@ -100,11 +90,24 @@ void sci_windDynamics(scicos_block *block, scicos::enumScicosFlags flag)
     matrix<double,column_major, shallow_array_adaptor<double> > M_b_T_(3,1,shallow_array_adaptor<double>(3,u2));
     matrix<double,column_major, shallow_array_adaptor<double> > F_w_A_(3,1,shallow_array_adaptor<double>(3,u3));
     matrix<double,column_major, shallow_array_adaptor<double> > M_b_A_(3,1,shallow_array_adaptor<double>(3,u4));
-    matrix<double,column_major, shallow_array_adaptor<double> > d_x_wind(nY,1,shallow_array_adaptor<double>(nY,y1));
 
     //handle flags
     if (flag==scicos::computeOutput)
     {
+  
+        if (frame == WIND_DYNAMICS)
+        {    
+        double & Vt      = u6[0];
+        double & alpha   = u6[1];
+        double & theta   = u6[2];
+        double & wy      = u6[3];
+        double & h       = u6[4];
+        double & beta    = u6[5];
+        double & phi     = u6[6];
+        double & wx      = u6[7];
+        double & psi     = u6[8];
+        double & wz      = u6[9];
+
         const double cosAlpha = cos(alpha);
         const double sinAlpha = sin(alpha);
         const double cosBeta = sin(beta);
@@ -117,12 +120,49 @@ void sci_windDynamics(scicos_block *block, scicos::enumScicosFlags flag)
         const double JxyJxy = Jxy*Jxy;
         const double JxzJxz = Jxz*Jxz;
         const double JyzJyz = Jyz*Jyz;
-    
+                 
+        matrix<double,column_major, shallow_array_adaptor<double> > d_x_wind(nY,1,shallow_array_adaptor<double>(nY,y1));
+
         #include "dynamics/windDynamics.hpp"
- 
-    }
-    else if (flag==scicos::terminate)
-    {
+        }
+        else if (frame == BODY_DYNAMICS)
+        {
+
+        double & U       = u6[0];
+        double & V       = u6[1];
+        double & theta   = u6[2];
+        double & wy      = u6[3];
+        double & h       = u6[4];
+        double & W       = u6[5];
+        double & phi     = u6[6];
+        double & wx      = u6[7];
+        double & psi     = u6[8];
+        double & wz      = u6[9];
+
+        double alpha   = tan(W/U);
+        double beta    = tan(V/U);
+        
+        const double cosAlpha = cos(alpha);
+        const double sinAlpha = sin(alpha);
+        const double cosBeta = sin(beta);
+        const double sinBeta = cos(beta);
+        const double sinPhi = sin(phi);
+        const double cosPhi = cos(phi);
+        const double sinTheta = sin(theta);
+        const double cosTheta = cos(theta);
+        const double tanTheta = tan(theta);
+        const double JxyJxy = Jxy*Jxy;
+        const double JxzJxz = Jxz*Jxz;
+        const double JyzJyz = Jyz*Jyz;
+
+
+        matrix<double,column_major, shallow_array_adaptor<double> > d_x_body(nY,1,shallow_array_adaptor<double>(nY,y1));
+
+            #include "dynamics/dynamicsBodyFrame.hpp"
+        }
+        else if (flag==scicos::terminate)
+        {
+        }
     }
     else if (flag==scicos::initialize || flag==scicos::reinitialize)
     {
