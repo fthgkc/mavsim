@@ -5,12 +5,14 @@ function [x,y,typ]=quad(job,arg1,arg2)
 // USAGE:
 //
 // input 1:
-//  [1]  roll
+//  [1]  Roll
 //  [2]  pitch
 //  [3]  yaw
-//  [4]  throttle
-//  [5]  steering
-//  [6]  velocity
+//  [4]  Front Throttle
+//  [5]  Back Throttle
+//  [6]  Left Throttle
+//  [7]  Right Throttle
+//  
 //
 //
 // Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>
