@@ -67,7 +67,23 @@ db_v_b : F_b/m - cross(w_ib,v_b);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_x_body : transpose([db_v_b[1,1],db_v_b[3,1],d_theta,b_w_ib[2,1],-W,db_v_b[2,1],d_phi,b_w_ib[1,1],d_psi,b_w_ib[3,1]]);
+v_n : C_nb_euler.v_b;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_body : transpose([db_v_b[1,1],db_v_b[3,1],d_theta,b_w_ib[2,1],-v_n[3,1],db_v_b[2,1],d_phi,b_w_ib[1,1],d_psi,b_w_ib[3,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Command Inputs
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+guidance_eq : C2(-%theta).C1(-%phi).v_b;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+guidance_sol : trigsimp(algsys([guidance_eq[1,1]=V_fwd,guidance_eq[2,1]=V_side,guidance_eq[3,1]=V_down],[U,V,W])[1]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
