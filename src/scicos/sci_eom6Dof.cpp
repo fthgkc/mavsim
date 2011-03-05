@@ -14,14 +14,35 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *
  * Input: 
- *  u1: F_b_T(0,0) , F_b_T(1,0) , F_b_T(2,0) 
- *  u2: M_b_T(0,0) , M_b_T(1,0) , M_b_T(2,0)
- *  u3: F_w_A(0,0) , F_w_A(1,0) , F_w_A(2,0)
- *  u4: M_b_A(0,0) , M_b_A(1,0) , M_w_A(2,0)
- *  u5: Jx, Jy, Jz, Jxy, Jxz, Jyz, g, m 
- *  u6: (state) Vt, alpha, theta, wy, h, beta, phi, wx, psi, wz 
+ *  u1: F_b(0,0) , F_b(1,0) , F_b(2,0) 
+ *  u2: M_b(0,0) , M_b(1,0) , M_b(2,0)
+ *  u3: m, Jx, Jy, Jz, Jxy, Jxz, Jyz 
+ *
+ *  u4: (wind mode)
+ *      1: Vt
+ *      2: alpha
+ *      3: theta
+ *      4: wy
+ *      5: h
+ *      6: beta
+ *      7: phi
+ *      8: wx
+ *      9: psi
+ *     10: wz 
+ *
+ *  u4: (body mode)
+ *      1: U
+ *      2: W
+ *      3: theta
+ *      4: wy
+ *      5: h
+ *      6: V
+ *      7: phi
+ *      8: wx
+ *      9: psi
+ *     10: wz 
+ *
  * Output:
  *  y1: (state derivative)
  *
@@ -57,8 +78,6 @@ void sci_eom6Dof(scicos_block *block, scicos::enumScicosFlags flag)
     double * u2=(double*)GetInPortPtrs(block,2);
     double * u3=(double*)GetInPortPtrs(block,3);
     double * u4=(double*)GetInPortPtrs(block,4);
-    double * u5=(double*)GetInPortPtrs(block,5);
-    double * u6=(double*)GetInPortPtrs(block,6);
     double * y1=(double*)GetOutPortPtrs(block,1);
 
     double * rpar=block->rpar;
@@ -67,96 +86,80 @@ void sci_eom6Dof(scicos_block *block, scicos::enumScicosFlags flag)
     // aliases
 
     int & frame = ipar[0];
-   
-    // Note that l = lon, and not in the equations but left here
-    // for ease of use with full state vector x
-
-    double & Jx      = u5[0];
-    double & Jy      = u5[1];
-    double & Jz      = u5[2];
-    double & Jxy     = u5[3];
-    double & Jxz     = u5[4];
-    double & Jyz     = u5[5];
-    double & g       = u5[6];
-    double & m       = u5[7];
+  
+    // matrices
+    int nY = 10;
+    using namespace boost::numeric::ublas;
+    matrix<double,column_major, shallow_array_adaptor<double> > F_b_(3,1,shallow_array_adaptor<double>(3,u1));
+    matrix<double,column_major, shallow_array_adaptor<double> > M_b_(3,1,shallow_array_adaptor<double>(3,u2));
+  
+    // mass/inertia params
+    double & m       = u3[0];
+    double & Jx      = u3[1];
+    double & Jy      = u3[2];
+    double & Jz      = u3[3];
+    double & Jxy     = u3[4];
+    double & Jxz     = u3[5];
+    double & Jyz     = u3[6];
 
     // sizes
-    int nY = 10;
- 
-
-    // matrices
-    using namespace boost::numeric::ublas;
-    matrix<double,column_major, shallow_array_adaptor<double> > F_b_T_(3,1,shallow_array_adaptor<double>(3,u1));
-    matrix<double,column_major, shallow_array_adaptor<double> > M_b_T_(3,1,shallow_array_adaptor<double>(3,u2));
-    matrix<double,column_major, shallow_array_adaptor<double> > F_w_A_(3,1,shallow_array_adaptor<double>(3,u3));
-    matrix<double,column_major, shallow_array_adaptor<double> > M_b_A_(3,1,shallow_array_adaptor<double>(3,u4));
-
     //handle flags
     if (flag==scicos::computeOutput)
     {
   
         if (frame == WIND_DYNAMICS)
         {    
-        double & Vt      = u6[0];
-        double & alpha   = u6[1];
-        double & theta   = u6[2];
-        double & wy      = u6[3];
-        double & h       = u6[4];
-        double & beta    = u6[5];
-        double & phi     = u6[6];
-        double & wx      = u6[7];
-        double & psi     = u6[8];
-        double & wz      = u6[9];
+            double & Vt      = u4[0];
+            double & alpha   = u4[1];
+            double & theta   = u4[2];
+            double & wy      = u4[3];
+            double & h       = u4[4];
+            double & beta    = u4[5];
+            double & phi     = u4[6];
+            double & wx      = u4[7];
+            double & psi     = u4[8];
+            double & wz      = u4[9];
 
-        const double cosAlpha = cos(alpha);
-        const double sinAlpha = sin(alpha);
-        const double cosBeta = sin(beta);
-        const double sinBeta = cos(beta);
-        const double sinPhi = sin(phi);
-        const double cosPhi = cos(phi);
-        const double sinTheta = sin(theta);
-        const double cosTheta = cos(theta);
-        const double tanTheta = tan(theta);
-        const double JxyJxy = Jxy*Jxy;
-        const double JxzJxz = Jxz*Jxz;
-        const double JyzJyz = Jyz*Jyz;
-                 
-        matrix<double,column_major, shallow_array_adaptor<double> > d_x_wind(nY,1,shallow_array_adaptor<double>(nY,y1));
+            const double cosAlpha = cos(alpha);
+            const double sinAlpha = sin(alpha);
+            const double cosBeta = sin(beta);
+            const double sinBeta = cos(beta);
+            const double sinPhi = sin(phi);
+            const double cosPhi = cos(phi);
+            const double sinTheta = sin(theta);
+            const double cosTheta = cos(theta);
+            const double tanTheta = tan(theta);
+            const double JxyJxy = Jxy*Jxy;
+            const double JxzJxz = Jxz*Jxz;
+            const double JyzJyz = Jyz*Jyz;
+                     
+            matrix<double,column_major, shallow_array_adaptor<double> > d_x_wind(nY,1,shallow_array_adaptor<double>(nY,y1));
 
-        #include "dynamics/windDynamics.hpp"
+            #include "dynamics/windDynamics.hpp"
         }
         else if (frame == BODY_DYNAMICS)
         {
+            double & U       = u4[0];
+            double & W       = u4[1];
+            double & theta   = u4[2];
+            double & wy      = u4[3];
+            double & h       = u4[4];
+            double & V       = u4[5];
+            double & phi     = u4[6];
+            double & wx      = u4[7];
+            double & psi     = u4[8];
+            double & wz      = u4[9];
 
-        double & U       = u6[0];
-        double & V       = u6[1];
-        double & theta   = u6[2];
-        double & wy      = u6[3];
-        double & h       = u6[4];
-        double & W       = u6[5];
-        double & phi     = u6[6];
-        double & wx      = u6[7];
-        double & psi     = u6[8];
-        double & wz      = u6[9];
+            const double sinPhi = sin(phi);
+            const double cosPhi = cos(phi);
+            const double sinTheta = sin(theta);
+            const double cosTheta = cos(theta);
+            const double tanTheta = tan(theta);
+            const double JxyJxy = Jxy*Jxy;
+            const double JxzJxz = Jxz*Jxz;
+            const double JyzJyz = Jyz*Jyz;
 
-        double alpha   = tan(W/U);
-        double beta    = tan(V/U);
-        
-        const double cosAlpha = cos(alpha);
-        const double sinAlpha = sin(alpha);
-        const double cosBeta = sin(beta);
-        const double sinBeta = cos(beta);
-        const double sinPhi = sin(phi);
-        const double cosPhi = cos(phi);
-        const double sinTheta = sin(theta);
-        const double cosTheta = cos(theta);
-        const double tanTheta = tan(theta);
-        const double JxyJxy = Jxy*Jxy;
-        const double JxzJxz = Jxz*Jxz;
-        const double JyzJyz = Jyz*Jyz;
-
-
-        matrix<double,column_major, shallow_array_adaptor<double> > d_x_body(nY,1,shallow_array_adaptor<double>(nY,y1));
+            matrix<double,column_major, shallow_array_adaptor<double> > d_x_body(nY,1,shallow_array_adaptor<double>(nY,y1));
 
             #include "dynamics/dynamicsBodyFrame.hpp"
         }

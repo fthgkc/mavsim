@@ -6,15 +6,11 @@ Quadrotor Body Frame Models
    [wxMaxima: title   end   ] */
 
 /* [wxMaxima: input   start ] */
-kill(all);
+if (dynamicsBodyFrameLoaded#true) then batchload("dynamicsBodyFrame.wxm")$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-batchload("dynamicsBodyFrame.wxm")$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-batchload("quadrotorForceMoment.wxm")$
+if (quadrotorForceMomentLoaded#true) then batchload("quadrotorForceMoment.wxm")$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -24,6 +20,13 @@ Quadrotor Body Frame Equations of Motion
 /* [wxMaxima: subsect start ]
 Airframe Dynamics
    [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: input   start ] */
+quadAssumptions : [
+F_b[1,1]=F_b_quad[1,1], F_b[2,1]=F_b_quad[2,1], F_b[3,1]=F_b_quad[3,1],
+M_b[1,1]=M_b_quad[1,1], M_b[2,1]=M_b_quad[2,1], M_b[3,1]=M_b_quad[3,1],
+Jxy=0,Jyz=0,Jxz=0];
+/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 d_x_body_quad : factor(fullratsubst(quadAssumptions,d_x_body));
@@ -94,7 +97,7 @@ G_body_quad_motors : jacobian(vector2list(d_x_body_quad),vector2list(u_motors));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F_body_quad_hover : fullratsimp(jacobian(vector2list(d_x_body_quad_trim_eq),vector2list(x_body_quad)));
+F_body_quad_hover : fullratsubst([wx=0,wy=0,wz=0,%phi=0,%theta=0,%psi=0,U=0,V=0,W=0],F_body_quad);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -139,6 +142,10 @@ Fortran Output
 /* [wxMaxima: input   start ] */
 with_stdout ("code/quad_body_dynamics.f90",
 f90(F_body_quad,G_body_quad,C_body_quad,D_body_quad))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+quadRotorBodyFrameLoaded : true$
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

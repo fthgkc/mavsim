@@ -39,7 +39,7 @@ J : matrix([Jx,-Jxy,-Jxz],[-Jxy,Jy,-Jyz],[-Jxz,-Jyz,Jz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-b_w_ib : invert(J).( (M_b_A+M_b_T) - cross(w_ib,J.w_ib))$
+b_w_ib : invert(J).( (M_b) - cross(w_ib,J.w_ib))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]

@@ -10,7 +10,7 @@ kill(all);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-batch("common.wxm");
+if is(commonLoaded#true) then batchload("common.wxm")$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -50,7 +50,7 @@ diff_q_nb : quat_diff(q_nb,w_nb);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-diff_v_n : express(C_nb_quat.f_b - cross(2*w_ie + w_en,v_n)+g_n);
+diff_v_n : C_nb_quat.f_b - cross(2*w_ie + w_en,v_n)+g_n;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -88,7 +88,7 @@ est_diff_q_nb : quat_diff(est_q_nb,est_w_nb);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_diff_v_n : express(est_C_nb_quat.est_f_b - cross(2*w_ie + w_en,est_v_n)+est_g_n);
+est_diff_v_n : est_C_nb_quat.est_f_b - cross(2*w_ie + w_en,est_v_n)+est_g_n;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

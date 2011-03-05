@@ -14,6 +14,10 @@ load(lrats)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
+ratprint : false$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
 if is(vectLoaded#true) then load(vect), vectLoaded : true$
 /* [wxMaxima: input   end   ] */
 
@@ -22,15 +26,15 @@ Definitions
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-ratprint : false$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 est_f_b : transpose([fx+e_fx,fy+e_fy,fz+e_fz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 w_ie : transpose([Omega*cos(L),0,-Omega*sin(L)])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+est_w_ie : transpose([Omega*cos(L+e_L),0,-Omega*sin(L+e_L)])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

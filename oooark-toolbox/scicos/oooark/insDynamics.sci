@@ -78,7 +78,7 @@ select job
 	 	[x,y]=standard_origin(arg1)
 	case 'set' then
 		x=arg1;
-		graphics=arg1.graphics;exprs=graphics.exprs
+		graphics=arg1.graphics;exprs=graphics.exprs;
 		model=arg1.model;
 		while %t do
 			labels=[..
@@ -89,7 +89,7 @@ select job
 				getvalue('Set Planet Parameters',labels,..
 				list('vec',1,'vec',1,'vec',1),exprs);
 			if ~ok then break,end
-				graphics.exprs=exprs;
+			graphics.exprs=exprs;
 
 			// set sizes based on mode
 			if stateMode==0 then
@@ -102,7 +102,7 @@ select job
 				nOut=6;
 				nIn=[3;1;6]
 			else
-				disp('invalid mode in insDynamcis block');
+				disp('invalid mode in insDynamics block');
 				error('invalid mode in insDynamics block');
 			end
 

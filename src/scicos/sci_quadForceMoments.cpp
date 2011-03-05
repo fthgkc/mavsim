@@ -114,7 +114,7 @@ void sci_quadForceMoments(scicos_block *block, scicos::enumScicosFlags flag)
         const double R = Re+alt;
         const double aa=a*a, bb=b*b, cc=c*c, dd=d*d;
 
-        #include "navigation/ins_dynamics_f_vp.hpp"
+        //#include "navigation/ins_dynamics_f_vp.hpp"
     }
     else if (flag==scicos::terminate)
     {

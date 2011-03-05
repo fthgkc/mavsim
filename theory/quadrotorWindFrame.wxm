@@ -6,10 +6,6 @@ Quadrotor Force and Moment Models
    [wxMaxima: title   end   ] */
 
 /* [wxMaxima: input   start ] */
-kill(all);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 if is(dynamicsWindFrameLoaded#true) then batchload("dynamicsWindFrame.wxm")$
 /* [wxMaxima: input   end   ] */
 

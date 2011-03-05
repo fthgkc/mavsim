@@ -5,12 +5,34 @@ function [x,y,typ]=eom6Dof(job,arg1,arg2)
 // USAGE:
 //
 // Input: 
-//  u1: F_b_T(0,0) , F_b_T(1,0) , F_b_T(2,0) 
-//  u2: M_b_T(0,0) , M_b_T(1,0) , M_b_T(2,0)
-//  u3: F_w_A(0,0) , F_w_A(1,0) , F_w_A(2,0)
-//  u4: M_b_A(0,0) , M_b_A(1,0) , M_b_A(2,0)
-//  u5: Jx, Jy, Jz, Jxy, Jxz, Jyz, g, m 
-//  u6: (state) Vt, alpha, theta, wy, h, beta, phi, wx, psi, wz 
+//  u1: F_b(0,0) , F_b(1,0) , F_b(2,0) 
+//  u2: M_b(0,0) , M_b(1,0) , M_b(2,0)
+//  u3: m, Jx, Jy, Jz, Jxy, Jxz, Jyz 
+//
+//  u4: (wind mode)
+//      1: Vt
+//      2: alpha
+//      3: theta
+//      4: wy
+//      5: h
+//      6: beta
+//      7: phi
+//      8: wx
+//      9: psi
+//     10: wz 
+//
+//  u4: (body mode)
+//      1: U
+//      2: W
+//      3: theta
+//      4: wy
+//      5: h
+//      6: V
+//      7: phi
+//      8: wx
+//      9: psi
+//     10: wz 
+//
 // Output:
 //  y1: (state derivative)
 //
@@ -34,67 +56,70 @@ function [x,y,typ]=eom6Dof(job,arg1,arg2)
 x=[];y=[];typ=[];
 
 select job
-	case 'plot' then
-	 	standard_draw(arg1)
-	case 'getinputs' then
-	 	[x,y,typ]=standard_inputs(arg1)
-	case 'getoutputs' then
-	 	[x,y,typ]=standard_outputs(arg1)
-	case 'getorigin' then
-	 	[x,y]=standard_origin(arg1)
-	case 'set' then
-		x=arg1;
-		graphics=arg1.graphics;exprs=graphics.exprs
-		model=arg1.model;
-		while %t do
-			labels=['frame: Wind(0), Body(1)'];
-			[ok,frame,exprs]=..
-				getvalue('Set Frame',labels,..
-				list('vec',1),exprs);
-			if ~ok then break,end
-				graphics.exprs=exprs;
-			
-           
-			model.out=[nOut];
-			model.in=[nIn];
-			[model,graphics,ok]=check_io(model,graphics,nIn,nOut,[],[])
-			if ok then
-				model.ipar=frame;
-				graphics.exprs=exprs;
-				x.graphics=graphics;
-				x.model=model;
-				break
-			end
-		end
-	case 'define' then
-		// set model properties
-		model=scicos_model();
-    
-	    model.sim=list('sci_eom6Dof',4);
+    case 'plot' then
+         standard_draw(arg1)
+    case 'getinputs' then
+         [x,y,typ]=standard_inputs(arg1)
+    case 'getoutputs' then
+         [x,y,typ]=standard_outputs(arg1)
+    case 'getorigin' then
+         [x,y]=standard_origin(arg1)
+    case 'set' then
+        x=arg1;
+        graphics=arg1.graphics;exprs=graphics.exprs;
+        model=arg1.model;
+        while %t do
+            labels=['frame: Wind(0), Body(1)'];
+            [ok,frame,exprs]=getvalue('Set Frame',labels,list('vec',1),exprs);
+            if ~ok then break,end
+            graphics.exprs=exprs;
+            nOut=10;
+            nIn=[3;3;7;10];
+
+            // set frame options
+            if frame==0 then
+            elseif frame==1 then
+            else
+                disp('invalid mode in eom6Dof block');
+                error('invalid mode in eom6Dof block');
+            end
+
+            model.out=[nOut];
+            model.in=[nIn];
+            [model,graphics,ok]=check_io(model,graphics,nIn,nOut,[],[])
+            if ok then
+                model.ipar=frame;
+                graphics.exprs=exprs;
+                x.graphics=graphics;
+                x.model=model;
+                break
+            end
+        end
+    case 'define' then
+        //set model properties
+        model=scicos_model();
+        model.sim=list('sci_eom6Dof',4);
         
-       	nOut=10;
-	   	nIn=[3;3;3;3;8;10]
+        nOut=10;
+        nIn=[3;3;7;10]
                 
-		model.in=nIn;
-		model.out=nOut;
-		model.blocktype='c';
-		model.dep_ut=[%t %f];
+        model.in=nIn;
+        model.out=nOut;
+        model.blocktype='c';
+        model.dep_ut=[%t %f];
 
-		// gpsIns parameters
-		Omega = 7.292115e-5;
-		Re=6378137;
-		frame=0; // full state
-		
-		model.ipar=frame;
-		
-		// initialize strings for gui
-		exprs=[..
-			strcat(sci2exp(frame))];
+        // default parameters
+        frame=0; // wind mode
+        
+        model.ipar=frame;
+        
+        // initialize strings for gui
+        exprs=[strcat(sci2exp(frame))];
 
-		// setup icon
-	  	gr_i=['xstringb(orig(1),orig(2),[''EOM 6DOF''],sz(1),sz(2),''fill'');']
-	  	x=standard_define([5 2],model,exprs,gr_i)
-	end
+        // setup icon
+        gr_i=['xstringb(orig(1),orig(2),[''EOM 6DOF''],sz(1),sz(2),''fill'');']
+        x=standard_define([5 2],model,exprs,gr_i)
+    end
 endfunction
 
-// vim:ts=4:sw=4
+// vim:ts=4:sw=4:expandtab
