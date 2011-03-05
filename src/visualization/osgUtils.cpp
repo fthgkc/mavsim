@@ -564,8 +564,8 @@ void Quad::setPositionScalars(double x, double y, double z)
 
 void Quad::setU(double throttleF, double throttleB, double throttleL, double throttleR)
 {
-	myPropF->setAttitude(osg::Quat(myPropAngleF-=0.5*throttleF,osg::Vec3(0,0,1)));
-	myPropB->setAttitude(osg::Quat(myPropAngleB-=0.5*throttleB,osg::Vec3(0,0,1)));
+	myPropF->setAttitude(osg::Quat(myPropAngleF-=-0.5*throttleF,osg::Vec3(0,0,1)));
+	myPropB->setAttitude(osg::Quat(myPropAngleB-=-0.5*throttleB,osg::Vec3(0,0,1)));
 	myPropL->setAttitude(osg::Quat(myPropAngleL-=0.5*throttleL,osg::Vec3(0,0,1)));
 	myPropR->setAttitude(osg::Quat(myPropAngleR-=0.5*throttleR,osg::Vec3(0,0,1)));
 }

@@ -74,7 +74,7 @@ Hh.W_Sum 		= -0.23*lead;
 Hh.phi_wx 		= 0.94;
 Hh.theta_wy 	= 0.94;
 Hh.psi_wz 		= 0.25;
-Hh.U_theta 		= -0.01*(1 + 0.1/%s + 1*%s*lowPass);
+Hh.U_theta 		= -0.025;
 Hh.V_phi 		= 0.025;
 Hh.h_W 			= -0.25;
 
