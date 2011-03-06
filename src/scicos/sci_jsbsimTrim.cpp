@@ -25,7 +25,7 @@
 #include "models/propulsion/FGEngine.h"
 #include "models/propulsion/FGTurbine.h"
 #include "models/propulsion/FGTurboProp.h"
-#include "src/config.h"
+#include "config.h"
 
 template <class varType>
 void prompt(const std::string & str, varType & var)
