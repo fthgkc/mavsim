@@ -1,12 +1,12 @@
 [submodule "thirdParty/mavlink"]
 	path = thirdParty/mavlink
-	url = https://github.com/pixhawk/mavlink.git
+	url = git://github.com/pixhawk/mavlink
 [submodule "thirdParty/jsbsim"]
 	path = thirdParty/jsbsim
-	url = git://mavsim.git.sourceforge.net/gitroot/mavsim/jsbsim
+	url = git://github.com/openmav/jsbsim
 [submodule "thirdParty/boost-numeric-bindings"]
 	path = thirdParty/boost-numeric-bindings
 	url = http://git.tiker.net/trees/boost-numeric-bindings.git
 [submodule "data/easystar"]
 	path = data/easystar
-	url = git://mavsim.git.sf.net/gitroot/mavsim/easystar
+	url = git://github.com/openmav/easystar
