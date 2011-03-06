@@ -20,7 +20,7 @@
 #include <boost/bind.hpp>
 #include <osgGA/TrackballManipulator>
 
-namespace oooark
+namespace mavsim
 {
 
 namespace visualization
@@ -70,7 +70,7 @@ void Viewer::unlock()
 
 } // visualization
 
-} // oooark
+} // mavsim
 
 
 // vim:ts=4:sw=4

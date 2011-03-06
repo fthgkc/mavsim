@@ -18,7 +18,7 @@
 
 #include "GeoMag.hpp"
 
-namespace oooark
+namespace mavsim
 {
 
 GeoMag::GeoMag(std::string file, int maxDeg)

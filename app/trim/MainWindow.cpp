@@ -38,11 +38,11 @@ MainWindow::MainWindow() : sceneRoot(new osg::Group), callback(new SolverCallbac
     viewer->setCameraManipulator(new osgGA::TrackballManipulator);
     viewer->getCameraManipulator()->setHomePosition(osg::Vec3d(30,30,-30),osg::Vec3d(0,0,0),osg::Vec3d(0,0,-1),false);
     viewer->getCameraManipulator()->home(0);
-    sceneRoot->addChild(new oooark::visualization::Frame(20,"N","E","D"));
+    sceneRoot->addChild(new mavsim::visualization::Frame(20,"N","E","D"));
     try
     {
-        plane = new oooark::visualization::Jet;
-        plane->addChild(new oooark::visualization::Frame(15,"X","Y","Z"));
+        plane = new mavsim::visualization::Jet;
+        plane->addChild(new mavsim::visualization::Frame(15,"X","Y","Z"));
         sceneRoot->addChild(plane);
     }
     catch(const std::exception & e)

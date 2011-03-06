@@ -16,8 +16,8 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef oooark_flightGearUtils_HPP
-#define oooark_flightGearUtils_HPP
+#ifndef mavsim_flightGearUtils_HPP
+#define mavsim_flightGearUtils_HPP
 
 #include "net_ctrls.hxx"
 #include "net_fdm.hxx"

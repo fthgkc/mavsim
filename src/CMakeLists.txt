@@ -1,7 +1,7 @@
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 configure_file(config.h.in ${CMAKE_BINARY_DIR}/src/config.h)
-install(FILES ${CMAKE_BINARY_DIR}/src/config.h DESTINATION include/oooark)
+install(FILES ${CMAKE_BINARY_DIR}/src/config.h DESTINATION include/mavsim)
 
 add_subdirectory(communication)
 add_subdirectory(navigation)

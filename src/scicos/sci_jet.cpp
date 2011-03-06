@@ -21,7 +21,7 @@
 #include "visualization/Viewer.hpp"
 #include "visualization/osgUtils.hpp"
 
-using namespace oooark::visualization;
+using namespace mavsim::visualization;
 
 class VisJet : public Viewer
 {

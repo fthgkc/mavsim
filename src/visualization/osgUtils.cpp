@@ -32,7 +32,7 @@
 #include <stdexcept>
 #include "config.h"
 
-namespace oooark
+namespace mavsim
 {
 
 namespace visualization
@@ -574,7 +574,7 @@ void Quad::setU(double throttleF, double throttleB, double throttleL, double thr
 
 } // visualization
 
-} // oooark
+} // mavsim
 
 
 // vim:ts=4:sw=4

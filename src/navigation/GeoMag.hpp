@@ -62,7 +62,7 @@
 #include <string>
 #define NaN log(-1.0)
 
-namespace oooark
+namespace mavsim
 {
 
 class GeoMag

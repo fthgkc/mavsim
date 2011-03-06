@@ -49,7 +49,7 @@
 #include <complex>
 
 
-namespace oooark
+namespace mavsim
 {
 
 using namespace boost::numeric::ublas;

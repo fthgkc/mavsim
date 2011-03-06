@@ -20,7 +20,7 @@
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include "utilities.hpp"
 
-namespace oooark
+namespace mavsim
 {
 GpsIns::GpsIns(double lat, double lon, double height, //
 	   	double roll, double pitch, double yaw, //
@@ -405,7 +405,7 @@ void GpsIns::getState(double *output)
 	output[7]=vn(1);
 	output[8]=vn(2);
 }
-} // oooark
+} // mavsim
 
 
 // vim:ts=4:sw=4

@@ -3,24 +3,24 @@ Released under GPL v3 License
 
 Using Scicoslab Toolbox:
 
-	For running in source directory, launch scicoslab from the oooark directory:
-	1a. launch a terminal in oooark root directory where this README is located.
+	For running in source directory, launch scicoslab from the mavsim directory:
+	1a. launch a terminal in mavsim root directory where this README is located.
 
-	If oooark toolbox is installed in the 
+	If mavsim toolbox is installed in the 
 	system path (i.e. /usr/lib/scicos../contrib)
 	1b. launch scicoslab
 
 	Opening the toolbox
-	2. select menu toolboxes->oooark-toolbox
-	3. select menu Demos->"oooark block demos"
+	2. select menu toolboxes->mavsim-toolbox
+	3. select menu Demos->"mavsim block demos"
 
 Using Trim Application: 
 
-	If the oooark is installed.
-	1a. launch the application: ./build/bin/oooarkTrim
+	If the mavsim is installed.
+	1a. launch the application: ./build/bin/mavsimTrim
 
 	If you are building from source.
-	1b. launch the application: oooarkTrim
+	1b. launch the application: mavsimTrim
 
 Building from Source:
 
@@ -34,7 +34,7 @@ Building from Source:
 		For debian sid/squeeze and ubuntu maverick:
 		sudo apt-get install cmake libqt4-dev simgear-dev liblapack-dev libboost-all-dev libopenscenegraph-dev gfortran
 		
-		If you need to build jsbsim from source (most likely since you need jsbsim-advtrim branch from oooark)
+		If you need to build jsbsim from source (most likely since you need jsbsim-advtrim branch from mavsim)
 		sudo apt-get install libtool automake
 
 		Install scicoslab 4.4:

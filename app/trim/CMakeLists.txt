@@ -29,10 +29,10 @@ set(trim_src
 	)
 
 add_definitions(-DUSE_QT4)
-add_executable(oooarkTrim ${trim_src})
-add_dependencies(oooarkTrim JSBSIM)
-target_link_libraries(oooarkTrim ${OSG_LIBRARIES}
+add_executable(mavsimTrim ${trim_src})
+add_dependencies(mavsimTrim JSBSIM)
+target_link_libraries(mavsimTrim ${OSG_LIBRARIES}
 	${QT_LIBRARIES} ${JSBSIM_LIBRARIES}
 	${OOOARK_LIBRARIES} ${Boost_LIBRARIES})
 
-install(TARGETS oooarkTrim DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+install(TARGETS mavsimTrim DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

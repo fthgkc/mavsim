@@ -40,7 +40,7 @@ extern "C"
 
     void sci_gpsIns(scicos_block *block, scicos::enumScicosFlags flag)
     {
-		static oooark::GpsIns* gpsIns = NULL;
+		static mavsim::GpsIns* gpsIns = NULL;
 
 		// constants
 		bool useGravity = false;
@@ -91,7 +91,7 @@ extern "C"
 			
 				try
 				{
-                	gpsIns = new oooark::GpsIns(*lat,*lon,*height,*roll,*pitch,*yaw,*Vn,*Ve,*Vd,*sigmaPos,*sigmaAlt,*sigmaVel,*sigmaAccelG,*sigmaGyro,useGravity);
+                	gpsIns = new mavsim::GpsIns(*lat,*lon,*height,*roll,*pitch,*yaw,*Vn,*Ve,*Vd,*sigmaPos,*sigmaAlt,*sigmaVel,*sigmaAccelG,*sigmaGyro,useGravity);
 				}
 				catch (const std::runtime_error & e)
 				{

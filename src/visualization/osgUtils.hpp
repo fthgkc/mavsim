@@ -16,8 +16,8 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef oooark_osgUtils_HPP
-#define oooark_osgUtils_HPP
+#ifndef mavsim_osgUtils_HPP
+#define mavsim_osgUtils_HPP
 
 #include <osg/NodeVisitor>
 #include <osg/PositionAttitudeTransform>
@@ -26,7 +26,7 @@
 
 #include <float.h>
 
-namespace oooark
+namespace mavsim
 {
 
 namespace visualization
@@ -213,7 +213,7 @@ private:
 
 } // visualization
 
-} // oooark
+} // mavsim
 
 #endif
 

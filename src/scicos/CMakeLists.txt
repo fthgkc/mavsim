@@ -1,7 +1,7 @@
 include_directories(${SCICOSLAB_INCLUDE_DIRS}
 	${JSBSIM_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${MAVLINK_INCLUDE_DIRS})
 
-set(oooarkScicosSources
+set(mavsimScicosSources
 	definitions.cpp
 	sci_mavlinkHilSensor.cpp
 	sci_mavlinkHilState.cpp
@@ -25,19 +25,19 @@ set(oooarkScicosSources
 	)
 
 if (SIMGEAR_FOUND)
-	list(APPEND oooarkScicosSources
+	list(APPEND mavsimScicosSources
 		sci_flightGearComm.cpp
 	)
 endif (SIMGEAR_FOUND)
 
 if (LAPACK_FOUND)
-	list(APPEND oooarkScicosSources
+	list(APPEND mavsimScicosSources
     	sci_gpsIns.cpp
 	)
 endif (LAPACK_FOUND)
 
 if (OPENSCENEGRAPH_FOUND)
-	list(APPEND oooarkScicosSources
+	list(APPEND mavsimScicosSources
 		sci_jet.cpp
 		sci_plane.cpp
 		sci_car.cpp
@@ -47,33 +47,33 @@ if (OPENSCENEGRAPH_FOUND)
 	link_directories( ${OSG_LIBRARY_DIRS} ) 
 endif(OPENSCENEGRAPH_FOUND)
 set(CMAKE_C_FLAGS -lpthread)
-add_library(oooarkScicos SHARED ${oooarkScicosSources})
-add_dependencies(oooarkScicos JSBSIM)
+add_library(mavsimScicos SHARED ${mavsimScicosSources})
+add_dependencies(mavsimScicos JSBSIM)
 
-target_link_libraries(oooarkScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES} -lpthread)
+target_link_libraries(mavsimScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES} -lpthread)
 
-set_target_properties(oooarkScicos PROPERTIES VERSION ${oooark_VERSION}
-    SOVERSION ${oooark_SOVERSION})
+set_target_properties(mavsimScicos PROPERTIES VERSION ${mavsim_VERSION}
+    SOVERSION ${mavsim_SOVERSION})
 
-add_custom_target(oooarkToolbox ALL
-	DEPENDS oooarkScicos
-    COMMAND cd ${PROJECT_SOURCE_DIR}/oooark-toolbox && ./build.sh)
+add_custom_target(mavsimToolbox ALL
+	DEPENDS mavsimScicos
+    COMMAND cd ${PROJECT_SOURCE_DIR}/mavsim-toolbox && ./build.sh)
 
-get_target_property(SCICOSLAB_LOCATION oooarkScicos LOCATION)
+get_target_property(SCICOSLAB_LOCATION mavsimScicos LOCATION)
 
 set(SCICOSLAB_INSTALL_SETTINGS 0)
-configure_file(loadscicos.sce.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/scicos/loadscicos.sce)
+configure_file(loadscicos.sce.in ${CMAKE_SOURCE_DIR}/mavsim-toolbox/scicos/loadscicos.sce)
 set(SCICOSLAB_INSTALL_SETTINGS 1)
 configure_file(loadscicos.sce.in ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce)
 
-configure_file(VERSION.in ${CMAKE_SOURCE_DIR}/oooark-toolbox/VERSION)
+configure_file(VERSION.in ${CMAKE_SOURCE_DIR}/mavsim-toolbox/VERSION)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce DESTINATION ${SCICOSLAB_CONTRIB_DIR}/oooark-toolbox/scicos)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/loadscicos.sce DESTINATION ${SCICOSLAB_CONTRIB_DIR}/mavsim-toolbox/scicos)
 
-install(TARGETS oooarkScicos DESTINATION lib)
+install(TARGETS mavsimScicos DESTINATION lib)
 
 install(FILES
     definitions.hpp
     utilities.hpp
-	DESTINATION include/oooark/scicos
+	DESTINATION include/mavsim/scicos
     )

@@ -23,7 +23,7 @@
 
 int main(int, char**)
 {
-    using namespace oooark::visualization;
+    using namespace mavsim::visualization;
 
     // construct the viewer.
     Viewer * viewer = new Viewer;

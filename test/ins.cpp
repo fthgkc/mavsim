@@ -21,8 +21,8 @@ int main (int argc, char const* argv[])
     double sigmaGyro = .001;
     bool useGravity = false;
 
-    oooark::GpsIns gpsIns(lat,lon,height,roll,pitch,yaw,0,0,0,sigmaPos,sigmaAlt,sigmaVel,sigmaAccelG,sigmaGyro,useGravity);
-    oooark::GpsIns gpsInsError(lat,lon,height,roll,pitch,yaw,0,0,0,sigmaPos,sigmaAlt,sigmaVel,sigmaAccelG,sigmaGyro,useGravity);
+    mavsim::GpsIns gpsIns(lat,lon,height,roll,pitch,yaw,0,0,0,sigmaPos,sigmaAlt,sigmaVel,sigmaAccelG,sigmaGyro,useGravity);
+    mavsim::GpsIns gpsInsError(lat,lon,height,roll,pitch,yaw,0,0,0,sigmaPos,sigmaAlt,sigmaVel,sigmaAccelG,sigmaGyro,useGravity);
 
     double fbNoiseFreq = 1330;
     double fbNoiseMag = .01*9.81;

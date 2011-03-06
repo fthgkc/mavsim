@@ -1,7 +1,7 @@
 clc; clear; lines(0);
 mode(-1)
 
-// depends on lqof.sci of the oooark toolbox
+// depends on lqof.sci of the mavsim toolbox
 
 // F-16 lateral regulator
 // example from pg. 414

@@ -1,11 +1,11 @@
 mode(-1);
 lines(0);
 
-oooarkPath=get_absolute_file_path('loader.sce');
+mavsimPath=get_absolute_file_path('loader.sce');
 
-chdir(oooarkPath);
+chdir(mavsimPath);
 
-mprintf('oooark version %s\n', stripblanks(read("VERSION",1,1,'(a)')) );
+mprintf('mavsim version %s\n', stripblanks(read("VERSION",1,1,'(a)')) );
 mprintf('Copyright (C) 2010 James Goppert\n\n' );
 
 if isdir('sci_gateway') then

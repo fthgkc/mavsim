@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (oooark)
+project (mavsim)
 
 # marcos
 macro(find_or_build_from_source PACKAGE PACKAGE_PATH IS_GIT_SUBMODULE)
@@ -39,10 +39,10 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 endif()
 
 # settings
-set(oooark_VERSION_MAJOR 0)
-set(oooark_VERSION_MINOR 2)
-set(oooark_VERSION_PATCH 0)
-set(oooark_SOVERSION 0)
+set(mavsim_VERSION_MAJOR 0)
+set(mavsim_VERSION_MINOR 2)
+set(mavsim_VERSION_PATCH 0)
+set(mavsim_SOVERSION 0)
 
 set_default(MAVLINK_BUILD_FROM_SOURCE FALSE)
 set_default(JSBSIM_BUILD_FROM_SOURCE FALSE)
@@ -51,7 +51,7 @@ set_default(STATIC_LINKING FALSE)
 set_default(IN_SRC_BUILD FALSE)
 
 # built variables
-set(oooark_VERSION ${oooark_VERSION_MAJOR}.${oooark_VERSION_MINOR}.${oooark_VERSION_PATCH})
+set(mavsim_VERSION ${mavsim_VERSION_MAJOR}.${mavsim_VERSION_MINOR}.${mavsim_VERSION_PATCH})
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
@@ -83,12 +83,12 @@ if (Fortran_langurage_works)
 endif(Fortran_langurage_works)
 
 # initialize variables
-set(OOOARK_LIBRARIES oooarkNavigation oooarkCommunication)
+set(OOOARK_LIBRARIES mavsimNavigation mavsimCommunication)
 set(SCICOSLAB_BLOCKS stdBlocks;jsbsimBlocks;mavlinkBlocks)
 
 # installer
 include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${oooark_VERSION}")
+set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${mavsim_VERSION}")
 set(CPACK_GENERATOR "DEB")
 set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
 set(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
@@ -110,9 +110,9 @@ set(CPACK_SOURCE_IGNORE_FILES ${CPACK_SOURCE_IGNORE_FILES}
 	/.git/;/build/;~$;.*\\\\.bin$;.*\\\\.swp$)
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README")
-set(CPACK_PACKAGE_VERSION_MAJOR ${oooark_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${oooark_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${oooark_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION_MAJOR ${mavsim_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${mavsim_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${mavsim_VERSION_PATCH})
 include(CPack)
 
 # add make dist target
@@ -188,23 +188,23 @@ if(IN_SRC_BUILD)
 	set(BINDIR ${CMAKE_BINARY_DIR}/bin)
 else()
 	message(STATUS "configuring for install build")
-	set(DATADIR ${CMAKE_INSTALL_PREFIX}/share/oooark/data)
+	set(DATADIR ${CMAKE_INSTALL_PREFIX}/share/mavsim/data)
 	set(LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
 	set(BINDIR ${CMAKE_INSTALL_PREFIX}/bin)
 endif()
 
 # install data files
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/data"
-	DESTINATION share/oooark
+	DESTINATION share/mavsim
 	PATTERN "*.git*" EXCLUDE)
 
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/oooark-toolbox"
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/mavsim-toolbox"
 	DESTINATION ${SCICOSLAB_CONTRIB_DIR}
 	PATTERN "*.git*" EXCLUDE)
 
 # pkgconfig
 install(FILES
-	oooark.pc
+	mavsim.pc
 	DESTINATION lib/pkgconfig
 	)
 
@@ -227,7 +227,7 @@ endif()
 
 message(STATUS "\tOpenSceneGraph\t${OPENSCENEGRAPH_FOUND}")
 if (OPENSCENEGRAPH_FOUND)
-	list(APPEND OOOARK_LIBRARIES oooarkVisualization)
+	list(APPEND OOOARK_LIBRARIES mavsimVisualization)
 	list(APPEND SCICOSLAB_BLOCKS osgBlocks)
 endif()
 
@@ -241,7 +241,7 @@ endif ()
 
 message(STATUS "\tLapack\t\t${LAPACK_FOUND}")
 if (LAPACK_FOUND)
-	list(APPEND OOOARK_LIBRARIES oooarkMath)
+	list(APPEND OOOARK_LIBRARIES mavsimMath)
 	list(APPEND SCICOSLAB_BLOCKS lapackBlocks)
 endif ()
 

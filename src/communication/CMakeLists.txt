@@ -1,21 +1,21 @@
 include_directories(${APM_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${MAVLINK_INCLUDE_DIRS})
 
-set(oooarkCommunicationSources
+set(mavsimCommunicationSources
 	AsyncSerial.cpp
 	asio_mavlink_bridge.cpp
 	)
 
-set(oooarkCommunicationHeaders
+set(mavsimCommunicationHeaders
 	AsyncSerial.hpp 
 	asio_mavlink_bridge.h
 	)
 
 if (SIMGEAR_FOUND)
-	list(APPEND oooarkCommunicationSources
+	list(APPEND mavsimCommunicationSources
 		FlightGearComm.cpp
 		flightGearUtils.cpp
 		)
-	list(APPEND oooarkCommunicationHeaders
+	list(APPEND mavsimCommunicationHeaders
 		FlightGearComm.hpp
 		flightGearUtils.hpp
 		net_ctrls.hxx
@@ -23,12 +23,12 @@ if (SIMGEAR_FOUND)
 		)
 endif(SIMGEAR_FOUND)
 
-add_library(oooarkCommunication SHARED ${oooarkCommunicationSources})
-add_dependencies(oooarkCommunication MAVLINK)
-target_link_libraries(oooarkCommunication ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
-set_target_properties(oooarkCommunication PROPERTIES 
-	VERSION ${oooark_VERSION} 
-	SOVERSION ${oooark_SOVERSION})
+add_library(mavsimCommunication SHARED ${mavsimCommunicationSources})
+add_dependencies(mavsimCommunication MAVLINK)
+target_link_libraries(mavsimCommunication ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
+set_target_properties(mavsimCommunication PROPERTIES 
+	VERSION ${mavsim_VERSION} 
+	SOVERSION ${mavsim_SOVERSION})
 
-install(TARGETS oooarkCommunication DESTINATION lib)
-install(FILES ${oooarkCommunicationHeaders} DESTINATION include/oooark/communication)
+install(TARGETS mavsimCommunication DESTINATION lib)
+install(FILES ${mavsimCommunicationHeaders} DESTINATION include/mavsim/communication)

@@ -5,7 +5,7 @@ mainpathB=get_absolute_file_path('builder.sce');
 
 chdir(mainpathB);
 
-mprintf('oooark version %s\n', stripblanks(read("VERSION",1,1,'(a)')) );
+mprintf('mavsim version %s\n', stripblanks(read("VERSION",1,1,'(a)')) );
 mprintf('Copyright (C) 20010 James Goppert\n\n' );
 
 if isdir('src') then

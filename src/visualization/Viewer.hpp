@@ -16,15 +16,15 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef oooark_Viewer_HPP
-#define oooark_Viewer_HPP
+#ifndef mavsim_Viewer_HPP
+#define mavsim_Viewer_HPP
 
 #include <osgViewer/Viewer>
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/scoped_ptr.hpp>
 
-namespace oooark
+namespace mavsim
 {
 
 namespace visualization
@@ -65,7 +65,7 @@ private:
 
 } // visualization
 
-} // oooark
+} // mavsim
 
 #endif
 

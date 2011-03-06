@@ -1,18 +1,18 @@
 include_directories(${APM_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${MAVLINK_INCLUDE_DIRS})
 
-set(oooarkNavigationSources
+set(mavsimNavigationSources
 	GeoMag.cpp
 	)
 
-set(oooarkNavigationHeaders
+set(mavsimNavigationHeaders
 	GeoMag.hpp
 	)
 
-add_library(oooarkNavigation SHARED ${oooarkNavigationSources})
-target_link_libraries(oooarkNavigation ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
-set_target_properties(oooarkNavigation PROPERTIES 
-	VERSION ${oooark_VERSION} 
-	SOVERSION ${oooark_SOVERSION})
+add_library(mavsimNavigation SHARED ${mavsimNavigationSources})
+target_link_libraries(mavsimNavigation ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
+set_target_properties(mavsimNavigation PROPERTIES 
+	VERSION ${mavsim_VERSION} 
+	SOVERSION ${mavsim_SOVERSION})
 
-install(TARGETS oooarkNavigation DESTINATION lib)
-install(FILES ${oooarkNavigationHeaders} DESTINATION include/oooark/navigation)
+install(TARGETS mavsimNavigation DESTINATION lib)
+install(FILES ${mavsimNavigationHeaders} DESTINATION include/mavsim/navigation)

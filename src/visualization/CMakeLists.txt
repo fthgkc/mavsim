@@ -6,29 +6,29 @@ include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS}
 link_libraries(${OPENSCENEGRAPH_LIBRARIES} 
 	${Boost_LIBRARIES} ${QT_LIBRARIES} ${OPENGL_LIBRARIES})
 
-set(oooarkVisualizationSource
+set(mavsimVisualizationSource
 	osgUtils.cpp
 	Viewer.cpp
 	)
 
-set(oooarkVisualizationHeaders
+set(mavsimVisualizationHeaders
 	osgUtils.hpp
 	Viewer.hpp
 	)
 
 if(QT_FOUND)
-	list(APPEND oooarkVisualizationSource
+	list(APPEND mavsimVisualizationSource
 		QOSGAdapterWidget.cpp
 	)
-	list(APPEND oooarkVisualizationHeaders
+	list(APPEND mavsimVisualizationHeaders
 		QOSGAdapterWidget.hpp
 	)
 endif(QT_FOUND)
 
-add_library(oooarkVisualization SHARED ${oooarkVisualizationSource})
+add_library(mavsimVisualization SHARED ${mavsimVisualizationSource})
 
-set_target_properties(oooarkVisualization PROPERTIES VERSION ${oooark_VERSION}
-	SOVERSION ${oooark_SOVERSION})
+set_target_properties(mavsimVisualization PROPERTIES VERSION ${mavsim_VERSION}
+	SOVERSION ${mavsim_SOVERSION})
 
-install(TARGETS oooarkVisualization DESTINATION lib)
-install(FILES ${oooarkVisualizationHeaders} DESTINATION include/oooark/visualization)
+install(TARGETS mavsimVisualization DESTINATION lib)
+install(FILES ${mavsimVisualizationHeaders} DESTINATION include/mavsim/visualization)

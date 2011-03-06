@@ -122,7 +122,7 @@ select job
 		model.dep_ut=[%f %t]
 
 		// jsbsim parameters
-		Root="""/usr/share/oooark/data/easystar""";
+		Root="""/usr/share/mavsim/data/easystar""";
 		ModelName="""easystar-datcom""";
 		AircraftPath="""""";
 		EnginePath="""""";

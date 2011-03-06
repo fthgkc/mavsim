@@ -16,8 +16,8 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef oooark_utilities_HPP
-#define oooark_utilities_HPP
+#ifndef mavsim_utilities_HPP
+#define mavsim_utilities_HPP
 
 #include <boost/numeric/ublas/matrix.hpp>
 

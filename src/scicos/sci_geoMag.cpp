@@ -39,7 +39,7 @@ extern "C"
 
 void sci_geoMag(scicos_block *block, scicos::enumScicosFlags flag)
 {
-    static oooark::GeoMag* geoMag = NULL;
+    static mavsim::GeoMag* geoMag = NULL;
     
     // constants
 
@@ -76,7 +76,7 @@ void sci_geoMag(scicos_block *block, scicos::enumScicosFlags flag)
         {
             try
             {
-                geoMag = new oooark::GeoMag(std::string(datadir)+"/WMM.COF",nTerms);
+                geoMag = new mavsim::GeoMag(std::string(datadir)+"/WMM.COF",nTerms);
             }
             catch (const std::runtime_error & e)
             {

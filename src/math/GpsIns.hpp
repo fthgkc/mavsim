@@ -15,14 +15,14 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef oooark_GpsIns_HPP
-#define oooark_GpsIns_HPP
+#ifndef mavsim_GpsIns_HPP
+#define mavsim_GpsIns_HPP
 
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-namespace oooark
+namespace mavsim
 {
 namespace ublas = boost::numeric::ublas;
 
@@ -123,7 +123,7 @@ void updateAll(double fbx, double fby, double fbz, double wbx, double wby, doubl
 
 };
 
-} // oooark
+} // mavsim
 
 #endif
 // vim:ts=4:sw=4
