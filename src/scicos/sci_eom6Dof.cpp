@@ -69,7 +69,7 @@ extern "C"
 //void sci_windDynamics(scicos_block *block, scicos::enumScicosFlags flag)
 void sci_eom6Dof(scicos_block *block, scicos::enumScicosFlags flag)
 {
-    enum frame {WIND_DYNAMICS=0,BODY_DYNAMICS=1};
+    enum frameEnum {WIND_DYNAMICS=0,BODY_DYNAMICS=1};
     
     // constants
 
@@ -172,7 +172,7 @@ void sci_eom6Dof(scicos_block *block, scicos::enumScicosFlags flag)
     }
     else
     {
-        std::cout << "unhandled block flag: " << flag << std::endl;
+        //std::cout << "unhandled block flag: " << flag << std::endl;
     }
 }
 

@@ -17,7 +17,7 @@
  *
  * u1: phi, theta, psi
  *
- * y1: C_nb
+ * y1: C_bn  (from navigation system to body system)
  *
  */
 
@@ -68,6 +68,7 @@ void sci_euler2Dcm(scicos_block *block, scicos::enumScicosFlags flag)
         double cosTheta = cos(theta), sinTheta = sin(theta);
         double cosPsi = cos(psi), sinPsi = sin(psi);
 
+        // Lewis/Stevens Aircraft Control and Simulationpg. 26
         c11 = cosTheta*cosPsi;
         c21 = -cosPhi*sinPsi + sinPhi*sinTheta*cosPsi;
         c31 = sinPhi*sinPsi + cosPhi*sinTheta*cosPsi;

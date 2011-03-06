@@ -78,6 +78,11 @@ d_x_body : transpose([db_v_b[1,1],db_v_b[3,1],d_theta,b_w_ib[2,1],-v_n[3,1],db_v
 Command Inputs
    [wxMaxima: section end   ] */
 
+/* [wxMaxima: comment start ]
+When piloting the quad we assume the commands will be forward velocity, side velocity, and altitude.
+So this is equivalent of a rotation of the body frame though phi and theta.
+   [wxMaxima: comment end   ] */
+
 /* [wxMaxima: input   start ] */
 guidance_eq : C2(-%theta).C1(-%phi).v_b;
 /* [wxMaxima: input   end   ] */
