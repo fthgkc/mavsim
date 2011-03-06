@@ -4,18 +4,18 @@ n=x_choose([
 'EasyStar Hardware in the Loop (Sensor Level)';
 'EasyStar Hardware in the Loop (State Level)';
 'Visualization Test';
-],'oooark block demos')
+],'oooark demos')
 
 if (n==1)
-	scicos(oooarkPath+'demos/JSBSimBackside.cos')
+	scicos(oooarkPath+'demos/block/JSBSimBackside.cos')
 elseif (n==2)
-	scicos(oooarkPath+'demos/JSBSimTrim.cos')
+	scicos(oooarkPath+'demos/block/JSBSimTrim.cos')
 elseif (n==3)
-	scicos(oooarkPath+'demos/JSBSimMavLinkHilState.cos')
+	scicos(oooarkPath+'demos/block/JSBSimMavLinkHilState.cos')
 elseif (n==4)
-	scicos(oooarkPath+'demos/JSBSimMavLinkHilSensor.cos')
+	scicos(oooarkPath+'demos/block/JSBSimMavLinkHilSensor.cos')
 elseif (n==5)
-	scicos(oooarkPath+'demos/VisTest.cos')
+	scicos(oooarkPath+'demos/block/VisTest.cos')
 else
-	disp('unknown block')
+	disp('unknown demo')
 end

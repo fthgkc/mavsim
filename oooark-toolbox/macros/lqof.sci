@@ -245,8 +245,8 @@ function [K,gradopt,info] = lqof(problemType,K0,varargin)
 			for c=1:length(KFixed.i)
 				dJdK(KFixed.i(c),KFixed.j(c)) = 0;
 			end
-			disp("dJdK:");disp(dJdK)
-			printf("\tnorm of gradient: %e\n",norm(dJdK));
+			//disp("dJdK:");disp(dJdK)
+			//printf("\tnorm of gradient: %e\n",norm(dJdK));
 		else
 			dJdK=zeros(nU,nY);
 		end
@@ -288,28 +288,28 @@ function [K,gradopt,info] = lqof(problemType,K0,varargin)
  	// solve the optimization problem
 	for i=1  // just using to scope and have break
 		// quasi newton method
-		//printf("attempting solution with quasi-newton method\n");
-		//[fopt,xopt,gradopt] = optim(list(cost,varargin),x0,"qn");
-		//if (norm(gradopt) > 1e-3)
-			//printf("\tfailed\n");
-			//info = 4;
-		//else
-			//printf("\tconverged\n");
-			//info = 0;
-			//break;
-		//end
+		printf("attempting solution with quasi-newton method\n");
+		[fopt,xopt,gradopt] = optim(list(cost,varargin),x0,"qn");
+		if (norm(gradopt) > 1e-3)
+			printf("\tfailed\n");
+			info = 4;
+		else
+			printf("\tconverged\n");
+			info = 0;
+			break;
+		end
 
 		// conjugate gradient method	
-		//printf("conjugate gradient method\n");
-		//[fopt,xopt,gradopt] = optim(list(cost,varargin),x0,"gc");
-		//if (norm(gradopt) > 1e-3)
-			//printf("\tfailed\n");
-			//info = 5;
-		//else
-			//printf("\tconverged\n");
-			//info = 0;
-			//break;
-		//end
+		printf("conjugate gradient method\n");
+		[fopt,xopt,gradopt] = optim(list(cost,varargin),x0,"gc");
+		if (norm(gradopt) > 1e-3)
+			printf("\tfailed\n");
+			info = 5;
+		else
+			printf("\tconverged\n");
+			info = 0;
+			break;
+		end
 
 		// non gradient based simplex method
 		printf("non-gradient based, simplex method\n");
@@ -328,12 +328,12 @@ function [K,gradopt,info] = lqof(problemType,K0,varargin)
 			error("linear quadratic design failed to converge")
 			info = 7;
 		else
-			printf("\tconverged\n");
+			//printf("\tconverged\n");
 			info = 0;
 			break;
 		end
 	end
 
     K = matrix(xopt,nU,nY)
-	disp("K:"); disp(K)
+	//disp("K:"); disp(K)
 endfunction

@@ -1,56 +1,3 @@
-function sys = unityFeedback(y,u,G,H)
-	C = zeros(length(y),size(G,1));
-	for (i=1:length(y)) C(i,y(i)) = 1; end;
-	D = zeros(size(G,2),size(u,2));
-	for (i=1:length(u)) D(u(i),i) = 1; end;
-	olss = G*D*H;
-	nPoles = size(olss.A,1);
-    sys=minssAutoTol((eye(size(G,1),size(G,1))+G*D*H*C)\[G,G*D*H],nPoles);
-endfunction
-
-function sysMin = minssAutoTol(sys,nPoles)
-    tol = 1e-30;
-    while(1)
-        sys = minss(sys)
-		nSysPoles = size(sys.A,1);
-        if (nSysPoles <= nPoles | tol > 1e-1) break; end;
-		tol = tol*2;
-	end
-    if (nSysPoles == nPoles)
-		//printf("\t\tconverged with right number of poles at %e\n",tol);
-    elseif (nSysPoles < nPoles)
-		//printf("\t\tpole zero cancellation occurred.\n");
-    else
-	    printf("\t\tWARNING: Failed to converge with correct number of poles.\n");
-	    printf("\t\t\treal: %d calculated: %d\n",nRealPoles,nPoles);
-    end
-    sysMin = sys;
-endfunction
-
-function  infoNew = createIndex(names,info)
-    // Used to define string/ indices for system
-
-    // check if we are appending
-    if (argn(2) == 2)
-        iStart = max(size(info.str));
-    else
-        iStart = 0;
-    end
-
-    // add strings
-     for i=1:max(size(names))
-        execstr('info.str(i+iStart)=names(i)')
-    end
-
-    // add new indices
-    for i=1:max(size(names))
-        execstr('info.'+names(i)+'=i+iStart')
-    end
-    
-    // output modified info
-    infoNew = info;
-endfunction
-
 function dataNew = closeLoop(data,y,u,H)
     olss = minss(data.clss(y,u)*H);
 
@@ -106,5 +53,4 @@ function dataNew = closeLoop(data,y,u,H)
 
     dataNew = data;
 endfunction
-
 // vim:ts=4:sw=4:expandtab

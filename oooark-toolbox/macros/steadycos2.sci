@@ -181,3 +181,4 @@ sys=lincos(scs_m,X,U,param)
 g=xp'*[sys.B(:,Indu) sys.A(:,Indx)]-..
     err'*[sys.D(:,Indu) sys.C(:,Indx)];
 endfunction
+// vim:ts=4:sw=4:expandtab

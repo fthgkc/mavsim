@@ -1,6 +1,7 @@
 clc; clear; lines(0);
 mode(-1)
-exec lqof.sci
+
+// depends on lqof.sci of the oooark toolbox
 
 // F-16 lateral regulator
 // example from pg. 414
@@ -63,7 +64,7 @@ disp(K,"K")
 
 scf(1); clf();
 subplot(3,2,1);
-title("design");
+title("linear quadratic design");
 [sim.y,sim.x] = csim(u,t,sysC(:,1),x0);
 plot2d(t,sim.y',leg="r@p@beta@phi");
 subplot(3,2,2);
@@ -131,9 +132,9 @@ disp("eigen values of closed loop design from book"); disp(spec(sysCBook.A))
 disp("eigen values of closed loop design new"); disp(spec(sysC.A))
 disp(K,"K")
 
-scf(1); clf();
+scf(2); clf();
 subplot(3,2,1);
-title("design");
+title("linear quadratic tracker design");
 [sim.y,sim.x] = csim('step',t,sysC(:,1));
 plot2d(t,sim.y(2,:)',leg="r@p@beta@phi");
 subplot(3,2,2);
