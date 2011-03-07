@@ -40,7 +40,7 @@ endif()
 
 # settings
 set(mavsim_VERSION_MAJOR 0)
-set(mavsim_VERSION_MINOR 2)
+set(mavsim_VERSION_MINOR 0)
 set(mavsim_VERSION_PATCH 0)
 set(mavsim_SOVERSION 0)
 

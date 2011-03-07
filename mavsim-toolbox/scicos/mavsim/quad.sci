@@ -4,16 +4,21 @@ function [x,y,typ]=quad(job,arg1,arg2)
 //
 // USAGE:
 //
-// input 1:
-//  [1]  Roll
-//  [2]  pitch
-//  [3]  yaw
-//  [4]  Front Throttle
-//  [5]  Back Throttle
-//  [6]  Left Throttle
-//  [7]  Right Throttle
-//  
+// u1:
+// 	1: roll (rad)
+// 	2: pitch (rad)
+// 	3: yaw( rad)
 //
+// u2:
+// 	1: xN (distance)
+// 	2: xE (distance)
+// 	3: xD (distance)
+//
+// u3:
+// 	1: F motor (rad/s)
+// 	2: B motor (rad/s)
+// 	3: L motor (rad/s)
+// 	4: R motor (rad/s)
 //
 // Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>
 //
@@ -46,7 +51,7 @@ select job
 	case 'define' then
 	  	model=scicos_model()
 	  	model.sim=list('sci_quad',4)
-		model.in=7
+		model.in=[3;3;4];
 		model.evtin=1
 		  //model.out=1
 	  	model.blocktype='c'

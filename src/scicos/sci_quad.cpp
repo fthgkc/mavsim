@@ -14,6 +14,22 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * u1:
+ * 	1: roll (rad)
+ * 	2: pitch (rad)
+ * 	3: yaw( rad)
+ *
+ * u2:
+ * 	1: xN (distance)
+ * 	2: xE (distance)
+ * 	3: xD (distance)
+ *
+ * u3:
+ * 	1: F motor (rad/s)
+ * 	2: B motor (rad/s)
+ * 	3: L motor (rad/s)
+ * 	4: R motor (rad/s)
  */
 
 
@@ -56,7 +72,9 @@ extern "C"
     {
         // definitions
         static VisQuad * vis=NULL;
-        double *u=(double*)GetInPortPtrs(block,1);
+        double *u1=(double*)GetInPortPtrs(block,1);
+        double *u2=(double*)GetInPortPtrs(block,2);
+        double *u3=(double*)GetInPortPtrs(block,3);
 
         // handle flags
         if (flag==scicos::initialize || flag==scicos::reinitialize)
@@ -87,8 +105,9 @@ extern "C"
 			else
 			{
 				vis->lock();
-				vis->quad->setEuler(u[0],u[1],u[2]);
-				vis->quad->setU(u[3],u[4],u[5],u[6]);
+				vis->quad->setEuler(u1[0],u1[1],u1[2]);
+				vis->quad->setPositionScalars(u2[0],u2[1],u2[2]);
+				vis->quad->setU(u3[0],u3[1],u3[2],u3[3]);
 				vis->unlock();
 			}
         }
