@@ -10,3 +10,6 @@
 [submodule "data/easystar"]
 	path = data/easystar
 	url = git://github.com/openmav/easystar
+[submodule "data/quadracopter"]
+	path = data/quadracopter
+	url = git://gitorious.org/ron-s-hanger/quadracopter.git

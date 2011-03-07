@@ -51,10 +51,10 @@ private:
 		}
 		void eval(const std::vector<double> & v)
 		{
-			window->viewer->mutex.lock();
-  			window->plane->setEuler(0,v[2],v[5]);
-    		window->plane->setU(v[3],v[1],v[4],v[0]);
-			window->viewer->mutex.unlock();
+			//window->viewer->mutex.lock();
+              //window->plane->setEuler(0,v[2],v[5]);
+            //window->plane->setU(v[3],v[1],v[4],v[0]);
+			//window->viewer->mutex.unlock();
 		}
 		MainWindow * window;
 	};

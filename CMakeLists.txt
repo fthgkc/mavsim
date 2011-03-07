@@ -149,6 +149,7 @@ find_or_build_from_source(BOOSTNUMERICBINDINGS thirdParty/boost-numeric-bindings
 find_or_build_from_source(JSBSIM thirdParty/jsbsim FOUND_GIT_REPO)
 find_or_build_from_source(MAVLINK thirdParty/mavlink FOUND_GIT_REPO)
 find_or_build_from_source(EASYSTAR data/easystar FOUND_GIT_REPO)
+find_or_build_from_source(QUADRACOPTER data/quadracopter FOUND_GIT_REPO)
 
 # build libraries from source if not found on system
 if(JSBSIM_BUILD_FROM_SOURCE)
@@ -178,6 +179,12 @@ if(EASYSTAR_BUILD_FROM_SOURCE)
 	set(EASYSTAR_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/data/easystar")
 	add_custom_command(OUTPUT EASYSTAR_BUILD.stamp 
 		COMMAND touch EASYSTAR_BUILD.stamp)
+endif()
+
+if(QUADRACOPTER_BUILD_FROM_SOURCE)
+	set(QUADRACOPTER_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/data/quadracopter")
+	add_custom_command(OUTPUT QUADRACOPTER_BUILD.stamp 
+		COMMAND touch QUADRACOPTER_BUILD.stamp)
 endif()
 
 # data directory
