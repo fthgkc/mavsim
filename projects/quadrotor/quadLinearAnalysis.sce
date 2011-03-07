@@ -1,3 +1,4 @@
+mode(-1)
 exec steadycos.sci // load custom steadycos using NDcost
 load arducopter.cos
 x = createIndex(["U","W","theta","wy","h","V","phi","wx","psi","wz","LR","FB","LRFB","SUM"]);
@@ -25,6 +26,16 @@ motorLagTf = clean(ss2tf(lincos(motorLag,zeros(4,1),UM)),1e-5);
 
 sys.oltf = quadTf*motorLagTf
 sys.olss = minssAutoTol(tf2ss(sys.oltf),14);
+
+function openLoopAnalysis(name,sys)
+	printf("%10s:\tgcf:%10.3f Hz\tpm:%10.3f deg\tgm:%10.3f\n",name,bw(sys,0),p_margin(sys),g_margin(sys));
+endfunction
+
+openLoopAnalysis("LR->wx",sys.olss(y.wx,u.LR));
+openLoopAnalysis("FB->wy",sys.olss(y.wy,u.FB));
+openLoopAnalysis("LRFB->wz",sys.olss(y.wz,u.LRFB));
+openLoopAnalysis("SUM->W",sys.olss(y.W,u.SUM));
+
 
 // open loop analysis
 scf(1); clf(1);

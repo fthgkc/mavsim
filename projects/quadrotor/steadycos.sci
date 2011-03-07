@@ -1,3 +1,4 @@
+mode(-1)
 function [X,U,Y,XP]=steadycos(scs_m,X,U,Y,Indx,Indu,Indy,Indxp,param)
 // NAME
 // steadycos - Finds an equilibrium state of a general 
