@@ -86,7 +86,7 @@
      <item row="0" column="0">
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -208,7 +208,7 @@
          <item row="0" column="2">
           <widget class="QLineEdit" name="lineEdit_modelSimRate">
            <property name="text">
-            <string>300</string>
+            <string>120</string>
            </property>
           </widget>
          </item>
@@ -448,14 +448,14 @@
          <item row="1" column="1" colspan="2">
           <widget class="QLineEdit" name="lineEdit_abstol">
            <property name="text">
-            <string>1e-30</string>
+            <string>1e-10</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1" colspan="2">
           <widget class="QLineEdit" name="lineEdit_speed">
            <property name="text">
-            <string>0.5</string>
+            <string>2</string>
            </property>
           </widget>
          </item>
@@ -509,7 +509,7 @@
          <item row="0" column="1" colspan="2">
           <widget class="QLineEdit" name="lineEdit_rtol">
            <property name="text">
-            <string>1e-30</string>
+            <string>1e-10</string>
            </property>
           </widget>
          </item>
