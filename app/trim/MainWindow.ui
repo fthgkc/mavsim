@@ -83,10 +83,10 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_6">
     <layout class="QGridLayout" name="gridLayout_4">
-     <item row="1" column="0">
+     <item row="0" column="0">
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>4</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -103,7 +103,7 @@
          <item row="1" column="2">
           <widget class="QLineEdit" name="lineEdit_enginePath">
            <property name="text">
-            <string>/usr/share/jsbsim/engine</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -124,7 +124,7 @@
          <item row="2" column="2">
           <widget class="QLineEdit" name="lineEdit_systemsPath">
            <property name="text">
-            <string>/usr/share/jsbsim/systems</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -159,7 +159,7 @@
          <item row="4" column="2">
           <widget class="QLineEdit" name="lineEdit_aircraft">
            <property name="text">
-            <string>f16</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -180,7 +180,7 @@
          <item row="5" column="2">
           <widget class="QLineEdit" name="lineEdit_initScript">
            <property name="text">
-            <string>/usr/share/jsbsim/scripts/f16-trim.xml</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -194,7 +194,7 @@
          <item row="3" column="2">
           <widget class="QLineEdit" name="lineEdit_aircraftPath">
            <property name="text">
-            <string>/usr/share/jsbsim/aircraft/f16</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -208,7 +208,7 @@
          <item row="0" column="2">
           <widget class="QLineEdit" name="lineEdit_modelSimRate">
            <property name="text">
-            <string>120</string>
+            <string>300</string>
            </property>
           </widget>
          </item>
@@ -267,7 +267,7 @@
          <item row="1" column="1" colspan="5">
           <widget class="QLineEdit" name="lineEdit_velocity">
            <property name="text">
-            <string>500</string>
+            <string>30</string>
            </property>
           </widget>
          </item>
@@ -445,24 +445,17 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1" colspan="2">
-          <widget class="QLineEdit" name="lineEdit_rtol">
-           <property name="text">
-            <string>1e-10</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="1" colspan="2">
           <widget class="QLineEdit" name="lineEdit_abstol">
            <property name="text">
-            <string>1e-10</string>
+            <string>1e-30</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1" colspan="2">
           <widget class="QLineEdit" name="lineEdit_speed">
            <property name="text">
-            <string>1.0</string>
+            <string>0.5</string>
            </property>
           </widget>
          </item>
@@ -510,6 +503,13 @@
           <widget class="QCheckBox" name="checkBox_pause">
            <property name="text">
             <string>pause </string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="QLineEdit" name="lineEdit_rtol">
+           <property name="text">
+            <string>1e-30</string>
            </property>
           </widget>
          </item>
@@ -670,14 +670,14 @@
          <item row="6" column="2">
           <widget class="QLineEdit" name="lineEdit_alphaMin">
            <property name="text">
-            <string>-45</string>
+            <string>-90</string>
            </property>
           </widget>
          </item>
          <item row="7" column="2">
           <widget class="QLineEdit" name="lineEdit_betaMin">
            <property name="text">
-            <string>-45</string>
+            <string>-90</string>
            </property>
           </widget>
          </item>
@@ -719,14 +719,14 @@
          <item row="6" column="3">
           <widget class="QLineEdit" name="lineEdit_alphaMax">
            <property name="text">
-            <string>45</string>
+            <string>90</string>
            </property>
           </widget>
          </item>
          <item row="7" column="3">
           <widget class="QLineEdit" name="lineEdit_betaMax">
            <property name="text">
-            <string>45</string>
+            <string>90</string>
            </property>
           </widget>
          </item>
@@ -789,7 +789,7 @@
          <item row="1" column="4">
           <widget class="QLineEdit" name="lineEdit_throttleInitialStepSize">
            <property name="text">
-            <string>10</string>
+            <string>20</string>
            </property>
           </widget>
          </item>

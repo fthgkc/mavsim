@@ -24,7 +24,11 @@
 #include "visualization/osgUtils.hpp"
 #include "math/FGNelderMead.h"
 #include <iomanip>
-#include <boost/thread.hpp>
+#include <QThread>
+#include "config.h"
+#include <stdexcept>
+#include <math/FGStateSpace.h>
+#include <initialization/FGTrimmer.h>
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
 {
@@ -32,6 +36,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 public:
     MainWindow();
     virtual ~MainWindow();
+
+signals:
+	void showMsgBuffered(const QString & str);
 
 private slots:
     void on_toolButton_enginePath_pressed();
@@ -41,6 +48,8 @@ private slots:
     void on_toolButton_initScript_pressed();
     void on_pushButton_trim_pressed();
     void on_pushButton_stop_pressed();
+    void on_pushButton_linearize_pressed();
+	void showMsg(const QString & str);
 
 private:
 	class SolverCallback : public JSBSim::FGNelderMead::Callback
@@ -51,20 +60,42 @@ private:
 		}
 		void eval(const std::vector<double> & v)
 		{
-			//window->viewer->mutex.lock();
-              //window->plane->setEuler(0,v[2],v[5]);
-            //window->plane->setU(v[3],v[1],v[4],v[0]);
-			//window->viewer->mutex.unlock();
+			std::vector<double> data = window->trimmer->constrain(v);
+			window->viewer->mutex.lock();
+			window->plane->setEuler(data[0],data[1],v[5]);
+				// phi, theta, beta to show orient, and side slip
+			window->plane->setU(v[0],v[3],v[1],v[4]);
+			window->viewer->mutex.unlock();
 		}
 		MainWindow * window;
 	};
 	SolverCallback * callback;
-	boost::thread * trimThread;
-	JSBSim::FGNelderMead * solver;
+	class TrimThread : public QThread
+	{
+	public:
+		TrimThread(MainWindow * window) : window(window)
+		{
+		}
+		void run()
+		{
+			try
+			{
+				window->trim();
+			}
+			catch(std::exception & e)
+			{
+				std::cerr << "exception: " << e.what() << std::endl;
+				window->showMsgBuffered(e.what());
+			}
+		}
+		MainWindow * window;
+	} trimThread;
     osg::ref_ptr<osg::Group> sceneRoot;
     void loadModel(const std::string & name);
     mavsim::visualization::Jet * plane;
+
 	void stopSolver();
+	volatile bool stopRequested;
     template <class varType>
     void prompt(const std::string & str, varType & var)
     {
@@ -77,6 +108,8 @@ private:
         else std::cin.get();
     }
 	void trim();
+	JSBSim::FGStateSpace * ss;
+	JSBSim::FGTrimmer * trimmer;
 };
 
 #endif

@@ -24,7 +24,7 @@
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/TrackballManipulator>
 #include <osgDB/ReadFile>
-#include <boost/thread/mutex.hpp>
+#include <QMutex>
 
 #if USE_QT4
 
@@ -87,7 +87,7 @@ class ViewerQT : public osgViewer::Viewer, public QOSGAdapterWidget
 {
 public:
 
-	boost::mutex mutex;
+	QMutex mutex;
 
     ViewerQT(QWidget * parent = 0, const char * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0):
             QOSGAdapterWidget( parent, name, shareWidget, f )
@@ -118,7 +118,7 @@ class CompositeViewerQT : public osgViewer::CompositeViewer, public QOSGAdapterW
 {
 public:
 
-	boost::mutex mutex;
+	QMutex mutex;
 
     CompositeViewerQT(QWidget * parent = 0, const char * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0):
             QOSGAdapterWidget( parent, name, shareWidget, f )

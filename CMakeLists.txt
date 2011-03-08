@@ -264,7 +264,7 @@ message(STATUS "\tFortran\t\t${FORTRAN_FOUND}")
 message(STATUS "=================================")
 
 # project wide flags
-include_directories( ${PROJECT_SOURCE_DIR}/src )
+include_directories( ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
 
 # subdirectories
 add_subdirectory(src)
