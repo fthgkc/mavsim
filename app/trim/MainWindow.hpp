@@ -60,11 +60,14 @@ private:
 		}
 		void eval(const std::vector<double> & v)
 		{
+			double maxDeflection = 20.0*3.14/180.0; // TODO: this is rough
+				// should depend on aircraft, but currently no access
 			std::vector<double> data = window->trimmer->constrain(v);
 			window->viewer->mutex.lock();
 			window->plane->setEuler(data[0],data[1],v[5]);
 				// phi, theta, beta to show orient, and side slip
-			window->plane->setU(v[0],v[3],v[1],v[4]);
+			window->plane->setU(v[0],v[3]*maxDeflection,
+					v[1]*maxDeflection,v[4]*maxDeflection);
 			window->viewer->mutex.unlock();
 		}
 		MainWindow * window;

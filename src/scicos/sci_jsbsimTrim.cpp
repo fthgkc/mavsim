@@ -190,6 +190,8 @@ void trimFunction ()
     FGNelderMead solver(trimmer,initialGuess, lowerBound, upperBound, initialStepSize,
                         iterMax,rtol,abstol,speed,showConvergeStatus,showSimplex,pause);
 
+	while(solver.status()==1) solver.update();		
+
     // output
     trimmer.printSolution(solver.getSolution()); // this also loads the solution into the fdm
 
