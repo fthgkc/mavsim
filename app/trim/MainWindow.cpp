@@ -223,6 +223,36 @@ void MainWindow::on_pushButton_stop_pressed()
 	trimThread.quit();
 }
 
+void MainWindow::on_pushButton_simulate_pressed()
+{
+	if (!fdm)
+	{
+		showMsg("trim the aircraft first");
+		return;
+	}
+
+	std::cout << "\nsimulating flight to determine trim stability" << std::endl;
+
+	std::cout << "\nt = 5 seconds" << std::endl;
+	for (int i=0;i<5*120;i++)
+	{
+		fdm->Run();
+
+		// TODO: add visualization
+		//window->viewer->mutex.lock();
+		//window->plane->setEuler(data[0],data[1],v[5]);
+			//// phi, theta, beta to show orient, and side slip
+		//window->plane->setU(v[0],v[3]*maxDeflection,
+				//v[1]*maxDeflection,v[4]*maxDeflection);
+		//window->viewer->mutex.unlock();
+	}
+	trimmer->printState();
+
+	std::cout << "\nt = 10 seconds" << std::endl;
+	for (int i=0;i<5*120;i++) fdm->Run();
+	trimmer->printState();
+}
+
 void MainWindow::stopSolver()
 {
 	stopRequested = true;
