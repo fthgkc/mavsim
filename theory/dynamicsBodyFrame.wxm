@@ -59,7 +59,7 @@ We now construct the state vector for the dynamcis in the stability axis.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-x_body : transpose([U, W, %theta, wy, h, V, %phi, wx, %psi, wz])$
+x_body : transpose([U, W, %theta, wy, V, %phi, wx, %psi, wz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -71,7 +71,7 @@ v_n : C_nb_euler.v_b;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_x_body : transpose([db_v_b[1,1],db_v_b[3,1],d_theta,b_w_ib[2,1],-v_n[3,1],db_v_b[2,1],d_phi,b_w_ib[1,1],d_psi,b_w_ib[3,1]]);
+d_x_body : transpose([db_v_b[1,1],db_v_b[3,1],d_theta,b_w_ib[2,1],db_v_b[2,1],d_phi,b_w_ib[1,1],d_psi,b_w_ib[3,1]]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]

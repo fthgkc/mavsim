@@ -75,7 +75,7 @@ We now construct the state vector for the dynamcis in the stability axis.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-x_wind : transpose([Vt, %alpha, %theta, wy, h, %beta, %phi, wx, %psi, wz])$
+x_wind : transpose([Vt, %alpha, %theta, wy, %beta, %phi, wx, %psi, wz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -95,8 +95,7 @@ eq_d_alpha : rhs(solve(eqn_d_v_w(3),d_alpha)[1])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-d_x_wind : transpose([eq_d_Vt,eq_d_alpha,d_theta,b_w_ib_b[2,1],Vt*sin(%theta-%alpha),
-eq_d_beta,d_phi,b_w_ib_b[1,1],d_psi,b_w_ib_b[3,1]])$
+d_x_wind : transpose([eq_d_Vt,eq_d_alpha,d_theta,b_w_ib_b[2,1],eq_d_beta,d_phi,b_w_ib_b[1,1],d_psi,b_w_ib_b[3,1]])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
