@@ -30,13 +30,44 @@
 #include <stdexcept>
 #include <math/FGStateSpace.h>
 #include <initialization/FGTrimmer.h>
+#include <QMutex>
+
+class MainWindow;
+
+class SimulateThread : public QThread
+{
+	Q_OBJECT
+public:
+	
+	SimulateThread(MainWindow * window);
+	void run();
+	MainWindow * window;
+	QTimer timer;
+	void quit()
+	{
+		timer.stop();
+		QThread::quit();
+	}
+};
+
+class TrimThread : public QThread
+{
+	Q_OBJECT
+public:
+	TrimThread(MainWindow * window);
+	void run();
+	MainWindow * window;
+};
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
 {
     Q_OBJECT
+	friend class SimulateThread;
+	friend class TrimThread;
 public:
     MainWindow();
     virtual ~MainWindow();
+	QMutex fdmMutex;
 
 signals:
 	void showMsgBuffered(const QString & str);
@@ -52,6 +83,8 @@ private slots:
     void on_pushButton_linearize_pressed();
     void on_pushButton_simulate_pressed();
 	void showMsg(const QString & str);
+	void simulate();
+	void trim();
 
 private:
 	class SolverCallback : public JSBSim::FGNelderMead::Callback
@@ -74,30 +107,11 @@ private:
 		}
 		MainWindow * window;
 	};
+	SimulateThread simThread;
+	TrimThread trimThread;
 	SolverCallback * callback;
-	class TrimThread : public QThread
-	{
-	public:
-		TrimThread(MainWindow * window) : window(window)
-		{
-		}
-		void run()
-		{
-			try
-			{
-				window->trim();
-			}
-			catch(std::exception & e)
-			{
-				std::cerr << "exception: " << e.what() << std::endl;
-				window->showMsgBuffered(e.what());
-			}
-		}
-		MainWindow * window;
-	} trimThread;
-    osg::ref_ptr<osg::Group> sceneRoot;
+	    osg::ref_ptr<osg::Group> sceneRoot;
     void loadModel(const std::string & name);
-    mavsim::visualization::Plane * plane;
 
 	void stopSolver();
 	volatile bool stopRequested;
@@ -112,13 +126,13 @@ private:
         }
         else std::cin.get();
     }
-	void trim();
-	JSBSim::FGStateSpace * ss;
-	JSBSim::FGTrimmer * trimmer;
-	JSBSim::FGFDMExec * fdm;
 	QSettings * settings;
 	void writeSettings();
 	void readSettings();
+    mavsim::visualization::Plane * plane;
+	JSBSim::FGStateSpace * ss;
+	JSBSim::FGTrimmer * trimmer;
+	JSBSim::FGFDMExec * fdm;
 };
 
 #endif

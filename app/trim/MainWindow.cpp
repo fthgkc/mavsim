@@ -29,8 +29,8 @@
 #include <models/propulsion/FGTurboProp.h>
 
 MainWindow::MainWindow() : sceneRoot(new osg::Group),
-	callback(new SolverCallback(this)), trimThread(this),
-	ss(NULL), trimmer(NULL), fdm(NULL) 
+	callback(new SolverCallback(this)), trimThread(this), simThread(this),
+	ss(NULL), trimmer(NULL), fdm(NULL)
 {
     setupUi(this);
     viewer->setSceneData(sceneRoot);
@@ -140,8 +140,8 @@ void MainWindow::on_toolButton_initScript_pressed()
 
 void MainWindow::on_pushButton_trim_pressed()
 {
-	writeSettings();
 	on_pushButton_stop_pressed();
+	writeSettings();
 	try
 	{
 		trimThread.start();
@@ -162,6 +162,9 @@ void MainWindow::on_pushButton_trim_pressed()
 
 void MainWindow::on_pushButton_linearize_pressed()
 {
+	QMutexLocker locker(&fdmMutex);
+
+	on_pushButton_stop_pressed();
 	writeSettings();
 	using namespace JSBSim;
 
@@ -220,37 +223,19 @@ void MainWindow::on_pushButton_linearize_pressed()
 void MainWindow::on_pushButton_stop_pressed()
 {
 	stopSolver();
+	simThread.quit();
 	trimThread.quit();
 }
 
 void MainWindow::on_pushButton_simulate_pressed()
 {
-	if (!fdm)
+	on_pushButton_stop_pressed();
+	if (!ss)
 	{
 		showMsg("trim the aircraft first");
 		return;
 	}
-
-	std::cout << "\nsimulating flight to determine trim stability" << std::endl;
-
-	std::cout << "\nt = 5 seconds" << std::endl;
-	for (int i=0;i<5*120;i++)
-	{
-		fdm->Run();
-
-		// TODO: add visualization
-		//window->viewer->mutex.lock();
-		//window->plane->setEuler(data[0],data[1],v[5]);
-			//// phi, theta, beta to show orient, and side slip
-		//window->plane->setU(v[0],v[3]*maxDeflection,
-				//v[1]*maxDeflection,v[4]*maxDeflection);
-		//window->viewer->mutex.unlock();
-	}
-	trimmer->printState();
-
-	std::cout << "\nt = 10 seconds" << std::endl;
-	for (int i=0;i<5*120;i++) fdm->Run();
-	trimmer->printState();
+	simThread.start();
 }
 
 void MainWindow::stopSolver()
@@ -265,16 +250,26 @@ void MainWindow::showMsg(const QString & str)
 	msgBox.exec();
 };
 
-
 void MainWindow::trim()
 {
+	QMutexLocker locker(&fdmMutex);
 	using namespace JSBSim;
 
 	// flight conditions
+	if (ss)
+	{
+		delete ss;
+		ss = NULL;
+	}
 	if (fdm)
 	{
 		delete fdm;
 		fdm = NULL;
+	}
+	if (trimmer)
+	{
+		delete trimmer;
+		trimmer = NULL;
 	}
 	fdm = new FGFDMExec;
 	double dt = 1./atof(lineEdit_modelSimRate->text().toAscii());
@@ -360,7 +355,6 @@ void MainWindow::trim()
 
 	
 	// solve
-	if (trimmer) delete trimmer;
 	trimmer = new FGTrimmer(*fdm,constraints);
 	FGNelderMead solver(*trimmer,initialGuess, lowerBound, upperBound, initialStepSize,
 						iterMax,rtol,abstol,speed,showConvergeStatus,showSimplex,pause,callback);
@@ -392,22 +386,22 @@ void MainWindow::trim()
 	ss = new FGStateSpace(*fdm);
 
 	// longitudinal states
-	ss->x.add(new FGStateSpace::Vt);
-	ss->x.add(new FGStateSpace::Alpha);
-	ss->x.add(new FGStateSpace::Theta);
-	ss->x.add(new FGStateSpace::Q);
-	ss->x.add(new FGStateSpace::Alt);
+	ss->x.add(new FGStateSpace::Vt); 	// 0 
+	ss->x.add(new FGStateSpace::Alpha); // 1
+	ss->x.add(new FGStateSpace::Theta); // 2
+	ss->x.add(new FGStateSpace::Q); 	// 3
+	ss->x.add(new FGStateSpace::Alt); 	// 4
 
 	// lateral states
-	ss->x.add(new FGStateSpace::Beta);
-	ss->x.add(new FGStateSpace::Phi);
-	ss->x.add(new FGStateSpace::P);
-	ss->x.add(new FGStateSpace::R);
-	ss->x.add(new FGStateSpace::Psi);
+	ss->x.add(new FGStateSpace::Beta);  // 5
+	ss->x.add(new FGStateSpace::Phi); 	// 6
+	ss->x.add(new FGStateSpace::P); 	// 7
+	ss->x.add(new FGStateSpace::R); 	// 8
+	ss->x.add(new FGStateSpace::Psi); 	// 9
 
 	// nav states
-	ss->x.add(new FGStateSpace::Longitude);
-	ss->x.add(new FGStateSpace::Latitude);
+	ss->x.add(new FGStateSpace::Longitude); // 10
+	ss->x.add(new FGStateSpace::Latitude); // 11
 
 	// propulsion states
 	if (thruster0->GetType()==FGThruster::ttPropeller)
@@ -417,13 +411,56 @@ void MainWindow::trim()
 	}
 
 	// input
-	ss->u.add(new FGStateSpace::ThrottleCmd);
-	ss->u.add(new FGStateSpace::DaCmd);
-	ss->u.add(new FGStateSpace::DeCmd);
-	ss->u.add(new FGStateSpace::DrCmd);
+	ss->u.add(new FGStateSpace::ThrottleCmd); 	// 0
+	ss->u.add(new FGStateSpace::DaCmd); 		// 1
+	ss->u.add(new FGStateSpace::DeCmd); 		// 2
+	ss->u.add(new FGStateSpace::DrCmd); 		// 3
 
 	// state feedback
 	ss->y = ss->x;
+}
+
+void MainWindow::simulate()
+{
+
+	fdm->Run();
+	double maxDeflection = 20.0*3.14/180.0; // TODO: this is rough
+	viewer->mutex.lock();
+	plane->setEuler(ss->x.get(6),ss->x.get(2),ss->x.get(9));
+	plane->setU(ss->u.get(0),ss->u.get(1)*maxDeflection,
+			ss->u.get(2)*maxDeflection,ss->u.get(3)*maxDeflection);
+	viewer->mutex.unlock();
+}
+
+SimulateThread::SimulateThread(MainWindow * window) : window(window), timer(this)
+{
+	connect(&timer, SIGNAL(timeout()), window, SLOT(simulate()));
+}
+void SimulateThread::run()
+{
+	QMutexLocker locker(&window->fdmMutex);
+	using namespace JSBSim;
+	std::cout << "simulation started" << std::endl;
+	timer.start(1000/120);
+	exec();
+}
+
+
+TrimThread::TrimThread(MainWindow * window) : window(window)
+{
+}
+
+void TrimThread::run()
+{
+	try
+	{
+		window->trim();
+	}
+	catch(std::exception & e)
+	{
+		std::cerr << "exception: " << e.what() << std::endl;
+		window->showMsgBuffered(e.what());
+	}
 }
 
 // vim:ts=4:sw=4
