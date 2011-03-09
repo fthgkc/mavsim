@@ -25,6 +25,7 @@
 #include "math/FGNelderMead.h"
 #include <iomanip>
 #include <QThread>
+#include <QSettings>
 #include "config.h"
 #include <stdexcept>
 #include <math/FGStateSpace.h>
@@ -95,7 +96,7 @@ private:
 	} trimThread;
     osg::ref_ptr<osg::Group> sceneRoot;
     void loadModel(const std::string & name);
-    mavsim::visualization::Jet * plane;
+    mavsim::visualization::Plane * plane;
 
 	void stopSolver();
 	volatile bool stopRequested;
@@ -113,6 +114,10 @@ private:
 	void trim();
 	JSBSim::FGStateSpace * ss;
 	JSBSim::FGTrimmer * trimmer;
+	JSBSim::FGFDMExec * fdm;
+	QSettings * settings;
+	void writeSettings();
+	void readSettings();
 };
 
 #endif

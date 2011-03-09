@@ -29,7 +29,8 @@
 #include <models/propulsion/FGTurboProp.h>
 
 MainWindow::MainWindow() : sceneRoot(new osg::Group),
-	callback(new SolverCallback(this)), trimThread(this), ss(NULL), trimmer(NULL) 
+	callback(new SolverCallback(this)), trimThread(this),
+	ss(NULL), trimmer(NULL), fdm(NULL) 
 {
     setupUi(this);
     viewer->setSceneData(sceneRoot);
@@ -38,17 +39,19 @@ MainWindow::MainWindow() : sceneRoot(new osg::Group),
     viewer->getCameraManipulator()->home(0);
     sceneRoot->addChild(new mavsim::visualization::Frame(20,"N","E","D"));
 
-	// initial paths
-	QString root(datadir);
-	lineEdit_enginePath->setText(root+"/easystar/Engine");
-	lineEdit_systemsPath->setText(root+"/easystar/Systems");
-	lineEdit_aircraftPath->setText(root+"/easystar");
-	lineEdit_aircraft->setText("easystar-windtunnel");
-	lineEdit_initScript->setText("");
+	// read initial settings
+	QCoreApplication::setOrganizationName("openmav");
+    QCoreApplication::setOrganizationDomain("github.com/mavsim");
+    QCoreApplication::setApplicationName("mavsim");
 
+	settings = new QSettings;
+	readSettings();
+	writeSettings();
+
+	// load plane
     try
     {
-        plane = new mavsim::visualization::Jet;
+        plane = new mavsim::visualization::Plane;
         plane->addChild(new mavsim::visualization::Frame(15,"X","Y","Z"));
         sceneRoot->addChild(plane);
     }
@@ -64,7 +67,31 @@ MainWindow::MainWindow() : sceneRoot(new osg::Group),
 
 MainWindow::~MainWindow()
 {
+	writeSettings();
     delete viewer;
+}
+
+void MainWindow::writeSettings()
+{
+	settings->beginGroup("mainwindow");
+	settings->setValue("enginePath",lineEdit_enginePath->text());
+	settings->setValue("systemsPath",lineEdit_systemsPath->text());
+	settings->setValue("aircraftPath",lineEdit_aircraftPath->text());
+	settings->setValue("aircraft",lineEdit_aircraft->text());
+	settings->setValue("initScript",lineEdit_initScript->text());
+	settings->endGroup();
+}
+
+void MainWindow::readSettings()
+{
+	QString root(datadir);
+	settings->beginGroup("mainwindow");
+	lineEdit_enginePath->setText(settings->value("enginePath",root+"/easystar/Engine").toString());
+	lineEdit_systemsPath->setText(settings->value("systemsPath",root+"/easystar/Systems").toString());
+	lineEdit_aircraftPath->setText(settings->value("aircraftPath",root+"/easystar").toString());
+	lineEdit_aircraft->setText(settings->value("aircraft","easystar-windtunnel").toString());
+	lineEdit_initScript->setText(settings->value("initScript","").toString());
+	settings->endGroup();
 }
 
 void MainWindow::on_toolButton_enginePath_pressed()
@@ -113,6 +140,7 @@ void MainWindow::on_toolButton_initScript_pressed()
 
 void MainWindow::on_pushButton_trim_pressed()
 {
+	writeSettings();
 	on_pushButton_stop_pressed();
 	try
 	{
@@ -134,6 +162,7 @@ void MainWindow::on_pushButton_trim_pressed()
 
 void MainWindow::on_pushButton_linearize_pressed()
 {
+	writeSettings();
 	using namespace JSBSim;
 
 	if (!ss)
@@ -212,7 +241,12 @@ void MainWindow::trim()
 	using namespace JSBSim;
 
 	// flight conditions
-	FGFDMExec fdm;
+	if (fdm)
+	{
+		delete fdm;
+		fdm = NULL;
+	}
+	fdm = new FGFDMExec;
 	double dt = 1./atof(lineEdit_modelSimRate->text().toAscii());
 	FGTrimmer::Constraints constraints;
 	constraints.velocity = atof(lineEdit_velocity->text().toAscii());
@@ -277,23 +311,27 @@ void MainWindow::trim()
 	std::cout << "\tJSBSim Trimming Utility\n";
 	std::cout << "==============================================\n" << std::endl;
 
-	fdm.Setdt(dt);
+	fdm->Setdt(dt);
 
-	if (!fdm.LoadModel(aircraftPath,enginePath,systemsPath,aircraft,false)) return;
-	std::string aircraftName = fdm.GetAircraft()->GetAircraftName();
+	if (!fdm->LoadModel(aircraftPath,enginePath,systemsPath,aircraft,false))
+	{
+		showMsgBuffered("model paths incorrect");
+		return;
+	}
+	std::string aircraftName = fdm->GetAircraft()->GetAircraftName();
 	std::cout << "\tsuccessfully loaded: " <<  aircraftName << std::endl;
 
 	// Turn on propulsion system
-	fdm.GetPropulsion()->InitRunning(-1);
+	fdm->GetPropulsion()->InitRunning(-1);
 
 	// get propulsion pointer to determine type/ etc.
-	FGEngine * engine0 = fdm.GetPropulsion()->GetEngine(0);
+	FGEngine * engine0 = fdm->GetPropulsion()->GetEngine(0);
 	FGThruster * thruster0 = engine0->GetThruster();
 
 	
 	// solve
 	if (trimmer) delete trimmer;
-	trimmer = new FGTrimmer(fdm,constraints);
+	trimmer = new FGTrimmer(*fdm,constraints);
 	FGNelderMead solver(*trimmer,initialGuess, lowerBound, upperBound, initialStepSize,
 						iterMax,rtol,abstol,speed,showConvergeStatus,showSimplex,pause,callback);
 	stopRequested = false;
@@ -305,6 +343,8 @@ void MainWindow::trim()
 		showMsgBuffered("solver failed");
 		return;
 	}
+
+	showMsgBuffered("solver converged");
 
 	// output
 	trimmer->printSolution(solver.getSolution()); // this also loads the solution into the fdm
@@ -319,7 +359,7 @@ void MainWindow::trim()
 	//for (int i=0;i<5*120;i++) fdm.Run();
 	//trimmer->printState();
 
-	ss = new FGStateSpace(fdm);
+	ss = new FGStateSpace(*fdm);
 
 	// longitudinal states
 	ss->x.add(new FGStateSpace::Vt);
