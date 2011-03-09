@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$_main_window_8hpp.html" title="/hsl/homes/jgoppert/Projects/mavsim/app/trim/MainWindow.hpp" alt="" coords="179,83,571,112"/>
+<area shape="rect" id="node9" href="$sci__geo_mag_8cpp.html" title="/hsl/homes/jgoppert/Projects/mavsim/src/scicos/sci_geoMag.cpp" alt="" coords="595,83,995,112"/>
+<area shape="rect" id="node11" href="$sci__jsbsim_trim_8cpp.html" title="/hsl/homes/jgoppert/Projects/mavsim/src/scicos/sci_jsbsimTrim.cpp" alt="" coords="1019,83,1437,112"/>
+<area shape="rect" id="node13" href="$machine_8h.html" title="/hsl/homes/jgoppert/Projects/mavsim/src/scicos/scicos/machine.h" alt="" coords="1461,83,1869,112"/>
+<area shape="rect" id="node17" href="$osg_utils_8cpp.html" title="/hsl/homes/jgoppert/Projects/mavsim/src/visualization/osgUtils.cpp" alt="" coords="1893,83,2307,112"/>
+<area shape="rect" id="node5" href="$main_8cpp.html" title="/hsl/homes/jgoppert/Projects/mavsim/app/trim/main.cpp" alt="" coords="5,160,352,189"/>
+<area shape="rect" id="node7" href="$_main_window_8cpp.html" title="/hsl/homes/jgoppert/Projects/mavsim/app/trim/MainWindow.cpp" alt="" coords="376,160,768,189"/>
+<area shape="rect" id="node15" href="$sci__randn_8cpp.html" title="/hsl/homes/jgoppert/Projects/mavsim/src/scicos/sci_randn.cpp" alt="" coords="1472,160,1859,189"/>
+</map>
