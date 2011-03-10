@@ -1,7 +1,8 @@
 include_directories(${SCICOSLAB_INCLUDE_DIRS}
 	${JSBSIM_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS}
 	${MAVLINK_INCLUDE_DIRS}
-	scicos // for people without scicoslab headers installed properly
+	scicos 	// HACK for systems without
+	. 		// scicoslab headers installed properly
 	)
 
 set(mavsimScicosSources
@@ -50,7 +51,7 @@ if (OPENSCENEGRAPH_FOUND)
 	link_directories( ${OSG_LIBRARY_DIRS} ) 
 endif(OPENSCENEGRAPH_FOUND)
 set(CMAKE_C_FLAGS -lpthread)
-add_library(mavsimScicos SHARED ${mavsimScicosSources})
+add_library(mavsimScicos MODULE ${mavsimScicosSources})
 add_dependencies(mavsimScicos JSBSIM)
 
 target_link_libraries(mavsimScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES} ${LAPACK_LIBRARIES} -lpthread)
