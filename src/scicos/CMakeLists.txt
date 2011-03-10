@@ -53,7 +53,7 @@ set(CMAKE_C_FLAGS -lpthread)
 add_library(mavsimScicos SHARED ${mavsimScicosSources})
 add_dependencies(mavsimScicos JSBSIM)
 
-target_link_libraries(mavsimScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES} -lpthread)
+target_link_libraries(mavsimScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES} ${LAPACK_LIBRARIES} -lpthread)
 
 set_target_properties(mavsimScicos PROPERTIES VERSION ${mavsim_VERSION}
     SOVERSION ${mavsim_SOVERSION})
