@@ -34,7 +34,7 @@ JuK : jacobian([u0],vector2list(K));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-y : transpose([e1, e1, r2-x2, r2-x2]);
+y : transpose([r1-x1, r1-x1, r2-x2, r2-x2]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

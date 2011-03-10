@@ -1,5 +1,8 @@
 include_directories(${SCICOSLAB_INCLUDE_DIRS}
-	${JSBSIM_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${MAVLINK_INCLUDE_DIRS})
+	${JSBSIM_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS}
+	${MAVLINK_INCLUDE_DIRS}
+	scicos // for people without scicoslab headers installed properly
+	)
 
 set(mavsimScicosSources
 	definitions.cpp
