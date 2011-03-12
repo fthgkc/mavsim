@@ -418,7 +418,7 @@ Jet::Jet() :
 void Jet::setEuler(double roll, double pitch, double yaw)
 {
     setAttitude(osg::Quat(
-                    roll,osg::Vec3(1,0,0),
+                    roll-M_PI/2,osg::Vec3(1,0,0),
                     pitch,osg::Vec3(0,1,0),
                     yaw,osg::Vec3(0,0,1)));
 }
@@ -462,7 +462,7 @@ Plane::Plane() :
 void Plane::setEuler(double roll, double pitch, double yaw)
 {
     setAttitude(osg::Quat(
-                    roll,osg::Vec3(1,0,0),
+                    roll-M_PI/2,osg::Vec3(1,0,0),
                     pitch,osg::Vec3(0,1,0),
                     yaw,osg::Vec3(0,0,1)));
 }
@@ -506,7 +506,7 @@ Car::Car() :
 void Car::setEuler(double roll, double pitch, double yaw)
 {
     setAttitude(osg::Quat(
-                    roll,osg::Vec3(1,0,0),
+                    roll-M_PI/2,osg::Vec3(1,0,0),
                     pitch,osg::Vec3(0,1,0),
                     yaw,osg::Vec3(0,0,1)));
 }
@@ -552,7 +552,7 @@ Quad::Quad() :
 void Quad::setEuler(double roll, double pitch, double yaw)
 {
     setAttitude(osg::Quat(
-                    roll,osg::Vec3(1,0,0),
+                    roll-M_PI/2,osg::Vec3(1,0,0),
                     pitch,osg::Vec3(0,1,0),
                     yaw,osg::Vec3(0,0,1)));
 }

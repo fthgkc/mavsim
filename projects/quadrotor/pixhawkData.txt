@@ -1,0 +1,39 @@
+Weight: 1.25 kg
+Thrust Max: 500 g
+
+Position Control: 50 Hz
+Attitude Control: 200 Hz
+
+Nav Delay: 100 ms
+
+position controller:
+ https://github.com/pixhawk/imu_autopilot/blob/master/controllers/quadrotor/control_quadrotor_position.c
+
+attitude controller
+https://github.com/pixhawk/imu_autopilot/tree/master/controllers/quadrotor
+
+position std dev: 0.10
+position data rate: 50 Hz, 15 Hz (measurement)
+attitude data rate: 200 Hz, 
+velocity data rate: 50 Hz (constant speed)
+
+low pass: 100 Hz
+
+Time Constat of motors: 0.136 seconds 
+source: https://dspace.ist.utl.pt/bitstream/2295/574042/1/Tese_de_Mestrado.pdf
+
+Arm length: 0.24 m
+
+motor thrust between 10-255 to keep them running
+
+control structure:
+
+roll angle -> L - R
+pitch angle -> F - B
+yaw angle -> L + R - F - B
+position x -> pitch
+position y -> roll
+position z -> L + R + F + B
+
+parameters for PID: 
+P, D, I, antiwindup limit

@@ -1,8 +1,8 @@
-clc; clear;
+clc;
 mode(-1);
 
 // dependencies
-exec utilities.sci;
+//exec utilities.sci;
 exec quadForwardFlightDesign.sci;
 exec quadHoverDesign.sci;
 
