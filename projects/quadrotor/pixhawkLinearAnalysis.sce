@@ -29,7 +29,7 @@ sys.olss = minssAutoTol(tf2ss(sys.oltf),14);
 
 function openLoopAnalysis(name,sys)
 	//sse
-	sse=1/(horner(ss2tf(sys),1e-10));
+	sse=1/(horner(sys,1e-10));
 	if (sse>1e6) sse=%inf; end
 
 	// pm/gm
@@ -37,30 +37,30 @@ function openLoopAnalysis(name,sys)
         pm = -%inf;
         gm = -%inf;
     else
-        pm = p_margin(sys)+180;
+		pm = p_margin(sys)+180;
         for i=1:length(pm)
             if (pm(i) >= 180) pm(i) = pm(i) - 360; end
             if (pm(i) < -180) pm(i) = pm(i) + 360; end
         end
-        gm = g_margin(sys);
+		gm = g_margin(sys);
     end
 	printf("%10s:\tgcf:%10.3f Hz\tpm:%10.3f deg\tgm:%10.3f\tsse:%10.3f\n",..
-		name,bw(sys,0),pm,gm,sse);
+		name,bw(tf2ss(sys),0),pm,gm,sse);
 endfunction
 
-H.LR_wx = .01;
-H.FB_wy = .01;
-H.LRFB_wz = 10;
-H.Sum_W = -1;
+H.LR_wx = 0.5;
+H.FB_wy = 0.5;
+H.LRFB_wz = 1;
+H.Sum_W = 30*(%s+1)/(%s+40);
 
-openLoopAnalysis("LR->wx",H.LR_wx*sys.olss(y.wx,u.LR));
-openLoopAnalysis("FB->wy",H.FB_wy*sys.olss(y.wy,u.FB));
-openLoopAnalysis("LRFB->wz",H.LRFB_wz*sys.olss(y.wz,u.LRFB));
-openLoopAnalysis("SUM->W",H.Sum_W*sys.olss(y.h,u.SUM));
+openLoopAnalysis("LR->wx",H.LR_wx*sys.oltf(y.wx,u.LR));
+openLoopAnalysis("FB->wy",H.FB_wy*sys.oltf(y.wy,u.FB));
+openLoopAnalysis("LRFB->wz",H.LRFB_wz*sys.oltf(y.wz,u.LRFB));
+openLoopAnalysis("SUM->W",H.Sum_W*sys.oltf(y.h,u.SUM));
 
 // open loop analysis
 //scf(1); clf(1);
-subplot(1,4,1); bode(1/6*sys.oltf(x.wx,u.LR),.1,100,"LR->wx");
-subplot(1,4,2); bode(1/6*sys.oltf(x.wy,u.FB),.1,100,"FB->wy");
-subplot(1,4,3); bode(16*sys.oltf(x.wz,u.LRFB),.1,100,"LRFB->wz");
-subplot(1,4,4); bode(1*sys.oltf(x.W,u.SUM),.1,100,"SUM->W");
+subplot(1,4,1); bode(H.LR_wx*sys.oltf(x.wx,u.LR),.1,100,"LR->wx");
+subplot(1,4,2); bode(H.FB_wy*sys.oltf(x.wy,u.FB),.1,100,"FB->wy");
+subplot(1,4,3); bode(H.LRFB_wz*sys.oltf(x.wz,u.LRFB),.1,100,"LRFB->wz");
+subplot(1,4,4); bode(H.Sum_W*sys.oltf(x.h,u.SUM),.1,100,"SUM->h");
