@@ -16,7 +16,7 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * x: Vt, Alpha, Theta, Q, Alt, Beta, Phi, P, R, Psi, Longitude, Latitude,
- * 		Rpm(if prop), PropPitch (if prop)
+ * 		Rpm0,RPM1,RPM2,RPM3 (dependent on number of engines) (if prop), PropPitch (if prop)
  *
  * u: Throttle, Aileron, Elevator, Rudder
  * 
@@ -92,11 +92,15 @@ public:
         ss.x.add(new FGStateSpace::Latitude);
 
         // propulsion states
-        if (thruster0->GetType()==FGThruster::ttPropeller)
-        {
-            ss.x.add(new FGStateSpace::Rpm);
-            if (variablePropPitch) ss.x.add(new FGStateSpace::PropPitch);
-        }
+		if (thruster0->GetType()==FGThruster::ttPropeller)
+		{
+			ss.x.add(new FGStateSpace::Rpm0);
+			if (variablePropPitch) ss.x.add(new FGStateSpace::PropPitch);
+			int numEngines = fdm.GetPropulsion()->GetNumEngines();
+			if (numEngines>1) ss.x.add(new FGStateSpace::Rpm1);
+			if (numEngines>2) ss.x.add(new FGStateSpace::Rpm2);
+			if (numEngines>3) ss.x.add(new FGStateSpace::Rpm3);
+		}
 
         // input
         ss.u.add(new FGStateSpace::ThrottleCmd);
