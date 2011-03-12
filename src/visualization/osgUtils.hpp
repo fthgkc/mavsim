@@ -150,6 +150,7 @@ public:
     void setU(double throttle, double aileron, double elevator, double rudder);
 private:
     osg::ref_ptr<osg::Node> model;
+	osg::ref_ptr<osg::PositionAttitudeTransform> modelPat;
     boost::scoped_ptr<Actuator> myLeftAileron;
     boost::scoped_ptr<Actuator> myRightAileron;
     boost::scoped_ptr<Actuator> myLeftElevator;
@@ -168,6 +169,7 @@ public:
 private:
 	double propAngle;
     osg::ref_ptr<osg::Node> model;
+	osg::ref_ptr<osg::PositionAttitudeTransform> modelPat;
     boost::scoped_ptr<Actuator> myLeftAileron;
     boost::scoped_ptr<Actuator> myRightAileron;
     boost::scoped_ptr<Actuator> myLeftElevator;
@@ -184,8 +186,9 @@ public:
     void setPositionScalars(double x, double y, double z);
     void setU(double throttle, double steering, double velocity);
 private:
-	double myTireAngleLF, myTireAngleLB, myTireAngleRF, myTireAngleRB;
     osg::ref_ptr<osg::Node> model;
+	osg::ref_ptr<osg::PositionAttitudeTransform> modelPat;
+	double myTireAngleLF, myTireAngleLB, myTireAngleRF, myTireAngleRB;
     boost::scoped_ptr<Actuator> myWheelLF;
     boost::scoped_ptr<Actuator> myWheelLB;
 	boost::scoped_ptr<Actuator> myWheelRF;
@@ -202,6 +205,7 @@ public:
 private:
 	double myPropAngleF, myPropAngleB, myPropAngleL, myPropAngleR;
     osg::ref_ptr<osg::Node> model;
+	osg::ref_ptr<osg::PositionAttitudeTransform> modelPat;
     boost::scoped_ptr<Actuator> myPropF;
     boost::scoped_ptr<Actuator> myPropB;
 	boost::scoped_ptr<Actuator> myPropL;

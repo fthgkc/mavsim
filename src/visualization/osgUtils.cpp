@@ -396,7 +396,7 @@ osg::StateSet* PointCloud::makeStateSet(float size)
 }
 
 Jet::Jet() :
-    model(), myLeftAileron(), myRightAileron(),
+    modelPat(), model(), myLeftAileron(), myRightAileron(),
     myLeftElevator(), myRightElevator(), myRudder()
 {
  	std::string modelFile(std::string(datadir)+"/models/jet.ac");
@@ -406,19 +406,22 @@ Jet::Jet() :
 		throw(std::runtime_error("can't find model: " + modelFile));
 		return;
 	}
-    myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-1.375,-3.330,0.485),model));
-    myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-1.375,3.330,0.485),model));
-    myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-7.431,-1.934,-0.417),model));
-    myRightElevator.reset(new Actuator("rightElevator",osg::Vec3(-7.431,1.934,-0.417),model));
-    myRudder.reset(new Actuator("rudder",osg::Vec3(-8.279,0,-2.458),model));
+	modelPat = new PositionAttitudeTransform;
+	modelPat->setAttitude(osg::Quat(M_PI,osg::Vec3(1,0,0)));
+	modelPat->addChild(model);
+    myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-1.077,2.652,-0.319),model));
+    myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-1.077,-2.652,-0.319),model));
+    myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-5.806,1.511,0.320),model));
+    myRightElevator.reset(new Actuator("rightElevator",osg::Vec3(-5.806,-1.511,0.320),model));
+    myRudder.reset(new Actuator("rudder",osg::Vec3(-6.508,0,2.473),model));
     myThrustPlume.reset(new Actuator("thrustPlume",osg::Vec3(0,0,0),model));
-    addChild(model);
+    addChild(modelPat);
 }
 
 void Jet::setEuler(double roll, double pitch, double yaw)
 {
     setAttitude(osg::Quat(
-                    roll-M_PI/2,osg::Vec3(1,0,0),
+                    roll,osg::Vec3(1,0,0),
                     pitch,osg::Vec3(0,1,0),
                     yaw,osg::Vec3(0,0,1)));
 }
@@ -449,20 +452,22 @@ Plane::Plane() :
 		throw(std::runtime_error("can't find model: " + modelFile));
 		return;
 	}
-    model = osgDB::readNodeFile(std::string(datadir)+"/models/plane.ac");
+	modelPat = new PositionAttitudeTransform;
+	modelPat->setAttitude(osg::Quat(M_PI,osg::Vec3(1,0,0)));
+	modelPat->addChild(model);
     myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-0.142,-7.852,1.249),model));
     myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-0.142,7.852,1.249),model));
     myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-12.895,-1.820,0.021),model));
     myRightElevator.reset(new Actuator("rightElevator",osg::Vec3(-12.895,1.820,0.021),model));
     myRudder.reset(new Actuator("rudder",osg::Vec3(-12.598,0.003,.522),model));
     myPropeller.reset(new Actuator("propeller",osg::Vec3(8.657,0,0.788),model));
-    addChild(model);
+    addChild(modelPat);
 }
 
 void Plane::setEuler(double roll, double pitch, double yaw)
 {
     setAttitude(osg::Quat(
-                    roll-M_PI/2,osg::Vec3(1,0,0),
+                    roll,osg::Vec3(1,0,0),
                     pitch,osg::Vec3(0,1,0),
                     yaw,osg::Vec3(0,0,1)));
 }
@@ -496,17 +501,20 @@ Car::Car() :
 		throw(std::runtime_error("can't find model: " + modelFile));
 		return;
 	}
+	modelPat = new PositionAttitudeTransform;
+	modelPat->setAttitude(osg::Quat(M_PI,osg::Vec3(1,0,0)));
+	modelPat->addChild(model);
     myWheelLF.reset(new Actuator("wheelLF",osg::Vec3(3.5,-3,1),model));
     myWheelLB.reset(new Actuator("wheelLB",osg::Vec3(-3.5,-3,1),model));
     myWheelRF.reset(new Actuator("wheelRF",osg::Vec3(3.5,3,1),model));
     myWheelRB.reset(new Actuator("wheelRB",osg::Vec3(-3.5,3,1),model));
-    addChild(model);
+    addChild(modelPat);
 }
 
 void Car::setEuler(double roll, double pitch, double yaw)
 {
     setAttitude(osg::Quat(
-                    roll-M_PI/2,osg::Vec3(1,0,0),
+                    roll,osg::Vec3(1,0,0),
                     pitch,osg::Vec3(0,1,0),
                     yaw,osg::Vec3(0,0,1)));
 }
@@ -542,17 +550,20 @@ Quad::Quad() :
 		throw(std::runtime_error("can't find model: " + modelFile));
 		return;
 	}
-    myPropF.reset(new Actuator("propellerF",osg::Vec3(6.2,0,1),model));
-    myPropB.reset(new Actuator("propellerB",osg::Vec3(-6.2,0,1),model));
-    myPropL.reset(new Actuator("propellerL",osg::Vec3(0,-6.2,1),model));
-    myPropR.reset(new Actuator("propellerR",osg::Vec3(0,6.2,1),model));
-    addChild(model);
+	modelPat = new PositionAttitudeTransform;
+	modelPat->setAttitude(osg::Quat(-M_PI/2,osg::Vec3(1,0,0)));
+	modelPat->addChild(model);
+    myPropF.reset(new Actuator("propellerF",osg::Vec3(0.288,0.046,0),modelPat));
+    myPropB.reset(new Actuator("propellerB",osg::Vec3(-0.288,0.046,0),modelPat));
+    myPropL.reset(new Actuator("propellerL",osg::Vec3(0,0.046,-0.288),modelPat));
+    myPropR.reset(new Actuator("propellerR",osg::Vec3(0,0.046,0.288),modelPat));
+    addChild(modelPat);
 }
 
 void Quad::setEuler(double roll, double pitch, double yaw)
 {
     setAttitude(osg::Quat(
-                    roll-M_PI/2,osg::Vec3(1,0,0),
+                    roll,osg::Vec3(1,0,0),
                     pitch,osg::Vec3(0,1,0),
                     yaw,osg::Vec3(0,0,1)));
 }
@@ -564,10 +575,10 @@ void Quad::setPositionScalars(double x, double y, double z)
 
 void Quad::setU(double throttleF, double throttleB, double throttleL, double throttleR)
 {
-	myPropF->setAttitude(osg::Quat(myPropAngleF-=-0.5*throttleF,osg::Vec3(0,0,1)));
-	myPropB->setAttitude(osg::Quat(myPropAngleB-=-0.5*throttleB,osg::Vec3(0,0,1)));
-	myPropL->setAttitude(osg::Quat(myPropAngleL-=0.5*throttleL,osg::Vec3(0,0,1)));
-	myPropR->setAttitude(osg::Quat(myPropAngleR-=0.5*throttleR,osg::Vec3(0,0,1)));
+	myPropF->setAttitude(osg::Quat(myPropAngleF-=-0.5*throttleF,osg::Vec3(0,1,0)));
+	myPropB->setAttitude(osg::Quat(myPropAngleB-=-0.5*throttleB,osg::Vec3(0,1,0)));
+	myPropL->setAttitude(osg::Quat(myPropAngleL-=0.5*throttleL,osg::Vec3(0,1,0)));
+	myPropR->setAttitude(osg::Quat(myPropAngleR-=0.5*throttleR,osg::Vec3(0,1,0)));
 }
 
 

@@ -31,9 +31,9 @@ public:
     VisCar() : car()
     {
 		car = new Car; // throws
-        osg::Group * root = new Frame(15,"N","E","D");
+        osg::Group * root = new Frame(1,"N","E","D");
         if (car) root->addChild(car);
-        getCameraManipulator()->setHomePosition(osg::Vec3(-30,30,-30),
+        getCameraManipulator()->setHomePosition(osg::Vec3(-3,3,-3),
                                                 osg::Vec3(0,0,0),osg::Vec3(0,0,-1));
         if (root) setSceneData(root);
         setUpViewInWindow(0,0,800,600);
