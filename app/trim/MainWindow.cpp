@@ -405,10 +405,14 @@ void MainWindow::trim()
 
 	// propulsion states
 	if (thruster0->GetType()==FGThruster::ttPropeller)
-	{
-		ss->x.add(new FGStateSpace::Rpm);
-		if (variablePropPitch) ss->x.add(new FGStateSpace::PropPitch);
-	}
+    {
+        ss->x.add(new FGStateSpace::Rpm0);
+        if (variablePropPitch) ss->x.add(new FGStateSpace::PropPitch);
+		int numEngines = fdm->GetPropulsion()->GetNumEngines();
+		if (numEngines>1) ss->x.add(new FGStateSpace::Rpm1);
+		if (numEngines>2) ss->x.add(new FGStateSpace::Rpm2);
+		if (numEngines>3) ss->x.add(new FGStateSpace::Rpm3);
+    }
 
 	// input
 	ss->u.add(new FGStateSpace::ThrottleCmd); 	// 0

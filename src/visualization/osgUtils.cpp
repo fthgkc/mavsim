@@ -407,7 +407,7 @@ Jet::Jet() :
 		return;
 	}
 	modelPat = new PositionAttitudeTransform;
-	modelPat->setAttitude(osg::Quat(M_PI,osg::Vec3(1,0,0)));
+	modelPat->setAttitude(osg::Quat(-M_PI/2,osg::Vec3(1,0,0)));
 	modelPat->addChild(model);
     myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-1.077,2.652,-0.319),model));
     myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-1.077,-2.652,-0.319),model));
@@ -453,7 +453,7 @@ Plane::Plane() :
 		return;
 	}
 	modelPat = new PositionAttitudeTransform;
-	modelPat->setAttitude(osg::Quat(M_PI,osg::Vec3(1,0,0)));
+	modelPat->setAttitude(osg::Quat(-M_PI/2,osg::Vec3(1,0,0)));
 	modelPat->addChild(model);
     myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-0.142,-7.852,1.249),model));
     myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-0.142,7.852,1.249),model));
@@ -502,7 +502,7 @@ Car::Car() :
 		return;
 	}
 	modelPat = new PositionAttitudeTransform;
-	modelPat->setAttitude(osg::Quat(M_PI,osg::Vec3(1,0,0)));
+	modelPat->setAttitude(osg::Quat(-M_PI/2,osg::Vec3(1,0,0)));
 	modelPat->addChild(model);
     myWheelLF.reset(new Actuator("wheelLF",osg::Vec3(3.5,-3,1),model));
     myWheelLB.reset(new Actuator("wheelLB",osg::Vec3(-3.5,-3,1),model));
