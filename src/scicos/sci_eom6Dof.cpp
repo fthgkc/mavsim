@@ -24,24 +24,22 @@
  *      2: alpha
  *      3: theta
  *      4: wy
- *      5: h
- *      6: beta
- *      7: phi
- *      8: wx
- *      9: psi
- *     10: wz 
+ *      5: beta
+ *      6: phi
+ *      7: wx
+ *      8: psi
+ *      9: wz 
  *
  *  u4: (body mode)
  *      1: U
  *      2: W
  *      3: theta
  *      4: wy
- *      5: h
- *      6: V
- *      7: phi
- *      8: wx
- *      9: psi
- *     10: wz 
+ *      5: V
+ *      6: phi
+ *      7: wx
+ *      8: psi
+ *      9: wz 
  *
  * Output:
  *  y1: (state derivative)
@@ -88,7 +86,7 @@ void sci_eom6Dof(scicos_block *block, scicos::enumScicosFlags flag)
     int & frame = ipar[0];
   
     // matrices
-    int nY = 10;
+    int nY = 9;
     using namespace boost::numeric::ublas;
     matrix<double,column_major, shallow_array_adaptor<double> > F_b_(3,1,shallow_array_adaptor<double>(3,u1));
     matrix<double,column_major, shallow_array_adaptor<double> > M_b_(3,1,shallow_array_adaptor<double>(3,u2));
@@ -113,12 +111,11 @@ void sci_eom6Dof(scicos_block *block, scicos::enumScicosFlags flag)
             double & alpha   = u4[1];
             double & theta   = u4[2];
             double & wy      = u4[3];
-            double & h       = u4[4];
-            double & beta    = u4[5];
-            double & phi     = u4[6];
-            double & wx      = u4[7];
-            double & psi     = u4[8];
-            double & wz      = u4[9];
+            double & beta    = u4[4];
+            double & phi     = u4[5];
+            double & wx      = u4[6];
+            double & psi     = u4[7];
+            double & wz      = u4[8];
 
             const double cosAlpha = cos(alpha);
             const double sinAlpha = sin(alpha);
@@ -143,12 +140,11 @@ void sci_eom6Dof(scicos_block *block, scicos::enumScicosFlags flag)
             double & W       = u4[1];
             double & theta   = u4[2];
             double & wy      = u4[3];
-            double & h       = u4[4];
-            double & V       = u4[5];
-            double & phi     = u4[6];
-            double & wx      = u4[7];
-            double & psi     = u4[8];
-            double & wz      = u4[9];
+            double & V       = u4[4];
+            double & phi     = u4[5];
+            double & wx      = u4[6];
+            double & psi     = u4[7];
+            double & wz      = u4[8];
 
             const double sinPhi = sin(phi);
             const double cosPhi = cos(phi);

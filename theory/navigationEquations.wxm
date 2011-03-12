@@ -10,7 +10,7 @@ if is(commonLoaded#true) then batchload("common.wxm");
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
-Navigator Equations
+Navigation Equations
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: subsect start ]
@@ -51,11 +51,11 @@ Fortran Output
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/navigatorEquations.f90", f90(v_n));
+with_stdout ("code/navigationEquations.f90", f90(v_n));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-navigatorEquations : true;
+navigationEquations : true;
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

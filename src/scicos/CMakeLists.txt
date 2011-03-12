@@ -24,6 +24,7 @@ set(mavsimScicosSources
 	sci_euler2Dcm.cpp
 	sci_quadForceMoments.cpp
 	sci_eom6Dof.cpp
+	sci_navigationEquations.cpp
 	)
 
 if (SIMGEAR_FOUND)

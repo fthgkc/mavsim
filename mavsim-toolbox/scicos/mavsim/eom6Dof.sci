@@ -14,24 +14,22 @@ function [x,y,typ]=eom6Dof(job,arg1,arg2)
 //      2: alpha
 //      3: theta
 //      4: wy
-//      5: h
-//      6: beta
-//      7: phi
-//      8: wx
-//      9: psi
-//     10: wz 
+//      5: beta
+//      6: phi
+//      7: wx
+//      8: psi
+//      9: wz 
 //
 //  u4: (body mode)
 //      1: U
 //      2: W
 //      3: theta
 //      4: wy
-//      5: h
-//      6: V
-//      7: phi
-//      8: wx
-//      9: psi
-//     10: wz 
+//      5: V
+//      6: phi
+//      7: wx
+//      8: psi
+//      9: wz 
 //
 // Output:
 //  y1: (state derivative)
@@ -73,8 +71,8 @@ select job
             [ok,frame,exprs]=getvalue('Set Frame',labels,list('vec',1),exprs);
             if ~ok then break,end
             graphics.exprs=exprs;
-            nOut=10;
-            nIn=[3;3;7;10];
+            nOut=9;
+            nIn=[3;3;7;9];
 
             // set frame options
             if frame==0 then
@@ -100,8 +98,8 @@ select job
         model=scicos_model();
         model.sim=list('sci_eom6Dof',4);
         
-        nOut=10;
-        nIn=[3;3;7;10]
+        nOut=9;
+        nIn=[3;3;7;9]
                 
         model.in=nIn;
         model.out=nOut;

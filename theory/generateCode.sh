@@ -13,6 +13,7 @@ then
 	then
 		echo running maxima
 		maxima -b navigation.wxm
+		maxima -b navigationEquations.wxm
 		maxima -b quadrotorWindFrame.wxm
 		maxima -b quadrotorBodyFrame.wxm
 	elif [ $1 == 'n' ] 
@@ -593,3 +594,29 @@ cat code/dynamicsBodyFrame.f90 | sed \
 	-e "s/Jxy\*\*2/JxyJxy/g" -e "s/Jxz\*\*2/JxzJxz/g" -e "s/Jyz\*\*2/Jyz/g" -e "s/KV\*\*2/KVKV/g" \
 	-e "s/(phi)/Phi/g" -e "s/(theta)/Theta/g" -e "s/(alpha)/Alpha/g" -e "s/(beta)/Beta/g" \
 	> ${dynPath}/dynamicsBodyFrame.hpp
+
+cat code/navigationEquations.f90 | sed \
+	-e "s/$/;/g" \
+	-e "/^.*) = 0;$/d" \
+	-e "s/%//g" \
+	-e "s/(1,/(0,/g" -e "s/,1)/,0)/g" \
+	-e "s/(2,/(1,/g" -e "s/,2)/,1)/g" \
+	-e "s/(3,/(2,/g" -e "s/,3)/,2)/g" \
+	-e "s/(4,/(3,/g" -e "s/,4)/,3)/g" \
+	-e "s/(5,/(4,/g" -e "s/,5)/,4)/g" \
+	-e "s/(6,/(5,/g" -e "s/,6)/,5)/g" \
+	-e "s/(7,/(6,/g" -e "s/,7)/,6)/g" \
+	-e "s/(8,/(7,/g" -e "s/,8)/,7)/g" \
+	-e "s/(9,/(8,/g" -e "s/,9)/,8)/g" \
+	-e "s/(10,/(9,/g" -e "s/,10)/,9)/g" \
+	-e "s/(11,/(10,/g" -e "s/,11)/,10)/g" \
+	-e "s/(12,/(11,/g" -e "s/,12)/,11)/g" \
+	-e "s/(13,/(12,/g" -e "s/,13)/,12)/g" \
+	-e "s/(14,/(13,/g" -e "s/,14)/,13)/g" \
+	-e "s/(15,/(14,/g" -e "s/,15)/,14)/g" \
+	-e "s/(16,/(15,/g" -e "s/,16)/,15)/g" \
+	-e "s/(17,/(16,/g" -e "s/,17)/,16)/g" \
+	-e "s/(18,/(17,/g" -e "s/,18)/,17)/g" \
+	-e "s/(19,/(18,/g" -e "s/,19)/,18)/g" \
+    -e "s/(phi)/Phi/g" -e "s/(theta)/Theta/g" -e "s/(psi)/Psi/g" \
+	> ${dynPath}/navigationEquations.hpp

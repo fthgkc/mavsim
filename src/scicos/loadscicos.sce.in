@@ -19,6 +19,7 @@ stdBlocks=[
 'sci_eom6Dof';..
 'sci_quadForceMoments';..
 'sci_insErrorDynamics';..
+'sci_navigationEquations';..
 'sci_zeroOrderHold'];
 simgearBlocks=['sci_flightGearComm'];
 osgBlocks=['sci_jet';'sci_car';'sci_quad';'sci_plane'];
