@@ -1,5 +1,6 @@
 function [x,y,typ]=randn(job,arg1,arg2)
 // Copyright Alan Kim
+mode(-1);
 x=[];y=[];typ=[];
 select job
 case 'plot' then //normal  position

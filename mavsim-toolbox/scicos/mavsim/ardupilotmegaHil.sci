@@ -1,4 +1,5 @@
 function [x,y,typ]=ardupilotmegaHil(job,arg1,arg2)
+mode(-1);
 //
 // ardupilotmegaHil.sci
 // Copyright (C) James Goppert 2010 <jgoppert@users.sourceforge.net>

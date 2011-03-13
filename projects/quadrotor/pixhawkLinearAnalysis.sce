@@ -1,8 +1,8 @@
 mode(-1)
 exec steadycos.sci // load custom steadycos using NDcost
 load pixhawk.cos
-x = createIndex(["U","W","theta","wy","h","V","phi","wx","psi","wz","LR","FB","LRFB","SUM"]);
-y = createIndex(["U","W","theta","wy","h","V","phi","wx","psi","wz","LR","FB","LRFB","SUM"]);
+x = createIndex(["U","W","theta","wy","V","phi","wx","psi","wz","LR","FB","LRFB","SUM","pN","pE","h"]);
+y = x;
 u = createIndex(["LR","FB","LRFB","SUM"]);
 
 dynamics=scs_m.objs(1).model.rpar;
@@ -25,7 +25,7 @@ UM=U;
 motorLagTf = clean(ss2tf(lincos(motorLag,zeros(4,1),UM)),1e-5);
 
 sys.oltf = quadTf*motorLagTf
-sys.olss = minssAutoTol(tf2ss(sys.oltf),14);
+sys.olss = minssAutoTol(tf2ss(sys.oltf),16);
 
 function openLoopAnalysis(name,sys)
 	//sse
@@ -51,16 +51,16 @@ endfunction
 H.LR_wx = 0.5;
 H.FB_wy = 0.5;
 H.LRFB_wz = 1;
-H.Sum_W = 30*(%s+1)/(%s+40);
+H.Sum_h = 0.1 + 0.01*%s*20/(%s+20) + 0.01/%s;
 
 openLoopAnalysis("LR->wx",H.LR_wx*sys.oltf(y.wx,u.LR));
 openLoopAnalysis("FB->wy",H.FB_wy*sys.oltf(y.wy,u.FB));
 openLoopAnalysis("LRFB->wz",H.LRFB_wz*sys.oltf(y.wz,u.LRFB));
-openLoopAnalysis("SUM->W",H.Sum_W*sys.oltf(y.h,u.SUM));
+openLoopAnalysis("SUM->W",H.Sum_h*sys.oltf(y.h,u.SUM));
 
 // open loop analysis
 //scf(1); clf(1);
 subplot(1,4,1); bode(H.LR_wx*sys.oltf(x.wx,u.LR),.1,100,"LR->wx");
 subplot(1,4,2); bode(H.FB_wy*sys.oltf(x.wy,u.FB),.1,100,"FB->wy");
 subplot(1,4,3); bode(H.LRFB_wz*sys.oltf(x.wz,u.LRFB),.1,100,"LRFB->wz");
-subplot(1,4,4); bode(H.Sum_W*sys.oltf(x.h,u.SUM),.1,100,"SUM->h");
+subplot(1,4,4); bode(H.Sum_h*sys.oltf(x.h,u.SUM),.1,100,"SUM->h");
