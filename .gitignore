@@ -5,7 +5,6 @@ install_manifest.txt
 tags
 Makefile
 _CPack_Packages
-CPack*
 build
 *.dat
 *.stamp
