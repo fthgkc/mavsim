@@ -1,5 +1,5 @@
-//mode(-1);
-//lines(0);
+mode(-1);
+lines(0);
 
 mainpathB=get_absolute_file_path('builder.sce');
 
