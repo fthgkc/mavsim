@@ -18,7 +18,7 @@ qt4_add_resources(trim_res ${trim_res_src})
 
 include_directories(. ${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${QT_INCLUDE_DIRS} ${JSBSIM_INCLUDE_DIRS}
-	${OOOARK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+	${MAVSIM_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 
 set(trim_src
 	MainWindow.cpp
@@ -33,6 +33,6 @@ add_executable(mavsimTrim ${trim_src})
 add_dependencies(mavsimTrim JSBSIM)
 target_link_libraries(mavsimTrim ${OSG_LIBRARIES}
 	${QT_LIBRARIES} ${JSBSIM_LIBRARIES}
-	${OOOARK_LIBRARIES} ${Boost_LIBRARIES})
+	${MAVSIM_LIBRARIES} ${Boost_LIBRARIES})
 
 install(TARGETS mavsimTrim DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

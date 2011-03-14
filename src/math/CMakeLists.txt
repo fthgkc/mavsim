@@ -6,8 +6,8 @@ add_library(mavsimMath SHARED
 	)
 add_dependencies(mavsimMath BOOSTNUMERICBINDINGS)
 target_link_libraries(mavsimMath ${Boost_LIBRARIES} ${LAPACK_LIBRARIES})
-set_target_properties(mavsimMath PROPERTIES VERSION ${mavsim_VERSION}
-	SOVERSION ${mavsim_SOVERSION})
+set_target_properties(mavsimMath PROPERTIES VERSION ${LIBRARY_VERSION}
+	SOVERSION ${LIBRARY_SOVERSION})
 
 install(TARGETS mavsimMath DESTINATION lib)
 

@@ -1,70 +1,77 @@
-cmake_minimum_required (VERSION 2.6)
-
 project (mavsim)
 
-# marcos
-macro(find_or_build_from_source PACKAGE PACKAGE_PATH IS_GIT_SUBMODULE)
-	add_custom_target(${PACKAGE})
-	if (NOT ${PACKAGE}_BUILD_FROM_SOURCE)
-		find_package(${PACKAGE})
-	endif()
-	if (NOT ${PACKAGE}_FOUND)
-		set(${PACKAGE}_BUILD_FROM_SOURCE TRUE)
-		message(STATUS "could not find package ${PACKAGE}, building from source")
-		add_custom_target(${PACKAGE}_BUILD DEPENDS ${PACKAGE}_BUILD.stamp)
-		add_dependencies(${PACKAGE} ${PACKAGE}_BUILD)
-		set(${PACKAGE}_FOUND TRUE)
-		if (${IS_GIT_SUBMODULE})
-			message(STATUS "${PACKAGE} detected as git submodule, will attempt to initialize it")
-			list(APPEND GIT_SUBMODULES ${PACKAGE_PATH})
-			add_dependencies(${PACKAGE}_BUILD GIT)
-		endif()
-	endif()
-endmacro(find_or_build_from_source)
+# Requried cmake version
+cmake_minimum_required (VERSION 2.6)
 
-macro(set_default VAR DEFAULT)
-	if (NOT DEFINED ${VAR})
-		set(${VAR} ${DEFAULT})
-	endif()
-endmacro(set_default)
+# global needed variables
+set(APPLICATION_NAME ${PROJECT_NAME})
 
-# check for out of source build
-if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-	message(FATAL_ERROR "In-source builds are not allowed. For example run:
-	rm CMakeCache.txt
-	mkdir build
-	cd build
-	cmake ..
-	make")
-endif()
+set(APPLICATION_VERSION_MAJOR "0")
+set(APPLICATION_VERSION_MINOR "0")
+set(APPLICATION_VERSION_PATCH "0")
+
+set(APPLICATION_VERSION "${APPLICATION_VERSION_MAJOR}.${APPLICATION_VERSION_MINOR}.${APPLICATION_VERSION_PATCH}")
+
+# SOVERSION scheme: CURRENT.AGE.REVISION
+#   If there was an incompatible interface change:
+#     Increment CURRENT. Set AGE and REVISION to 0
+#   If there was a compatible interface change:
+#     Increment AGE. Set REVISION to 0
+#   If the source code was changed, but there were no interface changes:
+#     Increment REVISION.
+set(LIBRARY_VERSION "0.0.0")
+set(LIBRARY_SOVERSION "0")
+
+# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+set(CMAKE_MODULE_PATH
+	${CMAKE_SOURCE_DIR}/cmake/Modules
+)
+
+# add definitions
+include(DefineCMakeDefaults)
+include(DefinePlatformDefaults)
+include(DefineCompilerFlags)
+include(DefineInstallationPaths)
+include(DefineOptions.cmake)
+include(CPackConfig.cmake)
+
+# disallow in-source build
+include(MacroEnsureOutOfSourceBuild)
+macro_ensure_out_of_source_build("${PROJECT_NAME} requires an out of source build. 
+Please create a separate build directory and run 'cmake /path/to/${PROJECT_NAME} [options]' there.")
+
+# add macros
+include(MacroAddPlugin)
+include(MacroCopyFile)
+include(MacroFindOrBuild)
+include(MacroSetDefault)
+include(language_support_v2)
 
 # settings
-set(mavsim_VERSION_MAJOR 0)
-set(mavsim_VERSION_MINOR 0)
-set(mavsim_VERSION_PATCH 0)
-set(mavsim_SOVERSION 0)
+set(LIBRARY_VERSION_MAJOR 0)
+set(LIBRARY_VERSION_MINOR 0)
+set(LIBRARY_VERSION_PATCH 0)
+set(LIBRARY_SOVERSION 0)
 
-set_default(MAVLINK_BUILD_FROM_SOURCE FALSE)
-set_default(JSBSIM_BUILD_FROM_SOURCE FALSE)
-set_default(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE FALSE)
-set_default(STATIC_LINKING FALSE)
-set_default(IN_SRC_BUILD FALSE)
+MacroSetDefault(MAVLINK_BUILD_FROM_SOURCE FALSE)
+MacroSetDefault(JSBSIM_BUILD_FROM_SOURCE FALSE)
+MacroSetDefault(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE FALSE)
+MacroSetDefault(STATIC_LINKING FALSE)
+MacroSetDefault(IN_SRC_BUILD FALSE)
 
 # built variables
-set(mavsim_VERSION ${mavsim_VERSION_MAJOR}.${mavsim_VERSION_MINOR}.${mavsim_VERSION_PATCH})
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # only find static libraries
-if(STATIC_LINKING)
-	message(WARNING "static linking is not yet fully functional and will have linking errors")
-	if(WIN32)
-		set(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
-	else(WIN32)
-		set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
-	endif(WIN32)
-endif()
+#if(STATIC_LINKING)
+	#message(WARNING "static linking is not yet fully functional and will have linking errors")
+	#if(WIN32)
+		#set(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+	#else(WIN32)
+		#set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+	#endif(WIN32)
+#endif()
 
 # set build type
 if(NOT CMAKE_BUILD_TYPE)
@@ -74,7 +81,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # enable languages
-include(${CMAKE_MODULE_PATH}/language_support_v2.cmake) 
 enable_language(C)
 enable_language(CXX)
 workaround_9220(Fortran Fortran_langurage_works)
@@ -83,37 +89,8 @@ if (Fortran_langurage_works)
 endif(Fortran_langurage_works)
 
 # initialize variables
-set(OOOARK_LIBRARIES mavsimNavigation mavsimCommunication)
+set(MAVSIM_LIBRARIES mavsimNavigation mavsimCommunication)
 set(SCICOSLAB_BLOCKS stdBlocks;jsbsimBlocks;mavlinkBlocks)
-
-# installer
-include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${mavsim_VERSION}")
-set(CPACK_GENERATOR "DEB")
-set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
-set(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
-set(CPACK_SET_DESTDIR TRUE)
-set(CPACK_PACKAGE_CONTACT "James Goppert james.goppert@gmail.com")
-set(CPACK_PACKAGE_DESCRITION_SUMMARY "
-    The Open Object Oriented Autonomous Robotics Kit
-
-    This library is useful for controller design for unmanned
-	vehicles. It has a trim gui based on qt that can be used
-    to craete a linaer model of JSBSim flight dynamic model.
-    This model can then be used in the Scicoslab toolbox
-    provided for controller design. A simple bicyle model
-    for ground vehicles is also implemented in one of the
-    demonstration blocks. Hardware in the loop simulation
-    is enabled via the MAVLINK protocol.	
-	")
-set(CPACK_SOURCE_IGNORE_FILES ${CPACK_SOURCE_IGNORE_FILES}
-	/.git/;/build/;~$;.*\\\\.bin$;.*\\\\.swp$)
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
-set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README")
-set(CPACK_PACKAGE_VERSION_MAJOR ${mavsim_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${mavsim_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${mavsim_VERSION_PATCH})
-include(CPack)
 
 # add make dist target
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
@@ -145,10 +122,10 @@ endif()
 find_package(LAPACK)
 find_package(SIMGEAR)
 find_package(SCICOSLAB)
-find_or_build_from_source(BOOSTNUMERICBINDINGS thirdParty/boost-numeric-bindings FOUND_GIT_REPO)
-find_or_build_from_source(JSBSIM thirdParty/jsbsim FOUND_GIT_REPO)
-find_or_build_from_source(MAVLINK thirdParty/mavlink FOUND_GIT_REPO)
-find_or_build_from_source(EASYSTAR data/easystar FOUND_GIT_REPO)
+MacroFindOrBuild(BOOSTNUMERICBINDINGS thirdParty/boost-numeric-bindings FOUND_GIT_REPO)
+MacroFindOrBuild(JSBSIM thirdParty/jsbsim FOUND_GIT_REPO)
+MacroFindOrBuild(MAVLINK thirdParty/mavlink FOUND_GIT_REPO)
+MacroFindOrBuild(EASYSTAR data/easystar FOUND_GIT_REPO)
 
 # build libraries from source if not found on system
 if(JSBSIM_BUILD_FROM_SOURCE)
@@ -185,7 +162,7 @@ endif()
 if(IN_SRC_BUILD)
 	message(STATUS "configuring for in source build")
 	set(DATADIR ${PROJECT_SOURCE_DIR}/data)
-	set(LIBDIR ${CMAKE_SOURCE_DIR}/data)
+	set(LIBDIR ${CMAKE_BINARY_DIR}/bin)
 	set(BINDIR ${CMAKE_BINARY_DIR}/bin)
 else()
 	message(STATUS "configuring for install build")
@@ -228,7 +205,7 @@ endif()
 
 message(STATUS "\tOpenSceneGraph\t${OPENSCENEGRAPH_FOUND}")
 if (OPENSCENEGRAPH_FOUND)
-	list(APPEND OOOARK_LIBRARIES mavsimVisualization)
+	list(APPEND MAVSIM_LIBRARIES mavsimVisualization)
 	list(APPEND SCICOSLAB_BLOCKS osgBlocks)
 endif()
 
@@ -242,7 +219,7 @@ endif ()
 
 message(STATUS "\tLapack\t\t${LAPACK_FOUND}")
 if (LAPACK_FOUND)
-	list(APPEND OOOARK_LIBRARIES mavsimMath)
+	list(APPEND MAVSIM_LIBRARIES mavsimMath)
 	list(APPEND SCICOSLAB_BLOCKS lapackBlocks)
 endif ()
 

@@ -53,16 +53,17 @@ set(CMAKE_C_FLAGS -lpthread)
 add_library(mavsimScicos MODULE ${mavsimScicosSources})
 add_dependencies(mavsimScicos JSBSIM)
 
-target_link_libraries(mavsimScicos ${OOOARK_LIBRARIES} ${JSBSIM_LIBRARIES} ${LAPACK_LIBRARIES} -lpthread)
+target_link_libraries(mavsimScicos ${MAVSIM_LIBRARIES} ${JSBSIM_LIBRARIES} ${LAPACK_LIBRARIES} -lpthread)
 
-set_target_properties(mavsimScicos PROPERTIES VERSION ${mavsim_VERSION}
-    SOVERSION ${mavsim_SOVERSION})
+set_target_properties(mavsimScicos PROPERTIES VERSION ${LIBRARY_VERSION}
+    SOVERSION ${LIBRARY_SOVERSION})
 
 add_custom_target(mavsimToolbox ALL
 	DEPENDS mavsimScicos
     COMMAND cd ${PROJECT_SOURCE_DIR}/mavsim-toolbox && ./build.sh)
 
-get_target_property(SCICOSLAB_LOCATION mavsimScicos LOCATION)
+get_target_property(MAVSIM_SCICOS_LOCATION mavsimScicos LOCATION)
+get_target_property(MAVSIM_COMMUNICATION_LOCATION mavsimCommunication LOCATION)
 
 set(SCICOSLAB_INSTALL_SETTINGS 0)
 configure_file(loadscicos.sce.in ${CMAKE_SOURCE_DIR}/mavsim-toolbox/scicos/loadscicos.sce)

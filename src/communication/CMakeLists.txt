@@ -27,8 +27,8 @@ add_library(mavsimCommunication SHARED ${mavsimCommunicationSources})
 add_dependencies(mavsimCommunication MAVLINK)
 target_link_libraries(mavsimCommunication ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
 set_target_properties(mavsimCommunication PROPERTIES 
-	VERSION ${mavsim_VERSION} 
-	SOVERSION ${mavsim_SOVERSION})
+	VERSION ${LIBRARY_VERSION} 
+	SOVERSION ${LIBRARY_SOVERSION})
 
 install(TARGETS mavsimCommunication DESTINATION lib)
 install(FILES ${mavsimCommunicationHeaders} DESTINATION include/mavsim/communication)

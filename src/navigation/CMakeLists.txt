@@ -11,8 +11,8 @@ set(mavsimNavigationHeaders
 add_library(mavsimNavigation SHARED ${mavsimNavigationSources})
 target_link_libraries(mavsimNavigation ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
 set_target_properties(mavsimNavigation PROPERTIES 
-	VERSION ${mavsim_VERSION} 
-	SOVERSION ${mavsim_SOVERSION})
+	VERSION ${LIBRARY_VERSION} 
+	SOVERSION ${LIBRARY_SOVERSION})
 
 install(TARGETS mavsimNavigation DESTINATION lib)
 install(FILES ${mavsimNavigationHeaders} DESTINATION include/mavsim/navigation)

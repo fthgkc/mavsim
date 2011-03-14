@@ -29,9 +29,9 @@ mavlinkBlocks=['sci_mavlinkHilSensor';'sci_mavlinkHilState';'sci_mavlinkHilTrack
 blocks=[@SCICOSLAB_BLOCKS@]';
 
 if (scicoslabInstallSettings) then
-	link('@LIBDIR@/libmavsimScicos.so',blocks,'c');
+	link(['@LIBDIR@/libmavsimScicos.so'],blocks,'c');
 else
-	link('@SCICOSLAB_LOCATION@',blocks,'c');
+	link(['@MAVSIM_SCICOS_LOCATION@'],blocks,'c');
 end
 
 genlib('lib_mavsim',pwd()+'/mavsim');

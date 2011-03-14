@@ -27,8 +27,8 @@ endif(QT_FOUND)
 
 add_library(mavsimVisualization SHARED ${mavsimVisualizationSource})
 
-set_target_properties(mavsimVisualization PROPERTIES VERSION ${mavsim_VERSION}
-	SOVERSION ${mavsim_SOVERSION})
+set_target_properties(mavsimVisualization PROPERTIES VERSION ${LIBRARY_VERSION}
+	SOVERSION ${LIBRARY_SOVERSION})
 
 install(TARGETS mavsimVisualization DESTINATION lib)
 install(FILES ${mavsimVisualizationHeaders} DESTINATION include/mavsim/visualization)
