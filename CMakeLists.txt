@@ -46,6 +46,7 @@ include(MacroCopyFile)
 include(MacroFindOrBuild)
 include(MacroSetDefault)
 include(language_support_v2)
+include(MacroAddLinkFlags)
 
 # settings
 set(LIBRARY_VERSION_MAJOR 0)

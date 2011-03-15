@@ -49,7 +49,11 @@ if (OPENSCENEGRAPH_FOUND)
 	include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
 	link_directories( ${OSG_LIBRARY_DIRS} ) 
 endif(OPENSCENEGRAPH_FOUND)
-set(CMAKE_C_FLAGS -lpthread)
+
+set(CMAKE_C_FLAGS "-lpthread -Wl,undefined,suppress")
+set(CMAKE_CXX_FLAGS "-lpthread -Wl,-undefined,suppress")
+set(CMAKE_LD_FLAGS "-Wl,-undefined,suppress")
+
 add_library(mavsimScicos MODULE ${mavsimScicosSources})
 add_dependencies(mavsimScicos JSBSIM)
 
