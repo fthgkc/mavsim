@@ -18,9 +18,7 @@ do
 	if [ $OPT = "in_source_build" ] &> /dev/null
 	then
 		echo you chose in source build
-		mkdir -p build && cd build && cmake -DCXXFLAGS="-fPIC" \
-			-DCPPFLAGS="-fPIC" -DCFLAGS="-fPIC" \
-			-DIN_SRC_BUILD:bool=TRUE .. && make $MAKEARGS
+		mkdir -p build && cd build && cmake -DIN_SRC_BUILD:bool=TRUE .. && make $MAKEARGS
 		exit 0
 	elif [ $OPT = "install_build" ] &> /dev/null
 	then
