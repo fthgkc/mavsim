@@ -48,7 +48,6 @@ void sci_navigationEquations(scicos_block *block, scicos::enumScicosFlags flag)
     // data
     double * u1=(double*)GetInPortPtrs(block,1);
     double * u2=(double*)GetInPortPtrs(block,2);
-    double * u3=(double*)GetInPortPtrs(block,3);
     double * y1=(double*)GetOutPortPtrs(block,1);
 
     double * rpar=block->rpar;
@@ -59,9 +58,9 @@ void sci_navigationEquations(scicos_block *block, scicos::enumScicosFlags flag)
     double & V     = u1[1];
     double & W     = u1[2];
 
-    double & phi   = u2[3];
-    double & theta = u2[4];
-    double & psi   = u2[5];
+    double & phi   = u2[0];
+    double & theta = u2[1];
+    double & psi   = u2[2];
 
     // sizes
     int nY = 3;
