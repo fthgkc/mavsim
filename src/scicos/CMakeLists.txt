@@ -64,9 +64,12 @@ target_link_libraries(mavsimScicos ${MAVSIM_LIBRARIES} ${JSBSIM_LIBRARIES} ${LAP
 set_target_properties(mavsimScicos PROPERTIES VERSION ${LIBRARY_VERSION}
     SOVERSION ${LIBRARY_SOVERSION})
 
-add_custom_target(mavsimToolbox ALL
-	DEPENDS mavsimScicos
-    COMMAND cd ${PROJECT_SOURCE_DIR}/mavsim-toolbox && ./build.sh)
+if (UNIX)
+	# if using unix add nifty script to see if scicoslab toolbox builds correctly
+	add_custom_target(mavsimToolbox ALL
+		DEPENDS mavsimScicos
+		COMMAND cd ${PROJECT_SOURCE_DIR}/mavsim-toolbox && ./build.sh)
+endif()
 
 get_target_property(MAVSIM_SCICOS_LOCATION mavsimScicos LOCATION)
 get_target_property(MAVSIM_COMMUNICATION_LOCATION mavsimCommunication LOCATION)
