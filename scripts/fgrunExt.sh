@@ -3,6 +3,7 @@ if [ $# != 1 ]
 then
 	echo program for communicating with jsbsimcomm
 	echo usage: $0 aircraft
+	fgfs --show-aircraft
 	exit
 fi
 aircraft=$1
