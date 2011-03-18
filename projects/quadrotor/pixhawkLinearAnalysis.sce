@@ -162,33 +162,18 @@ f=scf(1); clf(1);
 f.figure_size=[600,600];
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([sPitch*pade(PID_ATT_INTERVAL);sPN*pade(PID_POS_INTERVAL)],0.1,99,.01,["pitch";"position north"])
-xs2ps(1,'northChannel');
+xs2eps(1,'north_channel');
 
 f=scf(2); clf(2);
 f.figure_size=[600,600];
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([sPN*pade(4);sPN*pade(2);sPN*pade(1);sPN*pade(1/2);sPN*pade(1/4);sPN*pade(1/16)],0.1,99,.01,..
 	["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
+xs2eps(2,'north_channel_closed_loop_zoh');
 
 f=scf(3); clf(3);
 f.figure_size=[600,600];
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([sPNOpen*pade(4);sPNOpen*pade(2);sPNOpen*pade(1);sPNOpen*pade(1/2);sPNOpen*pade(1/4);sPNOpen*pade(1/16)],0.01,.99,.01,..
 	["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
-
-//H.LR_wx = 0.5;
-//H.FB_wy = 0.5;
-//H.LRFB_wz = 1;
-//H.Sum_h = 0.1 + 0.01*%s*20/(%s+20) + 0.01/%s;
-
-//openLoopAnalysis("LR->wx",H.LR_wx*sys.oltf(y.wx,u.LR));
-//openLoopAnalysis("FB->wy",H.FB_wy*sys.oltf(y.wy,u.FB));
-//openLoopAnalysis("LRFB->wz",H.LRFB_wz*sys.oltf(y.wz,u.LRFB));
-//openLoopAnalysis("SUM->W",H.Sum_h*sys.oltf(y.h,u.SUM));
-
-// open loop analysis
-//scf(1); clf(1);
-//subplot(1,4,1); bode(H.LR_wx*sys.oltf(x.wx,u.LR),.1,100,"LR->wx");
-//subplot(1,4,2); bode(H.FB_wy*sys.oltf(x.wy,u.FB),.1,100,"FB->wy");
-//subplot(1,4,3); bode(H.LRFB_wz*sys.oltf(x.wz,u.LRFB),.1,100,"LRFB->wz");
-//subplot(1,4,4); bode(H.Sum_h*sys.oltf(x.h,u.SUM),.1,100,"SUM->h");
+xs2eps(3,'north_channel_open_loop_zoh');
