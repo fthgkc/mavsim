@@ -1,52 +1,59 @@
 mode(-1);
 
 function data = quadForwardFlightDesign(H)
-
-    // solve for pitch angle at trim;
-    deff('[y]=theta_sol(x)','y=(-4*%pi^2*rho*x^2*sin(x)*K_cd_cl-rho*sin(x)*'+..
-           'Cd0-2*%pi*rho*x*cos(x))*s_frame*Vt^2+(2*cos(x)*sin(x)^2+2*cos(x)^3)*g*m');
-    theta=fsolve(-17*%pi/180,theta_sol)
-    alpha=theta;
-    data.trim.theta=theta;
-
-    // solve for T_sumSq at trim
-    //check the equation below; there was a minus sign in front
-    T_sumSq_trim= ((1800*%pi^2*rho*theta^2*K_cd_cl+450*rho*Cd0)*..
-    s_frame*Vt^2)/(%pi^3*cos(theta)*rho*batVolt^2*KV^2*rBlade^4*C_T)
+    theta = 0;
+	data.trim.theta = theta;
+	T_sumSq_trim = 900*g*m/(%pi^3*rho*batVolt^2*KV^2*rBlade^4*C_T);
+	printf("\n\tT_sumSq_trim: %f\n", T_sumSq_trim);
     data.trim.T_sumSq = T_sumSq_trim;
     T_sumSq=T_sumSq_trim;
     dutycycle_L=T_sumSq/4; dutycycle_R=T_sumSq/4;
     dutycycle_F=T_sumSq/4; dutycycle_B=T_sumSq/4;
 
     // include dynamics
-    exec quad_wind_dynamics.sci;
-    olss = minss(syslin('c',F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad));
-    oltf = ss2tf(olss);
+    exec quad_body_dynamics.sci;
+
+    // pade approximation for controller input sample hold
+    nU = size(G_body_quad,2);
+    pade = (1-%s*controlPeriod/6)/(1 + %s*controlPeriod/3);
+
+    // compute plant
+	olssCont = minss(syslin('c',F_body_quad,G_body_quad,C_body_quad,D_body_quad));
+    oltfCont = clean(ss2tf(olssCont),1e-8);
+    olss = olssCont*(pade*eye(nU,nU));
+    oltf = clean(ss2tf(olss),1e-8);
 
     // define variables
-    x = createIndex(["Vt" "alpha" "theta" "wy" "h" "beta" "phi" "wx" "psi" "wz" "dcL" "dcR" "dcF" "dcB"]);
-    y = createIndex(["Vt" "theta" "wy" "h" "phi" "wx" "psi" "wz"]);
+    x = createIndex(["U" "W" "wy" "h" "V" "phi" "wx" "psi" "wz" "dcL" "dcR" "dcF" "dcB"]);
+    y = createIndex(["U" "W" "theta" "wy" "h" "V" "phi" "wx" "psi" "wz"]);
     u = createIndex(["Sum" "FB" "LR" "LR_FB"]);
 
     // save to data structure
     data.x = x; data.y = y; data.u = u; data.H = H;
     data.olss = olss; data.oltf = oltf;
+	data.olssCont = olssCont; data.oltfCont = oltfCont;
+	data.pade = pade;
 
     // initialize closed loop as open before closures
     data.clss = olss; data.cltf = oltf;
 
-    printf("\n\nQuad Forward Flight: Classical Design\n");
-    printf("=================================================================================\n");
 
+    printf("\n\nQuadrotor Hover : Classical Design\n");
+    printf("==============================================================================================\n");
+    printf("\ty\t\tu\tstability\tgain\tphase\tband\tH dc\tsteady\n");
+    printf("\t\t\t\t\t\tmargin\tmargin\twidth\tgain\tstate error \%\n");
+    printf("----------------------------------------------------------------------------------------------\n");
     // controllers
     data = closeLoop(data,      data.y.wx,      data.u.LR,      H.wx_LR);
     data = closeLoop(data,      data.y.wy,      data.u.FB,      H.wy_FB);
     data = closeLoop(data,      data.y.wz,      data.u.LR_FB,   H.wz_LR_FB);
-    data = closeLoop(data,      data.y.Vt,      data.u.Sum,     H.Vt_Sum);
+    data = closeLoop(data,      data.y.W,       data.u.Sum,     H.W_Sum);
     data = closeLoop(data,      data.y.phi,     data.u.wx,      H.phi_wx);
-    data = closeLoop(data,      data.y.theta,   data.u.wy,      H.theta_wy); 
-    data = closeLoop(data,      data.y.psi,     data.u.phi,     H.psi_phi);
-    data = closeLoop(data,      data.y.h,       data.u.theta,   H.h_theta);
+    data = closeLoop(data,      data.y.theta,   data.u.wy,      H.theta_wy);
+    data = closeLoop(data,      data.y.psi,     data.u.wz,      H.psi_wz); 
+    data = closeLoop(data,      data.y.U,       data.u.theta,   H.U_theta);
+    data = closeLoop(data,      data.y.V,       data.u.phi,     H.V_phi);
+    data = closeLoop(data,      data.y.h,       data.u.W,       H.h_W);
     // The order that you close the loops here matters. The inner loop will have a higher bandwidth.
 
     [eVec, eVal] = spec(data.clss.A);
@@ -62,8 +69,8 @@ function data = quadForwardFlightDesign(H)
         printf("\n\tslowest stable time constant: %f Hz",abs(minVal/(2*%pi)));
     end
 
-    printf("\n\nQuad Forward Flight : Modern LQG Design Analysis\n");
-    printf("=================================================================================\n");
+    printf("\n\nQuadrotor Hover : Modern LQG Regulator Design Analysis\n");
+    printf("==============================================================================================\n");
     // modern control design
     nX = size(olss.A,1);
     nY = size(olss.C,1);
@@ -74,7 +81,7 @@ function data = quadForwardFlightDesign(H)
     R = eye(nX+nY,nX+nY); // measurement error  penality
     [P,r] = lqg2stan(minss(olss),Q,R);
     K.ss = minss(lqg(P,r));
-    K.tf = ss2tf(K.ss);
+    K.tf = clean(ss2tf(K.ss));
     [eVec, eVal] = spec(h_cl(P,r,K.ss));
      if (max(real(diag(eVal))) > 0)
         printf("\n\tWARNING: UNSTABLE!!!!!");
@@ -88,6 +95,7 @@ function data = quadForwardFlightDesign(H)
     printf("\n\tLQG state space sizes\ty:%d\tu:%d\tx:%d",size(K.ss,1),size(K.ss,2),size(K.ss.A,1));
     data.K_modern.ss = K.ss;
     data.K_modern.tf = K.tf;
+
 endfunction
 
 // vim:ts=4:sw=4:expandtab

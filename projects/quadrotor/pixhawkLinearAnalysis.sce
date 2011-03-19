@@ -35,11 +35,8 @@ function openLoopAnalysis(name,sys)
 endfunction
 
 // close a loop
-function [sysOut,uOut] = closeLoop(yi,ui,sys,u,H_vect)
-	nLoops = max(size(ui));
-	for i=1:nLoops
-		H(i,i) = H_vect(i,1);
-	end
+function [sysOut,uOut] = closeLoop2(yi,ui,sys,y,u,H)
+	openLoopAnalysis(y.str(yi)+"->"+u.str(ui),H*sys(yi,ui));
 	sysOut = unityFeedback(yi,ui,sys,H);
 	uOut = createIndex(y.str(yi),u);
 endfunction
@@ -137,39 +134,30 @@ H.pE_Roll = 0.05*pidCont(PID_POS_P,PID_POS_I,PID_POS_D,PID_POS_INTERVAL);
 H.pD_SUM = pidCont(PID_POS_Z_P,PID_POS_Z_I,PID_POS_Z_D,PID_POS_INTERVAL);
 
 // attitude loops
-s0 = sys.olss;
-[s1,u] = closeLoop([y.pD,y.pitch,y.roll,y.yawRate],..
-	[u.SUM,u.FB,u.LR,u.LRFB],s0,u,..
-	[H.pD_SUM;H.Pitch_FB;H.Roll_LR;H.YawRate_LRFB]);
-[s2,u] = closeLoop(y.yaw,u.yawRate,s1,u,H.Yaw_YawRate);
+s = sys.oltf;
+[s,u] = closeLoop2(y.pitch,u.FB,s,y,u,.1*H.Pitch_FB);
+sPitch = s(y.pitch,u.pitch);
+//[s,u] = closeLoop2(y.roll,u.LR,s,y,u,H.Roll_LR);
+//[s,u] = closeLoop2(y.yawRate,u.LRFB,s,y,u,H.YawRate_LRFB);
+//[s,u] = closeLoop2(y.yaw,u.LR,s,y,u,H.Yaw_YawRate);
 
 // position loops
 // we can tie in pitch and roll directly since for trim we are aligned with
 // North/ East frame
-[s3,u] = closeLoop([y.pN;y.pE],..
-	[u.pitch;u.roll],..
-	s2,u,[H.pN_Pitch;H.pE_Roll]);
+//sPNOpen = -s(y.pN,u.pitch)*H.pN_Pitch;
+[s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_Pitch);
+//sPN = s(y.pN,u.pN);
+//[s,u] = closeLoop2(y.pE,u.pitch,s,y,u,H.pE_Roll);
+//[s,u] = closeLoop2(y.pD,u.SUM,s,y,u,H.pD_SUM);
 
-openLoopAnalysis("pD->SUM",clean(ss2tf(minss(H.pD_SUM*s1(y.pD,u.SUM)))));
-openLoopAnalysis("roll->LR",clean(ss2tf(minss(H.Roll_LR*s1(y.roll,u.LR)))));
-openLoopAnalysis("pitch->FB",clean(ss2tf(minss(H.Pitch_FB*s1(y.pitch,u.FB)))));
-//openLoopAnalysis("yaw->LRFB",clean(ss2tf(minss(H.YawRate_LRFB*s2(y.yawRate,u.LRFB)))));
-//openLoopAnalysis("yawRate->yaw",clean(ss2tf(minss(H.Yaw_YawRate*s2(y.yawRate,u.yaw)))));
-
-openLoopAnalysis("pN->pitch",clean(ss2tf(minss(H.pN_Pitch*s3(y.pN,u.pitch)))));
-openLoopAnalysis("pE->roll",clean(ss2tf(minss(H.pE_Roll*s3(y.pE,u.roll)))));
-
-// pull out specific plants
-sPitch = ss2tf(s2(y.pitch,u.pitch));
-sPN = ss2tf(s3(y.pN,u.pN));
-sPNOpen = -ss2tf(s2(y.pN,u.pitch)*H.pN_Pitch);
-
+// position north, and pitch
 f=scf(1); clf(1);
 f.figure_size=[600,600];
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([sPitch*pade(PID_ATT_INTERVAL);sPN*pade(PID_POS_INTERVAL)],0.1,99,.01,["pitch";"position north"])
 xs2eps(1,'pN_pitch');
 
+// zoh time effect on pN closed loop
 f=scf(2); clf(2);
 f.figure_size=[600,600];
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
@@ -177,6 +165,7 @@ bode([sPN*pade(4);sPN*pade(2);sPN*pade(1);sPN*pade(1/2);sPN*pade(1/4);sPN*pade(1
 	["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
 xs2eps(2,'pN_closed_zoh');
 
+// zoh time effect on pN open loop
 f=scf(3); clf(3);
 f.figure_size=[600,600];
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
