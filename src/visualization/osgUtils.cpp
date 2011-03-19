@@ -504,10 +504,10 @@ Car::Car() :
 	modelPat = new PositionAttitudeTransform;
 	modelPat->setAttitude(osg::Quat(-M_PI/2,osg::Vec3(1,0,0)));
 	modelPat->addChild(model);
-    myWheelLF.reset(new Actuator("wheelLF",osg::Vec3(3.5,-3,1),model));
-    myWheelLB.reset(new Actuator("wheelLB",osg::Vec3(-3.5,-3,1),model));
-    myWheelRF.reset(new Actuator("wheelRF",osg::Vec3(3.5,3,1),model));
-    myWheelRB.reset(new Actuator("wheelRB",osg::Vec3(-3.5,3,1),model));
+    myWheelLF.reset(new Actuator("wheelLF",osg::Vec3(0.304,-0.087,0.260),model));
+    myWheelRF.reset(new Actuator("wheelRF",osg::Vec3(0.304,-0.087,-0.260),model));
+    myWheelLB.reset(new Actuator("wheelLB",osg::Vec3(-0.304,-0.087,0.260),model));
+    myWheelRB.reset(new Actuator("wheelRB",osg::Vec3(-0.304,-0.087,-0.260),model));
     addChild(modelPat);
 }
 
@@ -529,12 +529,12 @@ void Car::setU(double throttle, double steering, double velocity)
 	myWheelLF->setAttitude(osg::Quat(
 					myTireAngleLF-=0.5*throttle,osg::Vec3(0,0,1),
                     0,osg::Vec3(1,0,0),
-                    steering,osg::Vec3(0,1,0)));
+                    steering,osg::Vec3(0,-1,0)));
 	myWheelLB->setAttitude(osg::Quat(myTireAngleLB-=0.5*throttle,osg::Vec3(0,0,1)));
 	myWheelRF->setAttitude(osg::Quat(
 					myTireAngleRF-=0.5*throttle,osg::Vec3(0,0,1),
                     0,osg::Vec3(1,0,0),
-                    steering,osg::Vec3(0,1,0)));
+                    steering,osg::Vec3(0,-1,0)));
 	myWheelRB->setAttitude(osg::Quat(myTireAngleRB-=0.5*throttle,osg::Vec3(0,0,1)));
 }
 
