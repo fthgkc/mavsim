@@ -409,11 +409,11 @@ Jet::Jet() :
 	modelPat = new PositionAttitudeTransform;
 	modelPat->setAttitude(osg::Quat(-M_PI/2,osg::Vec3(1,0,0)));
 	modelPat->addChild(model);
-    myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-1.077,2.652,-0.319),model));
-    myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-1.077,-2.652,-0.319),model));
-    myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-5.806,1.511,0.320),model));
-    myRightElevator.reset(new Actuator("rightElevator",osg::Vec3(-5.806,-1.511,0.320),model));
-    myRudder.reset(new Actuator("rudder",osg::Vec3(-6.508,0,2.473),model));
+    myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-1.077,-0.319,2.652),model));
+    myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-1.075,-0.319,-2.652),model));
+    myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-5.806,0.320,1.511),model));
+    myRightElevator.reset(new Actuator("rightElevator",osg::Vec3(-5.806,0.320,-1.511),model));
+    myRudder.reset(new Actuator("rudder",osg::Vec3(-6.485,2.114,0.000),model));
     myThrustPlume.reset(new Actuator("thrustPlume",osg::Vec3(0,0,0),model));
     addChild(modelPat);
 }
@@ -433,11 +433,11 @@ void Jet::setPositionScalars(double x, double y, double z)
 
 void Jet::setU(double throttle, double aileron, double elevator, double rudder)
 {
-    myLeftAileron->setAttitude(osg::Quat(aileron,osg::Vec3(0,1,0)));
-    myRightAileron->setAttitude(osg::Quat(-aileron,osg::Vec3(0,1,0)));
-    myLeftElevator->setAttitude(osg::Quat(elevator,osg::Vec3(0,1,0)));
-    myRightElevator->setAttitude(osg::Quat(elevator,osg::Vec3(0,1,0)));
-    myRudder->setAttitude(osg::Quat(rudder,osg::Vec3(0,0,1)));
+    myLeftAileron->setAttitude(osg::Quat(aileron,osg::Vec3(0,0,1)));
+    myRightAileron->setAttitude(osg::Quat(-aileron,osg::Vec3(0,0,1)));
+    myLeftElevator->setAttitude(osg::Quat(elevator,osg::Vec3(0,0,1)));
+    myRightElevator->setAttitude(osg::Quat(elevator,osg::Vec3(0,0,1)));
+    myRudder->setAttitude(osg::Quat(rudder,osg::Vec3(0,1,0)));
 	myThrustPlume->setPosition(3-3*throttle,0,0);
 }
 
@@ -455,12 +455,12 @@ Plane::Plane() :
 	modelPat = new PositionAttitudeTransform;
 	modelPat->setAttitude(osg::Quat(-M_PI/2,osg::Vec3(1,0,0)));
 	modelPat->addChild(model);
-    myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-0.142,-7.852,1.249),model));
-    myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-0.142,7.852,1.249),model));
-    myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-12.895,-1.820,0.021),model));
-    myRightElevator.reset(new Actuator("rightElevator",osg::Vec3(-12.895,1.820,0.021),model));
-    myRudder.reset(new Actuator("rudder",osg::Vec3(-12.598,0.003,.522),model));
-    myPropeller.reset(new Actuator("propeller",osg::Vec3(8.657,0,0.788),model));
+    myLeftAileron.reset(new Actuator("leftAileron",osg::Vec3(-0.063,-0.559,3.514),model));
+    myRightAileron.reset(new Actuator("rightAileron",osg::Vec3(-0.063,-0.559,-3.514),model));
+    myLeftElevator.reset(new Actuator("leftElevator",osg::Vec3(-5.651,-0.019,-0.115),model));
+    myRightElevator.reset(new Actuator("rightElevator",osg::Vec3(-5.651,0.019,-0.115),model));
+    myRudder.reset(new Actuator("rudder",osg::Vec3(-5.638,0.234,0.000),model));
+    myPropeller.reset(new Actuator("propeller",osg::Vec3(3.874,-0.353,0.003),model));
     addChild(modelPat);
 }
 
@@ -479,11 +479,11 @@ void Plane::setPositionScalars(double x, double y, double z)
 
 void Plane::setU(double throttle, double aileron, double elevator, double rudder)
 {
-	myLeftAileron->setAttitude(osg::Quat(aileron,osg::Vec3(0,1,0)));
-	myRightAileron->setAttitude(osg::Quat(-aileron,osg::Vec3(0,1,0)));
-	myLeftElevator->setAttitude(osg::Quat(elevator,osg::Vec3(0,1,0)));
-	myRightElevator->setAttitude(osg::Quat(elevator,osg::Vec3(0,1,0)));
-	myRudder->setAttitude(osg::Quat(rudder,osg::Vec3(0,0,1)));
+	myLeftAileron->setAttitude(osg::Quat(aileron,osg::Vec3(0,0,1)));
+	myRightAileron->setAttitude(osg::Quat(-aileron,osg::Vec3(0,0,1)));
+	myLeftElevator->setAttitude(osg::Quat(elevator,osg::Vec3(0,0,1)));
+	myRightElevator->setAttitude(osg::Quat(elevator,osg::Vec3(0,0,1)));
+	myRudder->setAttitude(osg::Quat(rudder,osg::Vec3(0,1,0)));
 	myPropeller->setAttitude(osg::Quat(propAngle+=5*throttle,osg::Vec3(1,0,0)));
 }
 
@@ -527,15 +527,15 @@ void Car::setPositionScalars(double x, double y, double z)
 void Car::setU(double throttle, double steering, double velocity)
 {
 	myWheelLF->setAttitude(osg::Quat(
-					myTireAngleLF-=0.5*throttle,osg::Vec3(0,1,0),
+					myTireAngleLF-=0.5*throttle,osg::Vec3(0,0,1),
                     0,osg::Vec3(1,0,0),
-                    steering,osg::Vec3(0,0,1)));
-	myWheelLB->setAttitude(osg::Quat(myTireAngleLB-=0.5*throttle,osg::Vec3(0,1,0)));
+                    steering,osg::Vec3(0,1,0)));
+	myWheelLB->setAttitude(osg::Quat(myTireAngleLB-=0.5*throttle,osg::Vec3(0,0,1)));
 	myWheelRF->setAttitude(osg::Quat(
-					myTireAngleRF-=0.5*throttle,osg::Vec3(0,1,0),
+					myTireAngleRF-=0.5*throttle,osg::Vec3(0,0,1),
                     0,osg::Vec3(1,0,0),
-                    steering,osg::Vec3(0,0,1)));
-	myWheelRB->setAttitude(osg::Quat(myTireAngleRB-=0.5*throttle,osg::Vec3(0,1,0)));
+                    steering,osg::Vec3(0,1,0)));
+	myWheelRB->setAttitude(osg::Quat(myTireAngleRB-=0.5*throttle,osg::Vec3(0,0,1)));
 }
 
 Quad::Quad() :
