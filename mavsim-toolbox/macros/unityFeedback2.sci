@@ -1,4 +1,4 @@
-function sys = unityFeedback(y,u,G,H)
+function sys = unityFeedback2(y,u,G,H)
 
     // sizes
     nY = size(G,1);
@@ -28,8 +28,8 @@ function sys = unityFeedback(y,u,G,H)
 	D = zeros(nU,nH);
 	for (i=1:nH) D(u(i),i) = 1; end;
 	oltf = G*D*diag(H);
-    disp(ss2tf(oltf))
-    sys=(eye(nY,nY)+oltf*C)\[G,oltf];
-    sys = clean(ss2tf(minss(sys,1e-10)));
+    nPoles=size(abcd(H),1)+size(abcd(G),1);
+    printf("nPoles: %d\n",nPoles);
+    sys=minssAutoTol((eye(nY,nY)+oltf*C)\[G,oltf],nPoles);
 endfunction
 // vim:sw=4:ts=4:expandtab

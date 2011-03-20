@@ -14,30 +14,25 @@ endfunction
 
 // open loop statistics
 function openLoopAnalysis(name,sys)
+	if(typeof(sys)=="state-space") sys=clean(ss2tf(minss(sys,1e-100))); end
+	//disp("sys:"); disp(sys)
 	//sse
 	sse=1/(horner(sys,1e-10));
+
 	if (sse>1e6) sse=%inf; end
 
-	// pm/gm
-	if (sys == 0)
-		pm = -%inf;
-		gm = -%inf;
-	else
-		pm = p_margin(sys)+180;
-		for i=1:length(pm)
-			if (pm(i) >= 180) pm(i) = pm(i) - 360; end
-			if (pm(i) < -180) pm(i) = pm(i) + 360; end
-		end
-		gm = g_margin(sys);
-	end
-	printf("%10s:\tgcf:%10.3f Hz\tpm:%10.3f deg\tgm:%10.3f\tsse:%10.3f\n",..
-		name,bw(tf2ss(sys),0),pm,gm,sse);
+	// stability
+    unstablePoles=size(find(real(spec(abcd(sys)))>0),2)
+	poles=size(abcd(sys));
+
+	printf("%10s:\tgcf=%8.2f Hz\t\tsse=%8.2f\t\tunst poles=%d/%d\n",..
+		name,bw(tf2ss(sys),0),sse,unstablePoles,poles);
 endfunction
 
 // close a loop
 function [sysOut,uOut] = closeLoop2(yi,ui,sys,y,u,H)
 	openLoopAnalysis(y.str(yi)+"->"+u.str(ui),H*sys(yi,ui));
-	sysOut = unityFeedback(yi,ui,sys,H);
+	sysOut = unityFeedback2(yi,ui,sys,H);
 	uOut = createIndex(y.str(yi),u);
 endfunction
 
@@ -122,10 +117,10 @@ motorLagTf = clean(ss2tf(lincos(motorLag,zeros(4,1),Ud)),1e-5);
 //[Xnav,Unav]=steadycos(navigation,[],[],[],[],[],[],[]);
 //navTf = clean(ss2tf(lincos(navigation,Xnav,Unav)),1e-5);
 
-sys.oltf = clean(quadTf*motorLagTf*motorMixTf,1e-5);
+sys.oltf = clean(quadTf*motorLagTf*motorMixTf,1e-4);
 sys.olss = minssAutoTol(tf2ss(sys.oltf),16);
 
-H.Pitch_FB = -pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);
+H.Pitch_FB = pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);
 H.Roll_LR = pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);
 H.YawRate_LRFB = pidCont(PID_YAWSPEED_P,PID_YAWSPEED_I,PID_YAWSPEED_D,PID_ATT_INTERVAL);
 H.Yaw_YawRate = pidCont(PID_YAWPOS_P,PID_YAWPOS_I,PID_YAWPOS_D,PID_ATT_INTERVAL);
@@ -135,33 +130,38 @@ H.pD_SUM = pidCont(PID_POS_Z_P,PID_POS_Z_I,PID_POS_Z_D,PID_POS_INTERVAL);
 
 // attitude loops
 s = sys.oltf;
-[s,u] = closeLoop2(y.pitch,u.FB,s,y,u,.1*H.Pitch_FB);
-sPitch = s(y.pitch,u.pitch);
-//[s,u] = closeLoop2(y.roll,u.LR,s,y,u,H.Roll_LR);
-//[s,u] = closeLoop2(y.yawRate,u.LRFB,s,y,u,H.YawRate_LRFB);
-//[s,u] = closeLoop2(y.yaw,u.LR,s,y,u,H.Yaw_YawRate);
+s0 = s;
+[s,u] = closeLoop2(y.yawRate,u.LRFB,s,y,u,H.YawRate_LRFB);
+[s,u] = closeLoop2(y.roll,u.LR,s,y,u,H.Roll_LR);
+[s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.Pitch_FB);
+[s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.Yaw_YawRate);
+s1 = s;
+sPitch = clean(ss2tf(s1(y.pitch,u.pitch)));
+sPNOpen = clean(ss2tf(s(y.pN,u.pitch)*H.pN_Pitch));
 
 // position loops
 // we can tie in pitch and roll directly since for trim we are aligned with
 // North/ East frame
-//sPNOpen = -s(y.pN,u.pitch)*H.pN_Pitch;
+[s,u] = closeLoop2(y.pD,u.SUM,s,y,u,H.pD_SUM);
 [s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_Pitch);
-//sPN = s(y.pN,u.pN);
-//[s,u] = closeLoop2(y.pE,u.pitch,s,y,u,H.pE_Roll);
-//[s,u] = closeLoop2(y.pD,u.SUM,s,y,u,H.pD_SUM);
+[s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_Roll);
+s2 = s;
+sPN = clean(ss2tf(s2(y.pN,u.pN)));
 
 // position north, and pitch
 f=scf(1); clf(1);
 f.figure_size=[600,600];
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
-bode([sPitch*pade(PID_ATT_INTERVAL);sPN*pade(PID_POS_INTERVAL)],0.1,99,.01,["pitch";"position north"])
+bode([sPitch*pade(PID_ATT_INTERVAL);sPN*pade(PID_POS_INTERVAL)],..
+	0.01,99,.01,["pitch";"position north"])
 xs2eps(1,'pN_pitch');
 
 // zoh time effect on pN closed loop
 f=scf(2); clf(2);
 f.figure_size=[600,600];
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
-bode([sPN*pade(4);sPN*pade(2);sPN*pade(1);sPN*pade(1/2);sPN*pade(1/4);sPN*pade(1/16)],0.1,99,.01,..
+bode([sPN*pade(4);sPN*pade(2);sPN*pade(1);sPN*pade(1/2);..
+	sPN*pade(1/4);sPN*pade(1/16)],0.01,99,.01,..
 	["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
 xs2eps(2,'pN_closed_zoh');
 
@@ -169,6 +169,7 @@ xs2eps(2,'pN_closed_zoh');
 f=scf(3); clf(3);
 f.figure_size=[600,600];
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
-bode([sPNOpen*pade(4);sPNOpen*pade(2);sPNOpen*pade(1);sPNOpen*pade(1/2);sPNOpen*pade(1/4);sPNOpen*pade(1/16)],0.01,99,.01,..
+bode([sPNOpen*pade(4);sPNOpen*pade(2);sPNOpen*pade(1);sPNOpen*pade(1/2);..
+	sPNOpen*pade(1/4);sPNOpen*pade(1/16)],0.01,99,.01,..
 	["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
 xs2eps(3,'pN_open_zoh');
