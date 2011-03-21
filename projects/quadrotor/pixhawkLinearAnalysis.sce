@@ -58,9 +58,9 @@ PID_ATT_I= 60;
 PID_ATT_D= 30;
 PID_ATT_LIM= 100;
 PID_ATT_AWU= 0.3;
-PID_YAWPOS_P= 5;
-PID_YAWPOS_I= 0.1;
-PID_YAWPOS_D= 1;
+PID_YAWPOS_P= 0.31; //5;
+PID_YAWPOS_I= 0; //0.1;
+PID_YAWPOS_D= 3.1; //1;
 PID_YAWPOS_LIM= 2;
 PID_YAWPOS_AWU= 1;
 PID_YAWSPEED_P= 15;
@@ -132,21 +132,27 @@ H.pD_SUM = pidCont(PID_POS_Z_P,PID_POS_Z_I,PID_POS_Z_D,PID_POS_INTERVAL);
 s = sys.oltf;
 s0 = s;
 [s,u] = closeLoop2(y.yawRate,u.LRFB,s,y,u,H.YawRate_LRFB);
-[s,u] = closeLoop2(y.roll,u.LR,s,y,u,H.Roll_LR);
-[s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.Pitch_FB);
-[s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.Yaw_YawRate);
 s1 = s;
-sPitch = clean(ss2tf(s1(y.pitch,u.pitch)));
-sPNOpen = clean(ss2tf(s(y.pN,u.pitch)*H.pN_Pitch));
+[s,u] = closeLoop2(y.roll,u.LR,s,y,u,H.Roll_LR);
+s2 = s;
+[s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.Pitch_FB);
+s3 = s;
+[s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.Yaw_YawRate);
+s4 = s;
+
+sPitch = clean(ss2tf(s4(y.pitch,u.pitch)));
+sPNOpen = clean(ss2tf(s4(y.pN,u.pitch)*H.pN_Pitch));
 
 // position loops
 // we can tie in pitch and roll directly since for trim we are aligned with
 // North/ East frame
 [s,u] = closeLoop2(y.pD,u.SUM,s,y,u,H.pD_SUM);
+s5 = s;
 [s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_Pitch);
+s6 = s;
 [s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_Roll);
-s2 = s;
-sPN = clean(ss2tf(s2(y.pN,u.pN)));
+s7 = s;
+sPN = clean(ss2tf(s7(y.pN,u.pN)));
 
 // position north, and pitch
 f=scf(1); clf(1);
