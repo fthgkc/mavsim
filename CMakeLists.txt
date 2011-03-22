@@ -135,7 +135,7 @@ if(JSBSIM_BUILD_FROM_SOURCE)
 	add_custom_command(OUTPUT JSBSIM_BUILD.stamp 
 		COMMAND mkdir -p jsbsim
 		COMMAND cd ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim && ./autogen.sh --no-configure
-		COMMAND cd jsbsim && ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries
+		COMMAND cd jsbsim && ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/configure --enable-libraries --with-pic
 		COMMAND cd jsbsim && make -j8
 		COMMAND touch JSBSIM_BUILD.stamp)
 endif()
