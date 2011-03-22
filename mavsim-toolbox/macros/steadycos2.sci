@@ -1,9 +1,8 @@
+mode(-1)
 function [X,U,Y,XP]=steadycos2(scs_m,X,U,Y,Indx,Indu,Indy,Indxp,param)
-// steadycos2
-// Finds an equilibrium state of a general 
+// NAME
+// steadycos - Finds an equilibrium state of a general 
 // dynamical system described by a scicos diagram
-// Same as standard steadycos but takes the optimization method as a
-// parameter.
 
 // CALLING SEQUENCE
 //
@@ -18,15 +17,13 @@ function [X,U,Y,XP]=steadycos2(scs_m,X,U,Y,Indx,Indu,Indy,Indxp,param)
 // Indy: index of entries of Y that are not fixed. If all can vary, set to 1:$
 // Indxp: index of entries of XP (derivative of x) that need not be zero. 
 //        If all can vary, set to 1:$. Default [].
-// param: list with three elements (default list(1.d-6,0,'qn'))
+// param: list with two elements (default list(1.d-6,0))
 //   param(1): scalar. Perturbation level for linearization; the following variation is used
 //             del([x;u])_i = param(1)+param(1)*1d-4*abs([x;u])_i
 //   param(2): scalar. Time t.
-//   param(3): method, 'qn': quasi netwon (default), 'nd' : nelder meade, ..
-//   param(4): max func evals
-//   param(5): max interations
-
+//
 load SCI/macros/scicos/lib
+exec(loadpallibs, 1)
 
 [lhs,rhs]=argn(0)
 IN=[];OUT=[];
@@ -51,9 +48,9 @@ end
 // end
 
 if rhs==7 then
-  Indxp=[ ];param=list(1.d-6,0,'qn',100,100)
+  Indxp=[ ];param=list(1.d-6,0)
 elseif rhs==8 then
-  param=list(1.d-6,0,'qn',100,100)
+  param=list(1.d-6,0)
 elseif rhs==9 then
 else
   error('wrong number of arguments. 7, 8 or 9 expected.')
@@ -129,13 +126,10 @@ if Y==[] then Y=zeros(ny,1);end
 if U==[] then U=zeros(nu,1);end
 if param(1)==0 then param(1)=1.d-6;end
 t=param(2)
-optimMethod=param(3)
-nap=param(4);
-iter=param(5);
 
 ux0=[U(Indu);X(Indx)];
 sindu=size(U(Indu),'*');sindx=size(X(Indx),'*');
-[err,uxopt,gopt]=optim(cost,ux0,optimMethod,'ar',nap,iter)
+[err,uxopt,gopt]=optim(list(NDcost,cost),ux0);
 U(Indu)=uxopt(1:sindu);
 X(Indx)=uxopt(sindu+1:sindx+sindu);
 state.x=X;
@@ -144,7 +138,9 @@ for k=pointi'
  state.outtb(k)=matrix(U(Uind:Uind+size(state.outtb(k),'*')-1),size(state.outtb(k)));
  Uind=size(state.outtb(k),'*')+1;
 end
-[state,t]=scicosim(state,t,t,sim,'linear',[.1,.1,.1,.1]);
+  [state,t]=scicosim(state,t,t,sim,'start',[.1,.1,.1,.1]);
+  [state,t]=scicosim(state,t,t,sim,'linear',[.1,.1,.1,.1]);
+  [state_,t_]=scicosim(state,t,t,sim,'finish',[.1,.1,.1,.1]);
 XP=state.x;
 Yind=1
 for k=pointo'
@@ -166,7 +162,9 @@ for k=pointi'
  Uind=size(state.outtb(k),'*')+1;
 end
 // state.outtb(pointi)=U;
-[state,t]=scicosim(state,t,t,sim,'linear',[.1,.1,.1,.1]);
+  [state,t]=scicosim(state,t,t,sim,'start',[.1,.1,.1,.1]);
+  [state,t]=scicosim(state,t,t,sim,'linear',[.1,.1,.1,.1]);
+  [state_,t_]=scicosim(state,t,t,sim,'finish',[.1,.1,.1,.1]);
 zer=ones(X);zer(Indxp)=0;xp=zer.*state.x;
 Yind=1
 for k=pointo'
@@ -177,8 +175,8 @@ end
 zer=ones(y);zer(Indy)=0;err=zer.*(Y-y);
 f=.5*(norm(xp,2)+norm(err,2));
 
-sys=lincos(scs_m,X,U,param)
-g=xp'*[sys.B(:,Indu) sys.A(:,Indx)]-..
-    err'*[sys.D(:,Indu) sys.C(:,Indx)];
+//sys=lincos(scs_m,X,U,param)
+//g=xp'*[sys.B(:,Indu) sys.A(:,Indx)]-..
+    //err'*[sys.D(:,Indu) sys.C(:,Indx)];
+//disp(f)
 endfunction
-// vim:ts=4:sw=4:expandtab

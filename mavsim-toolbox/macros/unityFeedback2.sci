@@ -29,7 +29,7 @@ function sys = unityFeedback2(y,u,G,H)
 	for (i=1:nH) D(u(i),i) = 1; end;
 	oltf = G*D*diag(H);
     nPoles=size(abcd(H),1)+size(abcd(G),1);
-    printf("nPoles: %d\n",nPoles);
+    //printf("nPoles: %d\n",nPoles);
     sys=minssAutoTol((eye(nY,nY)+oltf*C)\[G,oltf],nPoles);
 endfunction
 // vim:sw=4:ts=4:expandtab
