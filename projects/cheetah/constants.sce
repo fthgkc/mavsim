@@ -55,10 +55,10 @@ U = 0; V = 0; W = 0; // hover
 // position control loop
 PID_POS_INTERVAL = 1/5; // 5 hz
 PID_POS_P = 1 // 1, 20 comes from 0.05 gain
-PID_POS_I = 0;
+PID_POS_I = 0.5;
 PID_POS_D = 3;
 PID_POS_LIM = 3.5; //  20*10*%pi/180, 20 comes form 0.05 gain
-PID_POS_AWU = 0.0;
+PID_POS_AWU = 1.0; // allow integral to wind up to about 5 degrees
 PID_POS_Z_P = 0.5;
 PID_POS_Z_I = 0.1;
 PID_POS_Z_D = 0.5;
