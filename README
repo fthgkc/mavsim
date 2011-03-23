@@ -1,10 +1,13 @@
 Copyright 2011 James Goppert
 Released under GPL v3 License
 
+For detailed information see the wiki: https://github.com/openmav/mavsim/wiki
+
 Using Scicoslab Toolbox:
 
 	For running in source directory, launch scicoslab from the mavsim directory:
 	1a. launch a terminal in mavsim root directory where this README is located.
+		Then type scicoslab.
 
 	If mavsim toolbox is installed in the 
 	system path (i.e. /usr/lib/scicos../contrib)

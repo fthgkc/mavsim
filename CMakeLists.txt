@@ -7,10 +7,11 @@ cmake_minimum_required (VERSION 2.6)
 set(APPLICATION_NAME ${PROJECT_NAME})
 
 set(APPLICATION_VERSION_MAJOR "0")
-set(APPLICATION_VERSION_MINOR "0")
+set(APPLICATION_VERSION_MINOR "1")
 set(APPLICATION_VERSION_PATCH "0")
 
 set(APPLICATION_VERSION "${APPLICATION_VERSION_MAJOR}.${APPLICATION_VERSION_MINOR}.${APPLICATION_VERSION_PATCH}")
+set(LIBRARY_VERSION ${APPLICATION_VERSION})
 
 # SOVERSION scheme: CURRENT.AGE.REVISION
 #   If there was an incompatible interface change:
@@ -19,8 +20,7 @@ set(APPLICATION_VERSION "${APPLICATION_VERSION_MAJOR}.${APPLICATION_VERSION_MINO
 #     Increment AGE. Set REVISION to 0
 #   If the source code was changed, but there were no interface changes:
 #     Increment REVISION.
-set(LIBRARY_VERSION "0.0.0")
-set(LIBRARY_SOVERSION "0")
+set(LIBRARY_SOVERSION "1.0.0")
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH
@@ -49,11 +49,6 @@ include(language_support_v2)
 include(MacroAddLinkFlags)
 
 # settings
-set(LIBRARY_VERSION_MAJOR 0)
-set(LIBRARY_VERSION_MINOR 0)
-set(LIBRARY_VERSION_PATCH 0)
-set(LIBRARY_SOVERSION 0)
-
 MacroSetDefault(MAVLINK_BUILD_FROM_SOURCE FALSE)
 MacroSetDefault(JSBSIM_BUILD_FROM_SOURCE FALSE)
 MacroSetDefault(BOOSTNUMERIBINDINGS_BUILD_FROM_SOURCE FALSE)
