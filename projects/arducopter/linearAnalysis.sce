@@ -4,7 +4,7 @@ mode(-1)
 exec constants.sce
 
 // load scicoslab diagram to linearize the dynamics
-load quadrotor.cos
+load arducopter.cos
 
 function tf = ss2cleanTf(ss)
 	tf = clean(ss2tf(ss));

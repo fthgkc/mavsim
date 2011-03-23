@@ -4,7 +4,7 @@ mode(-1)
 exec constants.sce
 
 // load scicoslab diagram to linearize the dynamics
-load quadrotor.cos
+load cheetah.cos
 
 function tf = ss2cleanTf(ss)
 	tf = clean(ss2tf(ss));
@@ -72,7 +72,7 @@ quadTf = clean(ss2tf(lincos(dynamics,Xd,Ud)),1e-5);
 
 // motor mix block
 disp('linearizing motor mix block');
-motorMixTf = clean(ss2tf(lincos(motorMix,[],[Ud(1,1);0;0;0])),1e-5);
+motorMixTf = clean(ss2tf(lincos(motorMix,[],[Ud(1)*255;0;0;0])),1e-5);
 
 // motor lag block
 disp('linearizing motor lag block');
