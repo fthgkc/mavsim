@@ -89,28 +89,28 @@ s = sys.olss;
 s0 = ss2tf(s);
 [s,u] = closeLoop2(y.pD,u.SUM,s,y,u,H.pD_SUM);
 s1 = ss2tf(s);
-//[s,u] = closeLoop2(y.yawRate,u.LRFB,s,y,u,H.yawRate_LRFB);
-//s2 = ss2tf(s);
-//[s,u] = closeLoop2(y.roll,u.LR,s,y,u,H.roll_LR);
-//s3 = ss2tf(s);
-//[s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.pitch_FB);
-//s4 = ss2tf(s);
-//[s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
-//s5 = s;
+[s,u] = closeLoop2(y.yawRate,u.LRFB,s,y,u,H.yawRate_LRFB);
+s2 = ss2tf(s);
+[s,u] = closeLoop2(y.roll,u.LR,s,y,u,H.roll_LR);
+s3 = ss2tf(s);
+[s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.pitch_FB);
+s4 = ss2tf(s);
+[s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
+s5 = s;
 
-//sPitch = s4(y.pitch,u.pitch);
+sPitch = s4(y.pitch,u.pitch);
 
 // position loops
 // we can tie in pitch and roll directly since for trim we are aligned with
 // North/ East frame
 
-//[s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_pitch);
-//s6 = s;
-//[s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_roll);
-//s7 = s;
+[s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_pitch);
+s6 = s;
+[s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_roll);
+s7 = s;
 
-//sPN = s7(y.pN,u.pN);
-//sPNOpen = s5(y.pN,u.pitch)*H.pN_pitch;
+sPN = s7(y.pN,u.pN);
+sPNOpen = s5(y.pN,u.pitch)*H.pN_pitch;
 
 //disp('beginning plotting');
 
