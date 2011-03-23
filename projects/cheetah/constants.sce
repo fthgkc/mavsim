@@ -53,37 +53,37 @@ U = 0; V = 0; W = 0; // hover
 // controllers
 
 // position control loop
-PID_POS_INTERVAL = 0.02; // 50 hz
+PID_POS_INTERVAL = 1/5; // 5 hz
 PID_POS_P = 1; //1.7;
 PID_POS_I = 0;// 0.25; 
 PID_POS_D = 5; //2.8
 PID_POS_LIM = 0.15;
 PID_POS_AWU = 0.1;
-PID_POS_Z_P = 0.35;
-PID_POS_Z_I = 0.2;
-PID_POS_Z_D = 0.15;
-PID_POS_Z_LIM = 0.2;
-PID_POS_Z_AWU = 3;
+PID_POS_Z_P = 0.5;
+PID_POS_Z_I = 0.1;
+PID_POS_Z_D = 0.5;
+PID_POS_Z_LIM = 0.4; // 20 % throttle deviation from trim contribution to motors, max
+PID_POS_Z_AWU = 0.2; // allows 10% throttle trim adjustment
 VEL_OFFSET_X = 0;
 VEL_OFFSET_Y = 0;
 
 // attitude control loop
-PID_ATT_INTERVAL = 0.005; // 200 hz
-PID_ATT_P= 90;
-PID_ATT_I= 0; //60;
-PID_ATT_D= 30;
-PID_ATT_LIM= 100;
-PID_ATT_AWU= 0.3;
+PID_ATT_INTERVAL = 1/20; // 20 hz
+PID_ATT_P= 35;
+PID_ATT_I= 0;
+PID_ATT_D= 35;
+PID_ATT_LIM= 100; // max motor contribution 100/255
+PID_ATT_AWU= 0;
 PID_YAWPOS_P= 3.1; //5;
 PID_YAWPOS_I= 1;
 PID_YAWPOS_D= 31; //1;
 PID_YAWPOS_LIM= 2;
 PID_YAWPOS_AWU= 1;
-PID_YAWSPEED_P= 15;
-PID_YAWSPEED_I= 5;
+PID_YAWSPEED_P= 255;
+PID_YAWSPEED_I= 0;
 PID_YAWSPEED_D= 0;
-PID_YAWSPEED_LIM= 20;
-PID_YAWSPEED_AWU= 1;
+PID_YAWSPEED_LIM= 20; // about 10% of the motors
+PID_YAWSPEED_AWU= 0.1; // rad/s windup guard
 ATT_OFFSET_X =0;
 ATT_OFFSET_Y =0;
 ATT_OFFSET_Z = -0.080;
@@ -114,13 +114,14 @@ function sys = pidCont(kP,kI,kD,controlPeriod)
 endfunction
 
 // linear approximations of controllers
-H.pitch_FB = -0.005*pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);
-H.roll_LR = 0.005*pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);
+H.pitch_FB = pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);
+H.roll_LR = pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);
 H.yawRate_LRFB = pidCont(PID_YAWSPEED_P,PID_YAWSPEED_I,PID_YAWSPEED_D,PID_ATT_INTERVAL);
 H.yaw_yawRate = pidCont(PID_YAWPOS_P,PID_YAWPOS_I,PID_YAWPOS_D,PID_ATT_INTERVAL);
-H.pN_pitch = pidCont(PID_POS_P,PID_POS_I,PID_POS_D,PID_POS_INTERVAL);
-H.pE_roll = pidCont(PID_POS_P,PID_POS_I,PID_POS_D,PID_POS_INTERVAL);
-H.pD_SUM = pidCont(PID_POS_Z_P,PID_POS_Z_I,PID_POS_Z_D,PID_POS_INTERVAL);
+H.pN_pitch = -0.05*pidCont(PID_POS_P,PID_POS_I,PID_POS_D,PID_POS_INTERVAL);
+H.pE_roll = 0.05*pidCont(PID_POS_P,PID_POS_I,PID_POS_D,PID_POS_INTERVAL);
+H.pD_SUM = (255-10)*pidCont(PID_POS_Z_P,PID_POS_Z_I,PID_POS_Z_D,PID_POS_INTERVAL);
+// scale factor from thrust adjustment block
 
 x0 = [
 U; // U
