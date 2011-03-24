@@ -54,31 +54,31 @@ U = 0; V = 0; W = 0; // hover
 
 // position control loop
 PID_POS_INTERVAL = 1/5; // 5 hz
-PID_POS_P = 1; //1.7;
-PID_POS_I = 0;// 0.25; 
-PID_POS_D = 5; //2.8
-PID_POS_LIM = 0.15;
-PID_POS_AWU = 0.1;
+PID_POS_P = 1 // 1, 20 comes from 0.05 gain
+PID_POS_I = 0.5;
+PID_POS_D = 3;
+PID_POS_LIM = 3.5; //  20*10*%pi/180, 20 comes form 0.05 gain
+PID_POS_AWU = 1.0; // allow integral to wind up to about 5 degrees
 PID_POS_Z_P = 0.5;
 PID_POS_Z_I = 0.1;
 PID_POS_Z_D = 0.5;
-PID_POS_Z_LIM = 0.4; // 20 % throttle deviation from trim contribution to motors, max
-PID_POS_Z_AWU = 0.2; // allows 10% throttle trim adjustment
+PID_POS_Z_LIM = 0.4; // 40 % throttle deviation from trim contribution to motors, max
+PID_POS_Z_AWU = 0.2; // allows 20% throttle trim adjustment
 VEL_OFFSET_X = 0;
 VEL_OFFSET_Y = 0;
 
 // attitude control loop
 PID_ATT_INTERVAL = 1/20; // 20 hz
-PID_ATT_P= 35;
+PID_ATT_P= 25;
 PID_ATT_I= 0;
-PID_ATT_D= 35;
+PID_ATT_D= 25;
 PID_ATT_LIM= 100; // max motor contribution 100/255
 PID_ATT_AWU= 0;
-PID_YAWPOS_P= 3.1; //5;
-PID_YAWPOS_I= 1;
-PID_YAWPOS_D= 31; //1;
-PID_YAWPOS_LIM= 2;
-PID_YAWPOS_AWU= 1;
+PID_YAWPOS_P= 1;
+PID_YAWPOS_I= 0;
+PID_YAWPOS_D= 0;
+PID_YAWPOS_LIM= 0.5; // 0.5 rad/s  max
+PID_YAWPOS_AWU= 0;
 PID_YAWSPEED_P= 255;
 PID_YAWSPEED_I= 0;
 PID_YAWSPEED_D= 0;

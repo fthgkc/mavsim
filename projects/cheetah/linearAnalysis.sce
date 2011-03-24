@@ -50,7 +50,7 @@ function [sysOut,uOut] = closeLoop2(yi,ui,sys,y,u,H)
 	end
 	poles=size(abcd(sys),1);
 	printf('\t\tclbw=%f\tunstable poles=%d/%d\n',..
-		bw(ss2cleanTf(sysOut),3),size(unstablePoles,2),size(abcd(sysOut),1));
+		bw(ss2cleanTf(sysOut),-3),size(unstablePoles,2),size(abcd(sysOut),1));
 endfunction
 
 
@@ -95,8 +95,8 @@ s2 = ss2cleanTf(s);
 s3 = ss2cleanTf(s);
 [s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.pitch_FB);
 s4 = ss2cleanTf(s);
-//[s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
-//s5 = ss2cleanTf(s);
+[s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
+s5 = ss2cleanTf(s);
 
 //sPitch = s4(y.pitch,u.pitch);
 
@@ -104,10 +104,10 @@ s4 = ss2cleanTf(s);
 // we can tie in pitch and roll directly since for trim we are aligned with
 // North/ East frame
 
-//[s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_pitch);
-//s6 = ss2cleanTf(s);
-//[s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_roll);
-//s7 = ss2cleanTf(s);
+[s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_pitch);
+s6 = ss2cleanTf(s);
+[s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_roll);
+s7 = ss2cleanTf(s);
 
 //sPN = s7(y.pN,u.pN);
 //sPNOpen = s5(y.pN,u.pitch)*H.pN_pitch;
