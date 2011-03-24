@@ -1,10 +1,10 @@
 mode(-1)
 
 // load constants file
-exec constants.sce                                                                                        //Change to my file when needed
+//exec constants.sce                                                                                        //Change to my file when needed
 
 // load scicoslab diagram to linearize the dynamics
-load JSBSIMBackside.cos                                                                                          //Changed, loads the Backsidecontroller
+load JSBSimBackside.cos                                                                                         //Changed, loads the Backsidecontroller
 
 function tf = ss2cleanTf(ss)
 	tf = clean(ss2tf(ss));
@@ -13,7 +13,7 @@ endfunction
 // open loop statistics
 function openLoopAnalysis(sys)
 	if(typeof(sys)=='state-space') sys = ss2cleanTf(sys); end
-	sse=1/(horner(sys,1e-10));
+	sse=1/(horner(sys,1e-10));                                                                           //This stuff just computes the steady state error 1/G(0) and the crossover frequency with bw(sys,0)
 	if (sse>1e6) sse=%inf; end
     printf('\t\tgcf=%8.2f Hz\t\tsse=%8.2f\n',bw(tf2ss(sys),0),sse);
 endfunction
@@ -55,17 +55,19 @@ endfunction
 
 
 // extract blocks
-disp('extracting blocks for linearization');
-dynamics=scs_m.objs(364).model.rpar;                                                                  //JSBSimComm block number 364
-controller=scs_m.objs(424).model.rpar;                                                                  //Backside Controller number 424
+  disp('extracting blocks for linearization');
+dynamics=scs_m.objs(424).model.rpar;                                                                  //JSBSimComm block number 364
+//controller=scs_m.objs(424).model.rpar;                                                                  //Backside Controller number 424
 
 // lineriaztion of dynamics
 disp('linearizing dynamics');
-// vary u to find zero initial conitions
-[Xd,Ud,Yd,XPd] = steadycos2(dynamics,[],[],[],[],[1:$],[],[]);                                      //DOes the same as the steadycos command (look it up!) only with non gradient methods. X,U,Y are at beginning all at 0. And only U can vary (makes no sense, look up the functionality of steadycos2)
-Xd=clean(Xd,1e-5);                                                                                  //gets rid of numerical error
-Ud=clean(Ud,1e-5);
-PlaneTf = clean(ss2tf(lincos(dynamics,Xd,Ud)),1e-5);                                                //Linearizes the Plane dynamics
+// vary u to find zero initial conitions, in my case finding the equ point of the dynamics
+[X,U,Y,XP] = steadycos2(dynamics,[],[],[],[],[1:$],[],[]);                                      //Does the same as the steadycos command (look it up!) only with non gradient methods. X,U,Y are at beginning all at 0. And only U can vary (makes no sense, look up the functionality of steadycos2)
+//X,U,Y,XP:Equilibrium state.    X  U  Y indxindy indyindxp
+X=clean(X,1e-5);                                                                                  //gets rid of numerical error
+U=clean(U,1e-5);
+PlaneTf = clean(ss2tf(lincos(dynamics,X,U)),1e-5);                                                //Linearizes the Plane dynamics
+disp(PlaneTf)
 
  //motor mix block
 //disp('linearizing motor mix block');
@@ -101,13 +103,13 @@ PlaneTf = clean(ss2tf(lincos(dynamics,Xd,Ud)),1e-5);                            
 // we can tie in pitch and roll directly since for trim we are aligned with
 // North/ East frame
 
-[s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_pitch);
-s6 = s;
-[s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_roll);
-s7 = s;
-
-sPN = s7(y.pN,u.pN);
-sPNOpen = s5(y.pN,u.pitch)*H.pN_pitch;
+//[s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_pitch);
+//s6 = s;
+//[s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_roll);
+//s7 = s;
+//
+//sPN = s7(y.pN,u.pN);
+//sPNOpen = s5(y.pN,u.pitch)*H.pN_pitch;
 
 //disp('beginning plotting');
 
