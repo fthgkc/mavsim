@@ -68,7 +68,7 @@ X=clean(X,1e-5);                                                                
 U=clean(U,1e-5);
 PlaneTf = clean(ss2tf(lincos(dynamics,X,U)),1e-5);                                                //Linearizes the Plane dynamics
 disp(PlaneTf)
-bode(PlaneTf(1,1));                                                                             //Up till here it is the general approach, however i am unable up to this point to linearize the JSBSimComm block. Another unsolved problem is how i can linearize only some of the inputs to outputs.
+//bode(PlaneTf(1,1));                                                                             //Up till here it is the general approach, however i am unable up to this point to linearize the JSBSimComm block. Another unsolved problem is how i can linearize only some of the inputs to outputs.
 
  //motor mix block
 //disp('linearizing motor mix block');
