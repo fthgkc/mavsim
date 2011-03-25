@@ -4,7 +4,7 @@ mode(-1)
 //exec constants.sce                                                                                        //Change to my file when needed
 
 // load scicoslab diagram to linearize the dynamics
-load JSBSimBackside.cos                                                                                         //Changed, loads the Backsidecontroller
+load Linearization.cos                                                                                         //Changed, loads the Backsidecontroller
 
 function tf = ss2cleanTf(ss)
 	tf = clean(ss2tf(ss));
@@ -56,7 +56,7 @@ endfunction
 
 // extract blocks
   disp('extracting blocks for linearization');
-dynamics=scs_m.objs(424).model.rpar;                                                                  //JSBSimComm block number 364
+dynamics=scs_m.objs(796).model.rpar;                                                                  //JSBSimComm block number 364
 //controller=scs_m.objs(424).model.rpar;                                                                  //Backside Controller number 424
 
 // lineriaztion of dynamics
@@ -68,6 +68,7 @@ X=clean(X,1e-5);                                                                
 U=clean(U,1e-5);
 PlaneTf = clean(ss2tf(lincos(dynamics,X,U)),1e-5);                                                //Linearizes the Plane dynamics
 disp(PlaneTf)
+bode(PlaneTf(1,1));                                                                             //Up till here it is the general approach, however i am unable up to this point to linearize the JSBSimComm block. Another unsolved problem is how i can linearize only some of the inputs to outputs.
 
  //motor mix block
 //disp('linearizing motor mix block');
