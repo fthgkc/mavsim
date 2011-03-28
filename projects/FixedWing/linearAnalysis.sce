@@ -1,10 +1,10 @@
 mode(-1)
 
 // load constants file
-exec constants.sce                                                                                        //Changed to the file i needed (basically this are the Context definitions)
+exec easystar-datcom_lin.sce;                                                                                      //Changed to the file i needed (basically this are the Context definitions)
 
 // load scicoslab diagram to linearize the dynamics
-load Linearization.cos                                                                                         //Changed, loads the Backsidecontroller
+load JSBSimBackside.cos;                                                                                        //Changed, loads the Backsidecontroller
 
 function tf = ss2cleanTf(ss)
 	tf = clean(ss2tf(ss));
@@ -61,26 +61,17 @@ dynamics=scs_m.objs(796).model.rpar;                                            
 
 
 
-// lineriaztion of dynamics
+// linerization of dynamics
 disp('linearizing dynamics');
+
 // vary u to find zero initial conitions, in my case finding the equ point of the dynamics
-
-
-
-X_0 = [45;0;0;0;0;0;0;0;0;0;0;0;0]
-X_0(10)=0*%pi/180;
-X_0(11)=-122.4*%pi/180;
-X_0(12)=37.8*%pi/180;
-
-[X,U,Y,XP]=steadycos2(dynamics,X_0,[],[],[11,12,13],[1:$],[],[])                                       //Does the same as the steadycos command (look it up!) only with non gradient methods. X,U,Y are at beginning all at 0. And only U can vary (makes no sense, look up the functionality of steadycos2)
+//[X,U,Y,XP]=steadycos2(dynamics,X_0,[],[],[11,12,13],[1:$],[],[])                                       //Does the same as the steadycos command (look it up!) only with non gradient methods. X,U,Y are at beginning all at 0. And only U can vary (makes no sense, look up the functionality of steadycos2)
 //X,U,Y,XP:Equilibrium state.  X   U  Y   indx      indu  indy indxp
 //The steadycos line does take very long to compute. 
 
-                                                                                       //gets rid of numerical error
+PlaneSS=sys;                                                                                   //Linearizes the Plane dynamics
+PlaneTf=tfm;
 
-//[A,B,C,D]=abcd(lincos(dynamics,X,U))                                                           //Linearizes the Plane dynamics 
-
-disp(PlaneTf)
 //bode(PlaneTf(1,1));                                                                             //Up till here it is the general approach, however i am unable up to this point to linearize the JSBSimComm block. Another unsolved problem is how i can linearize only some of the inputs to outputs.
 
  //motor mix block
