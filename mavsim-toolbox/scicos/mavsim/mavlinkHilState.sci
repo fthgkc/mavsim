@@ -64,7 +64,7 @@ select job
 				getvalue('Set mavlink HIL Parameters',labels,..
 				list('str',-1,'vec',1),exprs);
 			if ~ok then break,end
-			[model,graphics,ok]=check_io(model,graphics,[12],[20],[1],[])
+			[model,graphics,ok]=check_io(model,graphics,[12],[8],[1],[])
 			if ok then
 				model.ipar=[..
 					length(evstr(device)),ascii(evstr(device)),0,..
@@ -80,7 +80,7 @@ select job
 		model=scicos_model()
 		model.sim=list('sci_mavlinkHilState',4)
 		model.in=[12]
-		model.out=[20]
+		model.out=[8]
 		model.evtin=[1]
 		model.blocktype='c'
 		model.dep_ut=[%t %f]
