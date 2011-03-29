@@ -28,7 +28,7 @@ JSolidSphere = 2/5*m*dm^2;
 Jy=JSolidSphere; // moments of inertia, kg-m^2
 Jz=JSolidSphere; // guess, for now using solid sphere
 Jx=JSolidSphere;
-//Jxy = 0; Jyz = 0; Jxz = 0;
+Jxy = 0; Jyz = 0; Jxz = 0;
 printf("\tinertia guess assuming solid sphere: %f kg-m^2",JSolidSphere);
 
 // motor
@@ -39,11 +39,11 @@ T_max = 5; // max motor thrust in newtons
 torque_max = 0.8*dm; // max motor thrust in newton-m
 C_T = T_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
-controlPeriod = 1/10; //controlling motors at 10Hz
+//controlPeriod = 1/10; //controlling motors at 10Hz
 
-//controlPeriodAtt = 1/20; // attitude control rate 20 Hz
-//controlPeriodPos = 1/5; // position control rate 5 Hz
-//navDelay = 0.100 // seconds of navigation delay
+controlPeriodAtt = 1/10; // attitude control rate 20 Hz
+controlPeriodPos = 1/10; // position control rate 5 Hz
+navDelay = 0.100 // seconds of navigation delay
 
 // trim
 T_sum_trim = 900*g*m/(%pi^3*rho*batVolt^2*KV^2*rBlade^4*C_T);
@@ -59,14 +59,14 @@ MOTOR_MAX = 1;
 MOTOR_MIN = 0.1;
 
 // position control loop
-PID_POS_INTERVAL = 1/5; // 5 hz
+PID_POS_INTERVAL = 1/10; // 20 hz
 PID_POS_P =0.02;
 PID_POS_I =0;
 PID_POS_D =0.1;
 PID_POS_LIM =0.1; // about 5 deg
 PID_POS_AWU =0.0; // about 5 deg
 PID_POS_Z_P =0.5;
-PID_POS_Z_I =0.2;
+PID_POS_Z_I =2;
 PID_POS_Z_D =0.5;
 PID_POS_Z_LIM =0.5;
 PID_POS_Z_AWU =0.1;
@@ -74,7 +74,7 @@ VEL_OFFSET_X =0.0;
 VEL_OFFSET_Y =0.0;
 
 // attitude control loop
-PID_ATT_INTERVAL = 1/20; // 20 hz
+PID_ATT_INTERVAL = 1/10; // 5 hz
 PID_ATT_P=.1;
 PID_ATT_I=0.0;
 PID_ATT_D=0.1;
