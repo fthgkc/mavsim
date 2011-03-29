@@ -12,36 +12,38 @@ gammaAngle=0; // flight path angle,for level flight is zero
 
 // aerodynamics
 rho=1.225; // kg/m^3
-rBlade=0.127; // metres
+rBlade=0.125; // metres
 Cd0= 0.42; // guess
 K_cd_cl=0.02; //guess
 s_frame=0.1; //guess in m^2
 s_frame_side=0.1; // guess in m^2
 
 // airframe
-m=1.02;  //kg
-dm=0.25; // guess in metres, motor moment arm
+m=1;  //kg
+dm=0.3; // guess in metres, motor moment arm
 
-cmR = 0.08; // radius of sphere approximation for mass
-cmZ = 0.02; // center of mass 10 cm below center of airframe
-JSolidSphere = 2/5*m*cmR^2;
-Jy=JSolidSphere + m*cmZ^2; // moments of inertia, kg-m^2
+//cmR = 0.08; // radius of sphere approximation for mass
+//cmZ = 0.02; // center of mass 10 cm below center of airframe
+JSolidSphere = 2/5*m*dm^2;
+Jy=JSolidSphere; // moments of inertia, kg-m^2
 Jz=JSolidSphere; // guess, for now using solid sphere
-Jx=JSolidSphere + m*cmZ^2;
-Jxy = 0; Jyz = 0; Jxz = 0;
+Jx=JSolidSphere;
+//Jxy = 0; Jyz = 0; Jxz = 0;
 printf("\tinertia guess assuming solid sphere: %f kg-m^2",JSolidSphere);
 
 // motor
-KV=760 // rpm/Volts 
-batVolt=14.8; //Volts
-tau_motor=36.95991; // from  motor pole (rad/s) source: https://dspace.ist.utl.pt/bitstream/2295/574042/1/Tese_de_Mestrado.pdf
-T_max = 6.5; // max motor thrust in newtons
-torque_max = 1*dm; // max motor thrust in newton-m
+KV=850 // rpm/Volts 
+batVolt=11.1; //Volts
+tau_motor=18; // guess, motor pole in rad/s
+T_max = 5; // max motor thrust in newtons
+torque_max = 0.8*dm; // max motor thrust in newton-m
 C_T = T_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
-controlPeriodAtt = 1/20; // attitude control rate 20 Hz
-controlPeriodPos = 1/5; // position control rate 5 Hz
-navDelay = 0.100 // seconds of navigation delay
+controlPeriod = 1/10; //controlling motors at 10Hz
+
+//controlPeriodAtt = 1/20; // attitude control rate 20 Hz
+//controlPeriodPos = 1/5; // position control rate 5 Hz
+//navDelay = 0.100 // seconds of navigation delay
 
 // trim
 T_sum_trim = 900*g*m/(%pi^3*rho*batVolt^2*KV^2*rBlade^4*C_T);
