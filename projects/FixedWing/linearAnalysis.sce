@@ -72,6 +72,7 @@ disp('linearizing dynamics');
 PlaneSS=sys;                                                                                   //Linearizes the Plane dynamics
 PlaneTf=tfm;
 
+disp('done')
 //bode(PlaneTf(1,1));                                                                             //Up till here it is the general approach, however i am unable up to this point to linearize the JSBSimComm block. Another unsolved problem is how i can linearize only some of the inputs to outputs.
 
  //motor mix block
