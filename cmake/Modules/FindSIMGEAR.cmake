@@ -23,8 +23,16 @@ find_library(SIMGEAR_LIBRARY
 		/usr/local/lib
 )
 
+# plib, to correct for unresolved so links in fedora
+find_library(PLIB_LIBRARY
+	NAMES plib
+	PATHS 
+		/usr/lib 
+		/usr/local/lib
+)
+
 # Set the include dir variables and the libraries and let libfind_process do the rest.
 # NOTE: Singular variables for this library, plural for libraries this this lib depends on.
 set(SIMGEAR_PROCESS_INCLUDES SIMGEAR_INCLUDE_DIR)
-set(SIMGEAR_PROCESS_LIBS SIMGEAR_LIBRARY SIMGEAR_LIBRARIES)
+set(SIMGEAR_PROCESS_LIBS SIMGEAR_LIBRARY PLIB_LIBRARY SIMGEAR_LIBRARIES)
 libfind_process(SIMGEAR)
