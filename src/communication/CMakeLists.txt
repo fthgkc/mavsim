@@ -25,7 +25,7 @@ endif(SIMGEAR_FOUND)
 
 add_library(mavsimCommunication SHARED ${mavsimCommunicationSources})
 add_dependencies(mavsimCommunication MAVLINK)
-target_link_libraries(mavsimCommunication ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(mavsimCommunication ${PLIB_LIBRARY} ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
 set_target_properties(mavsimCommunication PROPERTIES 
 	VERSION ${LIBRARY_VERSION} 
 	SOVERSION ${LIBRARY_SOVERSION})
