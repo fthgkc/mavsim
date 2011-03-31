@@ -1,5 +1,11 @@
 disp('defining Constants')
 
+//Creating Indices
+//defining Indexes
+x = createIndex(['vt','alpha','theta','q','alt','beta','phi','p','r','psi','lng','lat','rpm','propPitch']);
+r = createIndex(['alt','vt','r','psi','phi']);
+u = createIndex(['throttle','aileron','elevator','rudder']);
+
 // servos
 aileron.sign = 1;
 elevator.sign = 1;
