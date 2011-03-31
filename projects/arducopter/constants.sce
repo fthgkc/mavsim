@@ -41,8 +41,8 @@ C_T = T_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 C_Q = torque_max / (rho*%pi*rBlade^4*(KV*2*%pi/60*batVolt)^2);
 //controlPeriod = 1/10; //controlling motors at 10Hz
 
-controlPeriodAtt = 1/10; // attitude control rate 20 Hz
-controlPeriodPos = 1/10; // position control rate 5 Hz
+controlPeriodAtt = 1/10; // attitude control rate 10 Hz
+controlPeriodPos = 1/10; // position control rate 10 Hz
 navDelay = 0.100 // seconds of navigation delay
 
 // trim
