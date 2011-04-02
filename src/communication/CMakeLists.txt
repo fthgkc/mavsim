@@ -1,4 +1,6 @@
-include_directories(${APM_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${MAVLINK_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS} ${MAVLINK_INCLUDE_DIRS})
+
+set(mavsimCommunicationLibs ${Boost_LIBRARIES})
 
 set(mavsimCommunicationSources
 	AsyncSerial.cpp
@@ -10,7 +12,7 @@ set(mavsimCommunicationHeaders
 	asio_mavlink_bridge.h
 	)
 
-if (SIMGEAR_FOUND)
+if (SIMGEAR_FOUND AND PLIB_FOUND)
 	list(APPEND mavsimCommunicationSources
 		FlightGearComm.cpp
 		flightGearUtils.cpp
@@ -21,11 +23,14 @@ if (SIMGEAR_FOUND)
 		net_ctrls.hxx
 		net_fdm.hxx
 		)
-endif(SIMGEAR_FOUND)
+	list(APPEND mavsimCommunicationLibs
+		${PLIB_LIBRARY} ${SIMGEAR_LIBRARIES} 
+		)
+endif()
 
 add_library(mavsimCommunication SHARED ${mavsimCommunicationSources})
 add_dependencies(mavsimCommunication MAVLINK)
-target_link_libraries(mavsimCommunication ${PLIB_LIBRARY} ${SIMGEAR_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(mavsimCommunication ${mavsimCommunicationLibs})
 set_target_properties(mavsimCommunication PROPERTIES 
 	VERSION ${LIBRARY_VERSION} 
 	SOVERSION ${LIBRARY_SOVERSION})
