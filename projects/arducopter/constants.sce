@@ -61,7 +61,7 @@ MOTOR_MIN = 0.1;
 // position control loop
 PID_POS_INTERVAL = 1/10; // 20 hz
 PID_POS_P =0.02;
-PID_POS_I =0;
+PID_POS_I =0.1;
 PID_POS_D =0.1;
 PID_POS_LIM =0.1; // about 5 deg
 PID_POS_AWU =0.0; // about 5 deg
@@ -76,7 +76,7 @@ VEL_OFFSET_Y =0.0;
 // attitude control loop
 PID_ATT_INTERVAL = 1/10; // 5 hz
 PID_ATT_P=.1;
-PID_ATT_I=0.0;
+PID_ATT_I=0.2;
 PID_ATT_D=0.1;
 PID_ATT_LIM=0.1; // 10 % motors
 PID_ATT_AWU=0.0;
@@ -87,7 +87,7 @@ PID_YAWPOS_LIM=1; // 1 rad/s
 PID_YAWPOS_AWU=1; // 1 rad/s
 PID_YAWSPEED_P=1;
 PID_YAWSPEED_I=0;
-PID_YAWSPEED_D=0.5;
+PID_YAWSPEED_D=0;
 PID_YAWSPEED_LIM=0.1; // 10 % motors
 PID_YAWSPEED_AWU=0.0;
 ATT_OFFSET_X =0.0;
@@ -127,6 +127,7 @@ H.yaw_yawRate = pidCont(PID_YAWPOS_P,PID_YAWPOS_I,PID_YAWPOS_D,PID_ATT_INTERVAL)
 H.pN_pitch = pidCont(PID_POS_P,PID_POS_I,PID_POS_D,PID_POS_INTERVAL);
 H.pE_roll = pidCont(PID_POS_P,PID_POS_I,PID_POS_D,PID_POS_INTERVAL);
 H.pD_SUM = (%s+2)/2*pidCont(PID_POS_Z_P,PID_POS_Z_I,PID_POS_Z_D,PID_POS_INTERVAL);
+
 
 x0 = [
 U; // U

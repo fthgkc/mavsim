@@ -96,7 +96,7 @@ s3 = ss2tf(s);
 [s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.pitch_FB);
 s4 = ss2tf(s);
 [s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
-s5 = s;
+s5 = ss2tf(s);
 
 sPitch = s4(y.pitch,u.pitch);
 
@@ -105,26 +105,55 @@ sPitch = s4(y.pitch,u.pitch);
 // North/ East frame
 
 [s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_pitch);
-s6 = s;
+s6 = ss2tf(s);
 [s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_roll);
-s7 = s;
+s7 = ss2tf(s);
 
 sPN = s7(y.pN,u.pN);
 sPNOpen = s5(y.pN,u.pitch)*H.pN_pitch;
 
-//Open Loops Bode Plots
-bode(s0(y.pD,u.SUM))
-scf(2); bode(s1(y.yawRate,u.LRFB))
-scf(3); bode(s2(y.roll,u.LR))
-scf(4); bode(s3(y.pitch,u.FB))
-scf(5); bode(s4(y.yaw,u.yawRate))
+//Open and Closed Loops Bode Plots and RLocus
+scf(1);
+subplot(2,2,1); xtitle("y.pD,u.SUM"); bode(s0(y.pD,u.SUM)*H.pD_SUM)
+subplot(2,2,2); xtitle("y.pD,u.pD"); bode(s1(y.pD,u.pD))
+subplot(2,2,3); evans(clean(s0(y.pD,u.SUM)))
+subplot(2,2,4); evans(clean(s0(y.pD,u.SUM))*H.pD_SUM)
 
-//Closed Loops Bode Plots
-scf(6); bode(s1(y.pD,u.pD))
-scf(7); bode(s2(y.yawRate,u.yawRate))
-scf(8); bode(s3(y.roll,u.roll))
-scf(9); bode(s4(y.pitch,u.pitch))
+scf(2);
+subplot(2,2,1); xtitle("y.yawRate,u.LRFB"); bode(s1(y.yawRate,u.LRFB)*H.yawRate_LRFB)
+subplot(2,2,2); xtitle("y.yawRate,u.yawRate"); bode(s2(y.yawRate,u.yawRate))
+subplot(2,2,3); evans(clean(s1(y.yawRate,u.LRFB)))
+subplot(2,2,4); evans(clean(s1(y.yawRate,u.LRFB))*H.yawRate_LRFB)
 
+scf(3);
+subplot(2,2,1); xtitle("y.roll,u.LR"); bode(s2(y.roll,u.LR)*H.roll_LR)
+subplot(2,2,2); xtitle("y.roll,u.roll"); bode(s3(y.roll,u.roll))
+subplot(2,2,3); evans(clean(s2(y.roll,u.LR)))
+subplot(2,2,4); evans(clean(s2(y.roll,u.LR))*H.roll_LR)
+
+scf(4);
+subplot(2,2,1); xtitle("y.pitch,u.FB"); bode(s3(y.pitch,u.FB)*H.pitch_FB)
+subplot(2,2,2); xtitle("y.pitch,u.pitch"); bode(s4(y.pitch,u.pitch))
+subplot(2,2,3); evans(clean(s3(y.pitch,u.FB)))
+subplot(2,2,4); evans(clean(s3(y.pitch,u.FB))*H.pitch_FB)
+
+scf(5);
+subplot(2,2,1); xtitle("y.yaw,u.yawRate"); bode(s4(y.yaw,u.yawRate)*H.yaw_yawRate)
+subplot(2,2,2); xtitle("y.yaw,u.yaw"); bode(s5(y.yaw,u.yaw))
+subplot(2,2,3); evans(clean(s4(y.yaw,u.yawRate)))
+subplot(2,2,4); evans(clean(s4(y.yaw,u.yawRate))*H.yaw_yawRate)
+
+scf(6);
+subplot(2,2,1); xtitle("y.pN,u.pitch"); bode(s5(y.pN,u.pitch)*H.pN_pitch)
+subplot(2,2,2); xtitle("y.pN,u.pN"); bode(s6(y.pN,u.pN))
+subplot(2,2,3); evans(clean(s5(y.pN,u.pitch)))
+subplot(2,2,4); evans(clean(s5(y.pN,u.pitch))*H.pN_pitch)
+
+scf(7);
+subplot(2,2,1); xtitle("y.pE,u.roll"); bode(s6(y.pE,u.roll)*H.pE_roll)
+subplot(2,2,2); xtitle("y.pE,u.pE"); bode(s7(y.pE,u.pE))
+subplot(2,2,3); evans(clean(s6(y.pE,u.roll)))
+subplot(2,2,4); evans(clean(s6(y.pE,u.roll))*H.pE_roll)
 //disp('beginning plotting');
 
 // position north, and pitch
