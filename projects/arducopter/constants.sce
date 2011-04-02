@@ -59,7 +59,7 @@ MOTOR_MAX = 1;
 MOTOR_MIN = 0.1;
 
 // position control loop
-PID_POS_INTERVAL = 1/10; // 5 hz
+PID_POS_INTERVAL = 1/5; // 5 hz
 PID_POS_P =0.02;
 PID_POS_I =0.1;
 PID_POS_D =0.1;
@@ -74,7 +74,7 @@ VEL_OFFSET_X =0.0;
 VEL_OFFSET_Y =0.0;
 
 // attitude control loop
-PID_ATT_INTERVAL = 1/10; // 20 hz
+PID_ATT_INTERVAL = 1/20; // 20 hz
 PID_ATT_P=.1;
 PID_ATT_I=0.2;
 PID_ATT_D=0.1;
