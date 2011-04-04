@@ -504,10 +504,10 @@ Car::Car() :
 	modelPat = new PositionAttitudeTransform;
 	modelPat->setAttitude(osg::Quat(-M_PI/2,osg::Vec3(1,0,0)));
 	modelPat->addChild(model);
-    myWheelLF.reset(new Actuator("wheelLF",osg::Vec3(0.304,-0.087,0.260),model));
-    myWheelRF.reset(new Actuator("wheelRF",osg::Vec3(0.304,-0.087,-0.260),model));
-    myWheelLB.reset(new Actuator("wheelLB",osg::Vec3(-0.304,-0.087,0.260),model));
-    myWheelRB.reset(new Actuator("wheelRB",osg::Vec3(-0.304,-0.087,-0.260),model));
+    myWheelLF.reset(new Actuator("wheelLF",osg::Vec3(0.304,-0.087,-0.260),model));
+    myWheelRF.reset(new Actuator("wheelRF",osg::Vec3(0.304,-0.087,0.260),model));
+    myWheelLB.reset(new Actuator("wheelLB",osg::Vec3(-0.304,-0.087,-0.260),model));
+    myWheelRB.reset(new Actuator("wheelRB",osg::Vec3(-0.304,-0.087,0.260),model));
     addChild(modelPat);
 }
 
