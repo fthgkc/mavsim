@@ -72,7 +72,7 @@ quadTf = clean(ss2tf(lincos(dynamics,Xd,Ud)),1e-5);
 
 // motor mix block
 disp('linearizing motor mix block');
-motorMixTf = clean(ss2tf(lincos(motorMix,[],[Ud(1,1);0;0;0])),1e-5);
+motorMixTf = clean(ss2tf(lincos(motorMix,[],[Ud(1);0;0;0])),1e-5);
 
 // motor lag block
 disp('linearizing motor lag block');
@@ -86,17 +86,17 @@ sys.olss = minssAutoTol(tf2ss(sys.oltf),16);
 // attitude loops
 disp('beginning loop closures');
 s = sys.olss;
-s0 = ss2tf(s);
+s0 = ss2cleanTf(s);
 [s,u] = closeLoop2(y.pD,u.SUM,s,y,u,H.pD_SUM);
-s1 = ss2tf(s);
+s1 = ss2cleanTf(s);
 [s,u] = closeLoop2(y.yawRate,u.LRFB,s,y,u,H.yawRate_LRFB);
-s2 = ss2tf(s);
+s2 = ss2cleanTf(s);
 [s,u] = closeLoop2(y.roll,u.LR,s,y,u,H.roll_LR);
-s3 = ss2tf(s);
+s3 = ss2cleanTf(s);
 [s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.pitch_FB);
-s4 = ss2tf(s);
+s4 = ss2cleanTf(s);
 [s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
-s5 = ss2tf(s);
+s5 = ss2cleanTf(s);
 
 sPitch = s4(y.pitch,u.pitch);
 
@@ -105,9 +105,9 @@ sPitch = s4(y.pitch,u.pitch);
 // North/ East frame
 
 [s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_pitch);
-s6 = ss2tf(s);
+s6 = ss2cleanTf(s);
 [s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_roll);
-s7 = ss2tf(s);
+s7 = ss2cleanTf(s);
 
 sPN = s7(y.pN,u.pN);
 sPNOpen = s5(y.pN,u.pitch)*H.pN_pitch;
