@@ -73,6 +73,36 @@ PlaneSS=sys;                                                                    
 PlaneTf=tfm;
 
 disp('done')
+disp('The Linearized System has the Size: ')
+size(PlaneTf)
+
+//Throttle to altitude
+f=scf(1)
+f.figure_position = [0 0]
+f.figure_name='Throttle -> Altitude'
+bode(PlaneTf(5,1))
+
+//Elevator to Velocity
+f=scf(2)
+f.figure_position = [800 0]
+f.figure_name='Elevator -> Velocity'
+bode(PlaneTf(1,3))
+
+//Rudder to Rollspeed
+f=scf(3)
+f.figure_position = [0 600]
+f.figure_name='Rudder -> Rollspeed (p)'
+bode(PlaneTf(7,4))
+
+//Rudder to Yawspeed
+f.figure_position = [800 600]
+f=scf(4)
+f.figure_name='Rudder -> Yawspeed (r)'
+bode(PlaneTf(10,4))
+
+
+
+
 //bode(PlaneTf(1,1));                                                                             //Up till here it is the general approach, however i am unable up to this point to linearize the JSBSimComm block. Another unsolved problem is how i can linearize only some of the inputs to outputs.
 
  //motor mix block

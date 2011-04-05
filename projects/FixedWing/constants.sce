@@ -15,8 +15,8 @@ rudder.sign = -1;
 // lateral control system
 
 // roll
-phi_pid.kp = .5;
-phi_pid.ki = 0;
+phi_pid.kp = .4;
+phi_pid.ki = .6;
 phi_pid.kd = 0;
 phi_pid.imax = 1;
 phi_pid.wcut = 20;
@@ -50,9 +50,9 @@ vt_pid.wcut = 20;
 vt_pid.dt=.01;
 
 // altitude
-h_pid.kp = .1;
+h_pid.kp = 1;
 h_pid.ki = 0;
-h_pid.kd = .1
+h_pid.kd = 1;
 h_pid.imax = 1;
 h_pid.wcut = 20;
 h_pid.dt=.01;
