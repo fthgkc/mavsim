@@ -142,5 +142,7 @@ m = createIndex(["Vfwd","psi","h","Vside"]);
 x = createIndex(["U","W","pitch","pitchRate","V","roll","rollRate","yaw",..
 	"yawRate","vN","vE","vD","pN","pE","pD"]);
 u = createIndex(["SUM","FB","LR","LRFB"]);
+ch = createIndex(["mode","left","right","front","back"]);
+xHil = [x.V,x.roll,x.pitch,x.yaw,x.rollRate,x.pitchRate,x.yawRate,x.yaw,x.V,x.pN,x.pE,x.pD];
 y = x;
 
