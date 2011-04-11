@@ -49,8 +49,7 @@ function [sysOut,uOut] = closeLoop2(yi,ui,sys,y,u,H)
 		end
 	end
 	poles=size(abcd(sys),1);
-	printf('\t\tclbw=%f\tunstable poles=%d/%d\n',..
-		bw(ss2cleanTf(sysOut),-3),size(unstablePoles,2),size(abcd(sysOut),1));
+	printf('\t\tunstable poles=%d/%d\n',size(unstablePoles,2),size(abcd(sysOut),1));
 endfunction
 
 
@@ -97,10 +96,11 @@ s1 = ss2cleanTf(s);
 
 f=scf(i); clf(i);
 f.figure_size=[600,600];
+f.figure_name='yawRate';
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([s0(y.yawRate,u.LRFB);H.yawRate_LRFB*s0(y.yawRate,u.LRFB);s1(y.yawRate,u.LRFB)],..
 	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
-	xs2eps(1,'yawRate');
+	xs2eps(i,'yawRate');
 
 // pD
 [s,u] = closeLoop2(y.pD,u.SUM,s,y,u,H.pD_SUM);
@@ -110,10 +110,11 @@ s1 = ss2cleanTf(s);
 
 f=scf(i); clf(i);
 f.figure_size=[600,600];
+f.figure_name='pD';
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([s0(y.pD,u.SUM);H.pD_SUM*s0(y.pD,u.SUM);s1(y.pD,u.SUM)],..
 	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
-	xs2eps(1,'pD');
+	xs2eps(i,'pD');
 
 
 // roll 
@@ -124,10 +125,11 @@ s1 = ss2cleanTf(s);
 
 f=scf(i); clf(i);
 f.figure_size=[600,600];
+f.figure_name='roll';
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([s0(y.roll,u.LR);H.roll_LR*s0(y.roll,u.LR);s1(y.roll,u.LR)],..
 	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
-	xs2eps(1,'roll');
+	xs2eps(i,'roll');
 
 // pitch 
 [s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.pitch_FB);
@@ -137,10 +139,11 @@ s1 = ss2cleanTf(s);
 
 f=scf(i); clf(i);
 f.figure_size=[600,600];
+f.figure_name='pitch';
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([s0(y.pitch,u.FB);H.pitch_FB*s0(y.pitch,u.FB);s1(y.pitch,u.FB)],..
 	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
-	xs2eps(1,'pitch');
+	xs2eps(i,'pitch');
 
 // yaw 
 i = i+1;
@@ -150,10 +153,11 @@ s1 = ss2cleanTf(s);
 
 f=scf(i); clf(i);
 f.figure_size=[600,600];
+f.figure_name='yaw';
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([s0(y.yaw,u.yawRate);H.yaw_yawRate*s0(y.yaw,u.yawRate);s1(y.yaw,u.yawRate)],..
 	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
-	xs2eps(1,'yaw');
+	xs2eps(i,'yaw');
 
 // position loops
 // we can tie in pitch and roll directly since for trim we are aligned with
@@ -167,10 +171,11 @@ s1 = ss2cleanTf(s);
 
 f=scf(i); clf(i);
 f.figure_size=[600,600];
+f.figure_name='pN';
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([s0(y.pN,u.pitch);H.pN_pitch*s0(y.pN,u.pitch);s1(y.pN,u.pN)],..
 	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
-	xs2eps(1,'pN');
+	xs2eps(i,'pN');
 
 // pE
 i = i+1;
@@ -180,10 +185,11 @@ s1 = ss2cleanTf(s);
 
 f=scf(i); clf(i);
 f.figure_size=[600,600];
+f.figure_name='pE';
 set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([s0(y.pE,u.roll);H.pE_roll*s0(y.pE,u.roll);s1(y.pE,u.pE)],..
 	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
-	xs2eps(1,'pE');
+	xs2eps(i,'pE');
 
 //disp('beginning plotting');
 
