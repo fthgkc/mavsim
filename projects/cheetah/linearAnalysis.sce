@@ -88,15 +88,61 @@ disp('beginning loop closures');
 s = sys.olss;
 s0 = ss2cleanTf(s);
 [s,u] = closeLoop2(y.pD,u.SUM,s,y,u,H.pD_SUM);
-s1 = ss2cleanTf(s);
+sPrev = s0;
+
+// pD
+f=scf(1); clf(1);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([s(y.pD,u.SUM);H.pD_SUM*s(y.pD,u.SUM);sPrev(y.pD,u.SUM)],..
+	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
+	xs2eps(1,'pD');
+
+sPrev = s;
 [s,u] = closeLoop2(y.yawRate,u.LRFB,s,y,u,H.yawRate_LRFB);
 s2 = ss2cleanTf(s);
+
+// yawRate 
+f=scf(1); clf(1);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([s0(y.yawRate,u.LRFB);H.yawRate_LRFB*s0(y.yawRate,u.LRFB);s1(y.yawRate,u.LRFB)],..
+	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
+	xs2eps(1,'yawRate');
+
 [s,u] = closeLoop2(y.roll,u.LR,s,y,u,H.roll_LR);
 s3 = ss2cleanTf(s);
+
+// roll 
+f=scf(1); clf(1);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([s0(y.roll,u.LR);H.roll_LR*s0(y.roll,u.LR);s1(y.roll,u.LR)],..
+	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
+	xs2eps(1,'roll');
+
 [s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.pitch_FB);
 s4 = ss2cleanTf(s);
+
+// pitch 
+f=scf(1); clf(1);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([s0(y.pitch,u.FB);H.pitch_FB*s0(y.pitch,u.FB);s1(y.pitch,u.FB)],..
+	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
+	xs2eps(1,'pitch');
+
 [s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
 s5 = ss2cleanTf(s);
+
+// yaw 
+f=scf(1); clf(1);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([s3(y.yaw,u.yawRate);H.yaw_yawRate*s3(y.yaw,u.yawRate);s3(y.yaw,u.yawRate)],..
+	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
+	xs2eps(1,'yaw');
+
 
 //sPitch = s4(y.pitch,u.pitch);
 
@@ -109,33 +155,42 @@ s6 = ss2cleanTf(s);
 [s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_roll);
 s7 = ss2cleanTf(s);
 
-//sPN = s7(y.pN,u.pN);
-//sPNOpen = s5(y.pN,u.pitch)*H.pN_pitch;
+sPN = s7(y.pN,u.pN);
+sPNOpen = s5(y.pN,u.pitch)*H.pN_pitch;
 
 //disp('beginning plotting');
 
 // position north, and pitch
-//f=scf(1); clf(1);
-//f.figure_size=[600,600];
-//set_posfig_dim(f.figure_size(1),f.figure_size(2));
-//bode([sPitch*pade(PID_ATT_INTERVAL);sPN*pade(PID_POS_INTERVAL)],..
-	//0.01,99,.01,["pitch";"position north"])
-//xs2eps(1,'pN_pitch');
+f=scf(1); clf(1);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([sPitch*pade(PID_ATT_INTERVAL);sPN*pade(PID_POS_INTERVAL)],..
+	0.01,99,.01,["pitch";"position north"])
+xs2eps(1,'pN_pitch');
 
 // zoh time effect on pN closed loop
-//f=scf(2); clf(2);
-//f.figure_size=[600,600];
-//set_posfig_dim(f.figure_size(1),f.figure_size(2));
-//bode([sPN*pade(4);sPN*pade(2);sPN*pade(1);sPN*pade(1/2);..
-	//sPN*pade(1/4);sPN*pade(1/16)],0.01,99,.01,..
-	//["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
-//xs2eps(2,'pN_closed_zoh');
+f=scf(2); clf(2);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([sPN*pade(4);sPN*pade(2);sPN*pade(1);sPN*pade(1/2);..
+	sPN*pade(1/4);sPN*pade(1/16)],0.01,99,.01,..
+	["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
+xs2eps(2,'pN_closed_zoh');
 
 // zoh time effect on pN open loop
-//f=scf(3); clf(3);
-//f.figure_size=[600,600];
-//set_posfig_dim(f.figure_size(1),f.figure_size(2));
-//bode([sPNOpen*pade(4);sPNOpen*pade(2);sPNOpen*pade(1);sPNOpen*pade(1/2);..
-	//sPNOpen*pade(1/4);sPNOpen*pade(1/16)],0.01,99,.01,..
-	//["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
-//xs2eps(3,'pN_open_zoh');
+f=scf(3); clf(3);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([sPNOpen*pade(4);sPNOpen*pade(2);sPNOpen*pade(1);sPNOpen*pade(1/2);..
+	sPNOpen*pade(1/4);sPNOpen*pade(1/16)],0.01,99,.01,..
+	["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
+xs2eps(3,'pN_open_zoh');
+
+// velocity
+f=scf(1); clf(1);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([s0(y.V,u.THR);H.V_THR*s0(y.V,u.THR);s2(y.V,u.V)],..
+	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
+	xs2eps(1,'velocity');
+

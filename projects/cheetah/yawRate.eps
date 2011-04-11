@@ -1,0 +1,2004 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%BoundingBox: 14 137 581 704 
+%%
+%%Scilab Postscript File (Copyright 1995-2005 J.Ph Chancelier Enpc/cermics)
+%%EndComments
+/saved save def 
+/$pictdict 100 dict def
+$pictdict begin
+
+/dogrey
+{ /Arraybox exch def
+	/Arraygrey exch def
+	/nargs exch def 
+	/func exch cvx def
+	Arraybox 0 nargs getinterval Arraygrey 0 get func 
+	1 1 Arraygrey length 1 sub 
+	{/i exch def
+	Arraybox i nargs mul nargs getinterval 
+	Arraygrey i get func
+	}for
+} def
+%--------------------------------------------
+% [x y width height] nivgris drawbox 
+% si niv gris > 1.0 alors on fait un stroke 
+% sans closepath 
+%--------------------------------------------
+
+/drawpoly
+	{/glev exch def /Ar exch def
+	newpath
+	Ar 0 get Ar 1 get moveto 
+	2 2 Ar length 1 sub 
+	{/i exch def
+	Ar i get Ar i 1 add get absolu {lineto} {rlineto} ifelse
+	}for
+	glev -1 le 
+	{ % filling the polygon with current pattern ( gray or color)
+	  closepath gsave glev neg 1 sub WhiteLev 2 add lmin 0 lmax Setgray eofill grestore }
+	{ glev 1 ge 
+	   { % drawing the polygon with current dash style or color 
+	     % XXXXX : a voir c'est pas clair il faudrait sauver 
+	     % and filling it with other color (glev) 
+	     closepath gsave glev 1 sub WhiteLev 2 add lmin 0 lmax xsetgray
+		 eofill grestore stroke }
+	   {% drawing the polygon with current style 
+	    closeflag {closepath} if stroke} 
+	ifelse }
+	ifelse 
+} def 
+
+
+/drawbox 
+	{/glev exch def /Ar exch def 
+	/x Ar 0 get def /y Ar 1 get def 
+	/w Ar 2 get def /h Ar 3 get def 
+	newpath
+	x y moveto
+	x w add y lineto
+	x w add y h add lineto
+	x y h add lineto
+	glev 1 ge 
+	{ % filling 
+	 closepath gsave glev 1 sub WhiteLev 2 add lmin 0 lmax Setgray eofill 
+		grestore}
+	{ 
+	  % drawing 
+	  glev -1 le 
+	  {
+    	  closepath gsave glev neg 1 sub WhiteLev 2 add lmin 0 lmax xsetgray
+		 stroke grestore  }
+	  { closepath stroke} ifelse 
+	} ifelse
+} def 
+
+%--------------------------------------------
+% [x y width height] clearzone
+%--------------------------------------------
+/clearzone
+        {/Ar exch def
+        /x Ar 0 get def /y Ar 1 get def
+        /w Ar 2 get def /h Ar 3 get def
+        newpath
+        x y moveto
+        x w add y lineto
+        x w add y h add lineto
+        x y h add lineto
+	closepath gsave background Setcolor eofill grestore
+} def
+
+%------------------------------------------------------
+% polyline stroke or polygon fill or both 
+%------------------------------------------------------
+/absolu true def 
+/closeflag false def 
+
+/lmin { /y exch def /x exch def x y le { x  } {  y  } ifelse } def
+/lmax { /y exch def /x exch def x y le { y } {  x } ifelse } def 
+
+
+/drawpoly
+	{/glev exch def /Ar exch def
+	newpath
+	Ar 0 get Ar 1 get moveto 
+	2 2 Ar length 1 sub 
+	{/i exch def
+	Ar i get Ar i 1 add get absolu {lineto} {rlineto} ifelse
+	}for
+	glev -1 le 
+	{ % filling the polygon with current pattern ( gray or color)
+	  closepath gsave glev neg 1 sub WhiteLev 2 add lmin 0 lmax Setgray eofill grestore }
+	{ glev 1 ge 
+	   { % drawing the polygon with current dash style or color 
+	     % XXXXX : a voir c'est pas clair il faudrait sauver 
+	     % and filling it with other color (glev) 
+	     closepath gsave glev 1 sub WhiteLev 2 add lmin 0 lmax Setgray 
+		 eofill grestore stroke }
+	   {% drawing the polygon with current style 
+	    closeflag {closepath} if stroke} 
+	ifelse }
+	ifelse 
+} def 
+
+%------------------------------------------------------
+% segments non connectes 
+%------------------------------------------------------
+
+/drawsegs
+	{/glev exch def /Ar exch def
+	% when  b&w is used drawsegs uses dash not gray levels 
+	newpath
+	Ar 0 get Ar 1 get moveto Ar 2 get Ar 3 get lineto 
+	gsave glev xsetgray stroke grestore
+	4 4 Ar length 3 sub 
+	{/i exch def
+	newpath 
+	Ar i get Ar i 1 add get moveto
+	Ar i 2 add get Ar i 3 add get lineto 
+	gsave glev xsetgray stroke grestore
+	}for
+} def 
+
+
+%------------------------------------------------------
+% unconected arrows
+%-----------------------------------------------------
+
+/drawarrows
+	{/arsize10 exch def /Ar exch def
+	Ar 0 get  Ar 1 get Ar 2 get Ar 3 get arsize10 drawarrow
+	4 4 Ar length 3 sub 
+	{/i exch def
+	Ar i get Ar i 1 add get  Ar i 2 add get  Ar i 3 add get arsize10 
+	drawarrow
+	}for
+} def 
+		
+/cos20 20 cos def
+/sin20 20 sin def
+
+/drawarrow                                
+  { 
+      /arsize exch 10 div def 
+      /tipy exch def /tipx exch def       
+      /taily exch def /tailx exch def
+      /dx tipx tailx sub  def               
+      /dy tipy taily sub  def               
+      newpath tipx tipy moveto tailx taily lineto stroke   
+      /norme dx dx mul dy dy mul add sqrt def 
+      norme 1.e-8 ge 
+	{
+	arsize dx mul norme div /dx1 exch def 
+	arsize dy mul norme div /dy1 exch def 
+% 	2 following lines modified (correction bug 607 (bruno 18 nov 2004)) 
+	/depx tipx def 
+	/depy tipy def 
+	newpath depx depy moveto 
+	cos20 neg dx1 mul sin20 dy1 mul sub depx add
+	sin20 dx1  mul cos20 dy1 mul sub depy add lineto 
+	cos20 neg dx1 mul sin20 dy1 mul add  depx add
+	sin20 neg dx1 mul cos20 dy1 mul sub depy add lineto closepath 
+	fill
+	} {} ifelse 
+  } def
+
+
+%------------------------------------------------------
+% cercle ou portions de cercle 
+% attention argument (x y w h angl1*64 angl2*64 )
+% devrait tracer une ellipse a modifier donc 
+%------------------------------------------------------
+
+/fillarc
+	{/glev exch def /Ar exch def
+	/cx Ar 0 get Ar 2 get 2 div add def 
+	/cy Ar 1 get Ar 3 get 2 div add def 
+	Ar 2 get 0 eq {} {
+	/hom Ar 3 get Ar 2 get div def 
+	/Cmsave1 matrix def Cmsave1 currentmatrix pop
+	%-- on change de transformation pour faire homothetie en (x,y) 
+	cx cy [1 0 0 hom 0 0 ] transform
+	/t1 exch neg cy add def 
+	/t2 exch neg cx add def 
+	[1 0 0 hom t2 t1 ] concat 
+	glev WhiteLev le
+	{ % filling 
+	newpath
+	cx cy moveto 
+	cx cy Ar 2 get 2 div Ar 5 get Ar 4 get add  64 div neg
+	 Ar 4 get 64 div neg  arc closepath
+	gsave glev Setgray eofill grestore}
+	{
+	%drawing with current dash or color unclosed path 
+	newpath
+	cx cy Ar 2 get 2 div Ar 5 get Ar 4 get add 64 div neg Ar 4 get 64 div neg arc
+	  stroke} ifelse 
+	Cmsave1 setmatrix } ifelse
+} def 
+
+/drawarc
+	{/glev exch def /Ar exch def
+	/cx Ar 0 get Ar 2 get 2 div add def 
+	/cy Ar 1 get Ar 3 get 2 div add def 
+	Ar 2 get 0 eq {} {
+	/hom Ar 3 get Ar 2 get div def 
+	/Cmsave1 matrix def Cmsave1 currentmatrix pop
+	%-- on change de transformation pour faire homothetie en (x,y) 
+	cx cy [1 0 0 hom 0 0 ] transform
+	/t1 exch neg cy add def 
+	/t2 exch neg cx add def 
+	[1 0 0 hom t2 t1 ] concat 
+	newpath
+	cx cy Ar 2 get 2 div Ar 5 get Ar 4 get add 64 div neg Ar 4 get 64 div neg arc
+	closepath glev xsetgray stroke
+	Cmsave1 setmatrix } ifelse
+} def 
+
+
+%------------------------------------------------------
+% centred hard mark 
+%------------------------------------------------------
+
+% x y str ShowCString 
+% on fait un show mais string est centre autour du point (x,y) 
+
+/ShowCString { /str exch def /y exch def /x exch def 
+ newpath 
+ x y moveto 
+ str true charpath flattenpath pathbbox 
+ /y2 exch def /x2 exch def /y1 exch def /x1 exch def 
+ x 2 mul x2 x1 add 2 div sub 
+ y 2 mul y2 y1 add 2 div sub moveto str show 
+ } def 
+
+/drawpolymark {/glev exch def /Ar exch def 
+	Ar 0 get Ar 1 get HardMark ShowCString 
+	2 2 Ar length 1 sub 
+	{/i exch def
+	Ar i get Ar i 1 add get HardMark ShowCString
+	}for
+} def 
+
+%---------------------------------------------------
+% chaines de caracteres 
+%---------------------------------------------------
+/FBox {/Ar exch def /rot exch def /str exch def /y exch def /x exch def 
+ newpath Ar 0 get Ar 1 get moveto 
+	/sina rot sin def /cosa rot cos def 
+	/-sina sina neg def 
+	[cosa -sina sina cosa 0 0 ] CtmModif
+ Ar 2 get 0 rlineto 0 Ar 3 get neg rlineto Ar 2 get neg 0 rlineto 
+ 0 Ar 3 get  rlineto  stroke CtmRestore 
+ x y str rot ShowRotate 
+ } def 
+
+% x y str ang Showrotate 
+% inverse du sens trigo 
+
+/ShowRotate { /ang exch def /str exch def 
+	/y exch def /x exch def 
+	x y moveto 
+	/sina ang sin def /cosa ang cos def 
+	/-sina 0 sina sub def 
+	[cosa -sina sina cosa 0 0 ] CtmModif
+	str show 
+	CtmRestore 
+} def 
+
+/HardMark (0) def 
+
+%(Chaine de caracteres) x y flag angle [arfbox] Show
+
+/Show { /Ar exch def 
+	/rot exch def /flag exch def /y exch def /x exch def /str exch def 
+	flag 1 eq 
+	{x y str rot Ar FBox}
+	{x y str rot ShowRotate } ifelse} def 
+
+/L {/y2 exch def /x2 exch def /y1 exch def /x1 exch def 
+    newpath x1 y1 moveto x2 y2 lineto stroke } def 
+
+%---------------------------------------------------------
+% drawing an axis 
+% angle [nsep1,nsep2] ,[siz1,siz2,coeff] [x0,y0] drawaxis",
+%---------------------------------------------------------
+
+/drawaxis {/XX exch def /Arsize exch def /Arsep exch def /ang exch def 
+	/Cmsave1 matrix def Cmsave1 currentmatrix pop
+	/sina ang sin def /cosa ang cos def /-sina sina neg def 
+	/x XX 0 get def /y XX 1 get def
+	%-- on change de transformation pour tourner autour de (x,y) 
+	x y [cosa sina -sina cosa 0 0 ] transform
+	/t1 exch neg y add def 
+	/t2 exch neg x add def 
+	[cosa sina -sina cosa t2 t1 ] concat 
+	newpath x y moveto 0 Arsize 1 get Arsize 2 get mul rlineto
+	stroke 
+	0 1 Arsep 1 get 1 sub
+	{
+	 % i don't want the value of the for indice 
+	 pop
+	newpath 
+	x y moveto 
+	0 1 Arsep 0 get 1 sub
+		{
+		 % i don't want the value of the for indice 
+		 pop
+		 Arsize 0 get 0  rlineto
+		 0 Arsize 1 get rlineto 
+	 	0 Arsize 1 get  neg rlineto }
+		for 
+	currentpoint /y exch def /x exch def 
+	stroke 
+	newpath x y moveto 0 Arsize 1 get Arsize 2 get mul rlineto
+	stroke }
+	for 
+	Cmsave1 setmatrix } def 
+
+%---------------------------------------------------------
+% change and restore CTM
+%---------------------------------------------------------
+
+/CtmModif {
+	/arg exch def 
+	/Cmsave matrix def 
+	Cmsave currentmatrix pop
+	[1 0 0 -1 0 0 ] concat 
+	arg concat 
+} def 
+
+/CtmRestore { Cmsave setmatrix } def 
+
+/Thickness { /th exch def th 0 le {/th 0.1 def} if th setlinewidth} def 
+
+/WhiteLev 15 def
+
+/Setgray { WhiteLev div setgray} def 
+
+/fillsolid { 0 setgray } def 
+
+%--------------------------------------
+% clip zones ( rectangle ) 
+%-------------------------------------
+
+/setclipzone {initclip 
+	/h exch def /w exch def /y exch def /x exch def 
+	newpath x y moveto w 0 rlineto 0 h rlineto w neg 0 rlineto 
+	0 h neg rlineto closepath clip} def 
+
+%------------------
+% to change the position of a picture 
+%------------------
+/cm{28.346457 mul}def
+
+/DesPosi { /YH exch def /XW exch def /YP exch def /XP exch def 
+	XP cm YP cm neg translate 
+	XW cm 6000 div YH cm 4240 div  scale } def 
+
+0 setlinecap 
+2 setlinejoin 
+1 setlinewidth
+
+%-- Color database 
+/ColorR [0.000000 0.000000 0.000000 0.529412 0.498039 0.133333 0.000000 0.878431 0.000000 1.000000 1.000000 1.000000 0.933333 1.000000 1.000000 0.960784 1.000000 ] def
+/ColorG [0.000000 0.000000 0.000000 0.807843 1.000000 0.545098 1.000000 1.000000 1.000000 0.647059 0.000000 0.000000 0.509804 1.000000 0.843137 0.960784 1.000000 ] def
+/ColorB [0.000000 0.501961 1.000000 0.921569 0.831373 0.133333 0.000000 1.000000 1.000000 0.000000 0.000000 1.000000 0.933333 0.000000 0.000000 0.862745 1.000000 ] def
+
+/Setcolor {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def
+
+% to multiply all the fontsizes by a factor  scf
+/scf 1.0 def
+
+% set dash styles : max number is hardcoded to 6 
+% /DashTab [[] [20 50 20 50]  [50 20 50 20]   [50 30 20 30]  [80 30 20 30]  [110 30 20 30]  [110 30 50 30]] def 
+/DashTab [[]  [50 20 50 20]   [50 30 20 30]  [80 30 20 30]  [110 30 20 30]  [110 30 50 30]] def 
+/Setdash {/i exch  0 lmax 5 lmin def i  DashTab i get 0 setdash } def 
+
+% style for drawing: color gray or dash 
+/xsetgray { usecolor 0 le {Setdash} {Setgray} ifelse } def 
+
+% default value for colormode 
+
+/usecolor 1 def 
+
+% changing fonts encoding 
+
+/Courier findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Courier exch definefont pop
+
+/Times-Roman findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Times-Roman exch definefont pop
+
+/Times-Bold findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Times-Bold exch definefont pop
+
+
+/Times-BoldItalic findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Times-BoldItalic exch definefont pop
+
+/Helvetica findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Helvetica exch definefont pop
+
+/Helvetica-Bold findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Helvetica-Bold exch definefont pop
+
+/Helvetica-Bold-Oblique findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Helvetica-Bold-Oblique exch definefont pop
+
+/Helvetica-Oblique findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Helvetica-Oblique exch definefont pop
+
+% used when extracting Latex from scilab generated text
+%Latex:% MySetFigFont
+%Latex:\begingroup\makeatletter\ifx\MySetFigFont\undefined%
+%Latex:\gdef\MySetFigFont#1#2#3#4#5{%
+%Latex:  \reset@font\fontsize{#1}{#2pt}%
+%Latex:  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+%Latex:  \selectfont}%
+%Latex:\fi\endgroup%
+%Latex:% myput 
+%Latex:\ifx\myput\undefined%
+%Latex:\long\def\myput#1#2#3#4{\put(#1,#2){\makebox(0,0)[lb]{\smash{{\MySetFigFont{#3}{#3}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}#4}}}}}}
+%Latex:\fi%
+
+%------ End Main Program ------%
+% XP YP XW YW DesPosi in the following code 
+% will output the picture in the rectangle defined by 
+% upper left point (XP,YP) wide :XW Height: YW
+% the coordinates are given in centimeter and 
+% are the (0,0) point is the down-left point of the paper 
+
+
+
+/ColorR [0.000000 
+0.000000 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000 0.000000 0.000000 0.000000 
+0.529412 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.564706 0.690196 0.815686 
+0.564706 0.690196 0.815686 0.501961 0.627451 0.752941 1.000000 1.000000 1.000000 1.000000 
+1.000000 0.0 1.0] def
+/ColorG [0.000000 
+0.000000 1.000000 1.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 
+0.807843 0.564706 0.690196 0.815686 0.564706 0.690196 0.815686 0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 0.188235 0.250980 0.376471 0.501961 0.627451 0.752941 0.878431 
+0.843137 0.0 1.0] def
+/ColorB [0.000000 
+1.000000 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 0.564706 0.690196 0.815686 
+1.000000 0.000000 0.000000 0.000000 0.564706 0.690196 0.815686 0.000000 0.000000 0.000000 
+0.564706 0.690196 0.815686 0.000000 0.000000 0.000000 0.501961 0.627451 0.752941 0.878431 
+0.000000 0.0 1.0] def
+%scipos_w=3000
+%scipos_h=3000
+% Dessin en bas a gauche de taille 3000,3000
+[1.889764 20 div 0 0 1.889764 20 div neg 141 10 div 7044 10 div] concat
+% Init driver 
+/PaintBackground {WhiteLev 2 add background eq {}{ (drawbox) 4 [background 1 add] [0 0 6000 6000] dogrey}ifelse } def
+5 Thickness
+% 3 setalufunction
+-1 -1 200000 200000 setclipzone
+[] 0 setdash
+/Times-Roman findfont 100 scf mul scalefont setfont
+fillsolid
+[] 0 setdash
+0 Setcolor
+/background 33 def PaintBackground
+%--use color 1 
+fillsolid
+[] 0 setdash
+0 Setcolor
+/WhiteLev 31 def
+/Setgray {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def 
+/Setcolor {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def 
+/usecolor 1 def 
+%--end use color 1 
+% End init driver 
+/WhiteLev 31 def
+/WhiteLev 31 def
+/ColorR [0.000000 
+0.000000 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000 0.000000 0.000000 0.000000 
+0.529412 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.564706 0.690196 0.815686 
+0.564706 0.690196 0.815686 0.501961 0.627451 0.752941 1.000000 1.000000 1.000000 1.000000 
+1.000000 0.0 1.0] def
+/ColorG [0.000000 
+0.000000 1.000000 1.000000 0.000000 0.000000 1.000000 1.000000 0.000000 0.000000 0.000000 
+0.807843 0.564706 0.690196 0.815686 0.564706 0.690196 0.815686 0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 0.188235 0.250980 0.376471 0.501961 0.627451 0.752941 0.878431 
+0.843137 0.0 1.0] def
+/ColorB [0.000000 
+1.000000 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 0.564706 0.690196 0.815686 
+1.000000 0.000000 0.000000 0.000000 0.564706 0.690196 0.815686 0.000000 0.000000 0.000000 
+0.564706 0.690196 0.815686 0.000000 0.000000 0.000000 0.501961 0.627451 0.752941 0.878431 
+0.000000 0.0 1.0] def
+%Latex:\setlength{\unitlength}{0.05pt}
+%Latex:\begin{picture}(6000,6000)(200,0)
+/background 33 def PaintBackground
+/background 33 def PaintBackground
+/background 33 def PaintBackground
+32 Setcolor
+5 Thickness
+[] 0 setdash
+32 Setcolor
+33 Setcolor
+ (drawpoly) 10 [ -34]
+[750 750 750 5250 5250 5250 5250 750 750 750 
+] dogrey 
+33 Setcolor
+/absolu true def
+32 Setcolor
+[] 0 setdash
+32 Setcolor
+32 Setcolor
+5 Thickness
+[] 0 setdash
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+/Helvetica findfont 100 scf mul scalefont setfont
+[] 0 setdash
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+5 Thickness
+750 306 4500 1839 setclipzone
+-1 -1 200000 200000 setclipzone
+[] 0 setdash
+32 Setcolor
+33 Setcolor
+ (drawpoly) 10 [ -34]
+[750 306 750 2145 5250 2145 5250 306 750 306 
+] dogrey 
+33 Setcolor
+/absolu true def
+32 Setcolor
+[] 0 setdash
+32 Setcolor
+[20 20 20 20 ] 0 setdash
+ (drawsegs) 4 [ 3]
+[750 2145 750 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1875 2145 1875 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3000 2145 3000 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4125 2145 4125 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[5250 2145 5250 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 2145 750 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1089 2145 1089 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1287 2145 1287 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1427 2145 1427 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1536 2145 1536 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1625 2145 1625 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1701 2145 1701 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1766 2145 1766 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1824 2145 1824 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1875 2145 1875 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2214 2145 2214 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2412 2145 2412 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2552 2145 2552 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2661 2145 2661 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2750 2145 2750 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2826 2145 2826 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2891 2145 2891 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2949 2145 2949 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3000 2145 3000 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3339 2145 3339 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3537 2145 3537 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3677 2145 3677 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3786 2145 3786 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3875 2145 3875 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3951 2145 3951 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4016 2145 4016 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4074 2145 4074 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4125 2145 4125 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4464 2145 4464 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4662 2145 4662 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4802 2145 4802 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4911 2145 4911 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[5000 2145 5000 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[5076 2145 5076 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[5141 2145 5141 306 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[5199 2145 5199 306 
+] dogrey 
+[] 0 setdash
+[20 20 20 20 ] 0 setdash
+ (drawsegs) 4 [ 3]
+[750 2145 5250 2145 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 1915 5250 1915 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 1685 5250 1685 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 1455 5250 1455 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 1226 5250 1226 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 996 5250 996 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 766 5250 766 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 536 5250 536 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 306 5250 306 
+] dogrey 
+[] 0 setdash
+0 Setcolor
+5 Thickness
+[] 0 setdash
+750 306 4500 1839 setclipzone
+0 Setcolor
+5 Thickness
+[] 0 setdash
+/closeflag false def
+ (drawpoly) 802 [ 0]
+[750 923 761 925 773 927 784 930 795 932 806 934 818 936 829 939 840 941 851 943 
+863 946 874 948 885 950 896 952 908 955 919 957 930 959 941 962 953 964 964 966 
+975 969 986 971 998 973 1009 975 1020 978 1031 980 1043 982 1054 985 1065 987 1076 989 
+1088 992 1099 994 1110 996 1121 998 1133 1001 1144 1003 1155 1005 1166 1008 1178 1010 1189 1012 
+1200 1015 1211 1017 1223 1019 1234 1021 1245 1024 1256 1026 1268 1028 1279 1031 1290 1033 1301 1035 
+1313 1038 1324 1040 1335 1042 1346 1044 1358 1047 1369 1049 1380 1051 1391 1054 1403 1056 1414 1058 
+1425 1060 1436 1063 1448 1065 1459 1067 1470 1070 1481 1072 1493 1074 1504 1077 1515 1079 1526 1081 
+1538 1083 1549 1086 1560 1088 1571 1090 1583 1093 1594 1095 1605 1097 1616 1100 1628 1102 1639 1104 
+1650 1106 1661 1109 1673 1111 1684 1113 1695 1116 1706 1118 1718 1120 1729 1123 1740 1125 1751 1127 
+1763 1129 1774 1132 1785 1134 1796 1136 1808 1139 1819 1141 1830 1143 1841 1146 1853 1148 1864 1150 
+1875 1152 1886 1155 1898 1157 1909 1159 1920 1162 1931 1164 1943 1166 1954 1168 1965 1171 1976 1173 
+1988 1175 1999 1178 2010 1180 2021 1182 2033 1185 2044 1187 2055 1189 2066 1191 2078 1194 2089 1196 
+2100 1198 2111 1201 2123 1203 2134 1205 2145 1208 2156 1210 2168 1212 2179 1214 2190 1217 2201 1219 
+2213 1221 2224 1224 2235 1226 2246 1228 2258 1231 2269 1233 2280 1235 2291 1237 2303 1240 2314 1242 
+2325 1244 2336 1247 2348 1249 2359 1251 2370 1254 2381 1256 2393 1258 2404 1260 2415 1263 2426 1265 
+2438 1267 2449 1270 2460 1272 2471 1274 2483 1277 2494 1279 2505 1281 2516 1283 2528 1286 2539 1288 
+2550 1290 2561 1293 2573 1295 2584 1297 2595 1300 2606 1302 2618 1304 2629 1307 2640 1309 2651 1311 
+2663 1313 2674 1316 2685 1318 2696 1320 2708 1323 2719 1325 2730 1327 2741 1330 2753 1332 2764 1334 
+2775 1337 2786 1339 2798 1341 2809 1344 2820 1346 2831 1348 2843 1350 2854 1353 2865 1355 2876 1357 
+2888 1360 2899 1362 2910 1364 2921 1367 2933 1369 2944 1371 2955 1374 2966 1376 2978 1378 2989 1381 
+3000 1383 3011 1385 3023 1388 3034 1390 3045 1392 3056 1395 3068 1397 3079 1400 3090 1402 3101 1404 
+3113 1407 3124 1409 3135 1411 3146 1414 3158 1416 3169 1418 3180 1421 3191 1423 3203 1426 3214 1428 
+3225 1430 3236 1433 3248 1435 3259 1438 3270 1440 3281 1442 3293 1445 3304 1447 3315 1450 3326 1452 
+3338 1455 3349 1457 3360 1460 3371 1462 3383 1465 3394 1467 3405 1470 3416 1472 3428 1475 3439 1477 
+3450 1480 3461 1482 3473 1485 3484 1487 3495 1490 3506 1492 3518 1495 3529 1498 3540 1500 3551 1503 
+3563 1506 3574 1508 3585 1511 3596 1514 3608 1516 3619 1519 3630 1522 3641 1524 3653 1527 3664 1530 
+3675 1533 3686 1536 3698 1539 3709 1541 3720 1544 3731 1547 3743 1550 3754 1553 3765 1556 3776 1559 
+3788 1562 3799 1565 3810 1568 3821 1571 3833 1574 3844 1577 3855 1581 3866 1584 3878 1587 3889 1590 
+3900 1594 3911 1597 3923 1600 3934 1603 3945 1607 3956 1610 3968 1614 3979 1617 3990 1621 4001 1624 
+4013 1628 4024 1631 4035 1635 4046 1638 4058 1642 4069 1646 4080 1649 4091 1653 4103 1657 4114 1660 
+4125 1664 4136 1668 4148 1672 4159 1676 4170 1680 4181 1683 4193 1687 4204 1691 4215 1695 4226 1699 
+4238 1703 4249 1707 4260 1711 4271 1715 4283 1719 4294 1724 4305 1728 4316 1732 4328 1736 4339 1740 
+4350 1744 4361 1748 4373 1753 4384 1757 4395 1761 4406 1765 4418 1770 4429 1774 4440 1778 4451 1783 
+4463 1787 4474 1791 4485 1796 4496 1800 4508 1804 4519 1809 4530 1813 4541 1817 4553 1822 4564 1826 
+4575 1831 4586 1835 4598 1839 4609 1844 4620 1848 4631 1853 4643 1857 4654 1862 4665 1866 4676 1871 
+4688 1875 4699 1880 4710 1884 4721 1889 4733 1893 4744 1897 4755 1902 4766 1907 4778 1911 4789 1916 
+4800 1920 4811 1925 4823 1929 4834 1934 4845 1938 4856 1943 4868 1947 4879 1952 4890 1956 4901 1961 
+4913 1965 4924 1970 4935 1974 4946 1979 4958 1984 4969 1988 4980 1993 4991 1997 5003 2002 5014 2006 
+5025 2011 5036 2016 5048 2020 5059 2025 5070 2029 5081 2034 5093 2038 5104 2043 5115 2048 5126 2052 
+5138 2057 5149 2061 5160 2066 5171 2070 5183 2075 5194 2080 5205 2084 5216 2089 5228 2093 5239 2098 
+5245 2100 
+] dogrey 
+0 Setcolor
+/absolu true def
+-1 -1 200000 200000 setclipzone
+1 Setcolor
+5 Thickness
+[] 0 setdash
+750 306 4500 1839 setclipzone
+1 Setcolor
+5 Thickness
+[] 0 setdash
+/closeflag false def
+ (drawpoly) 802 [ 0]
+[750 370 761 372 773 374 784 377 795 379 806 381 818 383 829 386 840 388 851 390 
+863 393 874 395 885 397 896 400 908 402 919 404 930 406 941 409 953 411 964 413 
+975 416 986 418 998 420 1009 422 1020 425 1031 427 1043 429 1054 432 1065 434 1076 436 
+1088 439 1099 441 1110 443 1121 445 1133 448 1144 450 1155 452 1166 455 1178 457 1189 459 
+1200 462 1211 464 1223 466 1234 468 1245 471 1256 473 1268 475 1279 478 1290 480 1301 482 
+1313 485 1324 487 1335 489 1346 491 1358 494 1369 496 1380 498 1391 501 1403 503 1414 505 
+1425 508 1436 510 1448 512 1459 514 1470 517 1481 519 1493 521 1504 524 1515 526 1526 528 
+1538 530 1549 533 1560 535 1571 537 1583 540 1594 542 1605 544 1616 547 1628 549 1639 551 
+1650 553 1661 556 1673 558 1684 560 1695 563 1706 565 1718 567 1729 570 1740 572 1751 574 
+1763 576 1774 579 1785 581 1796 583 1808 586 1819 588 1830 590 1841 593 1853 595 1864 597 
+1875 599 1886 602 1898 604 1909 606 1920 609 1931 611 1943 613 1954 616 1965 618 1976 620 
+1988 622 1999 625 2010 627 2021 629 2033 632 2044 634 2055 636 2066 639 2078 641 2089 643 
+2100 645 2111 648 2123 650 2134 652 2145 655 2156 657 2168 659 2179 662 2190 664 2201 666 
+2213 668 2224 671 2235 673 2246 675 2258 678 2269 680 2280 682 2291 685 2303 687 2314 689 
+2325 691 2336 694 2348 696 2359 698 2370 701 2381 703 2393 705 2404 708 2415 710 2426 712 
+2438 714 2449 717 2460 719 2471 721 2483 724 2494 726 2505 728 2516 731 2528 733 2539 735 
+2550 737 2561 740 2573 742 2584 744 2595 747 2606 749 2618 751 2629 754 2640 756 2651 758 
+2663 761 2674 763 2685 765 2696 768 2708 770 2719 772 2730 774 2741 777 2753 779 2764 781 
+2775 784 2786 786 2798 788 2809 791 2820 793 2831 795 2843 798 2854 800 2865 802 2876 805 
+2888 807 2899 809 2910 812 2921 814 2933 816 2944 819 2955 821 2966 823 2978 826 2989 828 
+3000 831 3011 833 3023 835 3034 838 3045 840 3056 842 3068 845 3079 847 3090 849 3101 852 
+3113 854 3124 857 3135 859 3146 861 3158 864 3169 866 3180 869 3191 871 3203 874 3214 876 
+3225 878 3236 881 3248 883 3259 886 3270 888 3281 891 3293 893 3304 896 3315 898 3326 901 
+3338 903 3349 906 3360 908 3371 911 3383 913 3394 916 3405 919 3416 921 3428 924 3439 926 
+3450 929 3461 932 3473 934 3484 937 3495 940 3506 943 3518 945 3529 948 3540 951 3551 954 
+3563 956 3574 959 3585 962 3596 965 3608 968 3619 971 3630 974 3641 977 3653 980 3664 983 
+3675 986 3686 989 3698 992 3709 995 3720 998 3731 1001 3743 1005 3754 1008 3765 1011 3776 1015 
+3788 1018 3799 1021 3810 1025 3821 1028 3833 1032 3844 1035 3855 1039 3866 1042 3878 1046 3889 1050 
+3900 1053 3911 1057 3923 1061 3934 1065 3945 1069 3956 1073 3968 1077 3979 1081 3990 1085 4001 1089 
+4013 1093 4024 1097 4035 1101 4046 1105 4058 1110 4069 1114 4080 1118 4091 1123 4103 1127 4114 1132 
+4125 1136 4136 1141 4148 1145 4159 1150 4170 1154 4181 1159 4193 1164 4204 1168 4215 1173 4226 1178 
+4238 1183 4249 1187 4260 1192 4271 1197 4283 1202 4294 1207 4305 1212 4316 1216 4328 1221 4339 1226 
+4350 1231 4361 1236 4373 1241 4384 1246 4395 1251 4406 1256 4418 1261 4429 1266 4440 1271 4451 1276 
+4463 1281 4474 1286 4485 1291 4496 1296 4508 1301 4519 1306 4530 1311 4541 1316 4553 1321 4564 1326 
+4575 1331 4586 1336 4598 1341 4609 1346 4620 1351 4631 1355 4643 1360 4654 1365 4665 1370 4676 1375 
+4688 1380 4699 1385 4710 1390 4721 1395 4733 1400 4744 1404 4755 1409 4766 1414 4778 1419 4789 1424 
+4800 1429 4811 1434 4823 1438 4834 1443 4845 1448 4856 1453 4868 1458 4879 1462 4890 1467 4901 1472 
+4913 1477 4924 1481 4935 1486 4946 1491 4958 1496 4969 1500 4980 1505 4991 1510 5003 1514 5014 1519 
+5025 1524 5036 1529 5048 1533 5059 1538 5070 1543 5081 1547 5093 1552 5104 1557 5115 1561 5126 1566 
+5138 1571 5149 1575 5160 1580 5171 1585 5183 1589 5194 1594 5205 1599 5216 1603 5228 1608 5239 1613 
+5245 1615 
+] dogrey 
+1 Setcolor
+/absolu true def
+-1 -1 200000 200000 setclipzone
+2 Setcolor
+5 Thickness
+[] 0 setdash
+750 306 4500 1839 setclipzone
+2 Setcolor
+5 Thickness
+[] 0 setdash
+/closeflag false def
+ (drawpoly) 802 [ 0]
+[750 923 761 925 773 927 784 930 795 932 806 934 818 936 829 939 840 941 851 943 
+863 946 874 948 885 950 896 952 908 955 919 957 930 959 941 962 953 964 964 966 
+975 969 986 971 998 973 1009 975 1020 978 1031 980 1043 982 1054 985 1065 987 1076 989 
+1088 992 1099 994 1110 996 1121 998 1133 1001 1144 1003 1155 1005 1166 1008 1178 1010 1189 1012 
+1200 1015 1211 1017 1223 1019 1234 1021 1245 1024 1256 1026 1268 1028 1279 1031 1290 1033 1301 1035 
+1313 1038 1324 1040 1335 1042 1346 1044 1358 1047 1369 1049 1380 1051 1391 1054 1403 1056 1414 1058 
+1425 1060 1436 1063 1448 1065 1459 1067 1470 1070 1481 1072 1493 1074 1504 1077 1515 1079 1526 1081 
+1538 1083 1549 1086 1560 1088 1571 1090 1583 1093 1594 1095 1605 1097 1616 1100 1628 1102 1639 1104 
+1650 1106 1661 1109 1673 1111 1684 1113 1695 1116 1706 1118 1718 1120 1729 1123 1740 1125 1751 1127 
+1763 1129 1774 1132 1785 1134 1796 1136 1808 1139 1819 1141 1830 1143 1841 1146 1853 1148 1864 1150 
+1875 1152 1886 1155 1898 1157 1909 1159 1920 1162 1931 1164 1943 1166 1954 1168 1965 1171 1976 1173 
+1988 1175 1999 1178 2010 1180 2021 1182 2033 1185 2044 1187 2055 1189 2066 1191 2078 1194 2089 1196 
+2100 1198 2111 1201 2123 1203 2134 1205 2145 1208 2156 1210 2168 1212 2179 1214 2190 1217 2201 1219 
+2213 1221 2224 1224 2235 1226 2246 1228 2258 1231 2269 1233 2280 1235 2291 1237 2303 1240 2314 1242 
+2325 1244 2336 1247 2348 1249 2359 1251 2370 1254 2381 1256 2393 1258 2404 1260 2415 1263 2426 1265 
+2438 1267 2449 1270 2460 1272 2471 1274 2483 1277 2494 1279 2505 1281 2516 1283 2528 1286 2539 1288 
+2550 1290 2561 1293 2573 1295 2584 1297 2595 1300 2606 1302 2618 1304 2629 1307 2640 1309 2651 1311 
+2663 1313 2674 1316 2685 1318 2696 1320 2708 1323 2719 1325 2730 1327 2741 1330 2753 1332 2764 1334 
+2775 1337 2786 1339 2798 1341 2809 1344 2820 1346 2831 1348 2843 1350 2854 1353 2865 1355 2876 1357 
+2888 1360 2899 1362 2910 1364 2921 1367 2933 1369 2944 1371 2955 1374 2966 1376 2978 1378 2989 1381 
+3000 1383 3011 1385 3023 1388 3034 1390 3045 1392 3056 1395 3068 1397 3079 1400 3090 1402 3101 1404 
+3113 1407 3124 1409 3135 1411 3146 1414 3158 1416 3169 1418 3180 1421 3191 1423 3203 1426 3214 1428 
+3225 1430 3236 1433 3248 1435 3259 1438 3270 1440 3281 1442 3293 1445 3304 1447 3315 1450 3326 1452 
+3338 1455 3349 1457 3360 1460 3371 1462 3383 1465 3394 1467 3405 1470 3416 1472 3428 1475 3439 1477 
+3450 1480 3461 1482 3473 1485 3484 1487 3495 1490 3506 1492 3518 1495 3529 1498 3540 1500 3551 1503 
+3563 1506 3574 1508 3585 1511 3596 1514 3608 1516 3619 1519 3630 1522 3641 1524 3653 1527 3664 1530 
+3675 1533 3686 1536 3698 1539 3709 1541 3720 1544 3731 1547 3743 1550 3754 1553 3765 1556 3776 1559 
+3788 1562 3799 1565 3810 1568 3821 1571 3833 1574 3844 1577 3855 1581 3866 1584 3878 1587 3889 1590 
+3900 1594 3911 1597 3923 1600 3934 1603 3945 1607 3956 1610 3968 1614 3979 1617 3990 1621 4001 1624 
+4013 1628 4024 1631 4035 1635 4046 1638 4058 1642 4069 1646 4080 1649 4091 1653 4103 1657 4114 1660 
+4125 1664 4136 1668 4148 1672 4159 1676 4170 1680 4181 1683 4193 1687 4204 1691 4215 1695 4226 1699 
+4238 1703 4249 1707 4260 1711 4271 1715 4283 1719 4294 1724 4305 1728 4316 1732 4328 1736 4339 1740 
+4350 1744 4361 1748 4373 1753 4384 1757 4395 1761 4406 1765 4418 1770 4429 1774 4440 1778 4451 1783 
+4463 1787 4474 1791 4485 1796 4496 1800 4508 1804 4519 1809 4530 1813 4541 1817 4553 1822 4564 1826 
+4575 1831 4586 1835 4598 1839 4609 1844 4620 1848 4631 1853 4643 1857 4654 1862 4665 1866 4676 1871 
+4688 1875 4699 1880 4710 1884 4721 1889 4733 1893 4744 1897 4755 1902 4766 1907 4778 1911 4789 1916 
+4800 1920 4811 1925 4823 1929 4834 1934 4845 1938 4856 1943 4868 1947 4879 1952 4890 1956 4901 1961 
+4913 1965 4924 1970 4935 1974 4946 1979 4958 1984 4969 1988 4980 1993 4991 1997 5003 2002 5014 2006 
+5025 2011 5036 2016 5048 2020 5059 2025 5070 2029 5081 2034 5093 2038 5104 2043 5115 2048 5126 2052 
+5138 2057 5149 2061 5160 2066 5171 2070 5183 2075 5194 2080 5205 2084 5216 2089 5228 2093 5239 2098 
+5245 2100 
+] dogrey 
+2 Setcolor
+/absolu true def
+-1 -1 200000 200000 setclipzone
+32 Setcolor
+5 Thickness
+[] 0 setdash
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+(-2) 715 2258 0  0.00 [715 2178 71 79] Show
+%Latex:\myput{715}{3742}{4}{-2}
+/Helvetica findfont 100 scf mul scalefont setfont
+(10) 604 2354 0  0.00 [604 2254 111 99] Show
+%Latex:\myput{604}{3646}{5}{10}
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 2145 750 2181 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-1) 1840 2258 0  0.00 [1840 2178 71 79] Show
+%Latex:\myput{1840}{3742}{4}{-1}
+/Helvetica findfont 100 scf mul scalefont setfont
+(10) 1729 2354 0  0.00 [1729 2254 111 99] Show
+%Latex:\myput{1729}{3646}{5}{10}
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[1875 2145 1875 2181 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(0) 2978 2258 0  0.00 [2978 2178 44 79] Show
+%Latex:\myput{2978}{3742}{4}{0}
+/Helvetica findfont 100 scf mul scalefont setfont
+(10) 2867 2354 0  0.00 [2867 2254 111 99] Show
+%Latex:\myput{2867}{3646}{5}{10}
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[3000 2145 3000 2181 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(1) 4103 2258 0  0.00 [4103 2178 44 79] Show
+%Latex:\myput{4103}{3742}{4}{1}
+/Helvetica findfont 100 scf mul scalefont setfont
+(10) 3992 2354 0  0.00 [3992 2254 111 99] Show
+%Latex:\myput{3992}{3646}{5}{10}
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[4125 2145 4125 2181 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(2) 5228 2258 0  0.00 [5228 2178 44 79] Show
+%Latex:\myput{5228}{3742}{4}{2}
+/Helvetica findfont 100 scf mul scalefont setfont
+(10) 5117 2354 0  0.00 [5117 2254 111 99] Show
+%Latex:\myput{5117}{3646}{5}{10}
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[5250 2145 5250 2181 
+] dogrey 
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 2145 750 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1089 2145 1089 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1287 2145 1287 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1427 2145 1427 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1536 2145 1536 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1625 2145 1625 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1701 2145 1701 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1766 2145 1766 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1824 2145 1824 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1875 2145 1875 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2214 2145 2214 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2412 2145 2412 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2552 2145 2552 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2661 2145 2661 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2750 2145 2750 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2826 2145 2826 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2891 2145 2891 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2949 2145 2949 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3000 2145 3000 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3339 2145 3339 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3537 2145 3537 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3677 2145 3677 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3786 2145 3786 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3875 2145 3875 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3951 2145 3951 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4016 2145 4016 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4074 2145 4074 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4125 2145 4125 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4464 2145 4464 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4662 2145 4662 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4802 2145 4802 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4911 2145 4911 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[5000 2145 5000 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[5076 2145 5076 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[5141 2145 5141 2172 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[5199 2145 5199 2172 
+] dogrey 
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+(-120) 478 2183 0  0.00 [478 2083 200 99] Show
+%Latex:\myput{478}{3817}{5}{-120}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 2145 690 2145 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-100) 478 1953 0  0.00 [478 1853 200 99] Show
+%Latex:\myput{478}{4047}{5}{-100}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 1915 690 1915 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-80) 534 1723 0  0.00 [534 1623 144 99] Show
+%Latex:\myput{534}{4277}{5}{-80}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 1685 690 1685 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-60) 534 1493 0  0.00 [534 1393 144 99] Show
+%Latex:\myput{534}{4507}{5}{-60}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 1455 690 1455 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-40) 534 1264 0  0.00 [534 1164 144 99] Show
+%Latex:\myput{534}{4736}{5}{-40}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 1226 690 1226 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-20) 534 1034 0  0.00 [534 934 144 99] Show
+%Latex:\myput{534}{4966}{5}{-20}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 996 690 996 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(0) 623 804 0  0.00 [623 704 55 99] Show
+%Latex:\myput{623}{5196}{5}{0}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 766 690 766 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(20) 567 574 0  0.00 [567 474 111 99] Show
+%Latex:\myput{567}{5426}{5}{20}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 536 690 536 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(40) 567 344 0  0.00 [567 244 111 99] Show
+%Latex:\myput{567}{5656}{5}{40}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 306 690 306 
+] dogrey 
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 2145 705 2145 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 2030 705 2030 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 1915 705 1915 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 1800 705 1800 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 1685 705 1685 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 1570 705 1570 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 1455 705 1455 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 1340 705 1340 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 1226 705 1226 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 1111 705 1111 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 996 705 996 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 881 705 881 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 766 705 766 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 651 705 651 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 536 705 536 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 421 705 421 
+] dogrey 
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 2145 5250 2145 
+] dogrey 
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 2145 750 306 
+] dogrey 
+32 Setcolor
+ (drawbox) 4 [ 0]
+[750 306 4500 1839 
+] dogrey 
+32 Setcolor
+[] 0 setdash
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+(Magnitude ) 2752 180 0  0.00 [2752 80 494 99] Show
+%Latex:\myput{2752}{5820}{5}{Magnitude }
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+( Hz) 2925 2537 0  0.00 [2925 2437 150 99] Show
+%Latex:\myput{2925}{3463}{5}{ Hz}
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+(db) 441 1259 0 270.00 [441 1159 111 99] Show
+%Latex:\myput{441}{4741}{5}{db}
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+5 Thickness
+750 2886 4500 1839 setclipzone
+-1 -1 200000 200000 setclipzone
+[] 0 setdash
+32 Setcolor
+33 Setcolor
+ (drawpoly) 10 [ -34]
+[750 2886 750 4725 5250 4725 5250 2886 750 2886 
+] dogrey 
+33 Setcolor
+/absolu true def
+32 Setcolor
+[] 0 setdash
+32 Setcolor
+[20 20 20 20 ] 0 setdash
+ (drawsegs) 4 [ 3]
+[750 4725 750 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1875 4725 1875 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3000 4725 3000 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4125 4725 4125 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[5250 4725 5250 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 4725 750 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1089 4725 1089 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1287 4725 1287 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1427 4725 1427 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1536 4725 1536 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1625 4725 1625 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1701 4725 1701 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1766 4725 1766 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1824 4725 1824 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[1875 4725 1875 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2214 4725 2214 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2412 4725 2412 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2552 4725 2552 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2661 4725 2661 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2750 4725 2750 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2826 4725 2826 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2891 4725 2891 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[2949 4725 2949 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3000 4725 3000 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3339 4725 3339 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3537 4725 3537 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3677 4725 3677 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3786 4725 3786 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3875 4725 3875 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[3951 4725 3951 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4016 4725 4016 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4074 4725 4074 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4125 4725 4125 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4464 4725 4464 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4662 4725 4662 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4802 4725 4802 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[4911 4725 4911 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[5000 4725 5000 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[5076 4725 5076 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[5141 4725 5141 2886 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[5199 4725 5199 2886 
+] dogrey 
+[] 0 setdash
+[20 20 20 20 ] 0 setdash
+ (drawsegs) 4 [ 3]
+[750 4725 5250 4725 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 4418 5250 4418 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 4112 5250 4112 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 3806 5250 3806 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 3499 5250 3499 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 3193 5250 3193 
+] dogrey 
+ (drawsegs) 4 [ 3]
+[750 2886 5250 2886 
+] dogrey 
+[] 0 setdash
+0 Setcolor
+5 Thickness
+[] 0 setdash
+750 2886 4500 1839 setclipzone
+0 Setcolor
+5 Thickness
+[] 0 setdash
+/closeflag false def
+ (drawpoly) 802 [ 0]
+[750 3132 761 3132 773 3132 784 3132 795 3132 806 3132 818 3132 829 3132 840 3132 851 3132 
+863 3132 874 3132 885 3132 896 3132 908 3132 919 3132 930 3132 941 3132 953 3132 964 3132 
+975 3132 986 3132 998 3132 1009 3132 1020 3132 1031 3132 1043 3132 1054 3132 1065 3132 1076 3132 
+1088 3132 1099 3132 1110 3132 1121 3132 1133 3133 1144 3133 1155 3133 1166 3133 1178 3133 1189 3133 
+1200 3133 1211 3133 1223 3133 1234 3133 1245 3133 1256 3133 1268 3133 1279 3133 1290 3133 1301 3133 
+1313 3133 1324 3133 1335 3133 1346 3133 1358 3133 1369 3133 1380 3133 1391 3133 1403 3133 1414 3133 
+1425 3133 1436 3133 1448 3133 1459 3134 1470 3134 1481 3134 1493 3134 1504 3134 1515 3134 1526 3134 
+1538 3134 1549 3134 1560 3134 1571 3134 1583 3134 1594 3134 1605 3134 1616 3134 1628 3134 1639 3134 
+1650 3134 1661 3135 1673 3135 1684 3135 1695 3135 1706 3135 1718 3135 1729 3135 1740 3135 1751 3135 
+1763 3135 1774 3135 1785 3135 1796 3136 1808 3136 1819 3136 1830 3136 1841 3136 1853 3136 1864 3136 
+1875 3136 1886 3136 1898 3136 1909 3137 1920 3137 1931 3137 1943 3137 1954 3137 1965 3137 1976 3137 
+1988 3137 1999 3138 2010 3138 2021 3138 2033 3138 2044 3138 2055 3138 2066 3139 2078 3139 2089 3139 
+2100 3139 2111 3139 2123 3139 2134 3140 2145 3140 2156 3140 2168 3140 2179 3140 2190 3141 2201 3141 
+2213 3141 2224 3141 2235 3141 2246 3142 2258 3142 2269 3142 2280 3142 2291 3143 2303 3143 2314 3143 
+2325 3143 2336 3144 2348 3144 2359 3144 2370 3145 2381 3145 2393 3145 2404 3146 2415 3146 2426 3146 
+2438 3147 2449 3147 2460 3147 2471 3148 2483 3148 2494 3148 2505 3149 2516 3149 2528 3150 2539 3150 
+2550 3150 2561 3151 2573 3151 2584 3152 2595 3152 2606 3153 2618 3153 2629 3154 2640 3154 2651 3155 
+2663 3155 2674 3156 2685 3156 2696 3157 2708 3158 2719 3158 2730 3159 2741 3160 2753 3160 2764 3161 
+2775 3162 2786 3162 2798 3163 2809 3164 2820 3164 2831 3165 2843 3166 2854 3167 2865 3168 2876 3168 
+2888 3169 2899 3170 2910 3171 2921 3172 2933 3173 2944 3174 2955 3175 2966 3176 2978 3177 2989 3178 
+3000 3179 3011 3180 3023 3181 3034 3182 3045 3183 3056 3185 3068 3186 3079 3187 3090 3188 3101 3190 
+3113 3191 3124 3192 3135 3194 3146 3195 3158 3197 3169 3198 3180 3200 3191 3201 3203 3203 3214 3204 
+3225 3206 3236 3208 3248 3209 3259 3211 3270 3213 3281 3215 3293 3217 3304 3219 3315 3220 3326 3222 
+3338 3225 3349 3227 3360 3229 3371 3231 3383 3233 3394 3235 3405 3238 3416 3240 3428 3242 3439 3245 
+3450 3247 3461 3250 3473 3252 3484 3255 3495 3257 3506 3260 3518 3263 3529 3265 3540 3268 3551 3271 
+3563 3274 3574 3277 3585 3280 3596 3283 3608 3286 3619 3289 3630 3293 3641 3296 3653 3299 3664 3302 
+3675 3306 3686 3309 3698 3313 3709 3316 3720 3320 3731 3323 3743 3327 3754 3330 3765 3334 3776 3338 
+3788 3342 3799 3345 3810 3349 3821 3353 3833 3357 3844 3361 3855 3365 3866 3369 3878 3372 3889 3376 
+3900 3380 3911 3384 3923 3388 3934 3392 3945 3397 3956 3401 3968 3405 3979 3409 3990 3413 4001 3417 
+4013 3421 4024 3425 4035 3429 4046 3433 4058 3437 4069 3441 4080 3445 4091 3449 4103 3453 4114 3456 
+4125 3460 4136 3464 4148 3468 4159 3472 4170 3476 4181 3479 4193 3483 4204 3487 4215 3490 4226 3494 
+4238 3497 4249 3501 4260 3504 4271 3508 4283 3511 4294 3514 4305 3518 4316 3521 4328 3524 4339 3527 
+4350 3530 4361 3534 4373 3537 4384 3539 4395 3542 4406 3545 4418 3548 4429 3551 4440 3554 4451 3556 
+4463 3559 4474 3562 4485 3564 4496 3567 4508 3569 4519 3572 4530 3574 4541 3576 4553 3579 4564 3581 
+4575 3583 4586 3585 4598 3587 4609 3589 4620 3591 4631 3593 4643 3595 4654 3597 4665 3599 4676 3601 
+4688 3603 4699 3605 4710 3606 4721 3608 4733 3610 4744 3611 4755 3613 4766 3614 4778 3616 4789 3617 
+4800 3619 4811 3620 4823 3622 4834 3623 4845 3624 4856 3626 4868 3627 4879 3628 4890 3629 4901 3631 
+4913 3632 4924 3633 4935 3634 4946 3635 4958 3636 4969 3637 4980 3638 4991 3639 5003 3640 5014 3641 
+5025 3642 5036 3643 5048 3644 5059 3645 5070 3646 5081 3647 5093 3647 5104 3648 5115 3649 5126 3650 
+5138 3651 5149 3651 5160 3652 5171 3653 5183 3653 5194 3654 5205 3655 5216 3655 5228 3656 5239 3657 
+5245 3657 
+] dogrey 
+0 Setcolor
+/absolu true def
+-1 -1 200000 200000 setclipzone
+1 Setcolor
+5 Thickness
+[] 0 setdash
+750 2886 4500 1839 setclipzone
+1 Setcolor
+5 Thickness
+[] 0 setdash
+/closeflag false def
+ (drawpoly) 802 [ 0]
+[750 3133 761 3133 773 3133 784 3133 795 3133 806 3133 818 3133 829 3133 840 3133 851 3133 
+863 3133 874 3133 885 3133 896 3133 908 3133 919 3133 930 3133 941 3133 953 3133 964 3133 
+975 3133 986 3133 998 3133 1009 3133 1020 3133 1031 3133 1043 3133 1054 3133 1065 3133 1076 3133 
+1088 3134 1099 3134 1110 3134 1121 3134 1133 3134 1144 3134 1155 3134 1166 3134 1178 3134 1189 3134 
+1200 3134 1211 3134 1223 3134 1234 3134 1245 3134 1256 3134 1268 3134 1279 3135 1290 3135 1301 3135 
+1313 3135 1324 3135 1335 3135 1346 3135 1358 3135 1369 3135 1380 3135 1391 3135 1403 3135 1414 3135 
+1425 3136 1436 3136 1448 3136 1459 3136 1470 3136 1481 3136 1493 3136 1504 3136 1515 3136 1526 3137 
+1538 3137 1549 3137 1560 3137 1571 3137 1583 3137 1594 3137 1605 3137 1616 3138 1628 3138 1639 3138 
+1650 3138 1661 3138 1673 3138 1684 3138 1695 3139 1706 3139 1718 3139 1729 3139 1740 3139 1751 3139 
+1763 3140 1774 3140 1785 3140 1796 3140 1808 3140 1819 3141 1830 3141 1841 3141 1853 3141 1864 3142 
+1875 3142 1886 3142 1898 3142 1909 3142 1920 3143 1931 3143 1943 3143 1954 3144 1965 3144 1976 3144 
+1988 3144 1999 3145 2010 3145 2021 3145 2033 3146 2044 3146 2055 3146 2066 3147 2078 3147 2089 3147 
+2100 3148 2111 3148 2123 3149 2134 3149 2145 3149 2156 3150 2168 3150 2179 3151 2190 3151 2201 3152 
+2213 3152 2224 3152 2235 3153 2246 3153 2258 3154 2269 3155 2280 3155 2291 3156 2303 3156 2314 3157 
+2325 3157 2336 3158 2348 3159 2359 3159 2370 3160 2381 3160 2393 3161 2404 3162 2415 3163 2426 3163 
+2438 3164 2449 3165 2460 3166 2471 3166 2483 3167 2494 3168 2505 3169 2516 3170 2528 3171 2539 3171 
+2550 3172 2561 3173 2573 3174 2584 3175 2595 3176 2606 3177 2618 3178 2629 3180 2640 3181 2651 3182 
+2663 3183 2674 3184 2685 3185 2696 3187 2708 3188 2719 3189 2730 3191 2741 3192 2753 3193 2764 3195 
+2775 3196 2786 3198 2798 3199 2809 3201 2820 3203 2831 3204 2843 3206 2854 3208 2865 3209 2876 3211 
+2888 3213 2899 3215 2910 3217 2921 3219 2933 3221 2944 3223 2955 3225 2966 3227 2978 3229 2989 3232 
+3000 3234 3011 3236 3023 3239 3034 3241 3045 3244 3056 3246 3068 3249 3079 3252 3090 3254 3101 3257 
+3113 3260 3124 3263 3135 3266 3146 3269 3158 3272 3169 3276 3180 3279 3191 3282 3203 3286 3214 3289 
+3225 3293 3236 3296 3248 3300 3259 3304 3270 3308 3281 3312 3293 3316 3304 3320 3315 3325 3326 3329 
+3338 3333 3349 3338 3360 3343 3371 3347 3383 3352 3394 3357 3405 3362 3416 3367 3428 3372 3439 3378 
+3450 3383 3461 3389 3473 3394 3484 3400 3495 3406 3506 3412 3518 3418 3529 3425 3540 3431 3551 3437 
+3563 3444 3574 3451 3585 3457 3596 3464 3608 3472 3619 3479 3630 3486 3641 3493 3653 3501 3664 3509 
+3675 3517 3686 3524 3698 3533 3709 3541 3720 3549 3731 3557 3743 3566 3754 3575 3765 3583 3776 3592 
+3788 3601 3799 3610 3810 3620 3821 3629 3833 3638 3844 3648 3855 3658 3866 3668 3878 3677 3889 3687 
+3900 3697 3911 3708 3923 3718 3934 3728 3945 3739 3956 3749 3968 3760 3979 3770 3990 3781 4001 3792 
+4013 3803 4024 3814 4035 3825 4046 3836 4058 3847 4069 3858 4080 3869 4091 3880 4103 3891 4114 3902 
+4125 3914 4136 3925 4148 3936 4159 3947 4170 3958 4181 3970 4193 3981 4204 3992 4215 4003 4226 4014 
+4238 4026 4249 4037 4260 4048 4271 4059 4283 4070 4294 4081 4305 4092 4316 4103 4328 4113 4339 4124 
+4350 4135 4361 4145 4373 4156 4384 4166 4395 4177 4406 4187 4418 4197 4429 4207 4440 4217 4451 4227 
+4463 4237 4474 4247 4485 4257 4496 4266 4508 4276 4519 4285 4530 4294 4541 4303 4553 4312 4564 4321 
+4575 4330 4586 4339 4598 4347 4609 4356 4620 4364 4631 4373 4643 4381 4654 4389 4665 4397 4676 4404 
+4688 4412 4699 4420 4710 4427 4721 4434 4733 4441 4744 4448 4755 4455 4766 4462 4778 4469 4789 4476 
+4800 4482 4811 4488 4823 4495 4834 4501 4845 4507 4856 4513 4868 4519 4879 4524 4890 4530 4901 4535 
+4913 4541 4924 4546 4935 4551 4946 4556 4958 4561 4969 4566 4980 4571 4991 4576 5003 4580 5014 4585 
+5025 4589 5036 4594 5048 4598 5059 4602 5070 4606 5081 4610 5093 4614 5104 4618 5115 4621 5126 4625 
+5138 4629 5149 4632 5160 4636 5171 4639 5183 4642 5194 4645 5205 4649 5216 4652 5228 4655 5239 4658 
+5245 4659 
+] dogrey 
+1 Setcolor
+/absolu true def
+-1 -1 200000 200000 setclipzone
+2 Setcolor
+5 Thickness
+[] 0 setdash
+750 2886 4500 1839 setclipzone
+2 Setcolor
+5 Thickness
+[] 0 setdash
+/closeflag false def
+ (drawpoly) 802 [ 0]
+[750 3132 761 3132 773 3132 784 3132 795 3132 806 3132 818 3132 829 3132 840 3132 851 3132 
+863 3132 874 3132 885 3132 896 3132 908 3132 919 3132 930 3132 941 3132 953 3132 964 3132 
+975 3132 986 3132 998 3132 1009 3132 1020 3132 1031 3132 1043 3132 1054 3132 1065 3132 1076 3132 
+1088 3132 1099 3132 1110 3132 1121 3132 1133 3133 1144 3133 1155 3133 1166 3133 1178 3133 1189 3133 
+1200 3133 1211 3133 1223 3133 1234 3133 1245 3133 1256 3133 1268 3133 1279 3133 1290 3133 1301 3133 
+1313 3133 1324 3133 1335 3133 1346 3133 1358 3133 1369 3133 1380 3133 1391 3133 1403 3133 1414 3133 
+1425 3133 1436 3133 1448 3133 1459 3134 1470 3134 1481 3134 1493 3134 1504 3134 1515 3134 1526 3134 
+1538 3134 1549 3134 1560 3134 1571 3134 1583 3134 1594 3134 1605 3134 1616 3134 1628 3134 1639 3134 
+1650 3134 1661 3135 1673 3135 1684 3135 1695 3135 1706 3135 1718 3135 1729 3135 1740 3135 1751 3135 
+1763 3135 1774 3135 1785 3135 1796 3136 1808 3136 1819 3136 1830 3136 1841 3136 1853 3136 1864 3136 
+1875 3136 1886 3136 1898 3136 1909 3137 1920 3137 1931 3137 1943 3137 1954 3137 1965 3137 1976 3137 
+1988 3137 1999 3138 2010 3138 2021 3138 2033 3138 2044 3138 2055 3138 2066 3139 2078 3139 2089 3139 
+2100 3139 2111 3139 2123 3139 2134 3140 2145 3140 2156 3140 2168 3140 2179 3140 2190 3141 2201 3141 
+2213 3141 2224 3141 2235 3141 2246 3142 2258 3142 2269 3142 2280 3142 2291 3143 2303 3143 2314 3143 
+2325 3143 2336 3144 2348 3144 2359 3144 2370 3145 2381 3145 2393 3145 2404 3146 2415 3146 2426 3146 
+2438 3147 2449 3147 2460 3147 2471 3148 2483 3148 2494 3148 2505 3149 2516 3149 2528 3150 2539 3150 
+2550 3150 2561 3151 2573 3151 2584 3152 2595 3152 2606 3153 2618 3153 2629 3154 2640 3154 2651 3155 
+2663 3155 2674 3156 2685 3156 2696 3157 2708 3158 2719 3158 2730 3159 2741 3160 2753 3160 2764 3161 
+2775 3162 2786 3162 2798 3163 2809 3164 2820 3164 2831 3165 2843 3166 2854 3167 2865 3168 2876 3168 
+2888 3169 2899 3170 2910 3171 2921 3172 2933 3173 2944 3174 2955 3175 2966 3176 2978 3177 2989 3178 
+3000 3179 3011 3180 3023 3181 3034 3182 3045 3183 3056 3185 3068 3186 3079 3187 3090 3188 3101 3190 
+3113 3191 3124 3192 3135 3194 3146 3195 3158 3197 3169 3198 3180 3200 3191 3201 3203 3203 3214 3204 
+3225 3206 3236 3208 3248 3209 3259 3211 3270 3213 3281 3215 3293 3217 3304 3219 3315 3220 3326 3222 
+3338 3225 3349 3227 3360 3229 3371 3231 3383 3233 3394 3235 3405 3238 3416 3240 3428 3242 3439 3245 
+3450 3247 3461 3250 3473 3252 3484 3255 3495 3257 3506 3260 3518 3263 3529 3265 3540 3268 3551 3271 
+3563 3274 3574 3277 3585 3280 3596 3283 3608 3286 3619 3289 3630 3293 3641 3296 3653 3299 3664 3302 
+3675 3306 3686 3309 3698 3313 3709 3316 3720 3320 3731 3323 3743 3327 3754 3330 3765 3334 3776 3338 
+3788 3342 3799 3345 3810 3349 3821 3353 3833 3357 3844 3361 3855 3365 3866 3369 3878 3372 3889 3376 
+3900 3380 3911 3384 3923 3388 3934 3392 3945 3397 3956 3401 3968 3405 3979 3409 3990 3413 4001 3417 
+4013 3421 4024 3425 4035 3429 4046 3433 4058 3437 4069 3441 4080 3445 4091 3449 4103 3453 4114 3456 
+4125 3460 4136 3464 4148 3468 4159 3472 4170 3476 4181 3479 4193 3483 4204 3487 4215 3490 4226 3494 
+4238 3497 4249 3501 4260 3504 4271 3508 4283 3511 4294 3514 4305 3518 4316 3521 4328 3524 4339 3527 
+4350 3530 4361 3534 4373 3537 4384 3539 4395 3542 4406 3545 4418 3548 4429 3551 4440 3554 4451 3556 
+4463 3559 4474 3562 4485 3564 4496 3567 4508 3569 4519 3572 4530 3574 4541 3576 4553 3579 4564 3581 
+4575 3583 4586 3585 4598 3587 4609 3589 4620 3591 4631 3593 4643 3595 4654 3597 4665 3599 4676 3601 
+4688 3603 4699 3605 4710 3606 4721 3608 4733 3610 4744 3611 4755 3613 4766 3614 4778 3616 4789 3617 
+4800 3619 4811 3620 4823 3622 4834 3623 4845 3624 4856 3626 4868 3627 4879 3628 4890 3629 4901 3631 
+4913 3632 4924 3633 4935 3634 4946 3635 4958 3636 4969 3637 4980 3638 4991 3639 5003 3640 5014 3641 
+5025 3642 5036 3643 5048 3644 5059 3645 5070 3646 5081 3647 5093 3647 5104 3648 5115 3649 5126 3650 
+5138 3651 5149 3651 5160 3652 5171 3653 5183 3653 5194 3654 5205 3655 5216 3655 5228 3656 5239 3657 
+5245 3657 
+] dogrey 
+2 Setcolor
+/absolu true def
+-1 -1 200000 200000 setclipzone
+32 Setcolor
+5 Thickness
+[] 0 setdash
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+(-2) 715 4838 0  0.00 [715 4758 71 79] Show
+%Latex:\myput{715}{1162}{4}{-2}
+/Helvetica findfont 100 scf mul scalefont setfont
+(10) 604 4934 0  0.00 [604 4834 111 99] Show
+%Latex:\myput{604}{1066}{5}{10}
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 4725 750 4761 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-1) 1840 4838 0  0.00 [1840 4758 71 79] Show
+%Latex:\myput{1840}{1162}{4}{-1}
+/Helvetica findfont 100 scf mul scalefont setfont
+(10) 1729 4934 0  0.00 [1729 4834 111 99] Show
+%Latex:\myput{1729}{1066}{5}{10}
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[1875 4725 1875 4761 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(0) 2978 4838 0  0.00 [2978 4758 44 79] Show
+%Latex:\myput{2978}{1162}{4}{0}
+/Helvetica findfont 100 scf mul scalefont setfont
+(10) 2867 4934 0  0.00 [2867 4834 111 99] Show
+%Latex:\myput{2867}{1066}{5}{10}
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[3000 4725 3000 4761 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(1) 4103 4838 0  0.00 [4103 4758 44 79] Show
+%Latex:\myput{4103}{1162}{4}{1}
+/Helvetica findfont 100 scf mul scalefont setfont
+(10) 3992 4934 0  0.00 [3992 4834 111 99] Show
+%Latex:\myput{3992}{1066}{5}{10}
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[4125 4725 4125 4761 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(2) 5228 4838 0  0.00 [5228 4758 44 79] Show
+%Latex:\myput{5228}{1162}{4}{2}
+/Helvetica findfont 100 scf mul scalefont setfont
+(10) 5117 4934 0  0.00 [5117 4834 111 99] Show
+%Latex:\myput{5117}{1066}{5}{10}
+/Helvetica findfont 80 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[5250 4725 5250 4761 
+] dogrey 
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 4725 750 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1089 4725 1089 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1287 4725 1287 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1427 4725 1427 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1536 4725 1536 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1625 4725 1625 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1701 4725 1701 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1766 4725 1766 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1824 4725 1824 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[1875 4725 1875 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2214 4725 2214 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2412 4725 2412 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2552 4725 2552 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2661 4725 2661 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2750 4725 2750 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2826 4725 2826 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2891 4725 2891 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[2949 4725 2949 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3000 4725 3000 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3339 4725 3339 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3537 4725 3537 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3677 4725 3677 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3786 4725 3786 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3875 4725 3875 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[3951 4725 3951 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4016 4725 4016 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4074 4725 4074 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4125 4725 4125 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4464 4725 4464 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4662 4725 4662 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4802 4725 4802 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[4911 4725 4911 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[5000 4725 5000 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[5076 4725 5076 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[5141 4725 5141 4752 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[5199 4725 5199 4752 
+] dogrey 
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+(-350) 478 4763 0  0.00 [478 4663 200 99] Show
+%Latex:\myput{478}{1237}{5}{-350}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 4725 690 4725 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-300) 478 4456 0  0.00 [478 4356 200 99] Show
+%Latex:\myput{478}{1544}{5}{-300}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 4418 690 4418 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-250) 478 4150 0  0.00 [478 4050 200 99] Show
+%Latex:\myput{478}{1850}{5}{-250}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 4112 690 4112 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-200) 478 3844 0  0.00 [478 3744 200 99] Show
+%Latex:\myput{478}{2156}{5}{-200}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 3806 690 3806 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-150) 478 3537 0  0.00 [478 3437 200 99] Show
+%Latex:\myput{478}{2463}{5}{-150}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 3499 690 3499 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-100) 478 3231 0  0.00 [478 3131 200 99] Show
+%Latex:\myput{478}{2769}{5}{-100}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 3193 690 3193 
+] dogrey 
+32 Setcolor
+32 Setcolor
+(-50) 534 2924 0  0.00 [534 2824 144 99] Show
+%Latex:\myput{534}{3076}{5}{-50}
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 2886 690 2886 
+] dogrey 
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 4725 705 4725 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 4648 705 4648 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 4571 705 4571 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 4495 705 4495 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 4418 705 4418 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 4342 705 4342 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 4265 705 4265 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 4188 705 4188 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 4112 705 4112 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 4035 705 4035 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3959 705 3959 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3882 705 3882 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3806 705 3806 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3729 705 3729 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3652 705 3652 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3576 705 3576 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3499 705 3499 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3423 705 3423 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3346 705 3346 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3269 705 3269 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3193 705 3193 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3116 705 3116 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 3040 705 3040 
+] dogrey 
+ (drawsegs) 4 [ 32]
+[750 2963 705 2963 
+] dogrey 
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 4725 5250 4725 
+] dogrey 
+32 Setcolor
+32 Setcolor
+ (drawsegs) 4 [ 32]
+[750 4725 750 2886 
+] dogrey 
+32 Setcolor
+ (drawbox) 4 [ 0]
+[750 2886 4500 1839 
+] dogrey 
+32 Setcolor
+[] 0 setdash
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+(Phase ) 2843 2760 0  0.00 [2843 2660 311 99] Show
+%Latex:\myput{2843}{3240}{5}{Phase }
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+( Hz) 2925 5117 0  0.00 [2925 5017 150 99] Show
+%Latex:\myput{2925}{883}{5}{ Hz}
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+(degrees) 441 3964 0 270.00 [441 3864 361 99] Show
+%Latex:\myput{441}{2036}{5}{degrees}
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+5 Thickness
+[] 0 setdash
+32 Setcolor
+33 Setcolor
+ (drawpoly) 10 [ -34]
+[750 5235 750 5685 5250 5685 5250 5235 750 5235 
+] dogrey 
+33 Setcolor
+/absolu true def
+32 Setcolor
+[] 0 setdash
+32 Setcolor
+0 Setcolor
+5 Thickness
+[] 0 setdash
+0 Setcolor
+5 Thickness
+[] 0 setdash
+ (drawsegs) 4 [ 0]
+[750 5370 1110 5370 
+] dogrey 
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+(open loop) 1200 5398 0  0.00 [1200 5298 439 99] Show
+%Latex:\myput{1200}{602}{5}{open loop}
+1 Setcolor
+5 Thickness
+[] 0 setdash
+1 Setcolor
+5 Thickness
+[] 0 setdash
+ (drawsegs) 4 [ 1]
+[750 5595 1110 5595 
+] dogrey 
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+(compensated open loop) 1200 5623 0  0.00 [1200 5523 1067 99] Show
+%Latex:\myput{1200}{377}{5}{compensated open loop}
+2 Setcolor
+5 Thickness
+[] 0 setdash
+2 Setcolor
+5 Thickness
+[] 0 setdash
+ (drawsegs) 4 [ 2]
+[750 5820 1110 5820 
+] dogrey 
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+(compensated closed loop) 1200 5848 0  0.00 [1200 5748 1133 99] Show
+%Latex:\myput{1200}{152}{5}{compensated closed loop}
+32 Setcolor
+5 Thickness
+[] 0 setdash
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+/Helvetica findfont 100 scf mul scalefont setfont
+[] 0 setdash
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+32 Setcolor
+32 Setcolor
+/Helvetica findfont 100 scf mul scalefont setfont
+%Latex:\end{picture}
+ showpage
+
+ end saved restore 
+
