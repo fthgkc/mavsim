@@ -29,7 +29,7 @@ Jy=JSolidSphere + m*cmZ^2; // moments of inertia, kg-m^2
 Jz=JSolidSphere; // guess, for now using solid sphere
 Jx=JSolidSphere + m*cmZ^2;
 Jxy = 0; Jyz = 0; Jxz = 0;
-printf("\tinertia guess assuming solid sphere: %f kg-m^2",JSolidSphere);
+printf('\tinertia guess assuming solid sphere: %f kg-m^2',JSolidSphere);
 
 // motor
 KV=850 // rpm/Volts 
@@ -134,10 +134,10 @@ wx; // wx
 psi; // psi
 wz]; //wz
 
-r = createIndex(["pN","pE","pD","yaw"]);
-m = createIndex(["Vfwd","psi","h","Vside"]);
-x = createIndex(["U","W","pitch","pitchRate","V","roll","rollRate","yaw",..
-	"yawRate","vN","vE","vD","pN","pE","pD"]);
-u = createIndex(["SUM","FB","LR","LRFB"]);
+r = createIndex(['pN','pE','pD','yaw']);
+m = createIndex(['Vfwd','psi','h','Vside']);
+x = createIndex(['U','W','pitch','pitchRate','V','roll','rollRate','yaw',..
+	'yawRate','vN','vE','vD','pN','pE','pD']);
+u = createIndex(['SUM','FB','LR','LRFB']);
 y = x;
 
