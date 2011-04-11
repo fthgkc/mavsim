@@ -1,10 +1,10 @@
 mode(-1)
 
 // load constants file
-exec constants.sce;
+exec constants.sce
 
 // load scicoslab diagram to linearize the dynamics
-load easystar.cos
+load stampede.cos
 
 function tf = ss2cleanTf(ss)
 	tf = clean(ss2tf(ss));
@@ -20,7 +20,7 @@ endfunction
 
 // close a loop
 function [sysOut,uOut] = closeLoop2(yi,ui,sys,y,u,H)
-	printf('\tclosing loop: %s\n',y.str(yi)+'->'+u.str(ui));
+	printf("\tclosing loop: %s\n",y.str(yi)+"->"+u.str(ui));
 	openLoopAnalysis(H*sys(yi,ui));
 	sysOut = unityFeedback2(yi,ui,sys,H);
 	uOut = createIndex(y.str(yi),u);
@@ -50,73 +50,62 @@ function [sysOut,uOut] = closeLoop2(yi,ui,sys,y,u,H)
 	end
 	poles=size(abcd(sys),1);
 	printf('\t\tclbw=%f\tunstable poles=%d/%d\n',..
-		bw(ss2cleanTf(sysOut),3),size(unstablePoles,2),size(abcd(sysOut),1));
+		bw(ss2cleanTf(sysOut),-3),size(unstablePoles,2),size(abcd(sysOut),1));
 endfunction
 
 
 // extract blocks
 disp('extracting blocks for linearization');
-//dynamics=scs_m.objs(1).model.rpar;
-actuators=scs_m.objs(46).model.rpar;
+dynamics=scs_m.objs(917).model.rpar;
+motorLag=scs_m.objs(1061).model.rpar;
 
 // lineriaztion of dynamics
 disp('linearizing dynamics');
 // vary u to find zero initial conitions
-//[Xd,Ud,Yd,XPd] = steadycos2(dynamics,[],[],[],[],[1:$],[],[]);
-//Xd=clean(Xd,1e-5);
-//Ud=clean(Ud,1e-5);
-//easyStarTf = clean(ss2tf(lincos(dynamics,Xd,Ud)),1e-5);
-easyStarTf = sys;
-Xd = x0;
-Ud = u0;
+Yd = zeros(15,1)
+Yd(y.V) = 2*3; // TODO why is they x 3? 1 m/s velocity
+Yd(y.sog) = Yd(y.V);
+[Xd,Ud,Yd,XPd] = steadycos2(dynamics,[],[],Yd,[],[1:$],[y.lat,y.lon]);
+Xd=clean(Xd,1e-5);
+Ud=clean(Ud,1e-5);
+ugvTf = clean(ss2tf(lincos(dynamics,Xd,Ud)),1e-5);
 
-// motor lag block
-disp('linearizing actuators block');
-actuatorsTf = clean(ss2tf(lincos(actuators,zeros(4,1),Ud)),1e-5);
+// motor lag
+motorLagTf = diag([tau_servo/(%s+tau_servo),tau_motor/(%s+tau_motor),0,0]);
 
-// find complete dynamics transfer function
-disp('finding dynamics transfer function');
-clear sys;
-sys.olss = easyStarTf*actuatorsTf;
+sys.oltf = clean(ugvTf,1e-4)*motorLagTf;
+sys.olss = minssAutoTol(tf2ss(sys.oltf),16);
+
+// controllers
+H.yaw_STR = 0.9*%s/%s; // %s/%s lets scicoslab know this is a tranfer function
+H.V_THR = 0.7  + 0.1/%s;
 
 // attitude loops
 disp('beginning loop closures');
 s = sys.olss;
-s0 = ss2tf(s);
-//[s,u] = closeLoop2(y.pD,u.SUM,s,y,u,H.pD_SUM);
-//s1 = ss2tf(s);
-//[s,u] = closeLoop2(y.yawRate,u.LRFB,s,y,u,H.yawRate_LRFB);
-//s2 = ss2tf(s);
-//[s,u] = closeLoop2(y.roll,u.LR,s,y,u,H.roll_LR);
-//s3 = ss2tf(s);
-//[s,u] = closeLoop2(y.pitch,u.FB,s,y,u,H.pitch_FB);
-//s4 = ss2tf(s);
-//[s,u] = closeLoop2(y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
-//s5 = s;
-
-//sPitch = s4(y.pitch,u.pitch);
-
-// position loops
-// we can tie in pitch and roll directly since for trim we are aligned with
-// North/ East frame
-
-//[s,u] = closeLoop2(y.pN,u.pitch,s,y,u,H.pN_pitch);
-//s6 = s;
-//[s,u] = closeLoop2(y.pE,u.roll,s,y,u,H.pE_roll);
-//s7 = s;
-
-//sPN = s7(y.pN,u.pN);
-//sPNOpen = s5(y.pN,u.pitch)*H.pN_pitch;
+s0 = ss2cleanTf(s);
+[s,u] = closeLoop2(y.yaw,u.STR,s,y,u,H.yaw_STR);
+s1 = ss2cleanTf(s);
+[s,u] = closeLoop2(y.V,u.THR,s,y,u,H.V_THR);
+s2 = ss2cleanTf(s);
 
 //disp('beginning plotting');
 
-// position north, and pitch
-//f=scf(1); clf(1);
-//f.figure_size=[600,600];
-//set_posfig_dim(f.figure_size(1),f.figure_size(2));
-//bode([sPitch*pade(PID_ATT_INTERVAL);sPN*pade(PID_POS_INTERVAL)],..
-	//0.01,99,.01,["pitch";"position north"])
-//xs2eps(1,'pN_pitch');
+// yaw 
+f=scf(1); clf(1);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([s0(y.yaw,u.STR);H.yaw_STR*s0(y.yaw,u.STR);s1(y.yaw,u.yaw)],..
+	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
+	xs2eps(1,'yaw');
+
+// velocity
+f=scf(1); clf(1);
+f.figure_size=[600,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
+bode([s0(y.V,u.THR);H.V_THR*s0(y.V,u.THR);s2(y.V,u.V)],..
+	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
+	xs2eps(1,'velocity');
 
 // zoh time effect on pN closed loop
 //f=scf(2); clf(2);
