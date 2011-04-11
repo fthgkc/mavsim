@@ -69,12 +69,14 @@ disp('linearizing dynamics');
 //X,U,Y,XP:Equilibrium state.  X   U  Y   indx      indu  indy indxp
 //The steadycos line does take very long to compute. 
 
+PlaneSS2 = lincos(dynamics, x0, u0);
+//PlaneTf2 = ss2tf(PlaneSS2);
 PlaneSS=sys;                                                                                   //Linearizes the Plane dynamics
 PlaneTf=tfm;
 
 disp('done')
 disp('The Linearized System has the Size: ')
-size(PlaneTf)
+disp(size(PlaneTf))
 
 //Throttle to altitude
 f=scf(1)

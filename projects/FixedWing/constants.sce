@@ -16,7 +16,7 @@ rudder.sign = -1;
 
 // roll
 phi_pid.kp = .4;
-phi_pid.ki = .6;
+phi_pid.ki = .0;
 phi_pid.kd = 0;
 phi_pid.imax = 1;
 phi_pid.wcut = 20;
@@ -42,17 +42,17 @@ psi_pid.dt=.01;
 // longitudinal control system
 
 // velocity
-vt_pid.kp = .05;
-vt_pid.ki = 0;
+vt_pid.kp = .1;
+vt_pid.ki = .2;
 vt_pid.kd = .1
 vt_pid.imax = 1;
 vt_pid.wcut = 20;
 vt_pid.dt=.01;
 
 // altitude
-h_pid.kp = 1;
-h_pid.ki = 0;
-h_pid.kd = 1;
+h_pid.kp = .1;
+h_pid.ki = .2;
+h_pid.kd = .1;
 h_pid.imax = 1;
 h_pid.wcut = 20;
 h_pid.dt=.01;
