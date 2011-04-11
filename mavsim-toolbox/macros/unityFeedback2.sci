@@ -9,7 +9,6 @@ function sys = unityFeedback2(y,u,G,H)
     if (typeof(G)=="rational") G = tf2ss(G); end;
     if (typeof(H)=="state-space") H = ss2tf(H); end;
     if (typeof(G)~="state-space")
-:q
         error("G must be a rational or state-space variable");
     end
     if (typeof(H)~="rational")
