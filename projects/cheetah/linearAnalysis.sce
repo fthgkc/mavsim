@@ -323,7 +323,9 @@ mSignal = struct();
 mSignal.time = 0;
 mSignal.values = zeros(1,4);
 
+// solver settings
 scs_m.props.tf = 15;
+scs_m.props.tol = [0,1e-6,1e-6,1e-10,1/120,0,1/120];
 
 // for the position loops
 for channel=['pN' 'pE' 'pD']
@@ -351,7 +353,7 @@ for channel=['pN' 'pE' 'pD']
 		rSignal.values(1,rCh) = step;
 
 		// non-linear simulation
-		scicos_simulate(scs_m);
+			scicos_simulate(scs_m);
 		t = xSignal.time;
 		yNLin = xSignal.values;
 
