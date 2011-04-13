@@ -364,5 +364,5 @@ for channel=['pN' 'pE' 'pD']
 	end
 	// plotting
 	legend(['linear','non-linear'])
-	xs2eps(i,ch+'_steps');
+	xs2eps(i,channel+'_steps');
 end
