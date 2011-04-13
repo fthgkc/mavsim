@@ -2,6 +2,7 @@ mode(-1);
 lines(0);
 
 mavsimPath=get_absolute_file_path('loader.sce');
+workspaceNull=struct();
 
 chdir(mavsimPath);
 

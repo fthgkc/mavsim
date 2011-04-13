@@ -100,8 +100,9 @@ s1 = ss2cleanTf(s);
 
 // yawRate design plots
 f=scf(i); clf(i);
-f.figure_name='yawRateg';
-set_posfig_dim(1200,600);
+f.figure_name='yawRate';
+f.figure_size = [1200,600];
+set_posfig_dim(f.figure_size(1),f.figure_size(2));
 
 subplot(1,3,1)
 bode([s0(y.yawRate,u.LRFB);H.yawRate_LRFB*s0(y.yawRate,u.LRFB);s1(y.yawRate,u.yawRate)],..
@@ -300,7 +301,7 @@ set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([sPN*pade(4);sPN*pade(2);sPN*pade(1);sPN*pade(1/2);..
 	sPN*pade(1/4);sPN*pade(1/16)],0.01,99,.01,..
 	['1/4 Hz';'1/2 Hz';'1 Hz';'2 Hz';'4 Hz';'16 Hz'])
-xs2eps(2,'pN_closed_zoh');
+xs2eps(i,'pN_closed_zoh');
 
 // zoh time effect on pN open loop
 i = i +1;
@@ -312,4 +313,55 @@ set_posfig_dim(f.figure_size(1),f.figure_size(2));
 bode([sPNOpen*pade(4);sPNOpen*pade(2);sPNOpen*pade(1);sPNOpen*pade(1/2);..
 	sPNOpen*pade(1/4);sPNOpen*pade(1/16)],0.01,99,.01,..
 	['1/4 Hz';'1/2 Hz';'1 Hz';'2 Hz';'4 Hz';'16 Hz'])
-xs2eps(3,'pN_open_zoh');
+xs2eps(i,'pN_open_zoh');
+
+// step responses
+load cheetahBatch.cos
+
+// manual input set to zero
+mSignal = struct();
+mSignal.time = 0;
+mSignal.values = zeros(1,4);
+
+scs_m.props.tf = 15;
+
+// for the position loops
+for channel=['pN' 'pE' 'pD']
+
+	yCh = evstr('y.'+channel);
+	uCh = evstr('u.'+channel);
+	rCh = evstr('r.'+channel);
+
+	// setup figure
+	i = i +1;
+	f=scf(i); clf(i);
+	f.figure_name=channel + ' step responses';
+	f.figure_size = [800,600];
+	set_posfig_dim(f.figure_size(1),f.figure_size(2));
+	xlabel('t, seconds');
+	ylabel(channel +', meters');
+
+	// for  several step sizes
+	for step=[0.1 1 10]
+
+		// reference input signal
+		rSignal = struct();
+		rSignal.time = 0;
+		rSignal.values = zeros(1,4);
+		rSignal.values(1,rCh) = step;
+
+		// non-linear simulation
+		scicos_simulate(scs_m);
+		t = xSignal.time;
+		yNLin = xSignal.values;
+
+		// linear simulation
+		yLin = csim('step',t,step*s(yCh,uCh))';
+
+		// plotting
+		plot(t,[yLin,yNLin(:,yCh)])
+	end
+
+end
+
+
