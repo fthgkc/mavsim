@@ -1,5 +1,5 @@
 function h=trfmod2(h,job)
-// hm=trfmod(h [,job])
+// hm=trfmod2(h [,job])
 // To visualize the pole-zero structure of a SISO transfer function h 
 //     job='p' : visualization of polynomials (default)
 //     job='f' : visualization of natural frequencies and damping

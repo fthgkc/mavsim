@@ -103,16 +103,6 @@ POSITION_SETPOINT_YAW = 0.0;
 
 THRUST_HOVER_OFFSET = 150; // this is really 160 - 10 since the controller adds 10 when mapping the thrust
 
-// zero order hold pade approximation
-function sys = pade(controlPeriod)
-	sys = (1-%s*controlPeriod/6)/(1 + %s*controlPeriod/3);
-endfunction
-
-// continuous pid controller model
-function sys = pidCont(kP,kI,kD,controlPeriod)
-	sys = pade(controlPeriod)*syslin('c',kP+kI/%s+%s*kD);
-endfunction
-
 // linear approximations of controllers
 H.pitch_FB = pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);
 H.roll_LR = pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);

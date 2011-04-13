@@ -6,54 +6,6 @@ exec constants.sce
 // load scicoslab diagram to linearize the dynamics
 load stampede.cos
 
-function tf = ss2cleanTf(ss)
-	tf = clean(ss2tf(ss));
-endfunction
-
-// open loop statistics
-function openLoopAnalysis(sys)
-	if(typeof(sys)=='state-space') sys = ss2cleanTf(sys); end
-	sse=1/(horner(sys,1e-10));
-	if (sse>1e6) sse=%inf; end
-    printf('\t\tgcf=%8.2f Hz\t\tsse=%8.2f\n',bw(tf2ss(sys),0),sse);
-endfunction
-
-// close a loop
-function [sysOut,uOut] = closeLoop2(yi,ui,sys,y,u,H)
-	printf("\tclosing loop: %s\n",y.str(yi)+"->"+u.str(ui));
-	openLoopAnalysis(H*sys(yi,ui));
-	sysOut = unityFeedback2(yi,ui,sys,H);
-	uOut = createIndex(y.str(yi),u);
-	[eVect,eVal] = spec(abcd(sysOut));
-	eVal = diag(eVal);
-	unstablePoles=find(real(eVal)>0);
-	printf('\t\tunstable modes:\n');
-	for i=1:size(unstablePoles,2)
-		[junk,k]=sort(eVect(:,unstablePoles(i)));
-		j=0; // number of valid states found
-		m=1; // index 
-		printf('\t\t\t');
-		while 1
-			if (k(m)<=size(y.str,1))		
-				j = j +1;
-				printf('%9s\t',y.str(k(m)));
-			end
-			if (j>2)
-				printf('\t%8.3f + %8.3f j\n',..
-					real(eVal(unstablePoles(i))),..
-					imag(eVal(unstablePoles(i))));
-				break;
-			else
-				m = m +1;
-			end;
-		end
-	end
-	poles=size(abcd(sys),1);
-	printf('\t\tclbw=%f\tunstable poles=%d/%d\n',..
-		bw(ss2cleanTf(sysOut),-3),size(unstablePoles,2),size(abcd(sysOut),1));
-endfunction
-
-
 // extract blocks
 disp('extracting blocks for linearization');
 dynamics=scs_m.objs(917).model.rpar;
@@ -80,12 +32,27 @@ sys.olss = minssAutoTol(tf2ss(sys.oltf),16);
 H.yaw_STR = 0.9*%s/%s; // %s/%s lets scicoslab know this is a tranfer function
 H.V_THR = 0.7  + 0.1/%s;
 
-// attitude loops
+// initializiation
 disp('beginning loop closures');
 s = sys.olss;
-s0 = ss2cleanTf(s);
+s1 = sys.oltf;
+i = 0;
+
+// set default figure
+f = gdf();
+f.color_map(8,:) = [0,0,0]; // set white to black in color map so it can be seen
+
+// yaw
 [s,u] = closeLoop2(y.yaw,u.STR,s,y,u,H.yaw_STR);
+i = i+1; 
+s0 = s1;
 s1 = ss2cleanTf(s);
+
+// yaw design plots
+
+
+
+
 [s,u] = closeLoop2(y.V,u.THR,s,y,u,H.V_THR);
 s2 = ss2cleanTf(s);
 
