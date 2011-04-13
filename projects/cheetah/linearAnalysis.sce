@@ -325,7 +325,6 @@ mSignal.values = zeros(1,4);
 
 // solver settings
 scs_m.props.tf = 15;
-scs_m.props.tol = [0,1e-6,1e-6,1e-10,1/120,0,1/120];
 
 // for the position loops
 for channel=['pN' 'pE' 'pD']
@@ -344,7 +343,7 @@ for channel=['pN' 'pE' 'pD']
 	ylabel(channel +', meters');
 
 	// for  several step sizes
-	for step=[0.1 1 10]
+	for step=[1 2]
 
 		// reference input signal
 		rSignal = struct();
@@ -363,7 +362,7 @@ for channel=['pN' 'pE' 'pD']
 		// plotting
 		plot(t,[yLin,yNLin(:,yCh)])
 	end
-
+	// plotting
+	legend(['linear','non-linear'])
+	xs2eps(i,ch+'_steps');
 end
-
-
