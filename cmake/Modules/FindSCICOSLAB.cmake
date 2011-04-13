@@ -31,6 +31,7 @@ elseif(UNIX)
 	set(SCICOSLAB_GUESS_INCLUDE_DIRS
 		/usr/lib/scicoslab-gtk-4.4b7/routines
 		/usr/lib/scicoslab-gtk-4.4/routines
+		/usr/lib/scicoslab-gtk-4.4.1/routines
 		)
 elseif(WIN32)
 	message(FATAL_ERROR "scicoslab cmake find module doesn't work for windows")
@@ -49,6 +50,7 @@ find_path(SCICOSLAB_CONTRIB_DIR
   PATHS
   	/usr/lib/scicoslab-gtk-4.4b7/contrib
 	/usr/lib/scicoslab-gtk-4.4/contrib
+	/usr/lib/scicoslab-gtk-4.4.1/contrib
 )
 
 # Set the include dir variables and the libraries and let libfind_process do the rest.
