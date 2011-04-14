@@ -35,14 +35,20 @@ disp('finding dynamics transfer function');
 sys.oltf = clean(quadTf*motorLagTf*motorMixTf,1e-4);
 sys.olss = minssAutoTol(tf2ss(sys.oltf),16);
 
-// attitude loops
+// initialization
 disp('beginning loop closures');
 s = sys.olss;
 i= 1;
 
+// disable white color plot, because you can't see it with a white background
+f = gdf();
+f.color_map(8,:) = [0,0,0]; // set white to black in color map so it can be seen
+
 // attitude loops
 [f,s,u,i] = closeLoopWithPlots('yawRate',i,y.yawRate,u.LRFB,s,y,u,H.yawRate_LRFB);
+sPDOpen = minss(H.pD_SUM*s(y.pD,u.SUM));
 [f,s,u,i] = closeLoopWithPlots('pD',i,y.pD,u.SUM,s,y,u,H.pD_SUM);
+sPDClosed = minss(s(y.pD,u.pD));
 [f,s,u,i] = closeLoopWithPlots('roll',i,y.roll,u.LR,s,y,u,H.roll_LR);
 [f,s,u,i] = closeLoopWithPlots('pitch',i,y.pitch,u.FB,s,y,u,H.pitch_FB);
 [f,s,u,i] = closeLoopWithPlots('yaw',i,y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
@@ -50,13 +56,14 @@ i= 1;
 // position loops
 // we can tie in pitch and roll directly since for trim we are aligned with
 // North/ East frame at the linearization point
-sPNOpen = H.pN_pitch*s(y.pN,u.pitch);
+sPNOpen = minss(H.pN_pitch*s(y.pN,u.pitch));
 [f,s,u,i] = closeLoopWithPlots('pN',i,y.pN,u.pitch,s,y,u,H.pN_pitch);
-sPNClosed = s(y.pN,u.pN);
+sPNClosed = minss(s(y.pN,u.pN));
 [f,s,u,i] = closeLoopWithPlots('pE',i,y.pE,u.roll,s,y,u,H.pE_roll);
 
 // zoh time effect on pN closed loop
 [f,i] = zohAnalysisPlot('pN',i, sPNOpen, sPNClosed, [.25, .5, 1, 2, 4, 16]);
+[f,i] = zohAnalysisPlot('pD',i, sPDOpen, sPDClosed, [.25, .5, 1, 2, 4, 16]);
 
 // step responses
 load cheetahBatch.cos
@@ -70,4 +77,5 @@ mSignal.values = zeros(1,4);
 scs_m.props.tf = 15;
 
 // position step responses
-stepAnalysis(s,['pN';'pE';'pD'],[0.1 1],['pN, meters'; 'pE, meters'; 'pD, meters'],y,u,r);
+[f,i] = stepAnalysis(s,['pN';'pE';'pD'],i,[0.1 1],..
+['pN, meters'; 'pE, meters'; 'pD, meters'],y,u,r);

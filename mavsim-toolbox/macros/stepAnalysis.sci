@@ -1,4 +1,4 @@
-function i=stepAnalysis(s,channels,steps,yLabels,y,u,r)
+function [f,i] =stepAnalysis(s,channels,i,steps,yLabels,y,u,r)
 
 	// for the position loops
 	for j=1:size(channels,1)

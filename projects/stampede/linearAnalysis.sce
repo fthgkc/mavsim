@@ -28,66 +28,28 @@ motorLagTf = diag([tau_servo/(%s+tau_servo),tau_motor/(%s+tau_motor),0,0]);
 sys.oltf = clean(ugvTf,1e-4)*motorLagTf;
 sys.olss = minssAutoTol(tf2ss(sys.oltf),16);
 
-// controllers
-H.yaw_STR = 0.9*%s/%s; // %s/%s lets scicoslab know this is a tranfer function
-H.V_THR = 0.7  + 0.1/%s;
-
-// initializiation
+// initialization
 disp('beginning loop closures');
 s = sys.olss;
-s1 = sys.oltf;
-i = 0;
+i= 1;
 
-// set default figure
+// disable white color plot, because you can't see it with a white background
 f = gdf();
 f.color_map(8,:) = [0,0,0]; // set white to black in color map so it can be seen
 
-// yaw
-[s,u] = closeLoop2(y.yaw,u.STR,s,y,u,H.yaw_STR);
-i = i+1; 
-s0 = s1;
-s1 = ss2cleanTf(s);
+// close loops
+sYawOpen = minss(H.yaw_STR*s(y.yaw,u.STR));
+[f,s,u,i] = closeLoopWithPlots('yaw',i,y.yaw,u.STR,s,y,u,H.yaw_STR);
+sYawClosed = minss(s(y.yaw,u.yaw));
 
-// yaw design plots
+sVOpen = minss(H.V_THR*s(y.V,u.THR));
+[f,s,u,i] = closeLoopWithPlots('V',i,y.V,u.THR,s,y,u,H.V_THR);
+sVClosed = minss(s(y.V,u.V));
 
+// zoh time effect on 
+[f,i] = zohAnalysisPlot('yaw',i, sYawOpen, sYawClosed, [16]);
+[f,i] = zohAnalysisPlot('V',i, sVOpen, sVClosed, [16]);
 
-
-
-[s,u] = closeLoop2(y.V,u.THR,s,y,u,H.V_THR);
-s2 = ss2cleanTf(s);
-
-//disp('beginning plotting');
-
-// yaw 
-f=scf(1); clf(1);
-f.figure_size=[600,600];
-set_posfig_dim(f.figure_size(1),f.figure_size(2));
-bode([s0(y.yaw,u.STR);H.yaw_STR*s0(y.yaw,u.STR);s1(y.yaw,u.yaw)],..
-	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
-	xs2eps(1,'yaw');
-
-// velocity
-f=scf(1); clf(1);
-f.figure_size=[600,600];
-set_posfig_dim(f.figure_size(1),f.figure_size(2));
-bode([s0(y.V,u.THR);H.V_THR*s0(y.V,u.THR);s2(y.V,u.V)],..
-	0.01,99,.01,["open loop";"compensated open loop";"compensated closed loop"])
-	xs2eps(1,'velocity');
-
-// zoh time effect on pN closed loop
-//f=scf(2); clf(2);
-//f.figure_size=[600,600];
-//set_posfig_dim(f.figure_size(1),f.figure_size(2));
-//bode([sPN*pade(4);sPN*pade(2);sPN*pade(1);sPN*pade(1/2);..
-	//sPN*pade(1/4);sPN*pade(1/16)],0.01,99,.01,..
-	//["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
-//xs2eps(2,'pN_closed_zoh');
-
-// zoh time effect on pN open loop
-//f=scf(3); clf(3);
-//f.figure_size=[600,600];
-//set_posfig_dim(f.figure_size(1),f.figure_size(2));
-//bode([sPNOpen*pade(4);sPNOpen*pade(2);sPNOpen*pade(1);sPNOpen*pade(1/2);..
-	//sPNOpen*pade(1/4);sPNOpen*pade(1/16)],0.01,99,.01,..
-	//["1/4 Hz";"1/2 Hz";"1 Hz";"2 Hz";"4 Hz";"16 Hz"])
-//xs2eps(3,'pN_open_zoh');
+// plot step responses
+[f,i] = stepAnalysis(180/%pi*s,'yaw',i,[10 50 180],'yaw, degrees',y,u,r);
+[f,i] = stepAnalysis(s,'V',i,[.1 1 6],'V, m/s',y,u,r);
