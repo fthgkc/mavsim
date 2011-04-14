@@ -1,9 +1,9 @@
-function [f,s,u,i] = closeLoopWithPlots(name,i,yi,ui,s,y,u,H)
+function [f,s,u,fIndex] = closeLoopWithPlots(name,fIndex,yi,ui,s,y,u,H)
 	s0 = ss2cleanTf(s);
 	[s,u] = closeLoop(yi,ui,s,y,u,H);
 	s1 = ss2cleanTf(s);
 
-	f=scf(i); clf(i);
+	f=scf(fIndex); clf(fIndex);
 	f.figure_name=name;
 	f.figure_size = [1200,600];
 	set_posfig_dim(f.figure_size(1),f.figure_size(2));
@@ -23,6 +23,6 @@ function [f,s,u,i] = closeLoopWithPlots(name,i,yi,ui,s,y,u,H)
 	mtlb_axis([-10,10,-10,10]);
 
 	// save
-	xs2eps(i,name);
-	i =i+1;
+	xs2eps(fIndex,name);
+	fIndex = fIndex +1;
 endfunction

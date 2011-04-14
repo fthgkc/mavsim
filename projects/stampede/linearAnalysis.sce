@@ -1,4 +1,5 @@
 mode(-1)
+mtlb_close all;
 
 // load constants file
 exec constants.sce
@@ -31,25 +32,39 @@ sys.olss = minssAutoTol(tf2ss(sys.oltf),16);
 // initialization
 disp('beginning loop closures');
 s = sys.olss;
-i= 1;
+fIndex= 1;
 
 // disable white color plot, because you can't see it with a white background
 f = gdf();
 f.color_map(8,:) = [0,0,0]; // set white to black in color map so it can be seen
 
 // close loops
-sYawOpen = minss(H.yaw_STR*s(y.yaw,u.STR));
-[f,s,u,i] = closeLoopWithPlots('yaw',i,y.yaw,u.STR,s,y,u,H.yaw_STR);
-sYawClosed = minss(s(y.yaw,u.yaw));
+sYawOpen = H.yaw_STR*s(y.yaw,u.STR);
+[f,s,u,fIndex] = closeLoopWithPlots('yaw',fIndex,y.yaw,u.STR,s,y,u,H.yaw_STR);
+disp('fIndex: '); disp(fIndex)
+sYawClosed = s(y.yaw,u.yaw);
 
-sVOpen = minss(H.V_THR*s(y.V,u.THR));
-[f,s,u,i] = closeLoopWithPlots('V',i,y.V,u.THR,s,y,u,H.V_THR);
-sVClosed = minss(s(y.V,u.V));
+sVOpen = H.V_THR*s(y.V,u.THR);
+[f,s,u,fIndex] = closeLoopWithPlots('V',fIndex,y.V,u.THR,s,y,u,H.V_THR);
+disp('fIndex: '); disp(fIndex)
+sVClosed = s(y.V,u.V);
 
 // zoh time effect on 
-[f,i] = zohAnalysisPlot('yaw',i, sYawOpen, sYawClosed, [16]);
-[f,i] = zohAnalysisPlot('V',i, sVOpen, sVClosed, [16]);
+[f,fIndex] = zohAnalysisPlot('yaw',fIndex, minss(sYawOpen), [0.1 1 2]);
+disp('fIndex: '); disp(fIndex)
+[f,fIndex] = zohAnalysisPlot('V',fIndex, sVOpen, [1 4]);
+disp('fIndex: '); disp(fIndex)
 
-// plot step responses
-[f,i] = stepAnalysis(180/%pi*s,'yaw',i,[10 50 180],'yaw, degrees',y,u,r);
-[f,i] = stepAnalysis(s,'V',i,[.1 1 6],'V, m/s',y,u,r);
+// step responses
+load stampedeBatch.cos
+scs_m.props.tf = 15;
+[f,fIndex] = stepAnalysis(s,'yaw',fIndex,[1],'yaw, radians',y,u,r);
+disp('fIndex: '); disp(fIndex)
+
+//load stampedeBatch.cos
+scs_m.props.tf = 15;
+[f,fIndex] = stepAnalysis(s,'V',fIndex,[1],'V, m/s',y,u,r);
+disp('fIndex: '); disp(fIndex)
+
+// restore default for figure properties
+sdf();

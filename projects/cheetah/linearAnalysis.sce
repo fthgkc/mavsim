@@ -37,33 +37,34 @@ sys.olss = minssAutoTol(tf2ss(sys.oltf),16);
 
 // initialization
 disp('beginning loop closures');
-s = sys.olss;
-i= 1;
+s = sys.olss*diag(zohPade(ones(1,4)/PID_ATT_INTERVAL));
+fIndex= 1;
 
 // disable white color plot, because you can't see it with a white background
 f = gdf();
 f.color_map(8,:) = [0,0,0]; // set white to black in color map so it can be seen
 
 // attitude loops
-[f,s,u,i] = closeLoopWithPlots('yawRate',i,y.yawRate,u.LRFB,s,y,u,H.yawRate_LRFB);
-sPDOpen = minss(H.pD_SUM*s(y.pD,u.SUM));
-[f,s,u,i] = closeLoopWithPlots('pD',i,y.pD,u.SUM,s,y,u,H.pD_SUM);
-sPDClosed = minss(s(y.pD,u.pD));
-[f,s,u,i] = closeLoopWithPlots('roll',i,y.roll,u.LR,s,y,u,H.roll_LR);
-[f,s,u,i] = closeLoopWithPlots('pitch',i,y.pitch,u.FB,s,y,u,H.pitch_FB);
-[f,s,u,i] = closeLoopWithPlots('yaw',i,y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
+[f,s,u,fIndex] = closeLoopWithPlots('yawRate',fIndex,y.yawRate,u.LRFB,s,y,u,H.yawRate_LRFB);
+[f,s,u,fIndex] = closeLoopWithPlots('roll',fIndex,y.roll,u.LR,s,y,u,H.roll_LR);
+[f,s,u,fIndex] = closeLoopWithPlots('pitch',fIndex,y.pitch,u.FB,s,y,u,H.pitch_FB);
+[f,s,u,fIndex] = closeLoopWithPlots('yaw',fIndex,y.yaw,u.yawRate,s,y,u,H.yaw_yawRate);
 
 // position loops
 // we can tie in pitch and roll directly since for trim we are aligned with
 // North/ East frame at the linearization point
-sPNOpen = minss(H.pN_pitch*s(y.pN,u.pitch));
-[f,s,u,i] = closeLoopWithPlots('pN',i,y.pN,u.pitch,s,y,u,H.pN_pitch);
-sPNClosed = minss(s(y.pN,u.pN));
-[f,s,u,i] = closeLoopWithPlots('pE',i,y.pE,u.roll,s,y,u,H.pE_roll);
+sPNOpen = H.pN_pitch*s(y.pN,u.pitch);
+[f,s,u,fIndex] = closeLoopWithPlots('pN',fIndex,y.pN,u.pitch,s,y,u,H.pN_pitch);
+[f,s,u,fIndex] = closeLoopWithPlots('pE',fIndex,y.pE,u.roll,s,y,u,H.pE_roll);
+sPDOpen = H.pD_SUM*s(y.pD,u.SUM);
+[f,s,u,fIndex] = closeLoopWithPlots('pD',fIndex,y.pD,u.SUM,s,y,u,H.pD_SUM);
+
+// restore default for figure properties
+sdf();
 
 // zoh time effect on pN closed loop
-[f,i] = zohAnalysisPlot('pN',i, sPNOpen, sPNClosed, [.25, .5, 1, 2, 4, 16]);
-[f,i] = zohAnalysisPlot('pD',i, sPDOpen, sPDClosed, [.25, .5, 1, 2, 4, 16]);
+[f,fIndex] = zohAnalysisPlot('pN',fIndex, sPNOpen, [1, 4, 16, 64, 256]);
+[f,fIndex] = zohAnalysisPlot('pD',fIndex, sPDOpen, [1, 4, 16, 64, 256]);
 
 // step responses
 load cheetahBatch.cos

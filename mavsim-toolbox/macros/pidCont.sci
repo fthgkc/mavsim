@@ -1,6 +1,5 @@
-function sys = pidCont(kP,kI,kD,controlPeriod)
+function sys = pidCont(kP,kI,kD)
 // continuous pid controller model, with zero order hold approximation
-// controlPeriod is in seconds
-	sys = zohPade(1/controlPeriod)*syslin('c',kP+kI/%s+%s*kD);
+	sys = syslin('c',kP+kI/%s+%s*kD);
 endfunction
 

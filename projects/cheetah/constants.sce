@@ -104,13 +104,13 @@ POSITION_SETPOINT_YAW = 0.0;
 THRUST_HOVER_OFFSET = 150; // this is really 160 - 10 since the controller adds 10 when mapping the thrust
 
 // linear approximations of controllers
-H.pitch_FB = pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);
-H.roll_LR = pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D,PID_ATT_INTERVAL);
-H.yawRate_LRFB = pidCont(PID_YAWSPEED_P,PID_YAWSPEED_I,PID_YAWSPEED_D,PID_ATT_INTERVAL);
-H.yaw_yawRate = pidCont(PID_YAWPOS_P,PID_YAWPOS_I,PID_YAWPOS_D,PID_ATT_INTERVAL);
-H.pN_pitch = -10/(%s+10)*0.05*pidCont(PID_POS_P,PID_POS_I,PID_POS_D,PID_POS_INTERVAL);
-H.pE_roll = 10/(%s+10)*0.05*pidCont(PID_POS_P,PID_POS_I,PID_POS_D,PID_POS_INTERVAL);
-H.pD_SUM = -(255-10)*pidCont(PID_POS_Z_P,PID_POS_Z_I,PID_POS_Z_D,PID_POS_INTERVAL);
+H.pitch_FB = pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D);
+H.roll_LR = pidCont(PID_ATT_P,PID_ATT_I,PID_ATT_D);
+H.yawRate_LRFB = pidCont(PID_YAWSPEED_P,PID_YAWSPEED_I,PID_YAWSPEED_D);
+H.yaw_yawRate = pidCont(PID_YAWPOS_P,PID_YAWPOS_I,PID_YAWPOS_D);
+H.pN_pitch = -10/(%s+10)*0.05*pidCont(PID_POS_P,PID_POS_I,PID_POS_D);
+H.pE_roll = 10/(%s+10)*0.05*pidCont(PID_POS_P,PID_POS_I,PID_POS_D);
+H.pD_SUM = -(255-10)*pidCont(PID_POS_Z_P,PID_POS_Z_I,PID_POS_Z_D);
 // scale factor from thrust adjustment block
 
 x0 = [
