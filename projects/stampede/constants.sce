@@ -6,7 +6,7 @@ y = x;
 r = createIndex(['yaw','V']);
 
 // time constants
-tau_motor = 1;
+tau_motor = 3;
 tau_servo = 20;
 
 x0 = zeros(size(x.str,1),1);
@@ -25,7 +25,7 @@ noiseStdDev(x.lon) = 1e-7;
 noiseStdDev(x.alt) = 1;
 
 // controllers
-H.yaw_STR = 0.9*%s/%s; // %s/%s lets scicoslab know this is a tranfer function
-H.V_THR = 0.7  + 0.1/%s;
+H.yaw_STR = 0.9 + 0.01/%s; // %s/%s lets scicoslab know this is a tranfer function
+H.V_THR = 0.7  + 0.5/%s;
 
 u0 = [0;.4];

@@ -41,30 +41,24 @@ f.color_map(8,:) = [0,0,0]; // set white to black in color map so it can be seen
 // close loops
 sYawOpen = H.yaw_STR*s(y.yaw,u.STR);
 [f,s,u,fIndex] = closeLoopWithPlots('yaw',fIndex,y.yaw,u.STR,s,y,u,H.yaw_STR);
-disp('fIndex: '); disp(fIndex)
 sYawClosed = s(y.yaw,u.yaw);
 
 sVOpen = H.V_THR*s(y.V,u.THR);
 [f,s,u,fIndex] = closeLoopWithPlots('V',fIndex,y.V,u.THR,s,y,u,H.V_THR);
-disp('fIndex: '); disp(fIndex)
 sVClosed = s(y.V,u.V);
 
 // zoh time effect on 
 [f,fIndex] = zohAnalysisPlot('yaw',fIndex, minss(sYawOpen), [0.1 1 2]);
-disp('fIndex: '); disp(fIndex)
 [f,fIndex] = zohAnalysisPlot('V',fIndex, sVOpen, [1 4]);
-disp('fIndex: '); disp(fIndex)
 
 // step responses
 load stampedeBatch.cos
 scs_m.props.tf = 15;
-[f,fIndex] = stepAnalysis(s,'yaw',fIndex,[1],'yaw, radians',y,u,r);
-disp('fIndex: '); disp(fIndex)
+[f,fIndex] = stepAnalysis(s,scs_m,'yaw',fIndex,[1],'yaw, radians',y,u,r);
 
 //load stampedeBatch.cos
 scs_m.props.tf = 15;
-[f,fIndex] = stepAnalysis(s,'V',fIndex,[1],'V, m/s',y,u,r);
-disp('fIndex: '); disp(fIndex)
+[f,fIndex] = stepAnalysis(s,scs_m,'V',fIndex,[1/3],'V, m/s',y,u,r);
 
 // restore default for figure properties
 sdf();
