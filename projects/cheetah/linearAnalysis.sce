@@ -50,11 +50,13 @@ i= 1;
 // position loops
 // we can tie in pitch and roll directly since for trim we are aligned with
 // North/ East frame at the linearization point
+sPNOpen = H.pN_pitch*s(y.pN,u.pitch);
 [f,s,u,i] = closeLoopWithPlots('pN',i,y.pN,u.pitch,s,y,u,H.pN_pitch);
+sPNClosed = s(y.pN,u.pN);
 [f,s,u,i] = closeLoopWithPlots('pE',i,y.pE,u.roll,s,y,u,H.pE_roll);
 
 // zoh time effect on pN closed loop
-[f,i] = zohAnalysisPlot('pN',[.25, .5, 1, 2, 4, 16]);
+[f,i] = zohAnalysisPlot('pN',i, sPNOpen, sPNClosed, [.25, .5, 1, 2, 4, 16]);
 
 // step responses
 load cheetahBatch.cos
@@ -68,4 +70,4 @@ mSignal.values = zeros(1,4);
 scs_m.props.tf = 15;
 
 // position step responses
-stepAnalysis(s,['pN','pE','pD'],[1 4],['pN, meters', 'pE, meters', 'pD, meters'],y,u,r);
+stepAnalysis(s,['pN';'pE';'pD'],[0.1 1],['pN, meters'; 'pE, meters'; 'pD, meters'],y,u,r);

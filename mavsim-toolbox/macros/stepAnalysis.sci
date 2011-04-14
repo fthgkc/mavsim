@@ -1,7 +1,7 @@
 function i=stepAnalysis(s,channels,steps,yLabels,y,u,r)
 
 	// for the position loops
-	for j=1:length(channels)
+	for j=1:size(channels,1)
 
 		channel = channels(j);
 		yLabel = yLabels(j);
