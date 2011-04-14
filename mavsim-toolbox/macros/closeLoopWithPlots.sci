@@ -9,7 +9,7 @@ function [f,s,u,fIndex] = closeLoopWithPlots(name,fIndex,yi,ui,s,y,u,H)
 	set_posfig_dim(f.figure_size(1),f.figure_size(2));
 
 	subplot(1,3,1)
-	bode([s0(yi,ui);H*s0(yi,ui);s1(yi,ui)],..
+	bode([s0(yi,ui);H*s0(yi,ui);s1(yi,evstr('u.'+y.str(yi))],..
 	0.01,99,.01,['open loop';'compensated open loop';'compensated closed loop'])
 
 	subplot(1,3,2)

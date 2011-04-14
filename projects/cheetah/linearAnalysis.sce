@@ -78,5 +78,6 @@ mSignal.values = zeros(1,4);
 scs_m.props.tf = 15;
 
 // position step responses
-[f,i] = stepAnalysis(s,['pN';'pE';'pD'],i,[0.1 1],..
-['pN, meters'; 'pE, meters'; 'pD, meters'],y,u,r);
+[f,fIndex] = stepAnalysis(s,scs_m,'pN',fIndex,[0.1 1],'pN, meters',y,u,r);
+[f,fIndex] = stepAnalysis(s,scs_m,'pE',fIndex,[0.1 1],'pE, meters',y,u,r);
+[f,fIndex] = stepAnalysis(s,scs_m,'pD',fIndex,[0.1 1],'pD, meters',y,u,r);
