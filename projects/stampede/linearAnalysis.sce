@@ -48,8 +48,8 @@ sVOpen = H.V_THR*s(y.V,u.THR);
 sVClosed = s(y.V,u.V);
 
 // zoh time effect on 
-[f,fIndex] = zohAnalysisPlot('yaw',fIndex, minss(sYawOpen), [0.1 1 2]);
-[f,fIndex] = zohAnalysisPlot('V',fIndex, sVOpen, [1 4]);
+[f,fIndex] = zohAnalysisPlot('yaw',fIndex, minss(sYawOpen), [1 4 16 64]);
+[f,fIndex] = zohAnalysisPlot('V',fIndex, sVOpen, [1 4 16 64]);
 
 // step responses
 load stampedeBatch.cos
