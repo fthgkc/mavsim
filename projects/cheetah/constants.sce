@@ -1,3 +1,5 @@
+mode(-1); // don't display this file loading
+
  // constants
 g=9.81; // m/s^2
 

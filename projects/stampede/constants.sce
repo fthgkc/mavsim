@@ -25,7 +25,7 @@ noiseStdDev(x.lon) = 1e-7;
 noiseStdDev(x.alt) = 1;
 
 // controllers
-H.yaw_STR = 0.9 + 0.01/%s; // %s/%s lets scicoslab know this is a tranfer function
-H.V_THR = 0.7  + 0.5/%s;
+H.yaw_STR = pidCont(0.9,0.01,0); 
+H.V_THR = pidCont(0.7,0.5,0);
 
 u0 = [0;.4];

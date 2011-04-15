@@ -31,7 +31,20 @@ disp('finding dynamics transfer function');
 clear sys;
 sys.olss = easyStarTf*actuatorsTf;
 
-// attitude loops
+// initialization
 disp('beginning loop closures');
-s = sys.olss;
-s0 = ss2tf(s);
+s = sys.olss
+fIndex= 1;
+
+// disable white color plot, because you can't see it with a white background
+f = gdf();
+f.color_map(8,:) = [0,0,0]; // set white to black in color map so it can be seen
+
+// attitude loops
+[f,s,u,fIndex] = closeLoopWithPlots('p',fIndex,y.p,u.rudder,s,y,u,0.1+ 0*%s + 0/%s);
+[f,s,u,fIndex] = closeLoopWithPlots('r',fIndex,y.r,u.rudder,s,y,u,-(0.1+ 0*%s + 0/%s));
+[f,s,u,fIndex] = closeLoopWithPlots('alt',fIndex,y.alt,u.throttle,s,y,u,0.1 + 0/%s + 0*%s);
+[f,s,u,fIndex] = closeLoopWithPlots('vt',fIndex,y.vt,u.elevator,s,y,u,1 + 0/%s + 0*%s);
+[f,s,u,fIndex] = closeLoopWithPlots('roll',fIndex,y.phi,u.p,s,y,u,-(0.5 + 0/%s + 0*%s));
+[f,s,u,fIndex] = closeLoopWithPlots('psi',fIndex,y.psi,u.phi,s,y,u,0.1+ 0/%s + 0*%s);
+
