@@ -1,6 +1,6 @@
-function [f,s,u,fIndex] = closeLoopWithPlots(name,fIndex,yi,ui,s,y,u,H)
+function [f,s,u,fIndex] = closeLoopWithPlots(name,fIndex,yi,ui,s,y,u,H,loopType)
 	s0 = ss2cleanTf(s);
-	[s,u] = closeLoop(yi,ui,s,y,u,H);
+	[s,u] = closeLoop(yi,ui,s,y,u,H,loopType);
 	s1 = ss2cleanTf(s);
 
 	f=scf(fIndex); clf(fIndex);

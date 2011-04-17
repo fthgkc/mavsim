@@ -1,8 +1,16 @@
+function [sysOut,uOut] = closeLoop(yi,ui,sys,y,u,H,loopType)
 // close a loop
-function [sysOut,uOut] = closeLoop(yi,ui,sys,y,u,H)
+// loopType : ff -> feed forward loop controller, fb -> feed back loop controller
 	printf('\tclosing loop: %s\n',y.str(yi)+'->'+u.str(ui));
 	openLoopAnalysis(H*sys(yi,ui));
-	sysOut = unityFeedback(yi,ui,sys,H);
+	if (loopType=='ff')
+		sysOut = unityFeedback(yi,ui,sys,H);
+	elseif (loopType=='fb')
+		sysOut = structuredFeedback(yi,ui,sys,H);
+	else
+		error('unknown type for closeLoop');
+	end
+		
 	uOut = createIndex(y.str(yi),u);
 	[eVect,eVal] = spec(abcd(sysOut));
 	eVal = diag(eVal);

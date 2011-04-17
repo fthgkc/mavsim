@@ -40,11 +40,11 @@ f.color_map(8,:) = [0,0,0]; // set white to black in color map so it can be seen
 
 // close loops
 sYawOpen = H.yaw_STR*s(y.yaw,u.STR);
-[f,s,u,fIndex] = closeLoopWithPlots('yaw',fIndex,y.yaw,u.STR,s,y,u,H.yaw_STR);
+[f,s,u,fIndex] = closeLoopWithPlots('yaw',fIndex,y.yaw,u.STR,s,y,u,H.yaw_STR,'ff');
 sYawClosed = s(y.yaw,u.yaw);
 
 sVOpen = H.V_THR*s(y.V,u.THR);
-[f,s,u,fIndex] = closeLoopWithPlots('V',fIndex,y.V,u.THR,s,y,u,H.V_THR);
+[f,s,u,fIndex] = closeLoopWithPlots('V',fIndex,y.V,u.THR,s,y,u,H.V_THR,'ff');
 sVClosed = s(y.V,u.V);
 
 // zoh time effect on 
