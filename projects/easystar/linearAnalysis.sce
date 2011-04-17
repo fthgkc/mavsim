@@ -1,4 +1,5 @@
 mode(-1)
+mtlb_close all
 
 // load constants file
 exec constants.sce;
@@ -41,24 +42,26 @@ f = gdf();
 f.color_map(8,:) = [0,0,0]; // set white to black in color map so it can be seen
 
 // attitude loops
+lowPass = 20/(%s+20);
+washOut = %s/(%s+1);
 
 [f,s,u,fIndex] = closeLoopWithPlots('r',fIndex,y.r,u.rudder,s,y,u,..
-	-0.5*%s/(%s+20));
+	-(1.0+0/%s+0*%s*lowPass)*washOut);
 
 // example of command to graphicaly set gain using root locus
 // k=-1/real(horner(ss2tf(s(y.r,u.rudder)),[1,%i]*locate(1)))
 
-[f,s,u,fIndex] = closeLoopWithPlots('phi',fIndex,y.phi,u.rudder,s,y,u,..
-	-(%s+2+2*%i)*(1+0/%s+0*%s));
+//[f,s,u,fIndex] = closeLoopWithPlots('phi',fIndex,y.phi,u.rudder,s,y,u,..
+	//-(0.001+0/%s+0*%s*lowPass));
 
-//[f,s,u,fIndex] = closeLoopWithPlots('vt',fIndex,y.vt,u.elevator,s,y,u,..
-	//(0.5+0/%s + 0.1*%s*20/(%s+20)));
+[f,s,u,fIndex] = closeLoopWithPlots('vt',fIndex,y.vt,u.elevator,s,y,u,..
+	(0.1+0/%s + 0.0*%s*lowPass));
 
-//[f,s,u,fIndex] = closeLoopWithPlots('alt',fIndex,y.alt,u.throttle,s,y,u,..
-	//(0.1 + 0/%s + 0.1*%s*20/(%s+20)));
+[f,s,u,fIndex] = closeLoopWithPlots('alt',fIndex,y.alt,u.throttle,s,y,u,..
+	(0.01 + 0/%s + 0.0*%s*lowPass));
 
 //[f,s,u,fIndex] = closeLoopWithPlots('psi',fIndex,y.psi,u.phi,s,y,u,..
-	//(0.5+ 0/%s + 1*%s*20/(%s+20)));
+	//(0.5+ 0/%s + 1*%s*lowPass));
 
 
 

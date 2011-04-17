@@ -12,7 +12,7 @@ function [f,s,u,fIndex] = closeLoopWithPlots(name,fIndex,yi,ui,s,y,u,H)
 		0.01,99,.01,..
 		['open loop';'compensated open loop';'compensated closed loop']);
 
-	xs2eps(fIndex,name);
+	xs2eps(fIndex,f.figure_name);
 	fIndex = fIndex +1;
 
 	f=scf(fIndex); clf(fIndex);
@@ -31,7 +31,7 @@ function [f,s,u,fIndex] = closeLoopWithPlots(name,fIndex,yi,ui,s,y,u,H)
 	mtlb_axis([-10,10,-10,10]);
 
 	// save
-	xs2eps(fIndex,name);
+	xs2eps(fIndex,f.figure_name);
 	fIndex = fIndex +1;
 
 endfunction
