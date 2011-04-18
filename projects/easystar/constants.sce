@@ -4,6 +4,13 @@ x = createIndex(['vt','alpha','theta','q','alt','beta','phi','p','r','psi','lng'
 r = createIndex(['psi','vt','alt']);
 u = createIndex(['throttle','aileron','elevator','rudder']);
 y = x;
+// servos
+aileron.sign = 1;
+elevator.sign = 1;
+throttle.sign = 1;
+rudder.sign = -1;
+
+// lateral control system
 
 // roll
 phi_pid.kp = .5;
