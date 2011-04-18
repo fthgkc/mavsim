@@ -5,7 +5,7 @@ function [f,s,u,fIndex] = closeLoopWithPlots(name,fIndex,yi,ui,s,y,u,H,loopType)
 
 	f=scf(fIndex); clf(fIndex);
 	f.figure_name=name+'_bode';
-	f.figure_size = [400,800];
+	f.figure_size = [800,600];
 	set_posfig_dim(f.figure_size(1),f.figure_size(2));
 
 	bode([s0(yi,ui);H*s0(yi,ui);s1(yi,evstr('u.'+y.str(yi)))],..
