@@ -230,11 +230,6 @@ void MainWindow::on_pushButton_stop_pressed()
 void MainWindow::on_pushButton_simulate_pressed()
 {
 	on_pushButton_stop_pressed();
-	if (!ss)
-	{
-		showMsg("trim the aircraft first");
-		return;
-	}
 	simThread.start();
 }
 
@@ -271,6 +266,7 @@ void MainWindow::trim()
 		delete trimmer;
 		trimmer = NULL;
 	}
+	if (!fdm)
 	fdm = new FGFDMExec;
 	double dt = 1./atof(lineEdit_modelSimRate->text().toAscii());
 	FGTrimmer::Constraints constraints;
@@ -297,6 +293,7 @@ void MainWindow::trim()
 	double rtol = atof(lineEdit_rtol->text().toAscii());
 	double abstol = atof(lineEdit_abstol->text().toAscii());
 	double speed = atof(lineEdit_speed->text().toAscii());
+	double random = atof(lineEdit_random->text().toAscii());
 	int iterMax = atof(lineEdit_iterMax->text().toAscii());
 
 	// initial solver state
@@ -357,7 +354,7 @@ void MainWindow::trim()
 	// solve
 	trimmer = new FGTrimmer(*fdm,constraints);
 	FGNelderMead solver(*trimmer,initialGuess, lowerBound, upperBound, initialStepSize,
-						iterMax,rtol,abstol,speed,showConvergeStatus,showSimplex,pause,callback);
+						iterMax,rtol,abstol,speed, random, showConvergeStatus,showSimplex,pause,callback);
 	stopRequested = false;
 	while(!stopRequested && solver.status()==1) solver.update();
 
@@ -426,7 +423,8 @@ void MainWindow::trim()
 
 void MainWindow::simulate()
 {
-
+	if (!fdm) return;
+	QMutexLocker locker(&fdmMutex);
 	fdm->Run();
 	double maxDeflection = 20.0*3.14/180.0; // TODO: this is rough
 	viewer->mutex.lock();
@@ -442,7 +440,6 @@ SimulateThread::SimulateThread(MainWindow * window) : window(window), timer(this
 }
 void SimulateThread::run()
 {
-	QMutexLocker locker(&window->fdmMutex);
 	using namespace JSBSim;
 	std::cout << "simulation started" << std::endl;
 	timer.start(1000/120);
