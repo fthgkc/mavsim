@@ -7,8 +7,8 @@ echo
 echo 1\)in_source_build: is used for development and you can start the scicoslab toolbox by typing scicoslab in the mavsim source directory
 echo 2.\)install_build: is used for building before final installation to the system.
 echo 3.\)grab_debian_dependencies: installs all the required packages for debian based systems \(ubuntu maverick/ debian squeeze,lenny\)
-echo 4.\)package: creates binary packages for distribution
-echo 5.\)package_source: creates a source package for distribution
+echo 4.\)package_source: creates a source package for distribution
+echo 5.\)package: creates binary packages for distribution
 echo 6.\)remake: calls make again after project has been configured as install or in source build
 echo 7.\)clean: removes the build directory 
 
