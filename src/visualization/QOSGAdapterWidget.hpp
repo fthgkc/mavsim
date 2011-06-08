@@ -25,6 +25,7 @@
 #include <osgGA/TrackballManipulator>
 #include <osgDB/ReadFile>
 #include <QMutex>
+#include "config.h"
 
 #if USE_QT4
 

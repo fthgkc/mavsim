@@ -84,7 +84,7 @@ void MainWindow::writeSettings()
 
 void MainWindow::readSettings()
 {
-	QString root(datadir);
+	QString root(DATADIR);
 	settings->beginGroup("mainwindow");
 	lineEdit_enginePath->setText(settings->value("enginePath",root+"/easystar/Engine").toString());
 	lineEdit_systemsPath->setText(settings->value("systemsPath",root+"/easystar/Systems").toString());
