@@ -56,6 +56,7 @@ do
 	then
 		echo you chose to clean the build 
 		rm -rf build
+		rm -rf thirdParty/*
 
 	elif [ $OPT = "END" ] &> /dev/null
 	then
