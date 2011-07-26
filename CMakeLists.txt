@@ -127,7 +127,7 @@ MacroFindOrBuild(EASYSTAR data/easystar FOUND_GIT_REPO)
 # build libraries from source if not found on system
 if(JSBSIM_BUILD_FROM_SOURCE)
 	set(JSBSIM_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/jsbsim/src")
-	set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libjsbsim.a")
+	set(JSBSIM_LIBRARIES "${PROJECT_BINARY_DIR}/jsbsim/src/.libs/libJSBSim.a")
 	add_custom_command(OUTPUT JSBSIM_BUILD.stamp 
 		COMMAND mkdir -p jsbsim
 		COMMAND cd ${PROJECT_SOURCE_DIR}/thirdParty/jsbsim && ./autogen.sh --no-configure
