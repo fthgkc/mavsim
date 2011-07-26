@@ -3,7 +3,7 @@
 	url = git://github.com/pixhawk/mavlink
 [submodule "thirdParty/jsbsim"]
 	path = thirdParty/jsbsim
-	url = git://github.com/openmav/jsbsim 1.0-advtrim-2
+	url = git://github.com/openmav/jsbsim
 [submodule "thirdParty/boost-numeric-bindings"]
 	path = thirdParty/boost-numeric-bindings
 	url = http://git.tiker.net/trees/boost-numeric-bindings.git
