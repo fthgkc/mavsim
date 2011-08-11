@@ -15,7 +15,7 @@ def updateTools(conf):
     os.system('./waf update --files="boost,compat15"')
 
 def options(opt):
-    opt.load('compiler_cxx qt4 boost')
+    opt.load('compiler_cxx qt4')
 
 def configure(conf):
     def check_pkg (name, version='', mandatory=True, var=None, args=''):
@@ -27,6 +27,7 @@ def configure(conf):
 
     # general
     conf.check_tool('boost')
+    conf.check_tool('compat15')
     conf.load('compiler_cxx qt4 boost')
     conf.check_boost('system thread', mt=True)
     conf.env.append_value('CXXFLAGS', '-g') # test

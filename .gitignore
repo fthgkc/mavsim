@@ -17,6 +17,7 @@ build
 *.zip
 *.gz
 *.tar
+*.pyc
 *.dll*
 *.so*
 *.nfs*
@@ -25,5 +26,4 @@ build
 *.swp
 ui_*
 moc_*
-.waf*
 .lock-wafbuild
