@@ -10,3 +10,6 @@
 [submodule "data/quadracopter"]
 	path = data/quadracopter
 	url = git://gitorious.org/ron-s-hanger/quadracopter.git
+[submodule "thirdParty/jsbsim"]
+	path = thirdParty/jsbsim
+	url = git://github.com/openmav/jsbsim.git
