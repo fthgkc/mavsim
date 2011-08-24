@@ -237,4 +237,3 @@ include_directories( ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
 # subdirectories
 add_subdirectory(src)
 add_subdirectory(test)
-add_subdirectory(app)
